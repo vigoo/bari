@@ -4,3 +4,13 @@ obj
 
 # mstest test results
 TestResults
+
+# resharper
+_ReSharper.*
+
+# nuget packages
+packages
+
+# user specific files
+*.suo
+*.user
