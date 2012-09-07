@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Bari.Core.Exceptions;
 using Bari.Core.Model.Loader;
-using Ninject;
-using Ninject.Syntax;
 
 namespace Bari.Core.Model
 {
@@ -11,15 +10,15 @@ namespace Bari.Core.Model
     /// </summary>
     public class DefaultSuiteLoader : ISuiteLoader
     {
-        private readonly IResolutionRoot root;
+        private readonly IEnumerable<IModelLoader> loaders;
 
         /// <summary>
         /// Creates the default suite loader
         /// </summary>
-        /// <param name="root">Path to resolve instances</param>
-        public DefaultSuiteLoader(IResolutionRoot root)
+        /// <param name="loaders">All the registerd module loader implementations</param>
+        public DefaultSuiteLoader(IEnumerable<IModelLoader> loaders)
         {
-            this.root = root;
+            this.loaders = loaders;
         }
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace Bari.Core.Model
         /// <returns>Returns the loaded suite model. On error it throws an exception, never returns <c>null</c>.</returns>
         public Suite Load(string source)
         {
-            foreach (var loader in root.GetAll<IModelLoader>())
+            foreach (var loader in loaders)
             {
                 if (loader.Supports(source))
                     return loader.Load(source);
