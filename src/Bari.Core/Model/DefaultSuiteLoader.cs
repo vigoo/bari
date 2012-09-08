@@ -13,12 +13,6 @@ namespace Bari.Core.Model
     {
         private readonly IEnumerable<IModelLoader> loaders;
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(loaders != null);
-        }
-
         /// <summary>
         /// Creates the default suite loader
         /// </summary>

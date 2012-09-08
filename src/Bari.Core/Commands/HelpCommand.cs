@@ -16,13 +16,6 @@ namespace Bari.Core.Commands
         private readonly IResolutionRoot root;
         private readonly IUserOutput output;
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(root != null);
-            Contract.Invariant(output != null);
-        }
-
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
         /// to access the particular command.

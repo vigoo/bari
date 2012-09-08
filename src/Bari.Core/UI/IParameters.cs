@@ -1,4 +1,6 @@
-﻿namespace Bari.Core.UI
+﻿using Bari.Core.Model.Loader;
+
+namespace Bari.Core.UI
 {
     /// <summary>
     /// Interface describing the parameters given by the user which specifies the task
@@ -15,5 +17,13 @@
         /// Gets the parameters given to the command specified by the <see cref="Command"/> property
         /// </summary>
         string[] CommandParameters { get; }
+
+        /// <summary>
+        /// Gets the name (or url, etc.) of the suite specification to be loaded.
+        /// 
+        /// <para>Every registered <see cref="IModelLoader"/> will be asked to interpret the
+        /// given suite name.</para>
+        /// </summary>
+        string Suite { get; }
     }
 }

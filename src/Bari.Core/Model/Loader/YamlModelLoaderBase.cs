@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Bari.Core.Exceptions;
 using Ninject;
@@ -46,8 +47,71 @@ namespace Bari.Core.Model.Loader
 
             suite.Name = GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
 
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(yaml.RootNode, "modules"))
+            {
+                var module = suite.GetModule(item.Key);
+
+                if (item.Value != null)
+                    LoadModule(module, item.Value);
+            }
+
             log.Debug("Finished processing YAML document.");
             return suite;
+        }
+
+        private void LoadModule(Module module, YamlNode moduleNode)
+        {
+            Contract.Requires(module != null);
+            Contract.Requires(moduleNode != null);
+
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "projects"))
+            {
+                var project = module.GetProject(item.Key);
+
+                if (item.Value != null)
+                    LoadProject(project, item.Value);
+            }
+        }
+
+        private void LoadProject(Project project, YamlNode projectNode)
+        {
+            Contract.Requires(project != null);
+            Contract.Requires(projectNode != null);
+        }
+
+        private IEnumerable<KeyValuePair<string, YamlNode>> EnumerateNamedNodesOf(YamlNode parent, string groupName)
+        {
+            Contract.Requires(parent != null);
+            Contract.Requires(!String.IsNullOrWhiteSpace(groupName));
+            Contract.Ensures(Contract.Result<IEnumerable<YamlNode>>() != null);
+
+            var mapping = parent as YamlMappingNode;
+            if (mapping != null)
+            {
+                var groupNameNode = new YamlScalarNode(groupName);
+                if (mapping.Children.ContainsKey(groupNameNode))
+                {
+                    var groupSeq = mapping.Children[groupNameNode] as YamlSequenceNode;
+
+                    if (groupSeq != null)
+                    {
+                        foreach (var item in groupSeq.Children)
+                        {
+                            if (item is YamlScalarNode)
+                            {
+                                yield return new KeyValuePair<string, YamlNode>(((YamlScalarNode) item).Value, null);
+                            }
+                            else if (item is YamlMappingNode)
+                            {
+                                var mappingChild = (YamlMappingNode)item;
+                                yield return new KeyValuePair<string, YamlNode>(
+                                    GetScalarValue(mappingChild, "name"),
+                                    mappingChild);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private string GetScalarValue(YamlNode parent, string key, string errorMessage = null)

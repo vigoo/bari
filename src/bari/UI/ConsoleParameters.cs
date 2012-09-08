@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.IO;
+using Bari.Core.Model.Loader;
 using Bari.Core.UI;
 
 namespace Bari.Console.UI
@@ -10,6 +13,7 @@ namespace Bari.Console.UI
     {
         private readonly string cmd;
         private readonly string[] cmdParams;
+        private readonly string initialCurrentDirectory = Environment.CurrentDirectory;
 
         /// <summary>
         /// Creates the parameter object and immediately parse the arguments
@@ -48,6 +52,20 @@ namespace Bari.Console.UI
         public string[] CommandParameters
         {
             get { return cmdParams; }
+        }
+
+        /// <summary>
+        /// Gets the name (or url, etc.) of the suite specification to be loaded.
+        /// 
+        /// <para>Every registered <see cref="IModelLoader"/> will be asked to interpret the
+        /// given suite name.</para>
+        /// </summary>
+        public string Suite
+        {
+            get
+            {                
+                return Path.Combine(initialCurrentDirectory, "suite.yaml");
+            }
         }
     }
 }

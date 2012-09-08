@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.Contracts;
+using System.IO;
 using Bari.Core.Exceptions;
 using Ninject.Syntax;
 using YamlDotNet.RepresentationModel;
@@ -18,6 +19,7 @@ namespace Bari.Core.Model.Loader
         /// <param name="root">Path to resolve instances</param>
         public LocalYamlModelLoader(IResolutionRoot root) : base(root)
         {
+            Contract.Requires(root != null);
         }
 
         /// <summary>

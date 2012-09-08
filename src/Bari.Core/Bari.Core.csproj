@@ -45,15 +45,15 @@
     <CodeContractsExtraRewriteOptions />
     <CodeContractsExtraAnalysisOptions />
     <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Debug\Bari.Core.XML</DocumentationFile>
-    <CodeContractsInferRequires>False</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>True</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
     <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
     <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
     <CodeContractsSuggestEnsures>True</CodeContractsSuggestEnsures>
@@ -96,12 +96,18 @@
     <Compile Include="Exceptions\InvalidCommandParameterException.cs" />
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
+    <Compile Include="Generic\IFileSystemDirectory.cs" />
+    <Compile Include="Generic\LocalFileSystemDirectory.cs" />
     <Compile Include="Kernel.cs" />
+    <Compile Include="Model\Discovery\ISuiteDiscovery.cs" />
+    <Compile Include="Model\Discovery\ModuleProjectDiscovery.cs" />
     <Compile Include="Model\ISuiteLoader.cs" />
     <Compile Include="Model\Loader\IModelLoader.cs" />
     <Compile Include="Model\Loader\InMemoryYamlModelLoader.cs" />
     <Compile Include="Model\Loader\LocalYamlModelLoader.cs" />
     <Compile Include="Model\Loader\YamlModelLoaderBase.cs" />
+    <Compile Include="Model\Module.cs" />
+    <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Suite.cs" />
     <Compile Include="Model\DefaultSuiteLoader.cs" />
     <Compile Include="Process\MainProcess.cs" />

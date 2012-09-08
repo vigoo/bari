@@ -18,6 +18,7 @@ namespace Bari.Core.UI
          {
              Contract.Requires(output != null);
              Contract.Requires(format != null);
+             Contract.Requires(args != null);
 
              output.Message(string.Format(format, args));
          }
