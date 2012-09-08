@@ -1,7 +1,7 @@
-﻿using Bari.Core.Commands;
+﻿using System.Diagnostics.Contracts;
+using Bari.Core.Commands;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
-using Bari.Core.UI;
 using Ninject;
 
 namespace Bari.Core
@@ -35,20 +35,14 @@ namespace Bari.Core
         /// <param name="kernel">The kernel to be used for registration</param>
         public static void RegisterCoreBindings(IKernel kernel)
         {
+            Contract.Requires(kernel != null);
+
             kernel.Bind<IModelLoader>().To<LocalYamlModelLoader>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
 
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
-        }
-
-        /// <summary>
-        /// Registers UI interfaces to the console implementation
-        /// </summary>
-        public static void RegisterConsoleUI()
-        {
-            root.Bind<IUserOutput>().To<ConsoleUserInterface>().InSingletonScope();
         }
     }
 }

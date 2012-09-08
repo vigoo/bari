@@ -1,6 +1,7 @@
-﻿using Bari.Core.Model;
+﻿using Bari.Core.Commands;
+using Bari.Core.Model;
 
-namespace Bari.Core.Commands
+namespace Bari.Core.Test.Commands
 {
     public class DummyCommand: ICommand
     {

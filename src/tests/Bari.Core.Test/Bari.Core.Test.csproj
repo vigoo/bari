@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\DummyCommand.cs" />
     <Compile Include="Commands\HelpTest.cs" />
     <Compile Include="Helper\TestUserOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

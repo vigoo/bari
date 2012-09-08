@@ -12,7 +12,7 @@ namespace Bari.Core.Model.Loader
     /// </summary>
     public abstract class YamlModelLoaderBase
     {
-        private static log4net.ILog log = log4net.LogManager.GetLogger(typeof (YamlModelLoaderBase));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (YamlModelLoaderBase));
 
         private readonly IResolutionRoot root;
 
@@ -22,6 +22,9 @@ namespace Bari.Core.Model.Loader
         /// <param name="root">Path to resolve instances</param>
         protected YamlModelLoaderBase(IResolutionRoot root)
         {
+            Contract.Requires(root != null);
+            Contract.Ensures(this.root == root);
+
             this.root = root;
         }
 

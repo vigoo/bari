@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Bari.Core.Exceptions;
 using Bari.Core.Model.Loader;
 
@@ -12,12 +13,21 @@ namespace Bari.Core.Model
     {
         private readonly IEnumerable<IModelLoader> loaders;
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(loaders != null);
+        }
+
         /// <summary>
         /// Creates the default suite loader
         /// </summary>
         /// <param name="loaders">All the registerd module loader implementations</param>
         public DefaultSuiteLoader(IEnumerable<IModelLoader> loaders)
         {
+            Contract.Requires(loaders != null);
+            Contract.Ensures(this.loaders == loaders);
+
             this.loaders = loaders;
         }
 

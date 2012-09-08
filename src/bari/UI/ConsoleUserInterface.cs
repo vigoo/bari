@@ -1,6 +1,7 @@
 ﻿using System;
+using Bari.Core.UI;
 
-namespace Bari.Core.UI
+namespace Bari.Console.UI
 {
     /// <summary>
     /// The default command line user interface implementation
@@ -13,8 +14,8 @@ namespace Bari.Core.UI
         /// <param name="message">The message to be shown</param>
         public void Message(string message)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(message);
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+            System.Console.WriteLine(message);
         }
 
         /// <summary>
@@ -24,12 +25,12 @@ namespace Bari.Core.UI
         /// <param name="description">The description</param>
         public void Describe(string target, string description)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("    ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write(target);
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(" - " + description);
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+            System.Console.Write("    ");
+            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.Write(target);
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+            System.Console.WriteLine(" - " + description);
         }
     }
 }
