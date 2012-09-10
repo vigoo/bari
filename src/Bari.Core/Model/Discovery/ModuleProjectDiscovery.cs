@@ -4,32 +4,29 @@ using Bari.Core.Generic;
 namespace Bari.Core.Model.Discovery
 {
     /// <summary>
-    /// A <see cref="ISuiteDiscovery"/> implementation which discovers modules and projects
+    /// A <see cref="ISuiteExplorer"/> implementation which discovers modules and projects
     /// by traversing the file system starting from the suite's root directory.
     /// </summary>
-    public class ModuleProjectDiscovery: ISuiteDiscovery
+    public class ModuleProjectDiscovery: ISuiteExplorer
     {
         private readonly IFileSystemDirectory suiteRoot;
-        private readonly Suite suite;
 
         /// <summary>
         /// Constructs the suite discovery implementation
         /// </summary>
         /// <param name="suiteRoot">File system directory representing the suite's root</param>
-        /// <param name="suite">The suite model to fill</param>
-        public ModuleProjectDiscovery(IFileSystemDirectory suiteRoot, Suite suite)
+        public ModuleProjectDiscovery([SuiteRoot] IFileSystemDirectory suiteRoot)
         {
             Contract.Requires(suiteRoot != null);
-            Contract.Requires(suite != null);
 
             this.suiteRoot = suiteRoot;
-            this.suite = suite;
         }
 
         /// <summary>
         /// Extends suite model with discovered information based on bari conventions
         /// </summary>        
-        public void ExtendWithDiscoveries()
+        /// <param name="suite">The suite model to be extended with discoveries</param>
+        public void ExtendWithDiscoveries(Suite suite)
         {
             var srcDir = suiteRoot.GetChildDirectory("src");
             if (srcDir != null)

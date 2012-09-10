@@ -10,12 +10,70 @@ namespace Bari.Console.UI
     {
         /// <summary>
         /// Outputs a message to the user. The message can be single or multiline.
+        /// 
+        /// <para>
+        /// The following formatting options must be supported:
+        /// <list>
+        ///     <item>*Emphasis*</item>
+        ///     <item>`command line or code example`</item>
+        ///     <item>=Heading=</item>
+        /// </list>
+        /// </para>
         /// </summary>
         /// <param name="message">The message to be shown</param>
         public void Message(string message)
         {
             System.Console.ForegroundColor = ConsoleColor.Gray;
-            System.Console.WriteLine(message);
+
+            bool inEmphasis = false;
+            bool inExample = false;
+            bool inHeading = false;
+            bool isEscaping = false;
+
+            foreach (var ch in message)
+            {
+                if (ch == '*' && !isEscaping)
+                {
+                    inEmphasis = !inEmphasis;
+                    ChangeColor(inEmphasis, inExample, inHeading);
+                }
+                else if (ch == '`' && !isEscaping)
+                {
+                    inExample = !inExample;
+                    ChangeColor(inEmphasis, inExample, inHeading);
+                }
+                else if (ch == '=' && !isEscaping)
+                {
+                    inHeading = !inHeading;
+                    ChangeColor(inEmphasis, inExample, inHeading);
+                }
+                else
+                {
+                    System.Console.Write(ch);
+                }
+
+                isEscaping = ch == '\\';
+            }
+
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+            System.Console.WriteLine();
+        }
+
+        private void ChangeColor(bool inEmphasis, bool inExample, bool inHeading)
+        {
+            if (inHeading)
+            {
+                System.Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                if (inEmphasis)
+                    System.Console.ForegroundColor = ConsoleColor.Yellow;
+                else if (inExample)
+                    System.Console.ForegroundColor = ConsoleColor.White;
+                else
+                    System.Console.ForegroundColor = ConsoleColor.Gray;
+            }
         }
 
         /// <summary>

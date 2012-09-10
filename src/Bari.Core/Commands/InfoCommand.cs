@@ -1,0 +1,103 @@
+﻿using System.Diagnostics.Contracts;
+using Bari.Core.Model;
+using Bari.Core.UI;
+
+namespace Bari.Core.Commands
+{
+    /// <summary>
+    /// Implements the <c>info</c> command, providing a textual description of the suite
+    /// with all the configured and discovered information.
+    /// </summary>
+    public class InfoCommand: ICommand
+    {
+        private readonly IUserOutput output;
+
+        /// <summary>
+        /// Gets the name of the command. This is the string which can be used on the command line interface
+        /// to access the particular command.
+        /// </summary>
+        public string Name
+        {
+            get { return "info"; }
+        }
+
+        /// <summary>
+        /// Gets a short, one-liner description of the command
+        /// </summary>
+        public string Description
+        {
+            get { return "shows all known information about the current suite"; }
+        }
+
+        /// <summary>
+        /// Gets a detailed, multiline description of the command and its possible parameters, usage examples
+        /// </summary>
+        public string Help
+        {
+            get
+            {
+                return
+@"=Info command=
+
+When used without a parameter, it shows all available information about the current suite.
+Example: `bari info`
+";
+            }
+        }
+
+        /// <summary>
+        /// Constructs the info command instance
+        /// </summary>
+        /// <param name="output">Interface for writing messages to the user</param>
+        public InfoCommand(IUserOutput output)
+        {
+            Contract.Requires(output != null);
+
+            this.output = output;
+        }
+
+        /// <summary>
+        /// Runs the command
+        /// </summary>
+        /// <param name="suite">The current suite model the command is applied to</param>
+        /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
+        public void Run(Suite suite, string[] parameters)
+        {            
+            output.Message("*Suite name:* {0}\n", suite.Name);            
+            
+            output.Message("*Modules:*");
+            foreach (var module in suite.Modules)
+            {
+                PrintModuleDetails(module);
+            }
+        }
+
+        /// <summary>
+        /// Prints information about one particular module
+        /// </summary>
+        /// <param name="module">The module to print information of</param>
+        private void PrintModuleDetails(Module module)
+        {
+            Contract.Requires(module != null);
+
+            output.Message("  *Name:* {0}", module.Name);
+            output.Message("  *Projects:*");
+
+            foreach (var project in module.Projects)
+            {
+                PrintProjectDetails(project);
+            }
+        }
+
+        /// <summary>
+        /// Prints information about one particular project
+        /// </summary>
+        /// <param name="project">The project to print information of</param>
+        private void PrintProjectDetails(Project project)
+        {
+            Contract.Requires(project != null);
+
+            output.Message("    *Name:* {0}", project.Name);
+        }
+    }
+}

@@ -3,6 +3,7 @@ using System.Reflection;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
+using Bari.Core.Model.Discovery;
 using Bari.Core.UI;
 using Ninject;
 using Ninject.Syntax;
@@ -52,6 +53,9 @@ namespace Bari.Core.Process
             output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
 
             var suite = loader.Load(parameters.Suite);
+            
+            var explorer = root.Get<ExplorerRunner>();
+            explorer.RunAll(suite);
 
             var cmd = root.TryGet<ICommand>(parameters.Command);
             if (cmd != null)

@@ -24,8 +24,8 @@ namespace Bari.Core.Test.Discovery
 
             suite.Modules.Should().BeEmpty();
 
-            var discovery = new ModuleProjectDiscovery(fs, suite);
-            discovery.ExtendWithDiscoveries();
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
 
             suite.Modules.Should().HaveCount(3);
             suite.Modules.Should().OnlyContain(m => m.Name == "Module1" ||
@@ -44,8 +44,8 @@ namespace Bari.Core.Test.Discovery
 
             suite.Modules.Should().BeEmpty();
 
-            var discovery = new ModuleProjectDiscovery(fs, suite);
-            discovery.ExtendWithDiscoveries();
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
 
             suite.Modules.Should().BeEmpty();
         }
@@ -67,8 +67,8 @@ namespace Bari.Core.Test.Discovery
 
             suite.Modules.Should().BeEmpty();
 
-            var discovery = new ModuleProjectDiscovery(fs, suite);
-            discovery.ExtendWithDiscoveries();
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
 
             suite.Modules.Should().HaveCount(3);
             suite.Modules.Should().OnlyContain(m => m.Name == "Module1" ||
@@ -100,8 +100,8 @@ namespace Bari.Core.Test.Discovery
             module1.Projects.Should().HaveCount(1);
             module1.Projects.Should().HaveElementAt(0, projectA);
 
-            var discovery = new ModuleProjectDiscovery(fs, suite);
-            discovery.ExtendWithDiscoveries();
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
 
             suite.Modules.Should().HaveCount(1);
             suite.Modules.Should().HaveElementAt(0, module1);

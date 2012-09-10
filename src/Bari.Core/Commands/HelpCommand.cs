@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.UI;
@@ -39,13 +40,13 @@ namespace Bari.Core.Commands
         public string Help
         {
             get { return 
-@"Help command
+@"=Help command=
 
 When used without parameter, it shows all the available commands in the current suite.
-Example: bari help
+Example: `bari help`
 
 When used with a command name as parameter, it prints detailed usage help for the given command.
-Example: bari help clean
+Example: `bari help clean`
 "; 
             }
         }
@@ -103,7 +104,7 @@ Example: bari help clean
         {
             output.Message("The following commands can be used for this suite:");
 
-            foreach (var cmd in root.GetAll<ICommand>())
+            foreach (var cmd in root.GetAll<ICommand>().OrderBy(cmd => cmd.Name))
             {
                 output.Describe(cmd.Name, cmd.Description);
             }

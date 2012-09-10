@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Bari.Core.Generic
 {
@@ -27,7 +28,7 @@ namespace Bari.Core.Generic
         /// </summary>
         public IEnumerable<string> ChildDirectories
         {
-            get { return Directory.EnumerateDirectories(path); }
+            get { return Directory.EnumerateDirectories(path).Select(Path.GetFileName); }
         }
 
         /// <summary>

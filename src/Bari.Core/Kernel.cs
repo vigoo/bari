@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using Bari.Core.Commands;
 using Bari.Core.Model;
+using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
 using Ninject;
 
@@ -43,6 +44,10 @@ namespace Bari.Core
 
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
+            kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
+
+            // Built-in suite explorers
+            kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
         }
     }
 }

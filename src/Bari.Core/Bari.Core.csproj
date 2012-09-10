@@ -92,14 +92,17 @@
   <ItemGroup>
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\InfoCommand.cs" />
     <Compile Include="Exceptions\InvalidCommandException.cs" />
     <Compile Include="Exceptions\InvalidCommandParameterException.cs" />
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Generic\IFileSystemDirectory.cs" />
     <Compile Include="Generic\LocalFileSystemDirectory.cs" />
+    <Compile Include="Generic\SuiteRootAttribute.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="Model\Discovery\ISuiteDiscovery.cs" />
+    <Compile Include="Model\Discovery\ExplorerRunner.cs" />
+    <Compile Include="Model\Discovery\ISuiteExplorer.cs" />
     <Compile Include="Model\Discovery\ModuleProjectDiscovery.cs" />
     <Compile Include="Model\ISuiteLoader.cs" />
     <Compile Include="Model\Loader\IModelLoader.cs" />

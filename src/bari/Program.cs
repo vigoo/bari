@@ -1,6 +1,7 @@
 ﻿using System;
 using Bari.Console.UI;
 using Bari.Core;
+using Bari.Core.Generic;
 using Bari.Core.Process;
 using Bari.Core.UI;
 using Ninject;
@@ -16,6 +17,9 @@ namespace Bari.Console
             
             root.Bind<IUserOutput>().To<ConsoleUserInterface>().InSingletonScope();
             root.Bind<IParameters>().ToConstant(new ConsoleParameters(args)).InSingletonScope();
+            root.Bind<IFileSystemDirectory>()
+                .ToConstant(new LocalFileSystemDirectory(Environment.CurrentDirectory))
+                .WhenTargetHas<SuiteRootAttribute>();
 
             var process = root.Get<MainProcess>();
             try
