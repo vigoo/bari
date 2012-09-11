@@ -70,6 +70,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(projectName));
             Contract.Ensures(Contract.Result<Project>() != null);
+            Contract.Ensures(Contract.Result<Project>().Name == projectName);
             Contract.Ensures(projects.ContainsKey(projectName));
 
             Project result;

@@ -111,6 +111,7 @@
     <Compile Include="Model\Loader\YamlModelLoaderBase.cs" />
     <Compile Include="Model\Module.cs" />
     <Compile Include="Model\Project.cs" />
+    <Compile Include="Model\SourceSet.cs" />
     <Compile Include="Model\Suite.cs" />
     <Compile Include="Model\DefaultSuiteLoader.cs" />
     <Compile Include="Process\MainProcess.cs" />

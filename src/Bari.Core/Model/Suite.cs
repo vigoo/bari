@@ -59,6 +59,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(moduleName));
             Contract.Ensures(Contract.Result<Module>() != null);
+            Contract.Ensures(Contract.Result<Module>().Name == moduleName);
             Contract.Ensures(modules.ContainsKey(moduleName));
 
             Module result;
