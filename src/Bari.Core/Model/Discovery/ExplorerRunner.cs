@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Bari.Core.Model.Discovery
 {
@@ -15,6 +16,9 @@ namespace Bari.Core.Model.Discovery
         /// <param name="explorers">The set of explorers to be used</param>
         public ExplorerRunner(IEnumerable<ISuiteExplorer> explorers)
         {
+            Contract.Requires(explorers != null);
+            Contract.Requires(Contract.ForAll(explorers, explorer => explorer != null));
+
             this.explorers = explorers;
         }
 
@@ -25,6 +29,8 @@ namespace Bari.Core.Model.Discovery
         /// <param name="suite">The suite model to be extended.</param>
         public void RunAll(Suite suite)
         {
+            Contract.Requires(suite != null);
+
             foreach (var suiteExplorer in explorers)
             {
                 suiteExplorer.ExtendWithDiscoveries(suite);

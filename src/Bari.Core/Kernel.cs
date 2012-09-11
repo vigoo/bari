@@ -19,7 +19,12 @@ namespace Bari.Core
         /// </summary>
         public static IKernel Root
         {
-            get { return root; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IKernel>() != null);
+                
+                return root;
+            }
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace Bari.Core.Model
+﻿using System.Diagnostics.Contracts;
+
+namespace Bari.Core.Model
 {
     /// <summary>
     /// Represents a project of a module, which is a separate processable set of inputs creating one or more targets
@@ -14,7 +16,12 @@
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                
+                return name;
+            }
         }
 
         /// <summary>
@@ -23,6 +30,8 @@
         /// <param name="name">Name of the project</param>
         public Project(string name)
         {
+            Contract.Requires(!string.IsNullOrWhiteSpace(name));
+
             this.name = name;
         }
     }

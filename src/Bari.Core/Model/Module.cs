@@ -11,12 +11,30 @@ namespace Bari.Core.Model
         private readonly string name;
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>();
 
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(name != null);
+            Contract.Invariant(projects != null);
+            Contract.Invariant(Contract.ForAll(projects,
+                                               pair =>
+                                               !string.IsNullOrWhiteSpace(pair.Key) &&
+                                               pair.Value != null &&
+                                               pair.Value.Name == pair.Key));
+        }
+
         /// <summary>
         /// Gets the module's name
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+                return name;
+            }
         }
 
         /// <summary>
@@ -24,7 +42,12 @@ namespace Bari.Core.Model
         /// </summary>
         public IEnumerable<Project> Projects
         {
-            get { return projects.Values; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<Project>>() != null);
+
+                return projects.Values;
+            }
         }
 
         /// <summary>
@@ -33,6 +56,8 @@ namespace Bari.Core.Model
         /// <param name="name">The name of the module</param>
         public Module(string name)
         {
+            Contract.Requires(!string.IsNullOrWhiteSpace(name));
+
             this.name = name;
         }
 
@@ -45,6 +70,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(projectName));
             Contract.Ensures(Contract.Result<Project>() != null);
+            Contract.Ensures(projects.ContainsKey(projectName));
 
             Project result;
             if (projects.TryGetValue(projectName, out result))

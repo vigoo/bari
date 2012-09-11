@@ -11,6 +11,18 @@ namespace Bari.Core.Model
         private string name = string.Empty;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>();
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(name != null);
+            Contract.Invariant(modules != null);
+            Contract.Invariant(Contract.ForAll(modules,
+                                               pair =>
+                                               !string.IsNullOrWhiteSpace(pair.Key) && 
+                                               pair.Value != null &&
+                                               pair.Value.Name == pair.Key));
+        }
+
         /// <summary>
         /// Gets or sets the suite's name
         /// </summary>
@@ -47,6 +59,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(moduleName));
             Contract.Ensures(Contract.Result<Module>() != null);
+            Contract.Ensures(modules.ContainsKey(moduleName));
 
             Module result;
             if (modules.TryGetValue(moduleName, out result))
