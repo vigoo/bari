@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -19,6 +20,14 @@ namespace Bari.Core.Generic
         public LocalFileSystemDirectory(string path)
         {
             this.path = path;
+        }
+
+        /// <summary>
+        /// Enumerates all the files within the directory by their names
+        /// </summary>
+        public IEnumerable<string> Files
+        {
+            get { return Directory.EnumerateFiles(path).Select(Path.GetFileName); }
         }
 
         /// <summary>
@@ -43,6 +52,27 @@ namespace Bari.Core.Generic
                 return new LocalFileSystemDirectory(childPath);
             else
                 return null;
+        }
+
+        /// <summary>
+        /// Gets the relative path from this directory to another directory (in any depth)
+        /// 
+        /// <para>If the given argument is not a child of this directory, an <see cref="ArgumentException"/>will
+        /// be thrown.</para>
+        /// </summary>
+        /// <param name="childDirectory">The child directory to get path to</param>
+        /// <returns>Returns the path</returns>
+        public string GetRelativePath(IFileSystemDirectory childDirectory)
+        {
+            var localChildDirectory = childDirectory as LocalFileSystemDirectory;
+            if (localChildDirectory == null)            
+                throw new ArgumentException("Only LocalFileSystemDirectory objects are supported", "childDirectory");
+
+            var childPath = localChildDirectory.path;
+            if (!childPath.StartsWith(path))
+                throw new ArgumentException("The argument is not a child directory of this directory", "childDirectory");
+
+            return childPath.Substring(path.Length).TrimStart('\\');
         }
     }
 }

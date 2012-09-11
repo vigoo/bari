@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.IO;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Model.Discovery
@@ -39,8 +40,31 @@ namespace Bari.Core.Model.Discovery
                     foreach (var projectName in moduleDir.ChildDirectories)
                     {
                         Project project = module.GetProject(projectName);
+                        DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName));
                     }
                 }
+            }
+        }
+
+        private void DiscoverProjectSources(Project project, IFileSystemDirectory projectDir)
+        {
+            foreach (var sourceSetName in projectDir.ChildDirectories)
+            {
+                var sourceSet = project.GetSourceSet(sourceSetName);
+                AddAllFiles(sourceSet, projectDir.GetChildDirectory(sourceSetName));
+            }
+        }
+
+        private void AddAllFiles(SourceSet target, IFileSystemDirectory dir)
+        {
+            foreach (var fileName in dir.Files)
+            {
+                target.Add(Path.Combine(suiteRoot.GetRelativePath(dir), fileName));
+            }
+
+            foreach (var childDirectory in dir.ChildDirectories)
+            {
+                AddAllFiles(target, dir.GetChildDirectory(childDirectory));
             }
         }
     }

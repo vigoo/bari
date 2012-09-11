@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Model;
 using Bari.Core.UI;
 
@@ -98,6 +99,12 @@ Example: `bari info`
             Contract.Requires(project != null);
 
             output.Message("    *Name:* {0}", project.Name);
+            output.Message("    *Source sets:");
+
+            foreach (var sourceSet in project.SourceSets)
+            {
+                output.Message("      `{0}`\t{1} files", sourceSet.Type, sourceSet.Files.Count());
+            }
         }
     }
 }
