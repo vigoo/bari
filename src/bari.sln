@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Core.Test", "tests\Bar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bari", "bari\bari.csproj", "{EC03BDC4-FAA9-454F-9D03-21ED58669231}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Csharp", "Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj", "{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,16 @@ Global
 		{EC03BDC4-FAA9-454F-9D03-21ED58669231}.Release|Mixed Platforms.Build.0 = Release|x86
 		{EC03BDC4-FAA9-454F-9D03-21ED58669231}.Release|x86.ActiveCfg = Release|x86
 		{EC03BDC4-FAA9-454F-9D03-21ED58669231}.Release|x86.Build.0 = Release|x86
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

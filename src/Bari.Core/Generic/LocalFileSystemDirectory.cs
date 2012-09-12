@@ -56,8 +56,7 @@ namespace Bari.Core.Generic
 
         /// <summary>
         /// Gets the relative path from this directory to another directory (in any depth)
-        /// 
-        /// <para>If the given argument is not a child of this directory, an <see cref="ArgumentException"/>will
+        ///         /// <para>If the given argument is not a child of this directory, an <see cref="ArgumentException"/>will
         /// be thrown.</para>
         /// </summary>
         /// <param name="childDirectory">The child directory to get path to</param>
@@ -73,6 +72,31 @@ namespace Bari.Core.Generic
                 throw new ArgumentException("The argument is not a child directory of this directory", "childDirectory");
 
             return childPath.Substring(path.Length).TrimStart('\\');
+        }
+
+        /// <summary>
+        /// Creates a child directory if it does not exist yet
+        /// </summary>
+        /// <param name="name">Name of the child directory</param>
+        /// <returns>Returns the directory abstraction of the new (or already existing) directory</returns>
+        public IFileSystemDirectory CreateDirectory(string name)
+        {
+            string childPath = Path.Combine(path, name);
+            Directory.CreateDirectory(childPath);
+
+            return new LocalFileSystemDirectory(childPath);
+        }
+
+        /// <summary>
+        /// Creates a new text file with a text writer in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the text writer to be used to write the contents of the file.</returns>
+        public TextWriter CreateTextFile(string name)
+        {
+            string childPath = Path.Combine(path, name);
+
+            return File.CreateText(childPath);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 
 namespace Bari.Core.Generic
@@ -39,8 +40,25 @@ namespace Bari.Core.Generic
         /// <param name="childDirectory">The child directory to get path to</param>
         /// <returns>Returns the path</returns>
         string GetRelativePath(IFileSystemDirectory childDirectory);
+
+        /// <summary>
+        /// Creates a child directory if it does not exist yet
+        /// </summary>
+        /// <param name="name">Name of the child directory</param>
+        /// <returns>Returns the directory abstraction of the new (or already existing) directory</returns>
+        IFileSystemDirectory CreateDirectory(string name);
+
+        /// <summary>
+        /// Creates a new text file with a text writer in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the text writer to be used to write the contents of the file.</returns>
+        TextWriter CreateTextFile(string name);
     }
 
+    /// <summary>
+    /// Contracts for the <see cref="IFileSystemDirectory"/> interface
+    /// </summary>
     [ContractClassFor(typeof(IFileSystemDirectory))]
     public abstract class IFileSystemDirectoryContracts: IFileSystemDirectory
     {
@@ -100,6 +118,34 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(childDirectory != null);
             Contract.Ensures(Contract.Result<string>() != null);
+
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Creates a child directory if it does not exist yet
+        /// </summary>
+        /// <param name="name">Name of the child directory</param>
+        /// <returns>Returns the directory abstraction of the new (or already existing) directory</returns>
+        public IFileSystemDirectory CreateDirectory(string name)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(name));
+            Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
+            Contract.Ensures(ChildDirectories.Contains(name));
+
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Creates a new text file with a text writer in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the text writer to be used to write the contents of the file.</returns>
+        public TextWriter CreateTextFile(string name)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(name));
+            Contract.Ensures(Contract.Result<TextWriter>() != null);
+            Contract.Ensures(Files.Contains(name));
 
             return null; // dummy value
         }

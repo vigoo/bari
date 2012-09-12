@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 
@@ -50,6 +51,26 @@ namespace Bari.Core.Test.Helper
         public string GetRelativePath(IFileSystemDirectory childDirectory)
         {
             throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a child directory if it does not exist yet
+        /// </summary>
+        /// <param name="name">Name of the child directory</param>
+        /// <returns>Returns the directory abstraction of the new (or already existing) directory</returns>
+        public IFileSystemDirectory CreateDirectory(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a new text file with a text writer in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the text writer to be used to write the contents of the file.</returns>
+        public TextWriter CreateTextFile(string name)
+        {
+            throw new NotImplementedException();
         }
 
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)

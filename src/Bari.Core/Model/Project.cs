@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Bari.Core.Model
 {
@@ -73,6 +74,17 @@ namespace Bari.Core.Model
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Checks if the project has a source set with the given type and at least one files
+        /// </summary>
+        /// <param name="type">The source set type name</param>
+        /// <returns>Returns <c>true</c> if there is a source set with the given type name and at least one files</returns>
+        public bool HasSourceSet(string type)
+        {
+            return sourceSets.ContainsKey(type) &&
+                   sourceSets[type].Files.Any();
         }
     }
 }
