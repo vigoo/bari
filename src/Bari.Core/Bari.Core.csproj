@@ -90,6 +90,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Cache\CachedBuilder.cs" />
+    <Compile Include="Build\IBuilder.cs" />
+    <Compile Include="Build\IDependencies.cs" />
+    <Compile Include="Build\IDependencyFingerprint.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\InfoCommand.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Generic\IFileSystemDirectory.cs" />
     <Compile Include="Generic\LocalFileSystemDirectory.cs" />
+    <Compile Include="Generic\SuiteRelativePath.cs" />
     <Compile Include="Generic\SuiteRootAttribute.cs" />
     <Compile Include="Kernel.cs" />
     <Compile Include="Model\Discovery\ExplorerRunner.cs" />

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Model
 {
@@ -11,7 +11,7 @@ namespace Bari.Core.Model
     public class SourceSet
     {
         private readonly string type;
-        private readonly ISet<string> files = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly ISet<SuiteRelativePath> files = new SortedSet<SuiteRelativePath>();
 
         /// <summary>
         /// Gets the type of sources in this set
@@ -31,7 +31,7 @@ namespace Bari.Core.Model
         /// 
         /// <para>The file names are stored in relative path form, relative to the suite root</para>
         /// </summary>
-        public IEnumerable<string> Files
+        public IEnumerable<SuiteRelativePath> Files
         {
             get { return files; }
         }
@@ -51,7 +51,7 @@ namespace Bari.Core.Model
         /// Adds a file to the set
         /// </summary>
         /// <param name="path">Path of the file relative to the suite root</param>
-        public void Add(string path)
+        public void Add(SuiteRelativePath path)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(path));
             Contract.Requires(!Path.IsPathRooted(path));

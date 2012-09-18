@@ -39,7 +39,7 @@ namespace Bari.Core.Generic
         /// </summary>
         /// <param name="childDirectory">The child directory to get path to</param>
         /// <returns>Returns the path</returns>
-        string GetRelativePath(IFileSystemDirectory childDirectory);
+        string GetRelativePath(IFileSystemDirectory childDirectory);        
 
         /// <summary>
         /// Creates a child directory if it does not exist yet

@@ -46,6 +46,11 @@ namespace Bari.Core.Model.Discovery
             }
         }
 
+        /// <summary>
+        /// Goes through all the subdirectories of a project and interprets them as source sets
+        /// </summary>
+        /// <param name="project">The project to be extended with source sets</param>
+        /// <param name="projectDir">The project's directory</param>
         private void DiscoverProjectSources(Project project, IFileSystemDirectory projectDir)
         {
             foreach (var sourceSetName in projectDir.ChildDirectories)
@@ -55,11 +60,16 @@ namespace Bari.Core.Model.Discovery
             }
         }
 
+        /// <summary>
+        /// Recursively adds every file in a given directory to a source set (<see cref="SourceSet"/>)
+        /// </summary>
+        /// <param name="target">The target source set to be extended</param>
+        /// <param name="dir">The root directory for the operation</param>
         private void AddAllFiles(SourceSet target, IFileSystemDirectory dir)
         {
             foreach (var fileName in dir.Files)
             {
-                target.Add(Path.Combine(suiteRoot.GetRelativePath(dir), fileName));
+                target.Add(new SuiteRelativePath(Path.Combine(suiteRoot.GetRelativePath(dir), fileName)));
             }
 
             foreach (var childDirectory in dir.ChildDirectories)
