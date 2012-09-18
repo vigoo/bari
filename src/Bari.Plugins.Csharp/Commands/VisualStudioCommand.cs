@@ -10,7 +10,7 @@ using Bari.Plugins.Csharp.VisualStudio;
 namespace Bari.Plugins.Csharp.Commands
 {
     /// <summary>
-    /// Implements the 'visualstudio' command, which generates visual studio solution and project
+    /// Implements the 'vs' command, which generates visual studio solution and project
     /// files for a given module or product, and launches Microsoft Visual Studio loading the generated
     /// solution.
     /// </summary>
@@ -25,7 +25,7 @@ namespace Bari.Plugins.Csharp.Commands
         /// </summary>
         public string Name
         {
-            get { return "visualstudio"; }
+            get { return "vs"; }
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Bari.Plugins.Csharp.Commands
 Generates visual studio solution and project files for the given module or product, 
 and launches Visual Studio to open them.
 
-Example: `bari visualstudio HelloWorld`
+Example: `bari vs HelloWorld`
 ";
             }
         }
@@ -73,12 +73,12 @@ Example: `bari visualstudio HelloWorld`
         public void Run(Suite suite, string[] parameters)
         {
             if (parameters.Length != 1)
-                throw new InvalidCommandParameterException("visualstudio", "Must be called with one parameter");
+                throw new InvalidCommandParameterException("vs", "Must be called with one parameter");
 
             // TODO: project support
             var module = suite.Modules.FirstOrDefault(m => String.Equals(m.Name, parameters[0], StringComparison.InvariantCultureIgnoreCase));
             if (module == null)
-                throw new InvalidCommandParameterException("visualstudio", 
+                throw new InvalidCommandParameterException("vs", 
                     String.Format("The parameter `{0}` is not a valid module name!", parameters[0]));
 
             Run(module);
