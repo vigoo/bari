@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
@@ -16,7 +17,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
-        /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        ISet<string> Run();
+        /// <returns>Returns a set of generated files, in target relative paths</returns>
+        ISet<TargetRelativePath> Run();
     }
 }

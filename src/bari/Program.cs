@@ -23,9 +23,14 @@ namespace Bari.Console
             
             root.Bind<IUserOutput>().To<ConsoleUserInterface>().InSingletonScope();
             root.Bind<IParameters>().ToConstant(new ConsoleParameters(args)).InSingletonScope();
+
+            var suiteRoot = new LocalFileSystemDirectory(Environment.CurrentDirectory);
             root.Bind<IFileSystemDirectory>()
-                .ToConstant(new LocalFileSystemDirectory(Environment.CurrentDirectory))
+                .ToConstant(suiteRoot)
                 .WhenTargetHas<SuiteRootAttribute>();
+            root.Bind<IFileSystemDirectory>()
+                .ToConstant(suiteRoot.GetChildDirectory("target", createIfMissing: true))
+                .WhenTargetHas<TargetRootAttribute>();
 
             var process = root.Get<MainProcess>();
             try

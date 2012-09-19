@@ -19,7 +19,7 @@ namespace Bari.Plugins.Csharp
         {
             log.Info("Csharp plugin loaded");
 
-            Bind<ICommand>().To<VisualStudioCommand>().Named("visualstudio");
+            Bind<ICommand>().To<VisualStudioCommand>().Named("vs");
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
         }

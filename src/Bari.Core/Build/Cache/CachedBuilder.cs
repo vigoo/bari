@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
 {
@@ -32,7 +33,7 @@ namespace Bari.Core.Build.Cache
         /// Runs this builder
         /// </summary>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        public ISet<string> Run()
+        public ISet<TargetRelativePath> Run()
         {
             // TODO: get cached dependencies from cache, compare fingerprint with current one and update cache if needed using the wrapped builder
             throw new NotImplementedException();

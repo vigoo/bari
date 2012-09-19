@@ -98,5 +98,20 @@ namespace Bari.Core.Generic
 
             return File.CreateText(childPath);
         }
+
+        /// <summary>
+        /// Gets the last modification's date for a given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the last modified date.</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public DateTime GetLastModifiedDate(string relativePath)
+        {
+            string absolutePath = Path.Combine(path, relativePath);
+            if (!File.Exists(absolutePath))
+                throw new ArgumentException("File does not exists", "relativePath");
+
+            return File.GetLastWriteTimeUtc(absolutePath);
+        }
     }
 }

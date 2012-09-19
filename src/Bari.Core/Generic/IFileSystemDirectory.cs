@@ -54,6 +54,14 @@ namespace Bari.Core.Generic
         /// <param name="name">Name of the new file</param>
         /// <returns>Returns the text writer to be used to write the contents of the file.</returns>
         TextWriter CreateTextFile(string name);
+
+        /// <summary>
+        /// Gets the last modification's date for a given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the last modified date.</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        DateTime GetLastModifiedDate(string relativePath);
     }
 
     /// <summary>
@@ -148,6 +156,18 @@ namespace Bari.Core.Generic
             Contract.Ensures(Files.Contains(name));
 
             return null; // dummy value
+        }
+
+        /// <summary>
+        /// Gets the last modification's date for a given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the last modified date.</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public DateTime GetLastModifiedDate(string relativePath)
+        {
+            Contract.Requires(relativePath != null);
+            return DateTime.UtcNow; // dummy value
         }
     }
 }

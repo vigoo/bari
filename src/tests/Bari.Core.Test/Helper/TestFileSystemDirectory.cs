@@ -73,6 +73,17 @@ namespace Bari.Core.Test.Helper
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the last modification's date for a given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the last modified date.</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public DateTime GetLastModifiedDate(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;

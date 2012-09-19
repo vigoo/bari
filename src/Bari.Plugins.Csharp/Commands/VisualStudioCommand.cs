@@ -4,7 +4,11 @@ using Bari.Core.Commands;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.VisualStudio;
+using Ninject;
+using Ninject.Extensions.ChildKernel;
+using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Commands
 {
@@ -15,7 +19,10 @@ namespace Bari.Plugins.Csharp.Commands
     /// </summary>
     public class VisualStudioCommand: ICommand
     {
-        private readonly IFileSystemDirectory suiteRoot;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (VisualStudioCommand));
+
+        private readonly IFileSystemDirectory targetDir;
+        private readonly IResolutionRoot root;
         private readonly IProjectGuidManagement projectGuidManagement;
 
         /// <summary>
@@ -56,11 +63,13 @@ Example: `bari vs HelloWorld`
         /// <summary>
         /// Initializes the command
         /// </summary>
-        /// <param name="suiteRoot">Root directory of the suite</param>
+        /// <param name="targetDir">The root directory of the build target, where the visual studio files shoulbe be put</param>
+        /// <param name="root">The path to resolve instances</param>
         /// <param name="projectGuidManagement">The project-guid mapper to be used</param>
-        public VisualStudioCommand([SuiteRoot] IFileSystemDirectory suiteRoot, IProjectGuidManagement projectGuidManagement)
+        public VisualStudioCommand([TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root, IProjectGuidManagement projectGuidManagement)
         {
-            this.suiteRoot = suiteRoot;
+            this.targetDir = targetDir;
+            this.root = root;
             this.projectGuidManagement = projectGuidManagement;
         }
 
@@ -88,16 +97,19 @@ Example: `bari vs HelloWorld`
             // TODO: these should be dependent actions to be perfomred by the bari engine
             // TODO: generated files should be managed by bari and their validity verified using the source files' last modified date
 
-            var targetDir = suiteRoot.CreateDirectory("target");
-
             foreach (var project in module.Projects)
             {
                 if (project.HasSourceSet("cs"))
                 {
-                    using (var csproj = targetDir.CreateTextFile(project.Name + ".csproj"))
+                    var childKernel = new ChildKernel(root);
+                    childKernel.Bind<Project>().ToConstant(project);
+
+                    var builder = childKernel.Get<CsprojBuilder>();
+                    var outputs = builder.Run();
+
+                    foreach (var outputPath in outputs)
                     {
-                        var generator = new CsprojGenerator(projectGuidManagement, "..", project, csproj);
-                        generator.Generate();
+                        log.InfoFormat("Generated output for project {0}: {1}", project.Name, outputPath);
                     }
                 }
             }
