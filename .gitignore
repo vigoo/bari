@@ -14,3 +14,8 @@ packages
 # user specific files
 *.suo
 *.user
+
+src\bari.sln.DotSettings
+src\bari.sln.DotSettings.user
+
+
