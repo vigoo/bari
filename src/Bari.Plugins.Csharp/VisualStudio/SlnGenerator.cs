@@ -39,7 +39,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
             foreach (var project in projects)
             {
-                if (project.HasSourceSet("cs"))
+                if (project.HasNonEmptySourceSet("cs"))
                 {
                     string projectFileName = project.Name + ".csproj";
                     string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");

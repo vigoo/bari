@@ -20,5 +20,12 @@ namespace Bari.Core.Test.Model
             set.Files.Should().HaveCount(1);
             set.Files.Should().HaveElementAt(0, new SuiteRelativePath("x/y/z.abc"));
         }
+
+        [Test]
+        public void SourceSetTypeCanBeQueried()
+        {
+            var set = new SourceSet("abcd");
+            set.Type.Should().Be("abcd");
+        }
     }
 }

@@ -51,12 +51,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Dependencies\NoDependenciesTest.cs" />
     <Compile Include="Commands\DummyCommand.cs" />
     <Compile Include="Commands\HelpTest.cs" />
+    <Compile Include="Commands\InfoTest.cs" />
     <Compile Include="Discovery\ModuleProjectDiscoveryTest.cs" />
     <Compile Include="Helper\TestFileSystemDirectory.cs" />
     <Compile Include="Helper\TestUserOutput.cs" />
+    <Compile Include="Model\ModuleTest.cs" />
+    <Compile Include="Model\ProjectTest.cs" />
     <Compile Include="Model\SourceSetTest.cs" />
+    <Compile Include="Model\SuiteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Loader\SuiteLoaderTest.cs" />
     <Compile Include="TestSetup.cs" />

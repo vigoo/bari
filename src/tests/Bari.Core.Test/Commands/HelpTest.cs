@@ -25,11 +25,19 @@ namespace Bari.Core.Test.Commands
         }
     
         [Test]
-        public void HelpCommandExists()
+        public void Exists()
         {
             var cmd = kernel.Get<ICommand>("help");
             cmd.Should().NotBeNull();
             cmd.Name.Should().Be("help");
+        }
+
+        [Test]
+        public void HasHelpAndDescription()
+        {
+            var cmd = kernel.Get<ICommand>("help");
+            cmd.Description.Should().NotBeBlank();
+            cmd.Help.Should().NotBeBlank();
         }
 
         [Test]

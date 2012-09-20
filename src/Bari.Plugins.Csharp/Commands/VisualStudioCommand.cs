@@ -99,7 +99,7 @@ Example: `bari vs HelloWorld`
 
             foreach (var project in module.Projects)
             {
-                if (project.HasSourceSet("cs"))
+                if (project.HasNonEmptySourceSet("cs"))
                 {
                     var childKernel = new ChildKernel(root);
                     childKernel.Bind<Project>().ToConstant(project);

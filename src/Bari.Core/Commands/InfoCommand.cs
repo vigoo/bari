@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.UI;
 
@@ -63,7 +64,11 @@ Example: `bari info`
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
-        {            
+        {   
+            if (parameters.Length != 0)
+                throw new InvalidCommandParameterException("info",
+                                                           "The 'info' command must be called without parameters!");
+
             output.Message("*Suite name:* {0}\n", suite.Name);            
             
             output.Message("*Modules:*");
@@ -103,7 +108,8 @@ Example: `bari info`
 
             foreach (var sourceSet in project.SourceSets)
             {
-                output.Message("      `{0}`\t{1} files", sourceSet.Type, sourceSet.Files.Count());
+                if (sourceSet.Files.Any())
+                    output.Message("      `{0}`\t{1} files", sourceSet.Type, sourceSet.Files.Count());
             }
         }
     }

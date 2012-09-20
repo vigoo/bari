@@ -81,7 +81,7 @@ namespace Bari.Core.Model
         /// </summary>
         /// <param name="type">The source set type name</param>
         /// <returns>Returns <c>true</c> if there is a source set with the given type name and at least one files</returns>
-        public bool HasSourceSet(string type)
+        public bool HasNonEmptySourceSet(string type)
         {
             return sourceSets.ContainsKey(type) &&
                    sourceSets[type].Files.Any();
