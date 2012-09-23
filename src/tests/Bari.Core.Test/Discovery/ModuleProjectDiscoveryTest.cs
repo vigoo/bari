@@ -1,4 +1,5 @@
-﻿using Bari.Core.Model;
+﻿using Bari.Core.Generic;
+using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
@@ -108,6 +109,111 @@ namespace Bari.Core.Test.Discovery
             module1.Projects.Should().HaveCount(2);
             module1.Projects.Should().Contain(projectA);
             module1.Projects.Should().Contain(p => p.Name == "Project11");
+        }
+
+        [Test]
+        public void SourceSetsDiscovered()
+        {
+            var fs = CreateFsWithSources();
+
+            var suite = Kernel.Root.Get<Suite>();
+
+            suite.Modules.Should().BeEmpty();
+
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
+
+            var project = suite.GetModule("Module1").GetProject("Project11");
+            project.SourceSets.Should().HaveCount(2);
+            project.SourceSets.Should().Contain(set => set.Type == "cs");
+            project.SourceSets.Should().Contain(set => set.Type == "fs");
+
+            var csSet = project.GetSourceSet("cs");
+            var fsSet = project.GetSourceSet("fs");
+
+            csSet.Files.Should().HaveCount(3);
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source1.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source2.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\subdir\\source3.cs"));
+
+            fsSet.Files.Should().HaveCount(1);
+            fsSet.Files.Should().HaveElementAt(0, new SuiteRelativePath("src\\Module1\\Project11\\fs\\a.fs"));
+        }
+
+        private static TestFileSystemDirectory CreateFsWithSources()
+        {
+            var fs = new TestFileSystemDirectory(
+                "root",
+                new TestFileSystemDirectory(
+                    "src",
+                    new TestFileSystemDirectory(
+                        "Module1",
+                        new TestFileSystemDirectory
+                            ("Project11",
+                             new TestFileSystemDirectory
+                                 ("cs",
+                                  new TestFileSystemDirectory
+                                      ("subdir")
+                                      {
+                                          Files =new[] { "source3.cs" }
+                                      })
+                                 {
+                                     Files = new[] { "source1.cs","source2.cs" }
+                                 },
+                             new TestFileSystemDirectory
+                                 ("fs")
+                                 {
+                                     Files = new[] { "a.fs" }
+                                 })),
+                    new TestFileSystemDirectory(
+                        "Module2"),
+                    new TestFileSystemDirectory(
+                        "Module3",
+                        new TestFileSystemDirectory
+                            ("Project31"),
+                        new TestFileSystemDirectory
+                            ("Project32"))),
+                new TestFileSystemDirectory("output"));
+            return fs;
+        }
+
+        [Test]
+        public void ExistingSourcesMergedWithDiscoveredOnes()
+        {
+            var fs = CreateFsWithSources();
+
+            var suite = Kernel.Root.Get<Suite>();
+
+            var fsSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("fs");
+            var vbSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("vb");
+
+            fsSet.Add(new SuiteRelativePath("src\\Module1\\Project11\\fs\\b.fs"));
+            vbSet.Add(new SuiteRelativePath("src\\Module1\\Project11\\vb\\x.vb"));
+
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
+
+            var project = suite.GetModule("Module1").GetProject("Project11");
+            project.SourceSets.Should().HaveCount(3);
+            project.SourceSets.Should().Contain(set => set.Type == "cs");
+            project.SourceSets.Should().Contain(set => set.Type == "fs");
+            project.SourceSets.Should().Contain(set => set.Type == "vb");
+
+            var csSet = project.GetSourceSet("cs");
+            fsSet = project.GetSourceSet("fs");
+            vbSet = project.GetSourceSet("vb");
+
+            csSet.Files.Should().HaveCount(3);
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source1.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source2.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\subdir\\source3.cs"));
+
+            fsSet.Files.Should().HaveCount(2);
+            fsSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\fs\\a.fs"));
+            fsSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\fs\\b.fs"));
+
+            vbSet.Files.Should().HaveCount(1);
+            vbSet.Files.Should().HaveElementAt(0, new SuiteRelativePath("src\\Module1\\Project11\\vb\\x.vb"));
         }
     }
 }

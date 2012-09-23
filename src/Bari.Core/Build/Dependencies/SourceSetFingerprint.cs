@@ -13,7 +13,7 @@ namespace Bari.Core.Build.Dependencies
     /// <para>Two source set fingerprints are equal if the set of names are equal, and for each file the last
     /// modified date also equals.</para>
     /// </summary>
-    public sealed class SourceSetFingerprint : IDependencyFingerprint
+    public sealed class SourceSetFingerprint : IDependencyFingerprint, IEquatable<SourceSetFingerprint>
     {
         private readonly ISet<SuiteRelativePath> fileNames;
         private readonly IDictionary<SuiteRelativePath, DateTime> lastModifiedDates;
@@ -47,11 +47,46 @@ namespace Bari.Core.Build.Dependencies
         public bool Equals(IDependencyFingerprint other)
         {
             var otherFingerprint = other as SourceSetFingerprint;
-            if (otherFingerprint != null &&
-                fileNames.SetEquals(otherFingerprint.fileNames))                 
-                return fileNames.All(file => lastModifiedDates[file] == otherFingerprint.lastModifiedDates[file]);
+            if (otherFingerprint != null)
+                return Equals(otherFingerprint);
             else
                 return false;
+        }
+
+        public bool Equals(SourceSetFingerprint other)
+        {
+            if (fileNames.SetEquals(other.fileNames))
+                return fileNames.All(file => lastModifiedDates[file] == other.lastModifiedDates[file]);
+            else
+                return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is SourceSetFingerprint && Equals((SourceSetFingerprint)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return lastModifiedDates.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n);
+        }
+
+        /// <summary>
+        /// Equality test
+        /// </summary>
+        public static bool operator ==(SourceSetFingerprint left, SourceSetFingerprint right)
+        {
+            return Equals(left, right);
+        }
+
+        /// <summary>
+        /// Unequality test
+        /// </summary>
+        public static bool operator !=(SourceSetFingerprint left, SourceSetFingerprint right)
+        {
+            return !Equals(left, right);
         }
     }
 }

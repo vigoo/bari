@@ -18,6 +18,7 @@ namespace Bari.Core.Test.Build.Dependencies
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
+            fp1.Equals(fp2).Should().BeTrue();
         }
     }
 }

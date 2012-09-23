@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Test.Helper
 {
-    public class TestFileSystemDirectory: IFileSystemDirectory
+    public class TestFileSystemDirectory : IFileSystemDirectory
     {
         private readonly string name;
         private readonly IList<TestFileSystemDirectory> childDirectories = new List<TestFileSystemDirectory>();
-        private readonly IList<string> files = new List<string>();
+        private IList<string> files = new List<string>();
+        private TestFileSystemDirectory parent;
 
         public string Name
         {
@@ -23,6 +25,7 @@ namespace Bari.Core.Test.Helper
         public IEnumerable<string> Files
         {
             get { return files; }
+            set { files = value.ToList(); }
         }
 
         public IEnumerable<string> ChildDirectories
@@ -50,7 +53,34 @@ namespace Bari.Core.Test.Helper
         /// <returns>Returns the path</returns>
         public string GetRelativePath(IFileSystemDirectory childDirectory)
         {
-            throw new System.NotImplementedException();
+            var testChild = childDirectory as TestFileSystemDirectory;
+            if (testChild != null)
+            {
+                var dirs = new List<TestFileSystemDirectory>();
+                TestFileSystemDirectory current = testChild;
+                while (current != this)
+                {
+                    dirs.Add(current);
+                    current = current.parent;
+                }
+
+                dirs.Reverse();
+
+                var result = new StringBuilder();
+                for (int i = 0; i < dirs.Count; i++)
+                {
+                    if (i > 0)
+                        result.Append("\\");
+
+                    result.Append(dirs[i].Name);
+                }
+
+                return result.ToString();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
 
         /// <summary>
@@ -88,7 +118,10 @@ namespace Bari.Core.Test.Helper
         {
             this.name = name;
             foreach (var child in childDirs)
+            {
+                child.parent = this;
                 childDirectories.Add(child);
+            }
         }
     }
 }

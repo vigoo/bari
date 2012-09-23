@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Model
@@ -58,6 +59,18 @@ namespace Bari.Core.Model
             Contract.Ensures(files.Contains(path));
 
             files.Add(path);
+        }
+
+        /// <summary>
+        /// Removes a file from the set
+        /// </summary>
+        /// <param name="path">Path of the file relative to the suite root</param>
+        public void Remove(SuiteRelativePath path)
+        {
+            Contract.Requires(Files.Contains(path));
+            Contract.Ensures(!files.Contains(path));
+
+            files.Remove(path);
         }
     }
 }

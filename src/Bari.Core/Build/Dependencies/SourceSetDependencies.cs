@@ -30,8 +30,8 @@ namespace Bari.Core.Build.Dependencies
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
         public IDependencyFingerprint CreateFingerprint()
-        {
-            return kernel.Get<SourceSetFingerprint>(new Parameter("files", sourceSet.Files, false));
+        {            
+            return kernel.Get<SourceSetFingerprint>(new ConstructorArgument("files", sourceSet.Files, false));
         }
     }
 }
