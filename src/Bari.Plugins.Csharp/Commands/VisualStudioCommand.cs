@@ -8,6 +8,7 @@ using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.VisualStudio;
 using Ninject;
 using Ninject.Extensions.ChildKernel;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Commands
@@ -94,31 +95,11 @@ Example: `bari vs HelloWorld`
 
         private void Run(Module module)
         {
-            // TODO: these should be dependent actions to be perfomred by the bari engine
-            // TODO: generated files should be managed by bari and their validity verified using the source files' last modified date
+            var builder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
+            var outputs = builder.Run();
 
-            foreach (var project in module.Projects)
-            {
-                if (project.HasNonEmptySourceSet("cs"))
-                {
-                    var childKernel = new ChildKernel(root);
-                    childKernel.Bind<Project>().ToConstant(project);
-
-                    var builder = childKernel.Get<CsprojBuilder>();
-                    var outputs = builder.Run();
-
-                    foreach (var outputPath in outputs)
-                    {
-                        log.InfoFormat("Generated output for project {0}: {1}", project.Name, outputPath);
-                    }
-                }
-            }
-
-            using (var sln = targetDir.CreateTextFile(module.Name + ".sln"))
-            {
-                var slnGenerator = new SlnGenerator(projectGuidManagement, module.Projects, sln);
-                slnGenerator.Generate();
-            }
+            foreach (var outputPath in outputs)
+                log.InfoFormat("Generated output solution for module {0}: {1}", module.Name, outputPath);
         }
     }
 }
