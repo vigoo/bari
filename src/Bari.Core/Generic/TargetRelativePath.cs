@@ -53,6 +53,13 @@ namespace Bari.Core.Generic
             return string.Equals(relativePath, other.relativePath);
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -61,13 +68,26 @@ namespace Bari.Core.Generic
             return Equals((TargetRelativePath) obj);
         }
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
             return (relativePath != null ? relativePath.GetHashCode() : 0);
         }
 
 
-
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
             return "target://" + relativePath;

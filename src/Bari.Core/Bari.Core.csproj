@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\Cache\CachedBuilder.cs" />
+    <Compile Include="Build\Dependencies\CombinedFingerprint.cs" />
+    <Compile Include="Build\Dependencies\MultipleDependencies.cs" />
     <Compile Include="Build\Dependencies\NoDependencies.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependencies.cs" />
     <Compile Include="Build\Dependencies\SourceSetFingerprint.cs" />

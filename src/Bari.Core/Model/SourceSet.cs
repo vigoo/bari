@@ -34,7 +34,12 @@ namespace Bari.Core.Model
         /// </summary>
         public IEnumerable<SuiteRelativePath> Files
         {
-            get { return files; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<SuiteRelativePath>>() != null);
+                
+                return files;
+            }
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace Bari.Core.Build.Dependencies
+﻿using System.Diagnostics.Contracts;
+
+namespace Bari.Core.Build.Dependencies
 {
     /// <summary>
     /// Represents dependency on another builde (<see cref="IBuilder"/>)
@@ -13,6 +15,8 @@
         /// <param name="subtask"></param>
         public SubtaskDependency(IBuilder subtask)
         {
+            Contract.Requires(subtask != null);
+
             this.subtask = subtask;
         }
 
@@ -23,7 +27,7 @@
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
         public IDependencyFingerprint CreateFingerprint()
         {
-            throw new System.NotImplementedException();
+            return subtask.Dependencies.CreateFingerprint();
         }
     }
 }
