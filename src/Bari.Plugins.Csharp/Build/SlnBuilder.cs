@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Build;
@@ -13,7 +14,7 @@ using Ninject.Syntax;
 namespace Bari.Plugins.Csharp.Build
 {
     /// <summary>
-    /// Builder for generating Visual Studio soluton files from a set of projects.
+    /// Builder for generating Visual Studio solution files from a set of projects.
     /// </summary>
     public class SlnBuilder : IBuilder
     {

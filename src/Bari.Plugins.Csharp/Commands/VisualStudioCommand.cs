@@ -7,7 +7,6 @@ using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.VisualStudio;
 using Ninject;
-using Ninject.Extensions.ChildKernel;
 using Ninject.Parameters;
 using Ninject.Syntax;
 

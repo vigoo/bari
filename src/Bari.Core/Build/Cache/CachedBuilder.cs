@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -11,6 +10,8 @@ namespace Bari.Core.Build.Cache
     public class CachedBuilder: IBuilder
     {
         private readonly IBuilder wrappedBuilder;
+        private readonly IBuildCache cache;
+        private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
         /// Dependencies required for running this builder
@@ -24,9 +25,13 @@ namespace Bari.Core.Build.Cache
         /// Creates a cached builder
         /// </summary>
         /// <param name="wrappedBuilder">The builder instance to be wrapped</param>
-        public CachedBuilder(IBuilder wrappedBuilder)
+        /// <param name="cache">The cache implementation to be used</param>
+        /// <param name="targetDir">The target directory's file system abstraction</param>
+        public CachedBuilder(IBuilder wrappedBuilder, IBuildCache cache, [TargetRoot] IFileSystemDirectory targetDir)
         {
             this.wrappedBuilder = wrappedBuilder;
+            this.cache = cache;
+            this.targetDir = targetDir;
         }
 
         /// <summary>
@@ -35,8 +40,25 @@ namespace Bari.Core.Build.Cache
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
         public ISet<TargetRelativePath> Run()
         {
-            // TODO: get cached dependencies from cache, compare fingerprint with current one and update cache if needed using the wrapped builder
-            throw new NotImplementedException();
+            var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
+            var builderType = wrappedBuilder.GetType();
+
+            cache.LockForBuilder(builderType);
+            try
+            {
+                if (cache.Contains(builderType, currentFingerprint))
+                    return cache.Restore(builderType, targetDir);
+                else
+                {
+                    var files = wrappedBuilder.Run();
+                    cache.Store(builderType, currentFingerprint, files, targetDir);
+                    return files;
+                }
+            }
+            finally
+            {
+                cache.UnlockForBuilder(wrappedBuilder.GetType());
+            }
         }
     }
 }

@@ -5,13 +5,17 @@ namespace Bari.Core.Test.Helper
 {
     public class TempDirectory : IDisposable
     {
+        private static readonly object globalLock = new object();
         private readonly string path;
 
         public TempDirectory()
         {
-            path = Path.GetTempFileName();
-            File.Delete(path);
-            Directory.CreateDirectory(path);
+            lock (globalLock)
+            {
+                path = Path.GetTempFileName();
+                File.Delete(path);
+                Directory.CreateDirectory(path);
+            }
         }
 
         public static implicit operator string(TempDirectory dir)
@@ -21,7 +25,10 @@ namespace Bari.Core.Test.Helper
 
         public void Dispose()
         {
-            Directory.Delete(path, true);
+            lock (globalLock)
+            {
+                Directory.Delete(path, true);
+            }
         }
     }
 }
