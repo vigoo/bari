@@ -113,5 +113,21 @@ namespace Bari.Core.Generic
 
             return File.GetLastWriteTimeUtc(absolutePath);
         }
+
+        /// <summary>
+        /// Gets the size of the given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the file size in bytes</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public long GetFileSize(string relativePath)
+        {
+            string absolutePath = Path.Combine(path, relativePath);
+            if (!File.Exists(absolutePath))
+                throw new ArgumentException("File does not exists", "relativePath");
+
+            var info = new FileInfo(absolutePath);
+            return info.Length;
+        }
     }
 }

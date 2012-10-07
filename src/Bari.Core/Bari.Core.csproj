@@ -95,6 +95,10 @@
     <Compile Include="Build\Dependencies\CombinedFingerprint.cs" />
     <Compile Include="Build\Dependencies\MultipleDependencies.cs" />
     <Compile Include="Build\Dependencies\NoDependencies.cs" />
+    <Compile Include="Build\Dependencies\Protocol\CombinedFingerprintProtocol.cs" />
+    <Compile Include="Build\Dependencies\Protocol\IDependencyFingerprintProtocol.cs" />
+    <Compile Include="Build\Dependencies\Protocol\Serializer.cs" />
+    <Compile Include="Build\Dependencies\Protocol\SourceSetFingerprintProtocol.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependencies.cs" />
     <Compile Include="Build\Dependencies\SourceSetFingerprint.cs" />
     <Compile Include="Build\Dependencies\SubtaskDependency.cs" />

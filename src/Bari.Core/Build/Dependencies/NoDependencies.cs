@@ -1,4 +1,7 @@
-﻿namespace Bari.Core.Build.Dependencies
+﻿using System.IO;
+using Bari.Core.Build.Dependencies.Protocol;
+
+namespace Bari.Core.Build.Dependencies
 {
     /// <summary>
     /// A dependency implementation representing no dependency
@@ -29,6 +32,22 @@
             public bool Equals(IDependencyFingerprint other)
             {
                 return other is NoDependencyFingerprint;
+            }
+
+            /// <summary>
+            /// Saves the fingerprint to the given target stream
+            /// </summary>
+            /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
+            public void Save(Stream targetStream)
+            {
+            }
+
+            /// <summary>
+            /// Gets the raw protocol data used for serialization
+            /// </summary>
+            public IDependencyFingerprintProtocol Protocol
+            {
+                get { return null; }
             }
         }
     }

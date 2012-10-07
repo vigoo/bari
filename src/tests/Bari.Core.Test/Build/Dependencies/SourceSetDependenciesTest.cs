@@ -89,7 +89,10 @@ namespace Bari.Core.Test.Build.Dependencies
             var fp1 = dep.CreateFingerprint();
 
             using (var writer = File.CreateText(Path.Combine(tmp, "file2")))
+            {
                 writer.WriteLine("Modified contents");
+                writer.Flush();
+            }
 
             var fp2 = dep.CreateFingerprint();
 
@@ -130,6 +133,40 @@ namespace Bari.Core.Test.Build.Dependencies
             var fp2 = dep.CreateFingerprint();
 
             fp1.Should().NotBe(fp2);
+        }
+
+        [Test]
+        public void ConvertToProtocolAndBack()
+        {
+            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var fp1 = dep.CreateFingerprint();
+
+            var proto = fp1.Protocol;
+            var fp2 = proto.CreateFingerprint();
+
+            fp1.Should().Be(fp2);
+        }
+
+        [Test]
+        public void SerializeAndReadBack()
+        {
+            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var fp1 = dep.CreateFingerprint();
+
+            byte[] data;
+            using (var ms = new MemoryStream())
+            {
+                fp1.Save(ms);
+                data = ms.ToArray();
+            }
+
+            SourceSetFingerprint fp2;
+            using (var ms = new MemoryStream(data))
+            {
+                fp2 = new SourceSetFingerprint(ms);
+            }            
+
+            fp1.Should().Be(fp2);
         }
     }
 }

@@ -1,25 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
+using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
 namespace Bari.Core.Build.Dependencies
 {
     /// <summary>
-    /// Stores data about a full source set (<see cref="SourceSet"/> using every file's name and last modified date
+    /// Stores data about a full source set (<see cref="SourceSet"/> using every file's name, size 
+    /// and last modified date
     /// 
     /// <para>Two source set fingerprints are equal if the set of names are equal, and for each file the last
-    /// modified date also equals.</para>
+    /// modified date and the file size are also equals.</para>
     /// </summary>
     public sealed class SourceSetFingerprint : IDependencyFingerprint, IEquatable<SourceSetFingerprint>
     {
         private readonly ISet<SuiteRelativePath> fileNames;
         private readonly IDictionary<SuiteRelativePath, DateTime> lastModifiedDates;
+        private readonly IDictionary<SuiteRelativePath, long> lastSizes;
 
         /// <summary>
-        /// Constructs the fingreprint by getting the file modification dates from the file system
+        /// Constructs the fingerprint by getting the file modification dates from the file system
         /// </summary>
         /// <param name="root">The suite's root directory</param>
         /// <param name="files">The files in the source set, in suite relative path form</param>
@@ -30,10 +34,45 @@ namespace Bari.Core.Build.Dependencies
 
             fileNames = new SortedSet<SuiteRelativePath>(files);
             lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
+            lastSizes = new Dictionary<SuiteRelativePath, long>();
 
             foreach (var file in fileNames)
             {
                 lastModifiedDates.Add(file, root.GetLastModifiedDate(file));
+                lastSizes.Add(file, root.GetFileSize(file));
+            }
+        }
+
+        /// <summary>
+        /// Constructs the fingerprint by deserializing it from a stream containing data previously 
+        /// created by the <see cref="Save"/> method.
+        /// </summary>
+        /// <param name="sourceStream">Deserialization stream</param>
+        public SourceSetFingerprint(Stream sourceStream)
+            : this(Serializer.Deserialize<SourceSetFingerprintProtocol>(sourceStream))
+        {
+            Contract.Requires(sourceStream != null);
+        }
+
+        /// <summary>
+        /// Constructs the fingerprint based on the deserialized protocol data
+        /// </summary>
+        /// <param name="proto">The protocol data which was deserialized from a stream</param>
+        public SourceSetFingerprint(SourceSetFingerprintProtocol proto)
+        {
+            fileNames = new SortedSet<SuiteRelativePath>();
+            lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
+            lastSizes = new Dictionary<SuiteRelativePath, long>();
+
+            if (proto.Files != null)
+            {
+                foreach (var pair in proto.Files)
+                {
+                    var path = new SuiteRelativePath(pair.Key);
+                    fileNames.Add(path);
+                    lastModifiedDates.Add(path, pair.Value.LastModifiedDate);
+                    lastSizes.Add(path, pair.Value.LastSize);
+                }
             }
         }
 
@@ -54,6 +93,39 @@ namespace Bari.Core.Build.Dependencies
         }
 
         /// <summary>
+        /// Saves the fingerprint to the given target stream
+        /// </summary>
+        /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
+        public void Save(Stream targetStream)
+        {
+            Serializer.Serialize(targetStream, Protocol);
+        }
+
+        /// <summary>
+        /// Gets the raw protocol data used for serialization
+        /// </summary>
+        public IDependencyFingerprintProtocol Protocol
+        {
+            get
+            {
+                var proto = new SourceSetFingerprintProtocol
+                {
+                    Files = new Dictionary<string, SourceSetFingerprintProtocol.FileFingerprint>()
+                };
+                foreach (var path in fileNames)
+                {
+                    proto.Files.Add(path, new SourceSetFingerprintProtocol.FileFingerprint
+                    {
+                        LastModifiedDate = lastModifiedDates[path],
+                        LastSize = lastSizes[path]
+                    });
+                }
+
+                return proto;
+            }
+        }
+
+        /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
@@ -63,7 +135,9 @@ namespace Bari.Core.Build.Dependencies
         public bool Equals(SourceSetFingerprint other)
         {
             if (fileNames.SetEquals(other.fileNames))
-                return fileNames.All(file => lastModifiedDates[file] == other.lastModifiedDates[file]);
+                return fileNames.All(file => 
+                    lastModifiedDates[file] == other.lastModifiedDates[file] &&
+                    lastSizes[file] == other.lastSizes[file]);
             else
                 return false;
         }
@@ -82,9 +156,17 @@ namespace Bari.Core.Build.Dependencies
             return obj is SourceSetFingerprint && Equals((SourceSetFingerprint)obj);
         }
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return lastModifiedDates.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n);
+            return lastModifiedDates.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n) ^
+                   lastSizes.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n);
         }
 
         /// <summary>

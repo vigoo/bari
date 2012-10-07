@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
+using Bari.Core.Build.Dependencies.Protocol;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -33,6 +35,34 @@ namespace Bari.Core.Build.Dependencies
             fingerprints = new HashSet<IDependencyFingerprint>(
                 deps.Select(dep => dep.CreateFingerprint()));
         }
+
+        /// <summary>
+        /// Creates the fingerprint by loading it from a stream containing data previously created
+        /// by the <see cref="Save"/> method.
+        /// </summary>
+        /// <param name="sourceStream">Deserialization stream</param>
+        public CombinedFingerprint(Stream sourceStream)
+            : this(Serializer.Deserialize<CombinedFingerprintProtocol>(sourceStream))
+        {
+            Contract.Requires(sourceStream != null);
+        }
+
+        /// <summary>
+        /// Creates the fingerprint by its deserialized protocol data
+        /// </summary>
+        /// <param name="proto">The deserialized protocol data</param>
+        public CombinedFingerprint(CombinedFingerprintProtocol proto)
+        {
+            fingerprints = new HashSet<IDependencyFingerprint>();
+            var noDeps = new NoDependencies();
+            var noDepsFp = noDeps.CreateFingerprint();
+
+            foreach (var childProtocol in proto.Items)
+            {
+                var childDependencyFingerprint = childProtocol != null ? childProtocol.CreateFingerprint() : noDepsFp;
+                fingerprints.Add(childDependencyFingerprint);
+            }
+        }
         
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -51,6 +81,36 @@ namespace Bari.Core.Build.Dependencies
         }
 
         /// <summary>
+        /// Saves the fingerprint to the given target stream
+        /// </summary>
+        /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
+        public void Save(Stream targetStream)
+        {
+            Serializer.Serialize(targetStream, Protocol);
+        }
+
+        /// <summary>
+        /// Gets the raw protocol data used for serialization
+        /// </summary>
+        public IDependencyFingerprintProtocol Protocol
+        {
+            get
+            {
+                var items = new HashSet<IDependencyFingerprintProtocol>();
+                
+                foreach (var child in fingerprints)
+                {
+                    items.Add(child.Protocol);
+                }
+
+                return new CombinedFingerprintProtocol
+                    {                        
+                        Items = items
+                    };
+            }
+        }
+
+        /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
@@ -60,6 +120,48 @@ namespace Bari.Core.Build.Dependencies
         public bool Equals(CombinedFingerprint other)
         {
             return fingerprints.SetEquals(other.fingerprints);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is CombinedFingerprint && Equals((CombinedFingerprint)obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override int GetHashCode()
+        {
+            return fingerprints.Aggregate(19, (h, fp) => h ^ fp.GetHashCode());
+        }
+
+        /// <summary>
+        /// Equality test
+        /// </summary>
+        public static bool operator ==(CombinedFingerprint left, CombinedFingerprint right)
+        {
+            return Equals(left, right);
+        }
+
+        /// <summary>
+        /// Inequality test
+        /// </summary>
+        public static bool operator !=(CombinedFingerprint left, CombinedFingerprint right)
+        {
+            return !Equals(left, right);
         }
     }
 }

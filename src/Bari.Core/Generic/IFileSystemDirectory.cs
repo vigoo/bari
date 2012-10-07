@@ -62,6 +62,14 @@ namespace Bari.Core.Generic
         /// <returns>Returns the last modified date.</returns>
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
         DateTime GetLastModifiedDate(string relativePath);
+
+        /// <summary>
+        /// Gets the size of the given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the file size in bytes</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        long GetFileSize(string relativePath);
     }
 
     /// <summary>
@@ -168,6 +176,19 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(relativePath != null);
             return DateTime.UtcNow; // dummy value
+        }
+
+        /// <summary>
+        /// Gets the size of the given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the file size in bytes</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public long GetFileSize(string relativePath)
+        {
+            Contract.Requires(relativePath != null);
+            Contract.Ensures(Contract.Result<long>() >= 0);
+            return 0; // dummy value
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Bari.Core.Build.Dependencies.Protocol;
 
 namespace Bari.Core.Build
 {
@@ -8,6 +10,15 @@ namespace Bari.Core.Build
     /// </summary>
     public interface IDependencyFingerprint: IEquatable<IDependencyFingerprint>
     {
-         
+        /// <summary>
+        /// Saves the fingerprint to the given target stream
+        /// </summary>
+        /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
+        void Save(Stream targetStream);
+
+        /// <summary>
+        /// Gets the raw data used for serialization
+        /// </summary>
+        IDependencyFingerprintProtocol Protocol { get; }
     }
 }

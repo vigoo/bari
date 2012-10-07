@@ -114,6 +114,17 @@ namespace Bari.Core.Test.Helper
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the size of the given file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the file size in bytes</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public long GetFileSize(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;
