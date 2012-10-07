@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Bari.Core.Build.Dependencies;
+using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
@@ -150,20 +151,21 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void SerializeAndReadBack()
         {
+            var ser = new BinarySerializer();
             var dep = new SourceSetDependencies(kernel, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             byte[] data;
             using (var ms = new MemoryStream())
             {
-                fp1.Save(ms);
+                fp1.Save(ser, ms);
                 data = ms.ToArray();
             }
 
             SourceSetFingerprint fp2;
             using (var ms = new MemoryStream(data))
             {
-                fp2 = new SourceSetFingerprint(ms);
+                fp2 = new SourceSetFingerprint(ser, ms);
             }            
 
             fp1.Should().Be(fp2);

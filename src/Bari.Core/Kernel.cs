@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
@@ -53,6 +54,9 @@ namespace Bari.Core
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
+
+            // Default serializer
+            kernel.Bind<IProtocolSerializer>().To<BinarySerializer>();
         }
     }
 }

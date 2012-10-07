@@ -13,8 +13,9 @@ namespace Bari.Core.Build
         /// <summary>
         /// Saves the fingerprint to the given target stream
         /// </summary>
+        /// <param name="serializer">The serializer implementation to be used</param>
         /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
-        void Save(Stream targetStream);
+        void Save(IProtocolSerializer serializer, Stream targetStream);
 
         /// <summary>
         /// Gets the raw data used for serialization

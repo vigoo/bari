@@ -47,10 +47,12 @@ namespace Bari.Core.Build.Dependencies
         /// Constructs the fingerprint by deserializing it from a stream containing data previously 
         /// created by the <see cref="Save"/> method.
         /// </summary>
+        /// <param name="serializer">The serialization implementation to be used</param>
         /// <param name="sourceStream">Deserialization stream</param>
-        public SourceSetFingerprint(Stream sourceStream)
-            : this(Serializer.Deserialize<SourceSetFingerprintProtocol>(sourceStream))
+        public SourceSetFingerprint(IProtocolSerializer serializer, Stream sourceStream)
+            : this(serializer.Deserialize<SourceSetFingerprintProtocol>(sourceStream))
         {
+            Contract.Requires(serializer != null);
             Contract.Requires(sourceStream != null);
         }
 
@@ -95,10 +97,11 @@ namespace Bari.Core.Build.Dependencies
         /// <summary>
         /// Saves the fingerprint to the given target stream
         /// </summary>
+        /// <param name="serializer">The serialization implementation to be used</param>
         /// <param name="targetStream">The stream to be used when serializing the fingerprint</param>
-        public void Save(Stream targetStream)
+        public void Save(IProtocolSerializer serializer, Stream targetStream)
         {
-            Serializer.Serialize(targetStream, Protocol);
+            serializer.Serialize(targetStream, Protocol);
         }
 
         /// <summary>
