@@ -91,7 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\Cache\CachedBuilder.cs" />
+    <Compile Include="Build\Cache\MemoryCacheItem.cs" />
     <Compile Include="Build\Cache\IBuildCache.cs" />
+    <Compile Include="Build\Cache\MemoryBuildCache.cs" />
     <Compile Include="Build\Dependencies\CombinedFingerprint.cs" />
     <Compile Include="Build\Dependencies\MultipleDependencies.cs" />
     <Compile Include="Build\Dependencies\NoDependencies.cs" />
