@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Monads;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -66,16 +67,13 @@ namespace Bari.Core.Build.Dependencies
             lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
             lastSizes = new Dictionary<SuiteRelativePath, long>();
 
-            if (proto.Files != null)
-            {
-                foreach (var pair in proto.Files)
+            proto.Files.Do(pair =>
                 {
                     var path = new SuiteRelativePath(pair.Key);
                     fileNames.Add(path);
                     lastModifiedDates.Add(path, pair.Value.LastModifiedDate);
                     lastSizes.Add(path, pair.Value.LastSize);
-                }
-            }
+                });        
         }
 
         /// <summary>

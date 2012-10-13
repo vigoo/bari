@@ -73,6 +73,7 @@ namespace Bari.Core.Model
                 sourceSets.Add(type, result);
             }
 
+            Contract.Assume(result != null);
             return result;
         }
 

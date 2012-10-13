@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\Cache\CachedBuilderTest.cs" />
+    <Compile Include="Build\Cache\MemoryBuildCacheTest.cs" />
     <Compile Include="Build\Dependencies\CombinedDependenciesTest.cs" />
     <Compile Include="Build\Dependencies\NoDependenciesTest.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependenciesTest.cs" />

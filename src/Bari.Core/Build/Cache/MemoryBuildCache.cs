@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -45,8 +47,19 @@ namespace Bari.Core.Build.Cache
         {
             MemoryCacheItem item = GetOrCreate(builder);            
 
-            var map = new Dictionary<TargetRelativePath, byte[]>();
-            // TODO: load files
+            var map = new ConcurrentDictionary<TargetRelativePath, byte[]>();
+
+            Parallel.ForEach(outputs, outputPath =>
+                {
+                    using (var stream = targetRoot.ReadBinaryFile(outputPath))
+                    {
+                        var buf = new byte[stream.Length];
+                        stream.Read(buf, 0, buf.Length);
+
+                        map.TryAdd(outputPath, buf);
+                    }
+                });
+            
             item.Update(fingerprint, map);
         }
 
@@ -98,7 +111,8 @@ namespace Bari.Core.Build.Cache
                 var paths = new HashSet<TargetRelativePath>();
                 foreach (var pair in outputs)
                 {                    
-                    // TODO: save data
+                    using (var stream = targetRoot.CreateBinaryFile(pair.Key))
+                        stream.Write(pair.Value, 0, pair.Value.Length);
 
                     paths.Add(pair.Key);
                 }
@@ -124,6 +138,8 @@ namespace Bari.Core.Build.Cache
                     item = new MemoryCacheItem();
                     cache.Add(builder, item);
                 }
+
+                Contract.Assume(item != null);
                 return item;
             }
         }

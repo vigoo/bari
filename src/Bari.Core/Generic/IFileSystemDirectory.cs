@@ -56,6 +56,21 @@ namespace Bari.Core.Generic
         TextWriter CreateTextFile(string name);
 
         /// <summary>
+        /// Creates a new binary file in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the stream to be used to write the contents of the file.</returns>
+        Stream CreateBinaryFile(string name);
+
+        /// <summary>
+        /// Reads an existing binary file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the stream belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        Stream ReadBinaryFile(string relativePath);
+
+        /// <summary>
         /// Gets the last modification's date for a given file which lies in this directory subtree
         /// </summary>
         /// <param name="relativePath">The relative path to the file from this directory</param>
@@ -163,6 +178,33 @@ namespace Bari.Core.Generic
             Contract.Ensures(Contract.Result<TextWriter>() != null);
             Contract.Ensures(Files.Contains(name));
 
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Creates a new binary file in this directory
+        /// </summary>
+        /// <param name="name">Name of the new file</param>
+        /// <returns>Returns the stream to be used to write the contents of the file.</returns>
+        public Stream CreateBinaryFile(string name)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(name));
+            Contract.Ensures(Contract.Result<Stream>() != null);
+            Contract.Ensures(Files.Contains(name));
+
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Reads an existing binary file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the stream belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public Stream ReadBinaryFile(string relativePath)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
+            Contract.Ensures(Contract.Result<Stream>() != null);
             return null; // dummy value
         }
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -29,6 +31,10 @@ namespace Bari.Core.Build.Cache
         /// <param name="targetDir">The target directory's file system abstraction</param>
         public CachedBuilder(IBuilder wrappedBuilder, IBuildCache cache, [TargetRoot] IFileSystemDirectory targetDir)
         {
+            Contract.Requires(wrappedBuilder != null);
+            Contract.Requires(cache != null);
+            Contract.Requires(targetDir != null);
+
             this.wrappedBuilder = wrappedBuilder;
             this.cache = cache;
             this.targetDir = targetDir;

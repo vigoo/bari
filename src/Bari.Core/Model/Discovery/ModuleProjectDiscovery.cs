@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.IO;
+using System.Monads;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Model.Discovery
@@ -8,7 +9,7 @@ namespace Bari.Core.Model.Discovery
     /// A <see cref="ISuiteExplorer"/> implementation which discovers modules and projects
     /// by traversing the file system starting from the suite's root directory.
     /// </summary>
-    public class ModuleProjectDiscovery: ISuiteExplorer
+    public class ModuleProjectDiscovery : ISuiteExplorer
     {
         private readonly IFileSystemDirectory suiteRoot;
 
@@ -30,9 +31,8 @@ namespace Bari.Core.Model.Discovery
         public void ExtendWithDiscoveries(Suite suite)
         {
             var srcDir = suiteRoot.GetChildDirectory("src");
-            if (srcDir != null)
-            {
-                foreach (var moduleName in srcDir.ChildDirectories)
+            srcDir.With(s => s.ChildDirectories.Do(
+                moduleName =>
                 {
                     Module module = suite.GetModule(moduleName);
 
@@ -42,8 +42,7 @@ namespace Bari.Core.Model.Discovery
                         Project project = module.GetProject(projectName);
                         DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName));
                     }
-                }
-            }
+                }));
         }
 
         /// <summary>

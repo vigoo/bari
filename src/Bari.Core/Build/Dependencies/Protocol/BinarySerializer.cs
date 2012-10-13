@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.Contracts;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Bari.Core.Build.Dependencies.Protocol
@@ -15,7 +16,9 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <param name="stream">Stream containing binary serialized object data</param>
         /// <returns>Returns the object casted to type <c>T</c></returns>
         public T Deserialize<T>(Stream stream)
-        {
+        {   
+            Contract.Requires(!stream.CanSeek || stream.Length > 0);
+
             var formatter = new BinaryFormatter();
             return (T)formatter.Deserialize(stream);
         }
@@ -27,7 +30,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <param name="stream">Stream where object data will be put</param>
         /// <param name="obj">Object to be serialized</param>
         public void Serialize<T>(Stream stream, T obj)
-        {
+        { 
             var formatter = new BinaryFormatter();
             formatter.Serialize(stream, obj);
         }
