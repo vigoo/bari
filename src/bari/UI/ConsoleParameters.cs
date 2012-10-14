@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using Bari.Core.Model.Loader;
 using Bari.Core.UI;
 
@@ -13,6 +15,7 @@ namespace Bari.Console.UI
     {
         private readonly string cmd;
         private readonly string[] cmdParams;
+        private readonly string[] globalParams;
         private readonly string initialCurrentDirectory = Environment.CurrentDirectory;
 
         /// <summary>
@@ -23,12 +26,28 @@ namespace Bari.Console.UI
         {
             Contract.Requires(args != null);
 
-            if (args.Length > 0)
+            var gp = new List<string>();
+            var remainingParams = new List<string>();
+
+            int i = 0;
+            for (; i < args.Length; i++)
             {
-                cmd = args[0];
-                cmdParams = new string[args.Length-1];
-                for (int i = 1; i < args.Length; i++)
-                    cmdParams[i - 1] = args[i];
+                string current = args[i];
+                if (current.StartsWith("-") ||
+                    current.StartsWith("/"))
+                    gp.Add(current);
+                else
+                    break;
+            }
+            remainingParams.AddRange(args.Skip(i));
+            globalParams = gp.ToArray();
+
+            if (remainingParams.Count > 0)
+            {
+                cmd = remainingParams[0];
+                cmdParams = new string[remainingParams.Count - 1];
+                for (int j = 1; j < remainingParams.Count; j++)
+                    cmdParams[j - 1] = remainingParams[j];
             }
             else
             {
@@ -65,6 +84,17 @@ namespace Bari.Console.UI
             get
             {                
                 return Path.Combine(initialCurrentDirectory, "suite.yaml");
+            }
+        }
+
+        /// <summary>
+        /// True if verbose output should be printed
+        /// </summary>
+        public bool VerboseOutput
+        {
+            get
+            {
+                return globalParams.Any(opt => opt == "-v" || opt == "/v");
             }
         }
     }

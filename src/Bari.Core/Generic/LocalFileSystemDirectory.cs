@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Bari.Core.Generic
 {
@@ -124,6 +125,21 @@ namespace Bari.Core.Generic
                 throw new ArgumentException("File does not exists", "relativePath");
 
             return new FileStream(absolutePath, FileMode.Open);
+        }
+
+        /// <summary>
+        /// Reads an existing text file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the text reader belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public TextReader ReadTextFile(string relativePath)
+        {
+            string absolutePath = Path.Combine(path, relativePath);
+            if (!File.Exists(absolutePath))
+                throw new ArgumentException("File does not exists", "relativePath");
+
+            return new StreamReader(absolutePath, Encoding.UTF8);
         }
 
         /// <summary>

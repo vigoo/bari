@@ -27,6 +27,11 @@ namespace Bari.Core.UI
         /// given suite name.</para>
         /// </summary>
         string Suite { get; }
+
+        /// <summary>
+        /// True if verbose output should be printed
+        /// </summary>
+        bool VerboseOutput { get; }
     }
 
     /// <summary>
@@ -73,5 +78,10 @@ namespace Bari.Core.UI
                 return null; // dummy value
             }
         }
+
+        /// <summary>
+        /// True if verbose output should be printed
+        /// </summary>
+        public abstract bool VerboseOutput { get; }
     }
 }

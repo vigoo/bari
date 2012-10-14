@@ -11,6 +11,8 @@ namespace Bari.Core.Build.Cache
     /// </summary>
     public class CachedBuilder: IBuilder
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CachedBuilder));
+
         private readonly IBuilder wrappedBuilder;
         private readonly IBuildCache cache;
         private readonly IFileSystemDirectory targetDir;
@@ -53,10 +55,16 @@ namespace Bari.Core.Build.Cache
             try
             {
                 if (cache.Contains(builderType, currentFingerprint))
+                {
+                    log.DebugFormat("Restoring cached build outputs for {0}", builderType);
                     return cache.Restore(builderType, targetDir);
+                }
                 else
                 {
+                    log.DebugFormat("Running builder {0}", builderType);
                     var files = wrappedBuilder.Run();
+
+                    log.DebugFormat("Storing build outputs of {0}", builderType);
                     cache.Store(builderType, currentFingerprint, files, targetDir);
                     return files;
                 }

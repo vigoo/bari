@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.Contracts;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;

@@ -71,6 +71,14 @@ namespace Bari.Core.Generic
         Stream ReadBinaryFile(string relativePath);
 
         /// <summary>
+        /// Reads an existing text file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the text reader belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        TextReader ReadTextFile(string relativePath);
+
+        /// <summary>
         /// Gets the last modification's date for a given file which lies in this directory subtree
         /// </summary>
         /// <param name="relativePath">The relative path to the file from this directory</param>
@@ -84,7 +92,7 @@ namespace Bari.Core.Generic
         /// <param name="relativePath">The relative path to the file from this directory</param>
         /// <returns>Returns the file size in bytes</returns>
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
-        long GetFileSize(string relativePath);
+        long GetFileSize(string relativePath);        
     }
 
     /// <summary>
@@ -205,6 +213,19 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
             Contract.Ensures(Contract.Result<Stream>() != null);
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Reads an existing text file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the text reader belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public TextReader ReadTextFile(string relativePath)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
+            Contract.Ensures(Contract.Result<TextReader>() != null);
             return null; // dummy value
         }
 

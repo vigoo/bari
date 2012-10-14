@@ -125,6 +125,17 @@ namespace Bari.Core.Test.Helper
         }
 
         /// <summary>
+        /// Reads an existing text file which lies in this directory subtree
+        /// </summary>
+        /// <param name="relativePath">The relative path to the file from this directory</param>
+        /// <returns>Returns the text reader belonging to the given file</returns>
+        /// <exception cref="ArgumentException">If the file does not exist.</exception>
+        public TextReader ReadTextFile(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Gets the last modification's date for a given file which lies in this directory subtree
         /// </summary>
         /// <param name="relativePath">The relative path to the file from this directory</param>

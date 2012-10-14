@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Build;
@@ -7,7 +6,6 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
-using Ninject;
 using Ninject.Extensions.ChildKernel;
 using Ninject.Syntax;
 
@@ -24,7 +22,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IFileSystemDirectory targetDir;
 
         private readonly ISet<IBuilder> projectBuilders;
-        private readonly MultipleDependencies projectDependencies;
+        private readonly IDependencies projectDependencies;
 
         /// <summary>
         /// Creates the builder
@@ -53,9 +51,16 @@ namespace Bari.Plugins.Csharp.Build
                 select builder
                 );
 
-            projectDependencies = new MultipleDependencies(
-                from builder in projectBuilders
-                select new SubtaskDependency(builder));
+            if (projectBuilders.Count == 1)
+            {
+                projectDependencies = new SubtaskDependency(projectBuilders.First());
+            }
+            else
+            {
+                projectDependencies = new MultipleDependencies(
+                    from builder in projectBuilders
+                    select new SubtaskDependency(builder));
+            }
         }
 
         private IBuilder CreateProjectBuilder(Project project)
@@ -65,7 +70,7 @@ namespace Bari.Plugins.Csharp.Build
                 var childKernel = new ChildKernel(root);
                 childKernel.Bind<Project>().ToConstant(project);
 
-                return childKernel.Get<CsprojBuilder>();
+                return childKernel.GetBuilder<CsprojBuilder>();
             }
             else
             {

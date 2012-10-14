@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Bari.Core.Build;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -94,11 +95,11 @@ Example: `bari vs HelloWorld`
 
         private void Run(Module module)
         {
-            var builder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
+            var builder = root.GetBuilder<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
             var outputs = builder.Run();
 
             foreach (var outputPath in outputs)
-                log.InfoFormat("Generated output solution for module {0}: {1}", module.Name, outputPath);
+                log.InfoFormat("Generated output for module {0}: {1}", module.Name, outputPath);
         }
     }
 }
