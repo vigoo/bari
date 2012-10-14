@@ -46,7 +46,7 @@ namespace Bari.Plugins.Csharp.Build
             {
                 if (project.HasNonEmptySourceSet("cs"))
                 {
-                    return root.Get<SourceSetDependencies>(new Parameter("sourceSet", project.GetSourceSet("cs"), false));                    
+                    return root.Get<SourceSetDependencies>(new ConstructorArgument("sourceSet", project.GetSourceSet("cs"), false));                    
                 }
                 else
                 {

@@ -7,6 +7,7 @@ using System.Monads;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Ninject;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -28,6 +29,7 @@ namespace Bari.Core.Build.Dependencies
         /// </summary>
         /// <param name="root">The suite's root directory</param>
         /// <param name="files">The files in the source set, in suite relative path form</param>
+        [Inject]
         public SourceSetFingerprint([SuiteRoot] IFileSystemDirectory root, IEnumerable<SuiteRelativePath> files)
         {
             Contract.Requires(root != null);
