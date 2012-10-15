@@ -1,5 +1,6 @@
 ﻿using Bari.Core.Commands;
 using Bari.Core.Exceptions;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using Bari.Core.UI;
@@ -22,6 +23,8 @@ namespace Bari.Core.Test.Commands
             Kernel.RegisterCoreBindings(kernel);
             output = new TestUserOutput();
             kernel.Bind<IUserOutput>().ToConstant(output).InSingletonScope();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
+                <SuiteRootAttribute>();
         }
     
         [Test]

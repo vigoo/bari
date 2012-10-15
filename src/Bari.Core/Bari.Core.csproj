@@ -113,6 +113,7 @@
     <Compile Include="Build\IBuilder.cs" />
     <Compile Include="Build\IDependencies.cs" />
     <Compile Include="Build\IDependencyFingerprint.cs" />
+    <Compile Include="Commands\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\InfoCommand.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Model\Loader\YamlModelLoaderBase.cs" />
     <Compile Include="Model\Module.cs" />
     <Compile Include="Model\Project.cs" />
+    <Compile Include="Model\ProjectType.cs" />
     <Compile Include="Model\SourceSet.cs" />
     <Compile Include="Model\Suite.cs" />
     <Compile Include="Model\DefaultSuiteLoader.cs" />

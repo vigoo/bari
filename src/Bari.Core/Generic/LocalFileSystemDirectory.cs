@@ -172,5 +172,14 @@ namespace Bari.Core.Generic
             var info = new FileInfo(absolutePath);
             return info.Length;
         }
+
+        /// <summary>
+        /// Deletes a child directory
+        /// </summary>
+        /// <param name="name">Name of the directory</param>
+        public void DeleteDirectory(string name)
+        {
+            Directory.Delete(Path.Combine(path, name), recursive: true);
+        }
     }
 }

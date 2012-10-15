@@ -157,6 +157,15 @@ namespace Bari.Core.Test.Helper
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Deletes a child directory
+        /// </summary>
+        /// <param name="name">Name of the directory</param>
+        public void DeleteDirectory(string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;

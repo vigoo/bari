@@ -13,6 +13,7 @@ namespace Bari.Core.Model
     {
         private readonly string name;
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
+        private ProjectType type = ProjectType.Library;
 
         /// <summary>
         /// Gets the project's name
@@ -25,6 +26,15 @@ namespace Bari.Core.Model
                 
                 return name;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the project type
+        /// </summary>
+        public ProjectType Type
+        {
+            get { return type; }
+            set { type = value; }
         }
 
         /// <summary>
@@ -57,20 +67,20 @@ namespace Bari.Core.Model
         /// <para>If the requested source set does not exist yet, it is created as an empty set
         /// and added to the project.</para>
         /// </summary>
-        /// <param name="type">Source set type name</param>
+        /// <param name="setType">Source set type name</param>
         /// <returns>Returns the requested source set. Never returns <c>null</c>.</returns>
-        public SourceSet GetSourceSet(string type)
+        public SourceSet GetSourceSet(string setType)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(type));
+            Contract.Requires(!string.IsNullOrWhiteSpace(setType));
             Contract.Ensures(Contract.Result<SourceSet>() != null);
-            Contract.Ensures(Contract.Result<SourceSet>().Type == type);
-            Contract.Ensures(sourceSets.ContainsKey(type));
+            Contract.Ensures(Contract.Result<SourceSet>().Type == setType);
+            Contract.Ensures(sourceSets.ContainsKey(setType));
 
             SourceSet result;
-            if (!sourceSets.TryGetValue(type, out result))
+            if (!sourceSets.TryGetValue(setType, out result))
             {
-                result = new SourceSet(type);
-                sourceSets.Add(type, result);
+                result = new SourceSet(setType);
+                sourceSets.Add(setType, result);
             }
 
             Contract.Assume(result != null);
@@ -80,12 +90,12 @@ namespace Bari.Core.Model
         /// <summary>
         /// Checks if the project has a source set with the given type and at least one files
         /// </summary>
-        /// <param name="type">The source set type name</param>
+        /// <param name="setType">The source set type name</param>
         /// <returns>Returns <c>true</c> if there is a source set with the given type name and at least one files</returns>
-        public bool HasNonEmptySourceSet(string type)
+        public bool HasNonEmptySourceSet(string setType)
         {
-            return sourceSets.ContainsKey(type) &&
-                   sourceSets[type].Files.Any();
+            return sourceSets.ContainsKey(setType) &&
+                   sourceSets[setType].Files.Any();
         }
     }
 }

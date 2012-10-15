@@ -1,4 +1,5 @@
-﻿using Bari.Core.Model.Loader;
+﻿using Bari.Core.Model;
+using Bari.Core.Model.Loader;
 using FluentAssertions;
 using NUnit.Framework;
 using Ninject;
@@ -79,7 +80,8 @@ modules:
     - name: Module3
       projects:
         - Project31
-        - Project32
+        - name: Project32
+          type: executable
 ";
 
             var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
@@ -98,6 +100,10 @@ modules:
             suite.GetModule("Module3").Projects.Should().HaveCount(2);
             suite.GetModule("Module3").Projects.Should().Contain(p => p.Name == "Project31");
             suite.GetModule("Module3").Projects.Should().Contain(p => p.Name == "Project32");
+
+            suite.GetModule("Module1").GetProject("Project11").Type.Should().Be(ProjectType.Library);
+            suite.GetModule("Module3").GetProject("Project31").Type.Should().Be(ProjectType.Library);
+            suite.GetModule("Module3").GetProject("Project32").Type.Should().Be(ProjectType.Executable);
         }
     }
 }

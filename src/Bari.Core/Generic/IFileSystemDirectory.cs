@@ -92,7 +92,13 @@ namespace Bari.Core.Generic
         /// <param name="relativePath">The relative path to the file from this directory</param>
         /// <returns>Returns the file size in bytes</returns>
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
-        long GetFileSize(string relativePath);        
+        long GetFileSize(string relativePath);
+
+        /// <summary>
+        /// Deletes a child directory
+        /// </summary>
+        /// <param name="name">Name of the directory</param>
+        void DeleteDirectory(string name);
     }
 
     /// <summary>
@@ -252,6 +258,17 @@ namespace Bari.Core.Generic
             Contract.Requires(relativePath != null);
             Contract.Ensures(Contract.Result<long>() >= 0);
             return 0; // dummy value
+        }
+
+        /// <summary>
+        /// Deletes a child directory
+        /// </summary>
+        /// <param name="name">Name of the directory</param>
+        public void DeleteDirectory(string name)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(name));
+            Contract.Requires(ChildDirectories.Contains(name));
+            Contract.Ensures(!ChildDirectories.Contains(name));
         }
     }
 }

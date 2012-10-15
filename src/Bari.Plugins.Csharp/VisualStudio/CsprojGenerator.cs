@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using Bari.Core.Model;
@@ -65,7 +66,22 @@ namespace Bari.Plugins.Csharp.VisualStudio
             writer.WriteStartElement("PropertyGroup");
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString());
+            writer.WriteElementString("OutputPath", project.Name);
+            writer.WriteElementString("OutputType", GetOutputType(project.Type)); 
             writer.WriteEndElement();
+        }
+
+        private string GetOutputType(ProjectType type)
+        {
+            switch (type)
+            {
+                case ProjectType.Executable:
+                    return "Exe";
+                case ProjectType.Library:
+                    return "Library";
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
         }
 
         private void WriteReferences()

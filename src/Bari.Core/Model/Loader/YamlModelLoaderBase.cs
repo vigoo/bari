@@ -77,6 +77,32 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(project != null);
             Contract.Requires(projectNode != null);
+
+            var mapping = projectNode as YamlMappingNode;
+            if (mapping != null)
+            {
+                foreach (var pair in mapping)
+                {
+                    if (new YamlScalarNode("type").Equals(pair.Key) &&
+                        pair.Value is YamlScalarNode)
+                    {
+                        SetProjectType(project, ((YamlScalarNode) pair.Value).Value);
+                    }
+                }
+            }
+        }
+
+        private void SetProjectType(Project project, string typeString)
+        {
+            switch (typeString.ToLowerInvariant())
+            {
+                case "executable":
+                    project.Type = ProjectType.Executable;
+                    break;
+                default:
+                    project.Type = ProjectType.Library;
+                    break;
+            }
         }
 
         private IEnumerable<KeyValuePair<string, YamlNode>> EnumerateNamedNodesOf(YamlNode parent, string groupName)

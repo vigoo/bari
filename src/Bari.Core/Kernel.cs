@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
-using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
-using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
@@ -53,6 +51,7 @@ namespace Bari.Core
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
             kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
+            kernel.Bind<ICommand>().To<CleanCommand>().Named("clean");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
