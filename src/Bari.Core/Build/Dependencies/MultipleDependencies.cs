@@ -15,6 +15,17 @@ namespace Bari.Core.Build.Dependencies
         /// Creates the dependency
         /// </summary>
         /// <param name="deps">The dependencies to combine into one</param>
+        public MultipleDependencies(params IDependencies[] deps)
+        {
+            Contract.Requires(deps != null);
+
+            dependencies = new HashSet<IDependencies>(deps);
+        }
+
+        /// <summary>
+        /// Creates the dependency
+        /// </summary>
+        /// <param name="deps">The dependencies to combine into one</param>
         public MultipleDependencies(IEnumerable<IDependencies> deps)
         {
             Contract.Requires(deps != null);

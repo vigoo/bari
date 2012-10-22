@@ -181,7 +181,7 @@ namespace Bari.Core.Build.Dependencies
         }
 
         /// <summary>
-        /// Unequality test
+        /// Inequality test
         /// </summary>
         public static bool operator !=(SourceSetFingerprint left, SourceSetFingerprint right)
         {

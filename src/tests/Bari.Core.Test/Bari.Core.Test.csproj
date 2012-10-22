@@ -91,6 +91,7 @@
     <Compile Include="Build\Cache\MemoryBuildCacheTest.cs" />
     <Compile Include="Build\Dependencies\CombinedDependenciesTest.cs" />
     <Compile Include="Build\Dependencies\NoDependenciesTest.cs" />
+    <Compile Include="Build\Dependencies\ObjectPropertiesFingerprintTest.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependenciesTest.cs" />
     <Compile Include="Commands\DummyCommand.cs" />
     <Compile Include="Commands\HelpTest.cs" />
