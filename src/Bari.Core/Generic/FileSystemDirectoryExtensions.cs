@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 
 namespace Bari.Core.Generic
@@ -33,6 +34,30 @@ namespace Bari.Core.Generic
                     return root.CreateDirectory(childName);
                 else
                     throw new ArgumentException("The argument is not a child directory of this directory", "childName");
+            }
+        }
+
+        /// <summary>
+        /// Creates a binary file in the given directory, or in a subdirectory of it.
+        /// If the subdirectory does not exist, it will be created.
+        /// </summary>
+        /// <param name="root">The root directory</param>
+        /// <param name="relativePath">Relative path of the file to be created</param>
+        /// <returns>Returns the stream for writing the binary file.</returns>
+        public static Stream CreateBinaryFileWithDirectories(this IFileSystemDirectory root, string relativePath)
+        {
+            Contract.Requires(root != null);
+            Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
+
+            string dirName = Path.GetDirectoryName(relativePath);
+            if (!String.IsNullOrWhiteSpace(dirName))
+            {
+                var subdir = root.GetChildDirectory(dirName, createIfMissing: true);
+                return subdir.CreateBinaryFile(Path.GetFileName(relativePath));
+            }
+            else
+            {
+                return root.CreateBinaryFile(relativePath);
             }
         }
     }

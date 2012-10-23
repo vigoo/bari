@@ -87,7 +87,12 @@
   <ItemGroup>
     <Compile Include="BariModule.cs" />
     <Compile Include="Build\CsprojBuilder.cs" />
+    <Compile Include="Build\MSBuildRunner.cs" />
     <Compile Include="Build\SlnBuilder.cs" />
+    <Compile Include="Build\SlnBuilderFactory.cs" />
+    <Compile Include="Build\VsProjectBuilderFactory.cs" />
+    <Compile Include="Tools\IMSBuild.cs" />
+    <Compile Include="Tools\MSBuild.cs" />
     <Compile Include="VisualStudio\DefaultProjectGuidManagement.cs" />
     <Compile Include="VisualStudio\IProjectGuidManagement.cs" />
     <Compile Include="Commands\VisualStudioCommand.cs" />

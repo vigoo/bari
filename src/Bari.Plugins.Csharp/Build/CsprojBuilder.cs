@@ -48,7 +48,7 @@ namespace Bari.Plugins.Csharp.Build
                 {
                     return new MultipleDependencies(
                         new SourceSetDependencies(root, project.GetSourceSet("cs")),
-                        new ProjectPropertiesDependencies(root, project, "Name", "Type"));
+                        new ProjectPropertiesDependencies(project, "Name", "Type"));
                 }
                 else
                 {

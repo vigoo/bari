@@ -99,6 +99,7 @@
     <Compile Include="Build\Cache\MemoryCacheItem.cs" />
     <Compile Include="Build\Cache\IBuildCache.cs" />
     <Compile Include="Build\Cache\MemoryBuildCache.cs" />
+    <Compile Include="Build\BuildContext.cs" />
     <Compile Include="Build\Dependencies\CombinedFingerprint.cs" />
     <Compile Include="Build\Dependencies\MultipleDependencies.cs" />
     <Compile Include="Build\Dependencies\NoDependencies.cs" />
@@ -113,9 +114,11 @@
     <Compile Include="Build\Dependencies\SourceSetDependencies.cs" />
     <Compile Include="Build\Dependencies\SourceSetFingerprint.cs" />
     <Compile Include="Build\Dependencies\SubtaskDependency.cs" />
+    <Compile Include="Build\IBuildContext.cs" />
     <Compile Include="Build\IBuilder.cs" />
     <Compile Include="Build\IDependencies.cs" />
     <Compile Include="Build\IDependencyFingerprint.cs" />
+    <Compile Include="Build\IProjectBuilderFactory.cs" />
     <Compile Include="Commands\BuildCommand.cs" />
     <Compile Include="Commands\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
@@ -126,6 +129,16 @@
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Generic\FileSystemDirectoryExtensions.cs" />
+    <Compile Include="Generic\Graph\IDirectedGraphEdge.cs" />
+    <Compile Include="Generic\Graph\IDirectedGraphNode.cs" />
+    <Compile Include="Generic\Graph\IUndirectedGraphEdge.cs" />
+    <Compile Include="Generic\Graph\IUndirectedGraphNode.cs" />
+    <Compile Include="Generic\Graph\NodeBuilder.cs" />
+    <Compile Include="Generic\Graph\SimpleDirectedGraphEdge.cs" />
+    <Compile Include="Generic\Graph\SimpleDirectedGraphNode.cs" />
+    <Compile Include="Generic\Graph\SimpleUndirectedGraphEdge.cs" />
+    <Compile Include="Generic\Graph\SimpleUndirectedGraphNode.cs" />
+    <Compile Include="Generic\Graph\TopologicalSorting.cs" />
     <Compile Include="Generic\IFileSystemDirectory.cs" />
     <Compile Include="Generic\LocalFileSystemDirectory.cs" />
     <Compile Include="Generic\SuiteRelativePath.cs" />

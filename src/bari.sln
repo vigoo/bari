@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EE5E75EC-4243-4D82-BCB7-096EA80328EA}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -15,6 +15,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bari", "bari\bari.csproj", "{EC03BDC4-FAA9-454F-9D03-21ED58669231}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Csharp", "Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj", "{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6181E5C5-1B34-46C3-9917-0E6779125067}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Csharp.Test", "tests\Bari.Plugins.Csharp.Test\Bari.Plugins.Csharp.Test.csproj", "{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,8 +71,22 @@ Global
 		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7AE51D83-BD38-42E0-A5F8-30D2D6714903} = {6181E5C5-1B34-46C3-9917-0E6779125067}
+		{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF} = {6181E5C5-1B34-46C3-9917-0E6779125067}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Bari.Core.Model;
 
@@ -49,6 +48,23 @@ namespace Bari.Plugins.Csharp.VisualStudio
                     output.WriteLine("EndProject");
                 }
             }
+
+            output.WriteLine("Global");
+            output.WriteLine("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
+            output.WriteLine("\t\tBari|Bari = Bari|Bari");
+            output.WriteLine("\tEndGlobalSection");
+            output.WriteLine("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
+            
+            foreach (var project in projects)
+            {
+                string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");
+
+                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Debug|x86", projectGuid);
+                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Debug|x68", projectGuid);
+            }
+            
+            output.WriteLine("\tEndGlobalSection");
+            output.WriteLine("EndGlobal");
         }
     }
 }

@@ -78,7 +78,7 @@ namespace Bari.Core.Model
                 return result;
             else
             {
-                result = new Project(projectName);
+                result = new Project(projectName, this);
                 projects.Add(projectName, result);
                 return result;
             }

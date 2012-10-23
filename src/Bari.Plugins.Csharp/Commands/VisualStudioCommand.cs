@@ -3,12 +3,9 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
-using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
-using Bari.Plugins.Csharp.VisualStudio;
 using Ninject;
-using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Commands
@@ -22,9 +19,7 @@ namespace Bari.Plugins.Csharp.Commands
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (VisualStudioCommand));
 
-        private readonly IFileSystemDirectory targetDir;
         private readonly IResolutionRoot root;
-        private readonly IProjectGuidManagement projectGuidManagement;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -64,14 +59,10 @@ Example: `bari vs HelloWorld`
         /// <summary>
         /// Initializes the command
         /// </summary>
-        /// <param name="targetDir">The root directory of the build target, where the visual studio files shoulbe be put</param>
         /// <param name="root">The path to resolve instances</param>
-        /// <param name="projectGuidManagement">The project-guid mapper to be used</param>
-        public VisualStudioCommand([TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root, IProjectGuidManagement projectGuidManagement)
+        public VisualStudioCommand(IResolutionRoot root)
         {
-            this.targetDir = targetDir;
             this.root = root;
-            this.projectGuidManagement = projectGuidManagement;
         }
 
         /// <summary>
@@ -95,8 +86,11 @@ Example: `bari vs HelloWorld`
 
         private void Run(Module module)
         {
-            var builder = root.GetBuilder<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
-            var outputs = builder.Run();
+            var buildContext = root.Get<IBuildContext>();
+            var slnBuilderFactory = root.Get<SlnBuilderFactory>();
+            slnBuilderFactory.AddToContext(buildContext, module.Projects);
+            
+            var outputs = buildContext.Run();
 
             foreach (var outputPath in outputs)
                 log.InfoFormat("Generated output for module {0}: {1}", module.Name, outputPath);

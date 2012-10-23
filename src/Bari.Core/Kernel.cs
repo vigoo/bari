@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using Bari.Core.Build;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Model;
@@ -52,12 +53,16 @@ namespace Bari.Core
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
             kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
             kernel.Bind<ICommand>().To<CleanCommand>().Named("clean");
+            kernel.Bind<ICommand>().To<BuildCommand>().Named("build");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
 
             // Default serializer
             kernel.Bind<IProtocolSerializer>().To<BinarySerializer>();
+
+            // Default build context
+            kernel.Bind<IBuildContext>().To<BuildContext>();
         }
     }
 }

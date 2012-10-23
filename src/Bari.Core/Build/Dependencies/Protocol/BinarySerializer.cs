@@ -16,9 +16,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <param name="stream">Stream containing binary serialized object data</param>
         /// <returns>Returns the object casted to type <c>T</c></returns>
         public T Deserialize<T>(Stream stream)
-        {   
-            Contract.Requires(!stream.CanSeek || stream.Length > 0);
-
+        {               
             var formatter = new BinaryFormatter();
             return (T)formatter.Deserialize(stream);
         }

@@ -11,9 +11,18 @@ namespace Bari.Core.Model
     /// </summary>
     public class Project
     {
+        private readonly Module module;
         private readonly string name;
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
         private ProjectType type = ProjectType.Library;
+
+        /// <summary>
+        /// Gets the module this project belongs to
+        /// </summary>
+        public Module Module
+        {
+            get { return module; }
+        }
 
         /// <summary>
         /// Gets the project's name
@@ -54,11 +63,14 @@ namespace Bari.Core.Model
         /// Constructs the project model instance
         /// </summary>
         /// <param name="name">Name of the project</param>
-        public Project(string name)
+        /// <param name="module">The module the project belongs to</param>
+        public Project(string name, Module module)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires(module != null);
 
             this.name = name;
+            this.module = module;
         }
 
         /// <summary>

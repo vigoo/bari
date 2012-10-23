@@ -153,7 +153,7 @@ namespace Bari.Core.Build.Cache
                             while ((line = reader.ReadLine()) != null)
                             {
                                 using (var source = cacheDir.ReadBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
-                                using (var target = targetRoot.CreateBinaryFile(line))
+                                using (var target = targetRoot.CreateBinaryFileWithDirectories(line))
                                     Copy(source, target);
 
                                 result.Add(new TargetRelativePath(line));

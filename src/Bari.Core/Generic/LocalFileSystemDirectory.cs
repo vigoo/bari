@@ -15,6 +15,14 @@ namespace Bari.Core.Generic
         private readonly string path;
 
         /// <summary>
+        /// Gets the local file system path represented by this directory
+        /// </summary>
+        public string AbsolutePath
+        {
+            get { return path; }
+        }
+
+        /// <summary>
         /// Constructs the directory abstraction
         /// </summary>
         /// <param name="path">Absolute path to the directory</param>
@@ -108,6 +116,8 @@ namespace Bari.Core.Generic
         public Stream CreateBinaryFile(string name)
         {
             string childPath = Path.Combine(path, name);
+            if (Path.GetDirectoryName(childPath) != path)
+                throw new ArgumentException("Must be a file name not a relative path", "name");
 
             return File.Create(childPath);
         }
@@ -122,7 +132,7 @@ namespace Bari.Core.Generic
         {
             string absolutePath = Path.Combine(path, relativePath);
             if (!File.Exists(absolutePath))
-                throw new ArgumentException("File does not exists", "relativePath");
+                throw new ArgumentException("File does not exists" + absolutePath, "relativePath");
 
             return new FileStream(absolutePath, FileMode.Open);
         }
@@ -137,7 +147,7 @@ namespace Bari.Core.Generic
         {
             string absolutePath = Path.Combine(path, relativePath);
             if (!File.Exists(absolutePath))
-                throw new ArgumentException("File does not exists", "relativePath");
+                throw new ArgumentException("File does not exists: " + absolutePath, "relativePath");
 
             return new StreamReader(absolutePath, Encoding.UTF8);
         }

@@ -41,7 +41,8 @@ namespace Bari.Core.Build.Dependencies.Protocol
         public T Deserialize<T>(Stream stream)
         {
             Contract.Requires(stream != null);
-            Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Requires(!stream.CanSeek || stream.Length > 0);
+            Contract.Ensures(Contract.Result<T>() != null);            
 
             return default(T); // dummy value
         }
