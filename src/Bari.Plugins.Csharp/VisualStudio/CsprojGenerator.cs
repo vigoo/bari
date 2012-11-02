@@ -95,12 +95,20 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
             foreach (var refPath in references)
             {
-                string relativePath = ToProjectRelativePath(Path.Combine("target", refPath));
-
                 writer.WriteStartElement("Reference");
-                writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
-                writer.WriteElementString("HintPath", relativePath);
-                writer.WriteElementString("SpecificVersion", "False");
+                if (((string)refPath).StartsWith("GAC!"))
+                {
+                    var assemblyName = ((string) refPath).Substring(4);
+                    writer.WriteAttributeString("Include", assemblyName);
+                }
+                else
+                {
+                    string relativePath = ToProjectRelativePath(Path.Combine("target", refPath));
+                    
+                    writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
+                    writer.WriteElementString("HintPath", relativePath);
+                    writer.WriteElementString("SpecificVersion", "False");                 
+                }
                 writer.WriteEndElement();
             }
 

@@ -88,6 +88,7 @@
     <Compile Include="BariModule.cs" />
     <Compile Include="Build\CsprojBuilder.cs" />
     <Compile Include="Build\CsprojBuilderFactory.cs" />
+    <Compile Include="Build\GacReferenceBuilder.cs" />
     <Compile Include="Build\MSBuildRunner.cs" />
     <Compile Include="Build\SlnBuilder.cs" />
     <Compile Include="Build\SlnBuilderFactory.cs" />

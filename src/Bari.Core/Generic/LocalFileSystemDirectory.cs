@@ -191,5 +191,15 @@ namespace Bari.Core.Generic
         {
             Directory.Delete(Path.Combine(path, name), recursive: true);
         }
+
+        /// <summary>
+        /// Checks whether a file exists at the given relative path
+        /// </summary>
+        /// <param name="relativePath">Path to the file to check, relative to this directory</param>
+        /// <returns>Returns <c>true</c> if the file exists.</returns>
+        public bool Exists(string relativePath)
+        {
+            return File.Exists(Path.Combine(path, relativePath));
+        }
     }
 }

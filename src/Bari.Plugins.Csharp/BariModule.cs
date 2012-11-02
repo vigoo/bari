@@ -27,6 +27,8 @@ namespace Bari.Plugins.Csharp
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
             Bind<IMSBuild>().To<MSBuild>();
+
+            Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
         }
     }
 }

@@ -99,6 +99,13 @@ namespace Bari.Core.Generic
         /// </summary>
         /// <param name="name">Name of the directory</param>
         void DeleteDirectory(string name);
+
+        /// <summary>
+        /// Checks whether a file exists at the given relative path
+        /// </summary>
+        /// <param name="relativePath">Path to the file to check, relative to this directory</param>
+        /// <returns>Returns <c>true</c> if the file exists.</returns>
+        bool Exists(string relativePath);
     }
 
     /// <summary>
@@ -268,6 +275,17 @@ namespace Bari.Core.Generic
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Requires(ChildDirectories.Contains(name));
             Contract.Ensures(!ChildDirectories.Contains(name));
+        }
+
+        /// <summary>
+        /// Checks whether a file exists at the given relative path
+        /// </summary>
+        /// <param name="relativePath">Path to the file to check, relative to this directory</param>
+        /// <returns>Returns <c>true</c> if the file exists.</returns>
+        public bool Exists(string relativePath)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
+            return false; // dummy value
         }
     }
 }

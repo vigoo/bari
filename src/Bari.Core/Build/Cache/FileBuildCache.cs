@@ -152,9 +152,15 @@ namespace Bari.Core.Build.Cache
                             string line;
                             while ((line = reader.ReadLine()) != null)
                             {
-                                using (var source = cacheDir.ReadBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
-                                using (var target = targetRoot.CreateBinaryFileWithDirectories(line))
-                                    Copy(source, target);
+                                var cacheFileName = idx.ToString(CultureInfo.InvariantCulture);
+
+                                // It is possible that only a file name (a virtual file) was cached without any contents:
+                                if (cacheDir.Exists(cacheFileName))
+                                {
+                                    using (var source = cacheDir.ReadBinaryFile(cacheFileName))
+                                    using (var target = targetRoot.CreateBinaryFileWithDirectories(line))
+                                        Copy(source, target);
+                                }
 
                                 result.Add(new TargetRelativePath(line));
                                 idx++;
@@ -200,10 +206,15 @@ namespace Bari.Core.Build.Cache
                 int idx = 0;
                 foreach (var outputPath in outputs)
                 {
-                    using (var source = targetRoot.ReadBinaryFile(outputPath))
-                    using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
+                    // It is possible that the returned path is a special path and does not refer to an existing file
+                    // In this case we only have to save the filename, without its contents
+                    if (targetRoot.Exists(outputPath))
                     {
-                        Copy(source, target);
+                        using (var source = targetRoot.ReadBinaryFile(outputPath))
+                        using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
+                        {
+                            Copy(source, target);
+                        }
                     }
 
                     names.WriteLine(outputPath);

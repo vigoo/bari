@@ -50,12 +50,19 @@ namespace Bari.Core.Build.Cache
 
             Parallel.ForEach(outputs, outputPath =>
                 {
-                    using (var stream = targetRoot.ReadBinaryFile(outputPath))
+                    if (targetRoot.Exists(outputPath))
                     {
-                        var buf = new byte[stream.Length];
-                        stream.Read(buf, 0, buf.Length);
+                        using (var stream = targetRoot.ReadBinaryFile(outputPath))
+                        {
+                            var buf = new byte[stream.Length];
+                            stream.Read(buf, 0, buf.Length);
 
-                        map.TryAdd(outputPath, buf);
+                            map.TryAdd(outputPath, buf);
+                        }
+                    }
+                    else
+                    {
+                        map.TryAdd(outputPath, null);
                     }
                 });
             
@@ -109,9 +116,12 @@ namespace Bari.Core.Build.Cache
                 var outputs = item.Outputs;
                 var paths = new HashSet<TargetRelativePath>();
                 foreach (var pair in outputs)
-                {                    
-                    using (var stream = targetRoot.CreateBinaryFile(pair.Key))
-                        stream.Write(pair.Value, 0, pair.Value.Length);
+                {
+                    if (pair.Value != null)
+                    {
+                        using (var stream = targetRoot.CreateBinaryFile(pair.Key))
+                            stream.Write(pair.Value, 0, pair.Value.Length);
+                    }
 
                     paths.Add(pair.Key);
                 }
