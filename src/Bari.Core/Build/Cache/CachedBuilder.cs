@@ -52,8 +52,9 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
             var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
@@ -69,7 +70,7 @@ namespace Bari.Core.Build.Cache
                 else
                 {
                     log.DebugFormat("Running builder {0}", buildKey);
-                    var files = wrappedBuilder.Run();
+                    var files = wrappedBuilder.Run(context);
 
                     log.DebugFormat("Storing build outputs of {0}", buildKey);
                     cache.Store(buildKey, currentFingerprint, files, targetDir);

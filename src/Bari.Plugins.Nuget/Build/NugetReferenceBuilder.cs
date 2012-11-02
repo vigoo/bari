@@ -55,8 +55,9 @@ namespace Bari.Plugins.Nuget.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             log.DebugFormat("Resolving reference {0}", reference.Uri);
 

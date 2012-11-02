@@ -54,8 +54,9 @@ namespace Bari.Plugins.Csharp.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             msbuild.Run(targetRoot, slnPath);
             return outputs;

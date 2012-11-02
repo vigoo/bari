@@ -24,6 +24,14 @@ namespace Bari.Core.Build
         /// </summary>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
         ISet<TargetRelativePath> Run();
+
+        /// <summary>
+        /// Gets the result paths returned by the given builder if it has already ran. Otherwise it throws an
+        /// exception.
+        /// </summary>
+        /// <param name="builder">Builder which was added previously with <see cref="AddBuilder"/> and was already executed.</param>
+        /// <returns>Return the return value of the builder's <see cref="IBuilder.Run"/> method.</returns>
+        ISet<TargetRelativePath> GetResults(IBuilder builder);
     }
 
     /// <summary>
@@ -51,6 +59,20 @@ namespace Bari.Core.Build
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
         public ISet<TargetRelativePath> Run()
         {
+            Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
+
+            return null; // dummy value
+        }
+
+        /// <summary>
+        /// Gets the result paths returned by the given builder if it has already ran. Otherwise it throws an
+        /// exception.
+        /// </summary>
+        /// <param name="builder">Builder which was added previously with <see cref="IBuildContext.AddBuilder"/> and was already executed.</param>
+        /// <returns>Return the return value of the builder's <see cref="IBuilder.Run"/> method.</returns>
+        public ISet<TargetRelativePath> GetResults(IBuilder builder)
+        {
+            Contract.Requires(builder != null);
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
 
             return null; // dummy value

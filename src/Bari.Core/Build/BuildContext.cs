@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using System;
+using System.Collections.Generic;
 using Bari.Core.Generic;
 using Bari.Core.Generic.Graph;
 
@@ -15,6 +15,8 @@ namespace Bari.Core.Build
     public class BuildContext: IBuildContext
     {
         private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
+        private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
+            new Dictionary<IBuilder, ISet<TargetRelativePath>>();
 
         /// <summary>
         /// Adds a new builder to be executed to the context
@@ -36,16 +38,35 @@ namespace Bari.Core.Build
         /// </summary>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
         public ISet<TargetRelativePath> Run()
-        {            
+        {
+            partialResults.Clear();
+
             var result = new HashSet<TargetRelativePath>();            
             var nodes = builders.BuildNodes(removeSelfLoops: true);
             foreach (var builder in nodes.TopologicalSort())
             {
-                var builderResult = builder.Run();
+                var builderResult = builder.Run(this);
+
+                partialResults.Add(builder, builderResult);
                 result.UnionWith(builderResult);
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the result paths returned by the given builder if it has already ran. Otherwise it throws an
+        /// exception.
+        /// </summary>
+        /// <param name="builder">Builder which was added previously with <see cref="IBuildContext.AddBuilder"/> and was already executed.</param>
+        /// <returns>Return the return value of the builder's <see cref="IBuilder.Run"/> method.</returns>
+        public ISet<TargetRelativePath> GetResults(IBuilder builder)
+        {
+            ISet<TargetRelativePath> builderResult;
+            if (partialResults.TryGetValue(builder, out builderResult))
+                return builderResult;
+            else
+                throw new InvalidOperationException("Builder has not ran in this context");
         }
     }
 }

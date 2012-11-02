@@ -3,6 +3,7 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Model;
 using Ninject.Extensions.ChildKernel;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
@@ -36,7 +37,8 @@ namespace Bari.Plugins.Csharp.Build
 
             var childKernel = new ChildKernel(root);
             childKernel.Bind<Project>().ToConstant(project);
-            var csprojBuilder = childKernel.GetBuilder<CsprojBuilder>();
+            var csprojBuilder = childKernel.GetBuilder<CsprojBuilder>(
+                new ConstructorArgument("referenceBuilders", refBuilders));
 
             foreach (var refBuilder in refBuilders)            
                 context.AddBuilder(refBuilder, new IBuilder[0]);

@@ -26,13 +26,15 @@ namespace Bari.Core.Test.Build.Cache
             var realBuilder = new Mock<IBuilder>();
             var realBuilderDeps = new Mock<IDependencies>();
             var initialFingerprint = new Mock<IDependencyFingerprint>();
+            var buildContext = new Mock<IBuildContext>();
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
             realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
             
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
-            realBuilder.Setup(b => b.Run()).Returns(resultSet);
+            realBuilder.Setup(b => b.Uid).Returns("");
+            realBuilder.Setup(b => b.Run(buildContext.Object)).Returns(resultSet);
 
             // Creating the builder
             var cachedBuilder = new CachedBuilder(realBuilder.Object, cache.Object, targetDir);
@@ -40,22 +42,22 @@ namespace Bari.Core.Test.Build.Cache
             cachedBuilder.Dependencies.Should().Be(realBuilderDeps.Object);            
             
             // Running the builder for the first time
-            var result1 = cachedBuilder.Run();
+            var result1 = cachedBuilder.Run(buildContext.Object);
 
             // ..verifying
-            result1.Should().BeEquivalentTo(resultSet);            
-            realBuilder.Verify(b => b.Run(), Times.Once());
+            result1.Should().BeEquivalentTo(resultSet);
+            realBuilder.Verify(b => b.Run(buildContext.Object), Times.Once());
 
             // Modifying cache behavior
             cache.Setup(c => c.Contains(new BuildKey(realBuilder.Object.GetType(), ""), initialFingerprint.Object)).Returns(true);
             cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.GetType(), ""), targetDir)).Returns(resultSet);
 
             // Running the builder for the second time
-            var result2 = cachedBuilder.Run();
+            var result2 = cachedBuilder.Run(buildContext.Object);
 
             // ..verifying
             result2.Should().BeEquivalentTo(resultSet);
-            realBuilder.Verify(b => b.Run(), Times.Once());
+            realBuilder.Verify(b => b.Run(buildContext.Object), Times.Once());
         }
          
     }

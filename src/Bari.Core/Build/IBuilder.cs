@@ -24,8 +24,9 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        ISet<TargetRelativePath> Run();
+        ISet<TargetRelativePath> Run(IBuildContext context);
     }
 
     /// <summary>
@@ -58,9 +59,11 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuildContext context)
         {
+            Contract.Requires(context != null);
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
             return null; // dummy value
         }

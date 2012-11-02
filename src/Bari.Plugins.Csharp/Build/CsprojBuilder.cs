@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
@@ -19,6 +20,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IResolutionRoot root;
         private readonly Project project;
         private readonly IFileSystemDirectory targetDir;
+        private readonly ISet<IBuilder> referenceBuilders;
 
         /// <summary>
         /// Creates the builder
@@ -27,12 +29,14 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="root">Path to resolve instances</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
         /// <param name="targetDir">The target directory where the csproj file should be put</param>
-        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir)
+        /// <param name="referenceBuilders">Project reference builders</param>
+        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir, IEnumerable<IBuilder> referenceBuilders)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.root = root;
             this.project = project;
             this.targetDir = targetDir;
+            this.referenceBuilders = new HashSet<IBuilder>(referenceBuilders);
         }
 
         /// <summary>
@@ -45,8 +49,14 @@ namespace Bari.Plugins.Csharp.Build
                 if (project.HasNonEmptySourceSet("cs"))
                 {
                     return new MultipleDependencies(
-                        new SourceSetDependencies(root, project.GetSourceSet("cs")),
-                        new ProjectPropertiesDependencies(project, "Name", "Type"));
+                        new IDependencies[]
+                            {
+                                new SourceSetDependencies(root, project.GetSourceSet("cs")),
+                                new ProjectPropertiesDependencies(project, "Name", "Type")
+                            }
+                            .Concat(
+                                from refBuilder in referenceBuilders
+                                select new SubtaskDependency(refBuilder)));
                 }
                 else
                 {
@@ -66,13 +76,21 @@ namespace Bari.Plugins.Csharp.Build
         /// <summary>
         /// Runs this builder
         /// </summary>
+        /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        public ISet<TargetRelativePath> Run()
-        {
+        public ISet<TargetRelativePath> Run(IBuildContext context)
+        {            
             var csprojPath = project.Name + ".csproj";
             using (var csproj = targetDir.CreateTextFile(csprojPath))
             {
-                var generator = new CsprojGenerator(projectGuidManagement, "..", project, csproj); // TODO: path to suite root should not be hard coded
+                var references = new HashSet<TargetRelativePath>();
+                foreach (var refBuilder in referenceBuilders)
+                {
+                    var builderResults = context.GetResults(refBuilder);
+                    references.UnionWith(builderResults);
+                }
+
+                var generator = new CsprojGenerator(projectGuidManagement, "..", project, references, csproj); // TODO: path to suite root should not be hard coded
                 generator.Generate();
             }
 
