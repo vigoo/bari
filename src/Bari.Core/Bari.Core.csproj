@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\BuilderResolver.cs" />
+    <Compile Include="Build\Cache\BuildKey.cs" />
     <Compile Include="Build\Cache\CachedBuilder.cs" />
     <Compile Include="Build\Cache\FileBuildCache.cs" />
     <Compile Include="Build\Cache\MemoryCacheItem.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Generic\Graph\TopologicalSorting.cs" />
     <Compile Include="Generic\IFileSystemDirectory.cs" />
     <Compile Include="Generic\LocalFileSystemDirectory.cs" />
+    <Compile Include="Generic\MD5.cs" />
     <Compile Include="Generic\SuiteRelativePath.cs" />
     <Compile Include="Generic\SuiteRootAttribute.cs" />
     <Compile Include="Generic\TargetRelativePath.cs" />

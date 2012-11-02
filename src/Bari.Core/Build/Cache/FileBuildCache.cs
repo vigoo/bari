@@ -20,7 +20,7 @@ namespace Bari.Core.Build.Cache
 
         private readonly IFileSystemDirectory cacheRoot;
         private readonly IProtocolSerializer protocolSerializer;
-        private readonly IDictionary<Type, ReaderWriterLockSlim> locks;
+        private readonly IDictionary<BuildKey, ReaderWriterLockSlim> locks;
 
         /// <summary>
         /// Constructs the cache
@@ -31,7 +31,7 @@ namespace Bari.Core.Build.Cache
         {
             this.cacheRoot = cacheRoot;
             this.protocolSerializer = protocolSerializer;
-            locks = new Dictionary<Type, ReaderWriterLockSlim>();
+            locks = new Dictionary<BuildKey, ReaderWriterLockSlim>();
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Bari.Core.Build.Cache
         /// <see cref="IBuildCache.Store"/> operation will be ran for the given builder from other
         /// threads.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        public void LockForBuilder(Type builder)
+        /// <param name="builder">Builder key</param>
+        public void LockForBuilder(BuildKey builder)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterUpgradeableReadLock();
@@ -51,8 +51,8 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Removes the lock put by the <see cref="IBuildCache.LockForBuilder"/> method.
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        public void UnlockForBuilder(Type builder)
+        /// <param name="builder">Builder key</param>
+        public void UnlockForBuilder(BuildKey builder)
         {
             ReaderWriterLockSlim lck;
             if (locks.TryGetValue(builder, out lck))
@@ -62,11 +62,11 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Store build outputs in the cache by reading them from the file system
         /// </summary>
-        /// <param name="builder">Builder type (first part of the key)</param>
+        /// <param name="builder">Builder key (first part of the key)</param>
         /// <param name="fingerprint">Dependency fingerprint created when the builder was executed (second part of the key)</param>
         /// <param name="outputs">Target-relative path of the build outputs to be cached</param>
         /// <param name="targetRoot">File system abstraction of the root target directory</param>
-        public void Store(Type builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs, IFileSystemDirectory targetRoot)
+        public void Store(BuildKey builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs, IFileSystemDirectory targetRoot)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterWriteLock();
@@ -89,10 +89,10 @@ namespace Bari.Core.Build.Cache
         /// <para>If <see cref="IBuildCache.Restore"/> will be also called, the cache must be locked first using
         /// the <see cref="IBuildCache.LockForBuilder"/> method.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="fingerprint">Current dependency fingerprint</param>
         /// <returns>Returns <c>true</c> if there are stored outputs for the given builder and fingerprint combination.</returns>
-        public bool Contains(Type builder, IDependencyFingerprint fingerprint)
+        public bool Contains(BuildKey builder, IDependencyFingerprint fingerprint)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterReadLock();
@@ -129,10 +129,10 @@ namespace Bari.Core.Build.Cache
         /// use <see cref="IBuildCache.Contains"/>.</para>
         /// <para>To ensure thread safety, use <see cref="IBuildCache.LockForBuilder"/>.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
-        public ISet<TargetRelativePath> Restore(Type builder, IFileSystemDirectory targetRoot)
+        public ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterReadLock();
@@ -176,9 +176,9 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Gets an existing lock or creates a new one
         /// </summary>
-        /// <param name="builder">Builder type used as a key to get locks</param>
+        /// <param name="builder">Builder key used as a key to get locks</param>
         /// <returns>Returns a reader-writer lock</returns>
-        private ReaderWriterLockSlim GetOrCreateLock(Type builder)
+        private ReaderWriterLockSlim GetOrCreateLock(BuildKey builder)
         {
             ReaderWriterLockSlim lck;
             if (!locks.TryGetValue(builder, out lck))
@@ -243,13 +243,13 @@ namespace Bari.Core.Build.Cache
         }
 
         /// <summary>
-        /// Gets the directory name associated with a given builder type
+        /// Gets the directory name associated with a given Builder key
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <returns>Returns a valid directory name</returns>
-        private static string GetCacheDirectoryName(Type builder)
+        private static string GetCacheDirectoryName(BuildKey builder)
         {
-            return builder.FullName;
+            return builder.ToString();
         }
     }
 }

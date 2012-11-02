@@ -16,7 +16,7 @@ namespace Bari.Plugins.Csharp.Build
     {
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
-        private readonly IList<Project> projects; 
+        private readonly IList<Project> projects;
         private readonly ISet<IBuilder> projectBuilders;
         private readonly IDependencies projectDependencies;
 
@@ -57,6 +57,18 @@ namespace Bari.Plugins.Csharp.Build
         public IDependencies Dependencies
         {
             get { return projectDependencies; }
+        }
+
+        public string Uid
+        {
+            get
+            {
+                return MD5.Encode(string.Join(",",
+                                   from project in projects
+                                   let module = project.Module
+                                   let fullName = module + "." + project.Name
+                                   select fullName));
+            }
         }
 
         /// <summary>

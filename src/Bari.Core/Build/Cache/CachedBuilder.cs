@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Bari.Core.Generic;
 
@@ -26,6 +25,14 @@ namespace Bari.Core.Build.Cache
         }
 
         /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
+        public string Uid
+        {
+            get { return wrappedBuilder.Uid; }
+        }
+
+        /// <summary>
         /// Creates a cached builder
         /// </summary>
         /// <param name="wrappedBuilder">The builder instance to be wrapped</param>
@@ -49,29 +56,29 @@ namespace Bari.Core.Build.Cache
         public ISet<TargetRelativePath> Run()
         {
             var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
-            var builderType = wrappedBuilder.GetType();
+            var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
 
-            cache.LockForBuilder(builderType);
+            cache.LockForBuilder(buildKey);
             try
             {
-                if (cache.Contains(builderType, currentFingerprint))
+                if (cache.Contains(buildKey, currentFingerprint))
                 {
-                    log.DebugFormat("Restoring cached build outputs for {0}", builderType);
-                    return cache.Restore(builderType, targetDir);
+                    log.DebugFormat("Restoring cached build outputs for {0}", buildKey);
+                    return cache.Restore(buildKey, targetDir);
                 }
                 else
                 {
-                    log.DebugFormat("Running builder {0}", builderType);
+                    log.DebugFormat("Running builder {0}", buildKey);
                     var files = wrappedBuilder.Run();
 
-                    log.DebugFormat("Storing build outputs of {0}", builderType);
-                    cache.Store(builderType, currentFingerprint, files, targetDir);
+                    log.DebugFormat("Storing build outputs of {0}", buildKey);
+                    cache.Store(buildKey, currentFingerprint, files, targetDir);
                     return files;
                 }
             }
             finally
             {
-                cache.UnlockForBuilder(wrappedBuilder.GetType());
+                cache.UnlockForBuilder(buildKey);
             }
         }
     }

@@ -47,8 +47,8 @@ namespace Bari.Core.Test.Build.Cache
             realBuilder.Verify(b => b.Run(), Times.Once());
 
             // Modifying cache behavior
-            cache.Setup(c => c.Contains(realBuilder.Object.GetType(), initialFingerprint.Object)).Returns(true);
-            cache.Setup(c => c.Restore(realBuilder.Object.GetType(), targetDir)).Returns(resultSet);
+            cache.Setup(c => c.Contains(new BuildKey(realBuilder.Object.GetType(), ""), initialFingerprint.Object)).Returns(true);
+            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.GetType(), ""), targetDir)).Returns(resultSet);
 
             // Running the builder for the second time
             var result2 = cachedBuilder.Run();

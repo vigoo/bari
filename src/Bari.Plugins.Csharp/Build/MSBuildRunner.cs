@@ -46,6 +46,11 @@ namespace Bari.Plugins.Csharp.Build
             }
         }
 
+        public string Uid
+        {
+            get { return slnBuilder.Uid; }
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>

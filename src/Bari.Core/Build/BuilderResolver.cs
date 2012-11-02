@@ -16,7 +16,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Creates a new builder instance and wraps it with <see cref="CachedBuilder"/> automatically.
         /// </summary>
-        /// <typeparam name="T">Builder type to be created</typeparam>
+        /// <typeparam name="T">Builder key to be created</typeparam>
         /// <param name="root">Interface to create new instances</param>
         /// <param name="parameters">Optional parameters for the inner builder</param>
         /// <returns>Returns a cached builder instance</returns>
@@ -31,7 +31,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Creates a new builder instance and wraps it with <see cref="CachedBuilder"/> automatically.
         /// </summary>
-        /// <typeparam name="T">Builder type to be created</typeparam>
+        /// <typeparam name="T">Builder key to be created</typeparam>
         /// <param name="root">Interface to create new instances</param>
         /// <param name="reference">The reference (type is encoded as the scheme part of the reference URI)</param>
         /// <param name="parameters">Optional parameters for the inner builder</param>

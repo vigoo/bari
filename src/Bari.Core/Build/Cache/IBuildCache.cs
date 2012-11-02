@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -20,23 +19,23 @@ namespace Bari.Core.Build.Cache
         /// <see cref="Store"/> operation will be ran for the given builder from other
         /// threads.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        void LockForBuilder(Type builder);
+        /// <param name="builder">Builder key</param>
+        void LockForBuilder(BuildKey builder);
 
         /// <summary>
         /// Removes the lock put by the <see cref="LockForBuilder"/> method.
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        void UnlockForBuilder(Type builder);
+        /// <param name="builder">Builder key</param>
+        void UnlockForBuilder(BuildKey builder);
 
         /// <summary>
         /// Store build outputs in the cache by reading them from the file system
         /// </summary>
-        /// <param name="builder">Builder type (first part of the key)</param>
+        /// <param name="builder">Builder key (first part of the key)</param>
         /// <param name="fingerprint">Dependency fingerprint created when the builder was executed (second part of the key)</param>
         /// <param name="outputs">Target-relative path of the build outputs to be cached</param>
         /// <param name="targetRoot">File system abstraction of the root target directory</param>
-        void Store(Type builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs,
+        void Store(BuildKey builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs,
                    IFileSystemDirectory targetRoot);
 
         /// <summary>
@@ -45,10 +44,10 @@ namespace Bari.Core.Build.Cache
         /// <para>If <see cref="Restore"/> will be also called, the cache must be locked first using
         /// the <see cref="LockForBuilder"/> method.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="fingerprint">Current dependency fingerprint</param>
         /// <returns>Returns <c>true</c> if there are stored outputs for the given builder and fingerprint combination.</returns>
-        bool Contains(Type builder, IDependencyFingerprint fingerprint);
+        bool Contains(BuildKey builder, IDependencyFingerprint fingerprint);
 
         /// <summary>
         /// Restores the stored files for a given builder to a file system directory
@@ -58,9 +57,9 @@ namespace Bari.Core.Build.Cache
         /// use <see cref="Contains"/>.</para>
         /// <para>To ensure thread safety, use <see cref="LockForBuilder"/>.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
-        ISet<TargetRelativePath> Restore(Type builder, IFileSystemDirectory targetRoot);
+        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot);
     }
 }

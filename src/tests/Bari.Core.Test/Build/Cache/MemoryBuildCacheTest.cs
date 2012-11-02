@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using Bari.Core.Build;
 using Bari.Core.Build.Cache;
@@ -16,7 +14,7 @@ namespace Bari.Core.Test.Build.Cache
     public class MemoryBuildCacheTest
     {
         private IBuildCache cache;
-        private Type T;
+        private BuildKey T;
         private IFileSystemDirectory root;
         private Mock<IDependencyFingerprint> fingerprint;
         private Mock<IDependencyFingerprint> otherFingerprint;
@@ -25,7 +23,7 @@ namespace Bari.Core.Test.Build.Cache
         public void SetUp()
         {
             cache = new MemoryBuildCache();
-            T = typeof(IBuilder);
+            T = new BuildKey(typeof(IBuilder), "test");
             root = new TestFileSystemDirectory("root");           
 
             fingerprint = new Mock<IDependencyFingerprint>();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace Bari.Core.Build.Cache
     /// </summary>
     public class MemoryBuildCache : IBuildCache
     {
-        private readonly IDictionary<Type, MemoryCacheItem> cache = new Dictionary<Type, MemoryCacheItem>();
+        private readonly IDictionary<BuildKey, MemoryCacheItem> cache = new Dictionary<BuildKey, MemoryCacheItem>();
 
         /// <summary>
         /// Locks the cache for a given builder. 
@@ -21,8 +20,8 @@ namespace Bari.Core.Build.Cache
         /// <see cref="IBuildCache.Store"/> operation will be ran for the given builder from other
         /// threads.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        public void LockForBuilder(Type builder)
+        /// <param name="builder">Builder key</param>
+        public void LockForBuilder(BuildKey builder)
         {
             GetOrCreate(builder).EnterUpgradeableLock();
         }
@@ -30,8 +29,8 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Removes the lock put by the <see cref="IBuildCache.LockForBuilder"/> method.
         /// </summary>
-        /// <param name="builder">Builder type</param>
-        public void UnlockForBuilder(Type builder)
+        /// <param name="builder">Builder key</param>
+        public void UnlockForBuilder(BuildKey builder)
         {
             GetOrCreate(builder).ExitUpgradeableLock();
         }
@@ -39,11 +38,11 @@ namespace Bari.Core.Build.Cache
         /// <summary>
         /// Store build outputs in the cache by reading them from the file system
         /// </summary>
-        /// <param name="builder">Builder type (first part of the key)</param>
+        /// <param name="builder">Builder key (first part of the key)</param>
         /// <param name="fingerprint">Dependency fingerprint created when the builder was executed (second part of the key)</param>
         /// <param name="outputs">Target-relative path of the build outputs to be cached</param>
         /// <param name="targetRoot">File system abstraction of the root target directory</param>
-        public void Store(Type builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs, IFileSystemDirectory targetRoot)
+        public void Store(BuildKey builder, IDependencyFingerprint fingerprint, IEnumerable<TargetRelativePath> outputs, IFileSystemDirectory targetRoot)
         {
             MemoryCacheItem item = GetOrCreate(builder);            
 
@@ -69,10 +68,10 @@ namespace Bari.Core.Build.Cache
         /// <para>If <see cref="IBuildCache.Restore"/> will be also called, the cache must be locked first using
         /// the <see cref="IBuildCache.LockForBuilder"/> method.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="fingerprint">Current dependency fingerprint</param>
         /// <returns>Returns <c>true</c> if there are stored outputs for the given builder and fingerprint combination.</returns>
-        public bool Contains(Type builder, IDependencyFingerprint fingerprint)
+        public bool Contains(BuildKey builder, IDependencyFingerprint fingerprint)
         {
             lock (cache)
             {
@@ -96,10 +95,10 @@ namespace Bari.Core.Build.Cache
         /// use <see cref="IBuildCache.Contains"/>.</para>
         /// <para>To ensure thread safety, use <see cref="IBuildCache.LockForBuilder"/>.</para>
         /// </summary>
-        /// <param name="builder">Builder type</param>
+        /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
-        public ISet<TargetRelativePath> Restore(Type builder, IFileSystemDirectory targetRoot)
+        public ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot)
         {
             MemoryCacheItem item;
             lock (cache)
@@ -125,7 +124,7 @@ namespace Bari.Core.Build.Cache
             }
         }
 
-        private MemoryCacheItem GetOrCreate(Type builder)
+        private MemoryCacheItem GetOrCreate(BuildKey builder)
         {
             Contract.Requires(builder != null);
             Contract.Ensures(Contract.Result<MemoryCacheItem>() != null);

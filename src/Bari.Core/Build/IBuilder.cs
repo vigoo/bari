@@ -17,6 +17,11 @@ namespace Bari.Core.Build
         IDependencies Dependencies { get; }
 
         /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
+        string Uid { get; }
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
@@ -27,7 +32,7 @@ namespace Bari.Core.Build
     /// Contracts for <see cref="IBuilder"/> interface
     /// </summary>
     [ContractClassFor(typeof(IBuilder))]
-    abstract class IBuilderContracts: IBuilder
+    abstract class IBuilderContracts : IBuilder
     {
         /// <summary>
         /// Dependencies required for running this builder
@@ -38,6 +43,15 @@ namespace Bari.Core.Build
             {
                 Contract.Ensures(Contract.Result<IDependencies>() != null);
                 return null; // dummy value
+            }
+        }
+
+        public string Uid
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<string>() != null);
+                return null; // dummy value 
             }
         }
 

@@ -4,8 +4,6 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
-using Ninject;
-using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
@@ -55,6 +53,14 @@ namespace Bari.Plugins.Csharp.Build
                     return new NoDependencies();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
+        public string Uid
+        {
+            get { return project.Module.Name + "." + project.Name; }
         }
 
         /// <summary>

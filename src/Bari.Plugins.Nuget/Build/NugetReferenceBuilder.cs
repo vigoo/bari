@@ -47,6 +47,11 @@ namespace Bari.Plugins.Nuget.Build
             get { return new NoDependencies(); }
         }
 
+        public string Uid
+        {
+            get { return reference.Uri.Host; }
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>
