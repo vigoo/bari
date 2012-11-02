@@ -1,4 +1,5 @@
-﻿using Bari.Core.Model;
+﻿using System;
+using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using FluentAssertions;
 using NUnit.Framework;
@@ -104,6 +105,42 @@ modules:
             suite.GetModule("Module1").GetProject("Project11").Type.Should().Be(ProjectType.Library);
             suite.GetModule("Module3").GetProject("Project31").Type.Should().Be(ProjectType.Library);
             suite.GetModule("Module3").GetProject("Project32").Type.Should().Be(ProjectType.Executable);
+        }
+
+        [Test]
+        public void ProjectReferencesRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:    
+    - name: Module
+      projects:
+        - name: Project
+          references:
+            - test://ref1
+            - test://ref2
+            - test://ref3
+";
+
+            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Modules.Should().HaveCount(1);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module");
+            suite.GetModule("Module").Projects.Should().HaveCount(1);
+            suite.GetModule("Module").Projects.Should().Contain(p => p.Name == "Project");
+            var prj = suite.GetModule("Module").GetProject("Project");
+
+            prj.Should().NotBeNull();
+            prj.References.Should().NotBeEmpty();
+            prj.References.Should().HaveCount(3);
+            prj.References.Should().OnlyContain(r => r.Uri == new Uri("test://ref1") ||
+                                                     r.Uri == new Uri("test://ref2") ||
+                                                     r.Uri == new Uri("test://ref3"));
         }
     }
 }

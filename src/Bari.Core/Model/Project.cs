@@ -11,9 +11,12 @@ namespace Bari.Core.Model
     /// </summary>
     public class Project
     {
+        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (Project));
+
         private readonly Module module;
         private readonly string name;
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
+        private readonly ISet<Reference> references = new HashSet<Reference>();
         private ProjectType type = ProjectType.Library;
 
         /// <summary>
@@ -56,6 +59,19 @@ namespace Bari.Core.Model
                 Contract.Ensures(Contract.Result<IEnumerable<SourceSet>>() != null);
 
                 return sourceSets.Values;
+            }
+        }
+
+        /// <summary>
+        /// Gets the project references
+        /// </summary>
+        public IEnumerable<Reference> References
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<Reference>>() != null);
+
+                return references;
             }
         }
 
@@ -108,6 +124,17 @@ namespace Bari.Core.Model
         {
             return sourceSets.ContainsKey(setType) &&
                    sourceSets[setType].Files.Any();
+        }
+
+        /// <summary>
+        /// Adds a new reference to the set of project references
+        /// </summary>
+        /// <param name="reference">The new reference to be added</param>
+        public void AddReference(Reference reference)
+        {
+            log.DebugFormat("Reference {0} added to project {1}", reference, name);
+
+            references.Add(reference);
         }
     }
 }

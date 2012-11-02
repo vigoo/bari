@@ -11,6 +11,7 @@ namespace Bari.Plugins.Csharp.Tools
     /// </summary>
     public class MSBuild: IMSBuild
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MSBuild));
         private readonly IParameters parameters;
 
         /// <summary>
@@ -42,6 +43,9 @@ namespace Bari.Plugins.Csharp.Tools
                         Arguments = (Path.GetFileName(absPath) ?? String.Empty) + " /nologo /verbosity:"+Verbosity,
                         UseShellExecute = false
                     };
+                
+                log.DebugFormat("Executing {0} with arguments {1}", path, psi.Arguments);
+
                 using (var process = Process.Start(psi))
                 {
                     process.WaitForExit();

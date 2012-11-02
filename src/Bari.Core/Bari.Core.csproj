@@ -119,6 +119,7 @@
     <Compile Include="Build\IDependencies.cs" />
     <Compile Include="Build\IDependencyFingerprint.cs" />
     <Compile Include="Build\IProjectBuilderFactory.cs" />
+    <Compile Include="Build\IReferenceBuilder.cs" />
     <Compile Include="Commands\BuildCommand.cs" />
     <Compile Include="Commands\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Model\Module.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectType.cs" />
+    <Compile Include="Model\Reference.cs" />
     <Compile Include="Model\SourceSet.cs" />
     <Compile Include="Model\Suite.cs" />
     <Compile Include="Model\DefaultSuiteLoader.cs" />

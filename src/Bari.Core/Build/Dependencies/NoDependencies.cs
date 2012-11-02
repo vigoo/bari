@@ -22,6 +22,14 @@ namespace Bari.Core.Build.Dependencies
         {
             public static readonly IDependencyFingerprint Instance = new NoDependencyFingerprint();
 
+            public NoDependencyFingerprint()
+            {
+            }
+
+            public NoDependencyFingerprint(IProtocolSerializer serializer, Stream sourceStream)
+            {                
+            }
+
             /// <summary>
             /// Indicates whether the current object is equal to another object of the same type.
             /// </summary>

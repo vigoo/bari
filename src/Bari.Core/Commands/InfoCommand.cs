@@ -104,12 +104,27 @@ Example: `bari info`
             Contract.Requires(project != null);
 
             output.Message("    *Name:* {0}", project.Name);
-            output.Message("    *Source sets:");
+            output.Message("    *Type:* {0}", project.Type);
 
-            foreach (var sourceSet in project.SourceSets)
+            if (project.References.Any())
             {
-                if (sourceSet.Files.Any())
-                    output.Message("      `{0}`\t{1} files", sourceSet.Type, sourceSet.Files.Count());
+                output.Message("    *References:* {0}", project.Type);
+
+                foreach (var reference in project.References)
+                {
+                    output.Message("      `{0}`", reference.Uri);
+                }
+            }
+
+            if (project.SourceSets.Any())
+            {
+                output.Message("    *Source sets:");
+
+                foreach (var sourceSet in project.SourceSets)
+                {
+                    if (sourceSet.Files.Any())
+                        output.Message("      `{0}`\t{1} files", sourceSet.Type, sourceSet.Files.Count());
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Model;
-using Ninject.Extensions.ChildKernel;
+using Ninject;
 using Ninject.Parameters;
 using Ninject.Syntax;
 
@@ -36,7 +36,7 @@ namespace Bari.Plugins.Csharp.Build
         {
             var projectBuilders = new HashSet<IBuilder>(
                 from project in projects
-                select CreateProjectBuilder(project)
+                select CreateProjectBuilder(context, project)
                     into builder
                     where builder != null
                     select builder
@@ -46,22 +46,17 @@ namespace Bari.Plugins.Csharp.Build
                 new ConstructorArgument("projects", projects),
                 new ConstructorArgument("projectBuilders", projectBuilders));
 
-            foreach (var projectBuilder in projectBuilders)            
-                context.AddBuilder(projectBuilder, new IBuilder[0]);
-            
             context.AddBuilder(slnBuilder, projectBuilders);
 
             return slnBuilder;
         }
 
-        private IBuilder CreateProjectBuilder(Project project)
+        private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
         {
             if (project.HasNonEmptySourceSet("cs"))
             {
-                var childKernel = new ChildKernel(root);
-                childKernel.Bind<Project>().ToConstant(project);
-
-                return childKernel.GetBuilder<CsprojBuilder>();
+                var csprojBuilder = root.Get<CsprojBuilderFactory>();
+                return csprojBuilder.AddToContext(context, project);
             }
             else
             {

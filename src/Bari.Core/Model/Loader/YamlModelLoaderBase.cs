@@ -88,6 +88,23 @@ namespace Bari.Core.Model.Loader
                     {
                         SetProjectType(project, ((YamlScalarNode) pair.Value).Value);
                     }
+                    else if (new YamlScalarNode("references").Equals(pair.Key) &&
+                        pair.Value is YamlSequenceNode)
+                    {
+                        SetProjectReferences(project, ((YamlSequenceNode) pair.Value).Children);
+                    }
+                }
+            }
+        }
+
+        private void SetProjectReferences(Project project, IEnumerable<YamlNode> referenceNodes)
+        {
+            foreach (var referenceNode in referenceNodes)
+            {
+                if (referenceNode is YamlScalarNode)
+                {
+                    var uri = ((YamlScalarNode) referenceNode).Value;
+                    project.AddReference(new Reference(new Uri(uri)));
                 }
             }
         }
