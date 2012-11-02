@@ -48,6 +48,18 @@ namespace Bari.Core.Build.Dependencies
             }
 
             /// <summary>
+            /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+            /// </summary>
+            /// <returns>
+            /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+            /// </returns>
+            /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
+            public override bool Equals(object obj)
+            {
+                return obj is NoDependencyFingerprint;
+            }
+
+            /// <summary>
             /// Saves the fingerprint to the given target stream
             /// </summary>
             /// <param name="serializer">The serializer implementation to be used</param>

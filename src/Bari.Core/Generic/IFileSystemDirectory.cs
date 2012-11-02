@@ -176,7 +176,6 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
-            Contract.Ensures(ChildDirectories.Contains(name));
 
             return null; // dummy value
         }
