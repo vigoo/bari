@@ -99,6 +99,9 @@ namespace Bari.Core.Model.Loader
 
         private void SetProjectReferences(Project project, IEnumerable<YamlNode> referenceNodes)
         {
+            Contract.Requires(project != null);
+            Contract.Requires(referenceNodes!= null);
+
             foreach (var referenceNode in referenceNodes)
             {
                 if (referenceNode is YamlScalarNode)
@@ -111,6 +114,9 @@ namespace Bari.Core.Model.Loader
 
         private void SetProjectType(Project project, string typeString)
         {
+            Contract.Requires(project != null);
+            Contract.Requires(typeString != null);
+
             switch (typeString.ToLowerInvariant())
             {
                 case "executable":

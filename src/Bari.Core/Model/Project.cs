@@ -132,7 +132,8 @@ namespace Bari.Core.Model
         /// <param name="reference">The new reference to be added</param>
         public void AddReference(Reference reference)
         {
-            log.DebugFormat("Reference {0} added to project {1}", reference, name);
+            Contract.Requires(reference != null);
+            Contract.Ensures(References.Contains(reference));
 
             references.Add(reference);
         }

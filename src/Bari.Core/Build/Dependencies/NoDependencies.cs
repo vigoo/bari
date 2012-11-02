@@ -22,10 +22,15 @@ namespace Bari.Core.Build.Dependencies
         {
             public static readonly IDependencyFingerprint Instance = new NoDependencyFingerprint();
 
-            public NoDependencyFingerprint()
+            private NoDependencyFingerprint()
             {
             }
 
+            /// <summary>
+            /// Serialization constructor for <see cref="NoDependencyFingerprint"/>
+            /// </summary>
+            /// <param name="serializer">Serializer implementation to be used</param>
+            /// <param name="sourceStream">Stream representing this object</param>
             public NoDependencyFingerprint(IProtocolSerializer serializer, Stream sourceStream)
             {                
             }

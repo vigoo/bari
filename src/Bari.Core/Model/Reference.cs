@@ -1,17 +1,32 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using Bari.Core.Build;
 
 namespace Bari.Core.Model
 {
+    /// <summary>
+    /// Represent a project reference
+    /// 
+    /// <para>A project reference is described by an URI, where the scheme part (before ://)
+    /// identifies the <see cref="IReferenceBuilder"/> to be used, an the other components
+    /// of the URI are processed by the selected builder.</para>
+    /// </summary>
     public class Reference : IEquatable<Reference>
     {
         private readonly Uri uri;
 
+        /// <summary>
+        /// Gets the reference URI
+        /// </summary>
         public Uri Uri
         {
             get { return uri; }
         }
 
+        /// <summary>
+        /// Constructs the reference
+        /// </summary>
+        /// <param name="uri">The reference URI</param>
         public Reference(Uri uri)
         {
             Contract.Requires(uri != null);
@@ -60,16 +75,29 @@ namespace Bari.Core.Model
             return uri.GetHashCode();
         }
 
+        /// <summary>
+        /// Equality operator for references
+        /// </summary>
         public static bool operator ==(Reference left, Reference right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator for references
+        /// </summary>
         public static bool operator !=(Reference left, Reference right)
         {
             return !Equals(left, right);
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
             return uri.ToString();
