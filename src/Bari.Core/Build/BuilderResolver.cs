@@ -42,7 +42,7 @@ namespace Bari.Core.Build
             Contract.Requires(root != null);
             Contract.Requires(reference != null);
 
-            var builder = root.Get<T>(reference.Uri.Scheme, parameters);
+            var builder = root.TryGet<T>(reference.Uri.Scheme, parameters);
             if (builder != null)
             {
                 builder.Reference = reference;

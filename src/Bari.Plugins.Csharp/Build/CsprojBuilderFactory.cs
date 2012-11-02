@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Ninject.Extensions.ChildKernel;
 using Ninject.Parameters;
@@ -54,7 +55,7 @@ namespace Bari.Plugins.Csharp.Build
             if (builder != null)
                 return builder;
             else
-                throw new NotSupportedException(string.Format("Reference type {0} is not supported", reference.Uri.Scheme));
+                throw new InvalidReferenceTypeException(reference.Uri.Scheme);
         }
     }
 }

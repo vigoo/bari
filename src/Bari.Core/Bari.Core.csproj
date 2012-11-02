@@ -128,6 +128,7 @@
     <Compile Include="Commands\InfoCommand.cs" />
     <Compile Include="Exceptions\InvalidCommandException.cs" />
     <Compile Include="Exceptions\InvalidCommandParameterException.cs" />
+    <Compile Include="Exceptions\InvalidReferenceTypeException.cs" />
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Generic\FileSystemDirectoryExtensions.cs" />
