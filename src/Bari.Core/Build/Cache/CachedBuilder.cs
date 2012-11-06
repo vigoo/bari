@@ -50,6 +50,17 @@ namespace Bari.Core.Build.Cache
         }
 
         /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public void AddToContext(IBuildContext context)
+        {
+            wrappedBuilder.AddToContext(context);
+        }
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context"> </param>
@@ -81,6 +92,11 @@ namespace Bari.Core.Build.Cache
             {
                 cache.UnlockForBuilder(buildKey);
             }
+        }
+
+        public override string ToString()
+        {
+            return wrappedBuilder.ToString() + "*";
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        void AddToContext(IBuildContext context, IEnumerable<Project> projects);
+        IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects);
     }
 
     /// <summary>
@@ -31,10 +31,12 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        public void AddToContext(IBuildContext context, IEnumerable<Project> projects)
+        public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
         {
             Contract.Requires(context != null);
             Contract.Requires(projects != null);
+
+            return null; // dummy value
         }
     }
 }

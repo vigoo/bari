@@ -6,6 +6,7 @@ using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
 using Ninject;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Commands
@@ -87,8 +88,8 @@ Example: `bari vs HelloWorld`
         private void Run(Module module)
         {
             var buildContext = root.Get<IBuildContext>();
-            var slnBuilderFactory = root.Get<SlnBuilderFactory>();
-            slnBuilderFactory.AddToContext(buildContext, module.Projects);
+            var slnBuilder = root.GetBuilder<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
+            slnBuilder.AddToContext(buildContext);
             
             var outputs = buildContext.Run();
 

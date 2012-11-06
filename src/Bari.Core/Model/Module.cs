@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 namespace Bari.Core.Model
@@ -9,7 +10,9 @@ namespace Bari.Core.Model
     public class Module
     {
         private readonly string name;
-        private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>();
+
+        private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
+            StringComparer.InvariantCultureIgnoreCase);
 
 
         [ContractInvariantMethod]
@@ -70,7 +73,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(projectName));
             Contract.Ensures(Contract.Result<Project>() != null);
-            Contract.Ensures(Contract.Result<Project>().Name == projectName);
+            Contract.Ensures(String.Equals(Contract.Result<Project>().Name, projectName, StringComparison.InvariantCultureIgnoreCase));
             Contract.Ensures(projects.ContainsKey(projectName));
 
             Project result;
@@ -82,6 +85,16 @@ namespace Bari.Core.Model
                 projects.Add(projectName, result);
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Returns true if a project with the given name belongs to this module
+        /// </summary>
+        /// <param name="projectName">Project name to look for</param>
+        /// <returns>Returns <c>true</c> if the module has the given project</returns>
+        public bool HasProject(string projectName)
+        {
+            return projects.ContainsKey(projectName);
         }
     }
 }

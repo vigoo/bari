@@ -6,6 +6,8 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
+using Ninject.Extensions.ChildKernel;
+using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
 {
@@ -14,41 +16,30 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class SlnBuilder : IBuilder
     {
+        private readonly IResolutionRoot root;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
         private readonly IList<Project> projects;
-        private readonly ISet<IBuilder> projectBuilders;
-        private readonly IDependencies projectDependencies;
+        private ISet<IBuilder> projectBuilders;
+        private IDependencies projectDependencies;
 
         /// <summary>
         /// Creates the builder
         /// </summary>
         /// <param name="projectGuidManagement">The project-guid mapper to use</param>
         /// <param name="projects">The projects to be included to the solution</param>
-        /// <param name="projectBuilders">Projects builders to be used as dependencies</param>
         /// <param name="targetDir">The target directory where the sln file should be put</param>
-        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, IEnumerable<IBuilder> projectBuilders, [TargetRoot] IFileSystemDirectory targetDir)
+        /// <param name="root">Interface for creating new builder instances</param>
+        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projects != null);
-            Contract.Requires(projectBuilders != null);
             Contract.Requires(targetDir != null);
 
             this.projectGuidManagement = projectGuidManagement;
             this.projects = projects.ToList();
-            this.projectBuilders = new HashSet<IBuilder>(projectBuilders);
             this.targetDir = targetDir;
-
-            if (this.projectBuilders.Count == 1)
-            {
-                projectDependencies = new SubtaskDependency(this.projectBuilders.First());
-            }
-            else
-            {
-                projectDependencies = new MultipleDependencies(
-                    from builder in this.projectBuilders
-                    select new SubtaskDependency(builder));
-            }
+            this.root = root;
         }
 
         /// <summary>
@@ -72,13 +63,61 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public void AddToContext(IBuildContext context)
+        {
+            projectBuilders = new HashSet<IBuilder>(
+                from project in projects
+                select CreateProjectBuilder(context, project)
+                    into builder
+                    where builder != null
+                    select builder
+                );
+
+            context.AddBuilder(this, projectBuilders);
+
+            if (projectBuilders.Count == 1)
+            {
+                projectDependencies = new SubtaskDependency(projectBuilders.First());
+            }
+            else
+            {
+                projectDependencies = new MultipleDependencies(
+                    from builder in projectBuilders
+                    select new SubtaskDependency(builder));
+            }
+        }
+
+        private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
+        {
+            if (project.HasNonEmptySourceSet("cs"))
+            {
+                var childKernel = new ChildKernel(root);
+                childKernel.Bind<Project>().ToConstant(project);
+                childKernel.Rebind<IResolutionRoot>().ToConstant(childKernel);
+
+                var csprojBuilder = childKernel.GetBuilder<CsprojBuilder>();
+                csprojBuilder.AddToContext(context);
+                return csprojBuilder;
+            }
+            else
+            {
+                return null;
+            }
+        } 
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            const string slnPath = "generated.sln";
+            string slnPath = Uid + ".sln";
 
             using (var sln = targetDir.CreateTextFile(slnPath))
             {
@@ -87,6 +126,18 @@ namespace Bari.Plugins.Csharp.Build
             }
 
             return new HashSet<TargetRelativePath> { new TargetRelativePath(slnPath) };
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("[{0}.sln]", Uid);
         }
     }
 }

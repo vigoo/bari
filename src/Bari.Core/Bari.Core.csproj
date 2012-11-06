@@ -121,6 +121,7 @@
     <Compile Include="Build\IDependencyFingerprint.cs" />
     <Compile Include="Build\IProjectBuilderFactory.cs" />
     <Compile Include="Build\IReferenceBuilder.cs" />
+    <Compile Include="Build\ModuleReferenceBuilder.cs" />
     <Compile Include="Commands\BuildCommand.cs" />
     <Compile Include="Commands\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Commands\InfoCommand.cs" />
     <Compile Include="Exceptions\InvalidCommandException.cs" />
     <Compile Include="Exceptions\InvalidCommandParameterException.cs" />
+    <Compile Include="Exceptions\InvalidReferenceException.cs" />
     <Compile Include="Exceptions\InvalidReferenceTypeException.cs" />
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />

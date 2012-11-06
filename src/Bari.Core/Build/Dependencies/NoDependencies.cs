@@ -60,6 +60,18 @@ namespace Bari.Core.Build.Dependencies
             }
 
             /// <summary>
+            /// Serves as a hash function for a particular type. 
+            /// </summary>
+            /// <returns>
+            /// A hash code for the current <see cref="T:System.Object"/>.
+            /// </returns>
+            /// <filterpriority>2</filterpriority>
+            public override int GetHashCode()
+            {
+                return 11;
+            }
+
+            /// <summary>
             /// Saves the fingerprint to the given target stream
             /// </summary>
             /// <param name="serializer">The serializer implementation to be used</param>

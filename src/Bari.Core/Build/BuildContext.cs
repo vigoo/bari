@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Generic.Graph;
 
@@ -14,6 +15,8 @@ namespace Bari.Core.Build
     /// </summary>
     public class BuildContext: IBuildContext
     {
+        private log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildContext));
+
         private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
             new Dictionary<IBuilder, ISet<TargetRelativePath>>();
@@ -43,7 +46,11 @@ namespace Bari.Core.Build
 
             var result = new HashSet<TargetRelativePath>();            
             var nodes = builders.BuildNodes(removeSelfLoops: true);
-            foreach (var builder in nodes.TopologicalSort())
+            var sortedBuilders = nodes.TopologicalSort().ToList();            
+
+            log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
+
+            foreach (var builder in sortedBuilders)
             {
                 var builderResult = builder.Run(this);
 

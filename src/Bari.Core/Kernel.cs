@@ -63,6 +63,9 @@ namespace Bari.Core
 
             // Default build context
             kernel.Bind<IBuildContext>().To<BuildContext>();
+
+            // Builders 
+            kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
         }
     }
 }

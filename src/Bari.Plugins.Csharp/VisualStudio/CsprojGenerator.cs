@@ -71,7 +71,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
             writer.WriteStartElement("PropertyGroup");
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString());
-            writer.WriteElementString("OutputPath", project.Name);
+            writer.WriteElementString("OutputPath", project.Module.Name);
             writer.WriteElementString("OutputType", GetOutputType(project.Type)); 
             writer.WriteEndElement();
         }

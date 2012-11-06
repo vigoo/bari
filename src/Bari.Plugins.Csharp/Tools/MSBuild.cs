@@ -49,6 +49,8 @@ namespace Bari.Plugins.Csharp.Tools
                 using (var process = Process.Start(psi))
                 {
                     process.WaitForExit();
+
+                    log.DebugFormat("Exit code: {0}", process.ExitCode);
                 }
             }
             else

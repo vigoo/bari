@@ -2,9 +2,12 @@
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
+using Ninject.Extensions.ChildKernel;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
@@ -20,7 +23,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IResolutionRoot root;
         private readonly Project project;
         private readonly IFileSystemDirectory targetDir;
-        private readonly ISet<IBuilder> referenceBuilders;
+        private ISet<IBuilder> referenceBuilders;
 
         /// <summary>
         /// Creates the builder
@@ -29,14 +32,12 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="root">Path to resolve instances</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
         /// <param name="targetDir">The target directory where the csproj file should be put</param>
-        /// <param name="referenceBuilders">Project reference builders</param>
-        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir, IEnumerable<IBuilder> referenceBuilders)
+        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.root = root;
             this.project = project;
             this.targetDir = targetDir;
-            this.referenceBuilders = new HashSet<IBuilder>(referenceBuilders);
         }
 
         /// <summary>
@@ -74,6 +75,35 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public void AddToContext(IBuildContext context)
+        {
+            referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+
+            var childKernel = new ChildKernel(root);
+            childKernel.Bind<Project>().ToConstant(project);
+
+            foreach (var refBuilder in referenceBuilders)
+                refBuilder.AddToContext(context);
+
+            context.AddBuilder(this, referenceBuilders);
+        }
+
+
+        private IBuilder CreateReferenceBuilder(Reference reference)
+        {
+            var builder = root.GetReferenceBuilder<IReferenceBuilder>(reference, new ConstructorArgument("project", project, shouldInherit: true));
+            if (builder != null)
+                return builder;
+            else
+                throw new InvalidReferenceTypeException(reference.Uri.Scheme);
+        }
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context"> </param>
@@ -99,6 +129,18 @@ namespace Bari.Plugins.Csharp.Build
                     {
                         new TargetRelativePath(csprojPath)
                     });
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("[{0}.{1}.csproj]", project.Module.Name, project.Name);
         }
     }
 }

@@ -36,6 +36,16 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public void AddToContext(IBuildContext context)
+        {            
+        }
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context"> </param>
@@ -59,6 +69,18 @@ namespace Bari.Plugins.Csharp.Build
         {
             get { return reference; }
             set { reference = value; }
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("[{0}]", reference.Uri);
         }
     }
 }

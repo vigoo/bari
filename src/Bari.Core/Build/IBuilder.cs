@@ -22,6 +22,14 @@ namespace Bari.Core.Build
         string Uid { get; }
 
         /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        void AddToContext(IBuildContext context);
+
+        /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context">Current build context</param>
@@ -54,6 +62,17 @@ namespace Bari.Core.Build
                 Contract.Ensures(Contract.Result<string>() != null);
                 return null; // dummy value 
             }
+        }
+
+        /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public void AddToContext(IBuildContext context)
+        {
+            Contract.Requires(context != null);
         }
 
         /// <summary>
