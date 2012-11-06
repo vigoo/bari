@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
 using Bari.Core.Generic.Graph;
+using Ninject;
+using Ninject.Parameters;
+using Ninject.Syntax;
 
 namespace Bari.Core.Build
 {
@@ -15,11 +19,22 @@ namespace Bari.Core.Build
     /// </summary>
     public class BuildContext: IBuildContext
     {
-        private log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildContext));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildContext));
 
         private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
             new Dictionary<IBuilder, ISet<TargetRelativePath>>();
+
+        private readonly IResolutionRoot root;
+
+        /// <summary>
+        /// Initializes the build context
+        /// </summary>
+        /// <param name="root">Interface to create new builder instances</param>
+        public BuildContext(IResolutionRoot root)
+        {
+            this.root = root;
+        }
 
         /// <summary>
         /// Adds a new builder to be executed to the context
@@ -52,7 +67,8 @@ namespace Bari.Core.Build
 
             foreach (var builder in sortedBuilders)
             {
-                var builderResult = builder.Run(this);
+                var cachedBuilder = root.Get<CachedBuilder>(new ConstructorArgument("wrappedBuilder", builder));
+                var builderResult = cachedBuilder.Run(this);
 
                 partialResults.Add(builder, builderResult);
                 result.UnionWith(builderResult);

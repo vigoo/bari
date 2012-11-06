@@ -10,7 +10,7 @@ namespace Bari.Plugins.Csharp.Build
     /// <summary>
     /// Builder for running MSBuild on a Visual Studio solution file.
     /// </summary>
-    public class MSBuildRunner: IBuilder
+    public class MSBuildRunner: IBuilder, IEquatable<MSBuildRunner>
     {
         private readonly IBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
@@ -84,6 +84,57 @@ namespace Bari.Plugins.Csharp.Build
         public override string ToString()
         {
             return String.Format("[msbuild:{0}]", slnPath);
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(MSBuildRunner other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return slnBuilder.Equals(other.slnBuilder);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MSBuildRunner) obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override int GetHashCode()
+        {
+            return slnBuilder.GetHashCode();
+        }
+
+        public static bool operator ==(MSBuildRunner left, MSBuildRunner right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(MSBuildRunner left, MSBuildRunner right)
+        {
+            return !Equals(left, right);
         }
     }
 }

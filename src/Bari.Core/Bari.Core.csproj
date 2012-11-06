@@ -93,7 +93,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build\BuilderResolver.cs" />
     <Compile Include="Build\Cache\BuildKey.cs" />
     <Compile Include="Build\Cache\CachedBuilder.cs" />
     <Compile Include="Build\Cache\FileBuildCache.cs" />

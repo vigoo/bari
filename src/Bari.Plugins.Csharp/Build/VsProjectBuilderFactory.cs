@@ -4,6 +4,7 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Ninject;
 using Ninject.Parameters;
 using Ninject.Syntax;
 
@@ -34,10 +35,10 @@ namespace Bari.Plugins.Csharp.Build
         public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
         {
             var prjs = projects.ToList();
-            var slnBuilder = root.GetBuilder<SlnBuilder>(new ConstructorArgument("projects", projects));
+            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", projects));
             slnBuilder.AddToContext(context);
 
-            var msbuild = root.GetBuilder<MSBuildRunner>(
+            var msbuild = root.Get<MSBuildRunner>(
                 new ConstructorArgument("slnBuilder", slnBuilder),
                 new ConstructorArgument("slnPath", new TargetRelativePath(slnBuilder.Uid+".sln")), 
                 new ConstructorArgument("outputs", prjs.Select(GetExpectedOutput)));

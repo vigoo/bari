@@ -88,7 +88,7 @@ Example: `bari vs HelloWorld`
         private void Run(Module module)
         {
             var buildContext = root.Get<IBuildContext>();
-            var slnBuilder = root.GetBuilder<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
+            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
             slnBuilder.AddToContext(buildContext);
             
             var outputs = buildContext.Run();
