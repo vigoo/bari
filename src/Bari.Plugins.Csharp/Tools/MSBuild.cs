@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Bari.Core.Generic;
 using Bari.Core.UI;
+using Bari.Plugins.Csharp.Exceptions;
 
 namespace Bari.Plugins.Csharp.Tools
 {
@@ -51,6 +52,8 @@ namespace Bari.Plugins.Csharp.Tools
                     process.WaitForExit();
 
                     log.DebugFormat("Exit code: {0}", process.ExitCode);
+                    if (process.ExitCode != 0)
+                        throw new MSBuildFailedException();
                 }
             }
             else

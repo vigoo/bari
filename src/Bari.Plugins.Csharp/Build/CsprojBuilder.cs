@@ -7,7 +7,6 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
-using Ninject;
 using Ninject.Extensions.ChildKernel;
 using Ninject.Parameters;
 using Ninject.Syntax;
@@ -98,10 +97,9 @@ namespace Bari.Plugins.Csharp.Build
 
         private IBuilder CreateReferenceBuilder(Reference reference)
         {
-            var builder = root.Get<IReferenceBuilder>(reference.Uri.Scheme, new ConstructorArgument("project", project, shouldInherit: true));
+            var builder = root.GetReferenceBuilder<IReferenceBuilder>(reference, new ConstructorArgument("project", project, shouldInherit: true));
             if (builder != null)
             {
-                builder.Reference = reference;
                 return builder;
             }
             else
