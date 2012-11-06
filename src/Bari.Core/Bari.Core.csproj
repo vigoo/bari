@@ -122,6 +122,7 @@
     <Compile Include="Build\IReferenceBuilder.cs" />
     <Compile Include="Build\ModuleReferenceBuilder.cs" />
     <Compile Include="Build\ReferenceBuilderResolver.cs" />
+    <Compile Include="Build\SuiteReferenceBuilder.cs" />
     <Compile Include="Commands\BuildCommand.cs" />
     <Compile Include="Commands\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />

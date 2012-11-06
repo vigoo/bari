@@ -6,6 +6,7 @@ using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
 using Ninject;
+using Ninject.Syntax;
 
 namespace Bari.Core
 {
@@ -45,6 +46,8 @@ namespace Bari.Core
         {
             Contract.Requires(kernel != null);
 
+            kernel.Bind<IBindingRoot>().ToConstant(kernel);
+
             kernel.Bind<IModelLoader>().To<LocalYamlModelLoader>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
@@ -66,6 +69,7 @@ namespace Bari.Core
 
             // Builders 
             kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
+            kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
         }
     }
 }

@@ -24,6 +24,7 @@ namespace Bari.Core.Process
         private readonly IParameters parameters;
         private readonly ISuiteLoader loader;
         private readonly IResolutionRoot root;
+        private readonly IBindingRoot binding;
 
         /// <summary>
         /// Initializes the main bari process
@@ -32,7 +33,8 @@ namespace Bari.Core.Process
         /// <param name="parameters">User defined parameters describing the process to be performed</param>
         /// <param name="loader">The suite model loader implementation to be used</param>
         /// <param name="root">Path to resolve instances</param>
-        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, IResolutionRoot root)
+        /// <param name="binding">Interface to bind new dependencies</param>
+        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, IResolutionRoot root, IBindingRoot binding)
         {
             Contract.Requires(output != null);
             Contract.Requires(parameters != null);
@@ -43,6 +45,7 @@ namespace Bari.Core.Process
             this.parameters = parameters;
             this.loader = loader;
             this.root = root;
+            this.binding = binding;
         }
 
         /// <summary>
@@ -53,6 +56,7 @@ namespace Bari.Core.Process
             output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
 
             var suite = loader.Load(parameters.Suite);
+            binding.Bind<Suite>().ToConstant(suite);
             
             var explorer = root.Get<ExplorerRunner>();
             explorer.RunAll(suite);

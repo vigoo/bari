@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 namespace Bari.Core.Model
@@ -9,7 +10,7 @@ namespace Bari.Core.Model
     public class Suite
     {
         private string name = string.Empty;
-        private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>();
+        private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -59,7 +60,7 @@ namespace Bari.Core.Model
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(moduleName));
             Contract.Ensures(Contract.Result<Module>() != null);
-            Contract.Ensures(Contract.Result<Module>().Name == moduleName);
+            Contract.Ensures(String.Equals(Contract.Result<Module>().Name, moduleName, StringComparison.InvariantCultureIgnoreCase));
             Contract.Ensures(modules.ContainsKey(moduleName));
 
             Module result;
@@ -71,6 +72,16 @@ namespace Bari.Core.Model
                 modules.Add(moduleName, result);
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Checks whether the suite has a module with the given name or not
+        /// </summary>
+        /// <param name="moduleName">Name of the module to look for</param>
+        /// <returns>Returns <c>true</c> if the suite already has a module with the given name.</returns>
+        public bool HasModule(string moduleName)
+        {
+            return modules.ContainsKey(moduleName);
         }
     }
 }
