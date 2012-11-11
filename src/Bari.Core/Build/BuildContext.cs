@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
@@ -90,6 +91,19 @@ namespace Bari.Core.Build
                 return builderResult;
             else
                 throw new InvalidOperationException("Builder has not ran in this context");
+        }
+
+        /// <summary>
+        /// Dumps the build context to dot files
+        /// </summary>
+        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        public void Dump(Stream builderGraphStream)
+        {
+            using (var writer = new DotWriter(builderGraphStream))
+            {
+                writer.Rankdir = "RL";
+                writer.WriteGraph(builders);
+            }
         }
     }
 }

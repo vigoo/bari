@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Ninject;
 using Ninject.Syntax;
@@ -17,6 +18,7 @@ namespace Bari.Core.Commands
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildCommand));
 
         private readonly IResolutionRoot root;
+        private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
 
         /// <summary>
@@ -47,11 +49,15 @@ namespace Bari.Core.Commands
 When used without parameter, it builds every module in the suite. 
 Example: `bari build`
 
-When used with a module name, it builds the specified module togeher with every required dependency of it.
+When used with a module name, it builds the specified module together with every required dependency of it.
 Example: `bari build HelloWorldModule`
 
 When used with a project name prefixed by its module, it builds the specified project only, together with every required dependency of it.
 Example: `bari build HelloWorldModule.HelloWorld`
+
+When the special `--dump` argument is specified, the build is not executed, but the build graph and the dependency graph will be dumped
+to GraphViz dot files.
+Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 "; }
         }
 
@@ -60,10 +66,12 @@ Example: `bari build HelloWorldModule.HelloWorld`
         /// </summary>
         /// <param name="root">Interface for creating new objects</param>
         /// <param name="projectBuilders">The set of registered project builder factories</param>
-        public BuildCommand(IResolutionRoot root, IEnumerable<IProjectBuilderFactory> projectBuilders)
+        /// <param name="targetRoot">Build target root directory </param>
+        public BuildCommand(IResolutionRoot root, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot)
         {
             this.root = root;
             this.projectBuilders = projectBuilders;
+            this.targetRoot = targetRoot;
         }
 
         /// <summary>
@@ -73,7 +81,16 @@ Example: `bari build HelloWorldModule.HelloWorld`
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
         {
-            if (parameters.Length == 0)
+            int effectiveLength = parameters.Length;
+            bool dumpMode = false;
+
+            if (effectiveLength > 0)
+                dumpMode = parameters[effectiveLength - 1] == "--dump";
+
+            if (dumpMode)
+                effectiveLength--;
+
+            if (effectiveLength == 0)
             {
                 var projects = (from module in suite.Modules
                                 from project in module.Projects
@@ -85,10 +102,18 @@ Example: `bari build HelloWorldModule.HelloWorld`
                     projectBuilder.AddToContext(context, projects);
                 }
 
-                var outputs = context.Run();
+                if (dumpMode)
+                {
+                    using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
+                        context.Dump(builderGraph);
+                }
+                else
+                {
+                    var outputs = context.Run();
 
-                foreach (var outputPath in outputs)
-                    log.InfoFormat("Generated output for build: {0}", outputPath);
+                    foreach (var outputPath in outputs)
+                        log.InfoFormat("Generated output for build: {0}", outputPath);
+                }
             }
             else
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
@@ -32,6 +33,12 @@ namespace Bari.Core.Build
         /// <param name="builder">Builder which was added previously with <see cref="AddBuilder"/> and was already executed.</param>
         /// <returns>Return the return value of the builder's <see cref="IBuilder.Run"/> method.</returns>
         ISet<TargetRelativePath> GetResults(IBuilder builder);
+
+        /// <summary>
+        /// Dumps the build context to dot files
+        /// </summary>
+        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        void Dump(Stream builderGraphStream);
     }
 
     /// <summary>
@@ -76,6 +83,15 @@ namespace Bari.Core.Build
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
 
             return null; // dummy value
+        }
+
+        /// <summary>
+        /// Dumps the build context to dot files
+        /// </summary>
+        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        public void Dump(Stream builderGraphStream)
+        {
+            Contract.Requires(builderGraphStream != null);
         }
     }
 }
