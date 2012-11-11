@@ -1,11 +1,11 @@
 ﻿using Bari.Core.Build;
-using Bari.Core.Commands;
 using Bari.Plugins.Nuget.Build;
 using Bari.Plugins.Nuget.Tools;
 using Ninject.Modules;
 
 namespace Bari.Plugins.Nuget
 {
+    /// <summary>
     /// The module definition of this bari plugin
     /// </summary>
     public class BariModule : NinjectModule

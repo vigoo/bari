@@ -25,6 +25,14 @@ namespace Bari.Core.Test.Commands
             kernel.Bind<IUserOutput>().ToConstant(output).InSingletonScope();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas
+                <TargetRootAttribute>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            kernel.Dispose();
         }
     
         [Test]

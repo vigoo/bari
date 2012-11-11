@@ -6,6 +6,7 @@ namespace Bari.Core.Exceptions
     /// Exception thrown when a task cannot be performed because no registered
     /// plugins can handle it.
     /// </summary>
+    [Serializable]
     public class NoPluginForTaskException: Exception
     {
         /// <summary>

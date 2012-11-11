@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Monads;
 using System.Threading;
 using Bari.Core.Generic;
@@ -11,7 +12,7 @@ namespace Bari.Core.Build.Cache
     /// 
     /// <para>The cache item is protected by a reader/writer lock.</para>
     /// </summary>
-    public sealed class MemoryCacheItem
+    public sealed class MemoryCacheItem: IDisposable
     {
         private IDependencyFingerprint fingerprint;
         private IDictionary<TargetRelativePath, byte[]> outputs;
@@ -106,6 +107,15 @@ namespace Bari.Core.Build.Cache
             {
                 rwlock.ExitReadLock();
             }
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            rwlock.Dispose();
         }
     }
 }

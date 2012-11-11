@@ -173,7 +173,7 @@ namespace Bari.Core.Test.Helper
         /// <returns>Returns <c>true</c> if the file exists.</returns>
         public bool Exists(string relativePath)
         {
-            throw new NotImplementedException();
+            return true; // ReadBinaryFile always returns a stream containing the file name
         }
 
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)

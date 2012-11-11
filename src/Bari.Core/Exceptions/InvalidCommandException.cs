@@ -6,6 +6,7 @@ namespace Bari.Core.Exceptions
     /// <summary>
     /// Exception thrown when a bari command cannot be recognized
     /// </summary>
+    [Serializable]
     public class InvalidCommandException: Exception
     {
          private readonly string commandName;
@@ -19,7 +20,7 @@ namespace Bari.Core.Exceptions
         }
 
         /// <summary>
-        /// Creates the exeption object
+        /// Creates the exception object
         /// </summary>
         /// <param name="commandName">Name of the command which was called with invalid parameters</param>
         /// <param name="message">Message describing the problem</param>

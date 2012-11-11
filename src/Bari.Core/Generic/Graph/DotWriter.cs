@@ -7,7 +7,7 @@ namespace Bari.Core.Generic.Graph
     /// <summary>
     /// Utility class for exporting directed graphs to GraphViz dot format
     /// </summary>
-    public class DotWriter: IDisposable
+    public sealed class DotWriter: IDisposable
     {
         private readonly TextWriter writer;
         private string rankdir;

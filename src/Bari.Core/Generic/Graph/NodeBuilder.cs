@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Bari.Core.Generic.Graph
@@ -36,6 +37,9 @@ namespace Bari.Core.Generic.Graph
                     node2 = new SimpleUndirectedGraphNode<T>(edge.Data2);
                     map.Add(edge.Data2, node2);
                 }
+
+                Contract.Assume(node1 != null);
+                Contract.Assume(node2 != null);
 
                 if (!node1.AdjacentNodes.Contains(node2))
                     node1.Add(node2);
@@ -88,6 +92,9 @@ namespace Bari.Core.Generic.Graph
                     map.Add(edge.Target, targetNode);
                 }
 
+                Contract.Assume(sourceNode != null);
+                Contract.Assume(targetNode != null);
+
                 if (!sourceNode.TargetNodes.Contains(targetNode) && 
                     (!removeSelfLoops || sourceNode != targetNode))
                     sourceNode.AddTarget(targetNode);
@@ -126,6 +133,9 @@ namespace Bari.Core.Generic.Graph
                     targetNode = new SimpleDirectedGraphNode<T>(edge.Target);
                     map.Add(edge.Target, targetNode);
                 }
+
+                Contract.Assume(sourceNode != null);
+                Contract.Assume(targetNode != null);
 
                 if (!sourceNode.TargetNodes.Contains(targetNode) &&
                     (!removeSelfLoops || sourceNode != targetNode))

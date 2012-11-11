@@ -48,6 +48,9 @@ namespace Bari.Plugins.Nuget.Build
             get { return new NoDependencies(); }
         }
 
+        /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
         public string Uid
         {
             get { return reference.Uri.Host; }
@@ -129,7 +132,7 @@ namespace Bari.Plugins.Nuget.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((NugetReferenceBuilder) obj);
         }
 
@@ -142,14 +145,20 @@ namespace Bari.Plugins.Nuget.Build
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return (reference != null ? reference.GetHashCode() : 0);
+            return reference != null ? reference.GetHashCode() : 0;
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(NugetReferenceBuilder left, NugetReferenceBuilder right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(NugetReferenceBuilder left, NugetReferenceBuilder right)
         {
             return !Equals(left, right);

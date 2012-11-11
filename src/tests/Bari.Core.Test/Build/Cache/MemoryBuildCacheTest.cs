@@ -13,7 +13,7 @@ namespace Bari.Core.Test.Build.Cache
     [TestFixture]
     public class MemoryBuildCacheTest
     {
-        private IBuildCache cache;
+        private MemoryBuildCache cache;
         private BuildKey T;
         private IFileSystemDirectory root;
         private Mock<IDependencyFingerprint> fingerprint;
@@ -34,6 +34,12 @@ namespace Bari.Core.Test.Build.Cache
 
             otherFingerprint.Setup(f => f.Equals(fingerprint.Object)).Returns(false);
             otherFingerprint.Setup(f => f.Equals(otherFingerprint.Object)).Returns(true);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            cache.Dispose();
         }
 
         [Test]

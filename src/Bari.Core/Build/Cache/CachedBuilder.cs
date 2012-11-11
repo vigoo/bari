@@ -94,9 +94,16 @@ namespace Bari.Core.Build.Cache
             }
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return wrappedBuilder.ToString() + "*";
+            return wrappedBuilder + "*";
         }
     }
 }

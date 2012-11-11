@@ -5,6 +5,7 @@ namespace Bari.Core.Exceptions
     /// <summary>
     /// Exception thrown when the suite specification to be load is invalid
     /// </summary>
+    [Serializable]
     public class InvalidSpecificationException: Exception
     {
         /// <summary>

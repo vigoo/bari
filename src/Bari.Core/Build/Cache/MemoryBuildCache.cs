@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace Bari.Core.Build.Cache
     /// <summary>
     /// Simple build cache which only stores build outputs until the process is running
     /// </summary>
-    public class MemoryBuildCache : IBuildCache
+    public sealed class MemoryBuildCache : IBuildCache, IDisposable
     {
         private readonly IDictionary<BuildKey, MemoryCacheItem> cache = new Dictionary<BuildKey, MemoryCacheItem>();
 
@@ -151,6 +152,18 @@ namespace Bari.Core.Build.Cache
                 Contract.Assume(item != null);
                 return item;
             }
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            foreach (var item in cache)            
+                item.Value.Dispose();
+
+            cache.Clear();
         }
     }
 }

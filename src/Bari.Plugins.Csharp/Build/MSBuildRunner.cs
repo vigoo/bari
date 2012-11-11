@@ -47,6 +47,9 @@ namespace Bari.Plugins.Csharp.Build
             }
         }
 
+        /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
         public string Uid
         {
             get { return slnBuilder.Uid; }
@@ -127,11 +130,17 @@ namespace Bari.Plugins.Csharp.Build
             return slnBuilder.GetHashCode();
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(MSBuildRunner left, MSBuildRunner right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(MSBuildRunner left, MSBuildRunner right)
         {
             return !Equals(left, right);

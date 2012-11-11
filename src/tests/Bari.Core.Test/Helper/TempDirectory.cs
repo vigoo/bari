@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Bari.Core.Test.Helper
 {
-    public class TempDirectory : IDisposable
+    public sealed class TempDirectory : IDisposable
     {
         private static readonly object globalLock = new object();
         private readonly string path;

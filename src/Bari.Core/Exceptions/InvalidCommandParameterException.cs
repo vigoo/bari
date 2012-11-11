@@ -6,6 +6,7 @@ namespace Bari.Core.Exceptions
     /// <summary>
     /// Exception thrown when a bari command was called with invalid parameters
     /// </summary>
+    [Serializable]
     public class InvalidCommandParameterException: Exception
     {
         private readonly string commandName;

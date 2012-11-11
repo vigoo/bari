@@ -41,6 +41,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void TearDown()
         {
             tmp.Dispose();
+            kernel.Dispose();
         }
 
         [Test]

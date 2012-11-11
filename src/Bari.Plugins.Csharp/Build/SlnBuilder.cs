@@ -52,6 +52,9 @@ namespace Bari.Plugins.Csharp.Build
             get { return projectDependencies; }
         }
 
+        /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
         public string Uid
         {
             get
@@ -183,11 +186,17 @@ namespace Bari.Plugins.Csharp.Build
             return (projects != null ? projects.GetHashCode() : 0);
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(SlnBuilder left, SlnBuilder right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(SlnBuilder left, SlnBuilder right)
         {
             return !Equals(left, right);

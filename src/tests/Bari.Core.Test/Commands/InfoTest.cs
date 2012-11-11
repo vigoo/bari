@@ -47,6 +47,12 @@ namespace Bari.Core.Test.Commands
             vb.Add(new SuiteRelativePath("x.vb"));
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            kernel.Dispose();
+        }
+
         [Test]
         public void Exists()
         {

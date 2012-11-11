@@ -187,11 +187,17 @@ namespace Bari.Plugins.Csharp.Build
             return (project != null ? project.GetHashCode() : 0);
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(CsprojBuilder left, CsprojBuilder right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(CsprojBuilder left, CsprojBuilder right)
         {
             return !Equals(left, right);
