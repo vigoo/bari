@@ -23,6 +23,15 @@ namespace Bari.Core.Build
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private Reference reference;
         private ISet<IBuilder> subtasks;
+        private Project referencedProject;
+
+        /// <summary>
+        /// Gets the referenced project
+        /// </summary>
+        public Project ReferencedProject
+        {
+            get { return referencedProject; }
+        }
 
         /// <summary>
         /// Constructs the reference builder
@@ -77,12 +86,12 @@ namespace Bari.Core.Build
 
                 if (module.HasProject(projectName))
                 {
-                    var project = module.GetProject(projectName);
+                    referencedProject = module.GetProject(projectName);
 
                     subtasks = new HashSet<IBuilder>();
                     foreach (var projectBuilder in projectBuilders)
                     {
-                        subtasks.Add(projectBuilder.AddToContext(context, new[] {project}));
+                        subtasks.Add(projectBuilder.AddToContext(context, new[] { referencedProject }));
                     }
 
                     context.AddBuilder(this, subtasks);

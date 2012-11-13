@@ -5,10 +5,12 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
+using Bari.Core.Generic.Graph;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
 using Ninject;
 using Ninject.Extensions.ChildKernel;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
@@ -18,6 +20,8 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class SlnBuilder : IBuilder, IEquatable<SlnBuilder>
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SlnBuilder));
+
         private readonly IResolutionRoot root;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
@@ -84,6 +88,7 @@ namespace Bari.Plugins.Csharp.Build
                 );
 
             context.AddBuilder(this, projectBuilders);
+            context.AddTransformation(TransformRedundantSolutionBuilds);
 
             if (projectBuilders.Count == 1)
             {
@@ -98,8 +103,7 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
-        {
-            if (project.HasNonEmptySourceSet("cs"))
+        {            if (project.HasNonEmptySourceSet("cs"))
             {
                 var childKernel = new ChildKernel(root);
                 childKernel.Bind<Project>().ToConstant(project);
@@ -114,6 +118,63 @@ namespace Bari.Plugins.Csharp.Build
                 return null;
             }
         } 
+
+        private bool TransformRedundantSolutionBuilds(List<IDirectedGraphEdge<IBuilder>> builders)
+        {
+            var subNodes = builders.BuildNodes(this).DirectedBreadthFirstTraversal((builder, bs) => { bs.Add(builder); return bs; }, new List<IBuilder>());
+            foreach (var builderNode in subNodes)
+            {
+                var moduleReferenceBuilder = builderNode as ModuleReferenceBuilder;
+                if (moduleReferenceBuilder != null)
+                {
+                    if (projects.Contains(moduleReferenceBuilder.ReferencedProject))
+                    {
+                        log.DebugFormat("Transforming module reference builder {0}", moduleReferenceBuilder);
+
+                        ConvertToInSolutionReference(builders, moduleReferenceBuilder, moduleReferenceBuilder.ReferencedProject);
+                    }
+                }
+
+                var suiteReferenceBuilder = builderNode as SuiteReferenceBuilder;
+                if (suiteReferenceBuilder != null)
+                {
+                    if (projects.Contains(suiteReferenceBuilder.ReferencedProject))
+                    {
+                        log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
+
+                        ConvertToInSolutionReference(builders, suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private void ConvertToInSolutionReference(List<IDirectedGraphEdge<IBuilder>> builders, IReferenceBuilder moduleReferenceBuilder, Project referencedProject)
+        {
+            // finding edges X -> RB 
+            var edges = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder)).ToList();
+
+            // removing these edges
+            foreach (var edge in edges)
+                builders.Remove(edge);
+            var sourceNodes = edges.Select(edge => edge.Source);
+
+            // creating new, in-solution reference builder node (ISB)
+            var inSolutionBuilder = root.Get<InSolutionReferenceBuilder>(
+                new ConstructorArgument("project", referencedProject));
+            inSolutionBuilder.Reference = moduleReferenceBuilder.Reference;
+
+            // creating new edges: X -> ISB                        
+            builders.AddRange(
+                sourceNodes.Select(
+                    sourceNode => new SimpleDirectedGraphEdge<IBuilder>(sourceNode, inSolutionBuilder)));
+
+            // removing every edge containing RB
+            var edgesToRemove = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder) || Equals(edge.Source, moduleReferenceBuilder)).ToList();
+            foreach (var edge in edgesToRemove)
+                builders.Remove(edge);
+        }
 
         /// <summary>
         /// Runs this builder

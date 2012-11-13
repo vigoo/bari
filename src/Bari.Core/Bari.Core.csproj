@@ -136,6 +136,7 @@
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Generic\FileSystemDirectoryExtensions.cs" />
     <Compile Include="Generic\Graph\DotWriter.cs" />
+    <Compile Include="Generic\Graph\GraphTraversal.cs" />
     <Compile Include="Generic\Graph\IDirectedGraphEdge.cs" />
     <Compile Include="Generic\Graph\IDirectedGraphNode.cs" />
     <Compile Include="Generic\Graph\IUndirectedGraphEdge.cs" />

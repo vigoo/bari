@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Generic;
+using Bari.Core.Generic.Graph;
 
 namespace Bari.Core.Build
 {
@@ -19,6 +21,12 @@ namespace Bari.Core.Build
         /// separately with the <see cref="AddBuilder"/> method, listing them here only changes the
         /// order in which they are executed.</param>
         void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites);
+
+        /// <summary>
+        /// Adds a new graph transformation which will be executed before the builders
+        /// </summary>
+        /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
+        void AddTransformation(Func<List<IDirectedGraphEdge<IBuilder>>, bool> transformation);
 
         /// <summary>
         /// Runs all the added builders
@@ -58,6 +66,15 @@ namespace Bari.Core.Build
         {
             Contract.Requires(builder != null);
             Contract.Requires(prerequisites != null);
+        }
+
+        /// <summary>
+        /// Adds a new graph transformation which will be executed before the builders
+        /// </summary>
+        /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
+        public void AddTransformation(Func<List<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        {
+            Contract.Requires(transformation != null);
         }
 
         /// <summary>

@@ -25,6 +25,8 @@ namespace Bari.Core.Build
         private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
             new Dictionary<IBuilder, ISet<TargetRelativePath>>();
+        private readonly ISet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>> graphTransformations =
+            new HashSet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>>();
 
         private readonly IResolutionRoot root;
 
@@ -53,29 +55,54 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
+        /// Adds a new graph transformation which will be executed before the builders
+        /// </summary>
+        /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
+        public void AddTransformation(Func<List<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        {
+            graphTransformations.Add(transformation);
+        }
+
+        /// <summary>
         /// Runs all the added builders
         /// </summary>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
         public ISet<TargetRelativePath> Run()
         {
+            var result = new HashSet<TargetRelativePath>();
+
             partialResults.Clear();
 
-            var result = new HashSet<TargetRelativePath>();            
-            var nodes = builders.BuildNodes(removeSelfLoops: true);
-            var sortedBuilders = nodes.TopologicalSort().ToList();            
+            var cancel = RunTransformations();
 
-            log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
+            if (!cancel)
+            {                
+                var nodes = builders.BuildNodes(removeSelfLoops: true);
+                var sortedBuilders = nodes.TopologicalSort().ToList();
 
-            foreach (var builder in sortedBuilders)
+                log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
+
+                foreach (var builder in sortedBuilders)
+                {
+                    var cachedBuilder = root.Get<CachedBuilder>(new ConstructorArgument("wrappedBuilder", builder));
+                    var builderResult = cachedBuilder.Run(this);
+
+                    partialResults.Add(builder, builderResult);
+                    result.UnionWith(builderResult);
+                }
+            }
+            else
             {
-                var cachedBuilder = root.Get<CachedBuilder>(new ConstructorArgument("wrappedBuilder", builder));
-                var builderResult = cachedBuilder.Run(this);
-
-                partialResults.Add(builder, builderResult);
-                result.UnionWith(builderResult);
+                log.DebugFormat("Build cancelled by graph transformation");
             }
 
             return result;
+        }
+
+        private bool RunTransformations()
+        {
+            bool cancel = graphTransformations.Any(graphTransformation => !graphTransformation(builders));
+            return cancel;
         }
 
         /// <summary>
@@ -99,6 +126,8 @@ namespace Bari.Core.Build
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
         public void Dump(Stream builderGraphStream)
         {
+            RunTransformations();
+
             using (var writer = new DotWriter(builderGraphStream))
             {
                 writer.Rankdir = "RL";
