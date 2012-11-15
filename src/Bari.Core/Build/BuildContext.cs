@@ -18,9 +18,9 @@ namespace Bari.Core.Build
     /// executed and ensures that they are started in topological order according
     /// to their dependency constraints.</para>
     /// </summary>
-    public class BuildContext: IBuildContext
+    public class BuildContext : IBuildContext
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildContext));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(BuildContext));
 
         private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
@@ -47,11 +47,11 @@ namespace Bari.Core.Build
         /// separately with the <see cref="IBuildContext.AddBuilder"/> method, listing them here only changes the
         /// order in which they are executed.</param>
         public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
-        {            
+        {
             builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, builder));
 
-            foreach (var prerequisite in prerequisites)            
-                builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, prerequisite));            
+            foreach (var prerequisite in prerequisites)
+                builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, prerequisite));
         }
 
         /// <summary>
@@ -66,8 +66,11 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs all the added builders
         /// </summary>
+        /// <param name="rootBuilder">The root builder which represents the final goal of the build process.
+        /// If specified, every branch which is not accessible from the root builder will be removed
+        /// from the build graph before executing it.</param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuilder rootBuilder = null)
         {
             var result = new HashSet<TargetRelativePath>();
 
@@ -76,7 +79,10 @@ namespace Bari.Core.Build
             var cancel = RunTransformations();
 
             if (!cancel)
-            {                
+            {
+                if (rootBuilder != null)
+                    RemoveIrrelevantBranches(rootBuilder);
+
                 var nodes = builders.BuildNodes(removeSelfLoops: true);
                 var sortedBuilders = nodes.TopologicalSort().ToList();
 
@@ -97,6 +103,21 @@ namespace Bari.Core.Build
             }
 
             return result;
+        }
+
+        private void RemoveIrrelevantBranches(IBuilder rootBuilder)
+        {
+            var rootNode = builders.BuildNodes(rootBuilder, true);
+            var toKeep = rootNode.DirectedBreadthFirstTraversal(
+                (node, set) =>
+                {
+                    set.Add(node);
+                    return set;
+                }, new HashSet<IBuilder>());
+
+            builders.RemoveAll(
+                edge => !toKeep.Contains(edge.Source) ||
+                        !toKeep.Contains(edge.Target));
         }
 
         private bool RunTransformations()
@@ -121,12 +142,27 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
+        /// Gets the dependent builders of a given builder
+        /// </summary>
+        /// <param name="builder">Builder to get dependencies of</param>
+        /// <returns>A possibly empty enumeration of builders</returns>
+        public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
+        {
+            return from edge in builders
+                   where edge.Source == builder && edge.Target != builder
+                   select edge.Target;
+        }
+
+        /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
-        public void Dump(Stream builderGraphStream)
+        /// <param name="rootBuilder">The root builder</param>
+        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
         {
             RunTransformations();
+            if (rootBuilder != null)
+                RemoveIrrelevantBranches(rootBuilder);
 
             using (var writer = new DotWriter(builderGraphStream))
             {

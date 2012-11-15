@@ -15,6 +15,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
     {
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly Project project;
+        private readonly Suite suite;
         private readonly XmlWriter writer;
         private readonly string pathToSuiteRoot;
         private readonly ISet<TargetRelativePath> references;
@@ -27,11 +28,13 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// <param name="project">The project model to work on</param>
         /// <param name="references">Paths to the external references to be included in the project</param>
         /// <param name="output">Output where the csproj file will be written</param>
-        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, string pathToSuiteRoot, Project project, IEnumerable<TargetRelativePath> references, TextWriter output)
+        /// <param name="suite">The suite the project belongs to </param>
+        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, string pathToSuiteRoot, Project project, IEnumerable<TargetRelativePath> references, TextWriter output, Suite suite)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.pathToSuiteRoot = pathToSuiteRoot;
             this.project = project;
+            this.suite = suite;
             this.references = new HashSet<TargetRelativePath>(references);
 
             var settings = new XmlWriterSettings
@@ -70,7 +73,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         {
             writer.WriteStartElement("PropertyGroup");
             writer.WriteElementString("AssemblyName", project.Name);
-            writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString());
+            writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
             writer.WriteElementString("OutputPath", project.Module.Name);
             writer.WriteElementString("OutputType", GetOutputType(project.Type)); 
             writer.WriteEndElement();
@@ -95,21 +98,37 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
             foreach (var refPath in references)
             {
-                writer.WriteStartElement("Reference");
-                if (((string)refPath).StartsWith("GAC!"))
+                if (((string)refPath).StartsWith("SLN!"))
                 {
-                    var assemblyName = ((string) refPath).Substring(4);
-                    writer.WriteAttributeString("Include", assemblyName);
+                    var moduleAndprojectName = ((string) refPath).Substring(4);
+                    var parts = moduleAndprojectName.Split('#');
+                    var moduleName = parts[0];
+                    var projectName = parts[1];
+
+                    writer.WriteStartElement("ProjectReference");
+                    writer.WriteAttributeString("Include", projectName + ".csproj");
+                    writer.WriteElementString("Project", projectGuidManagement.GetGuid(suite.GetModule(moduleName).GetProject(projectName)).ToString("B"));
+                    writer.WriteElementString("Name", projectName);
+                    writer.WriteEndElement();
                 }
                 else
                 {
-                    string relativePath = ToProjectRelativePath(Path.Combine("target", refPath));
-                    
-                    writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
-                    writer.WriteElementString("HintPath", relativePath);
-                    writer.WriteElementString("SpecificVersion", "False");                 
+                    writer.WriteStartElement("Reference");
+                    if (((string) refPath).StartsWith("GAC!"))
+                    {
+                        var assemblyName = ((string) refPath).Substring(4);
+                        writer.WriteAttributeString("Include", assemblyName);
+                    }
+                    else
+                    {
+                        string relativePath = ToProjectRelativePath(Path.Combine("target", refPath));
+
+                        writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
+                        writer.WriteElementString("HintPath", relativePath);
+                        writer.WriteElementString("SpecificVersion", "False");
+                    }
+                    writer.WriteEndElement();
                 }
-                writer.WriteEndElement();
             }
 
             writer.WriteEndElement();

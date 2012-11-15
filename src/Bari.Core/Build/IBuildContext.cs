@@ -31,8 +31,11 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs all the added builders
         /// </summary>
+        /// <param name="rootBuilder">The root builder which represents the final goal of the build process.
+        /// If specified, every branch which is not accessible from the root builder will be removed
+        /// from the build graph before executing it.</param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        ISet<TargetRelativePath> Run();
+        ISet<TargetRelativePath> Run(IBuilder rootBuilder = null);
 
         /// <summary>
         /// Gets the result paths returned by the given builder if it has already ran. Otherwise it throws an
@@ -43,10 +46,18 @@ namespace Bari.Core.Build
         ISet<TargetRelativePath> GetResults(IBuilder builder);
 
         /// <summary>
+        /// Gets the dependent builders of a given builder
+        /// </summary>
+        /// <param name="builder">Builder to get dependencies of</param>
+        /// <returns>A possibly empty enumeration of builders</returns>
+        IEnumerable<IBuilder> GetDependencies(IBuilder builder);
+
+        /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
-        void Dump(Stream builderGraphStream);
+        /// <param name="rootBuilder">The root builder</param>
+        void Dump(Stream builderGraphStream, IBuilder rootBuilder);
     }
 
     /// <summary>
@@ -80,8 +91,9 @@ namespace Bari.Core.Build
         /// <summary>
         /// Runs all the added builders
         /// </summary>
+        /// <param name="rootBuilder"> </param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        public ISet<TargetRelativePath> Run()
+        public ISet<TargetRelativePath> Run(IBuilder rootBuilder)
         {
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
 
@@ -103,10 +115,24 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
+        /// Gets the dependent builders of a given builder
+        /// </summary>
+        /// <param name="builder">Builder to get dependencies of</param>
+        /// <returns>A possibly empty enumeration of builders</returns>
+        public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
+        {
+            Contract.Requires(builder != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IBuilder>>() != null);
+
+            return null; // dummy
+        }
+
+        /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
-        public void Dump(Stream builderGraphStream)
+        /// <param name="rootBuilder">The root builder</param>
+        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
         {
             Contract.Requires(builderGraphStream != null);
         }

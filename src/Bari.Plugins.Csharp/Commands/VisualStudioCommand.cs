@@ -91,7 +91,7 @@ Example: `bari vs HelloWorld`
             var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
             slnBuilder.AddToContext(buildContext);
             
-            var outputs = buildContext.Run();
+            var outputs = buildContext.Run(slnBuilder);
 
             foreach (var outputPath in outputs)
                 log.InfoFormat("Generated output for module {0}: {1}", module.Name, outputPath);

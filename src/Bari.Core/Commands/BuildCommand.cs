@@ -97,19 +97,22 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                                 select project).ToList();
 
                 var context = root.Get<IBuildContext>();
+
+                IBuilder rootBuilder = null;
                 foreach (var projectBuilder in projectBuilders)
                 {
-                    projectBuilder.AddToContext(context, projects);
+                    rootBuilder = projectBuilder.AddToContext(context, projects);
+                    // TODO: we have to make one builder above all the returned project builders and use it as root
                 }
 
                 if (dumpMode)
                 {
                     using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                        context.Dump(builderGraph);
+                        context.Dump(builderGraph, rootBuilder);
                 }
                 else
                 {
-                    var outputs = context.Run();
+                    var outputs = context.Run(rootBuilder);
 
                     foreach (var outputPath in outputs)
                         log.InfoFormat("Generated output for build: {0}", outputPath);

@@ -23,6 +23,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IResolutionRoot root;
         private readonly Project project;
+        private readonly Suite suite;
         private readonly IFileSystemDirectory targetDir;
         private ISet<IBuilder> referenceBuilders;
 
@@ -33,12 +34,14 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="root">Path to resolve instances</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
         /// <param name="targetDir">The target directory where the csproj file should be put</param>
-        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir)
+        /// <param name="suite">The suite the project belongs to </param>
+        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir, Suite suite)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.root = root;
             this.project = project;
             this.targetDir = targetDir;
+            this.suite = suite;
         }
 
         /// <summary>
@@ -117,13 +120,13 @@ namespace Bari.Plugins.Csharp.Build
             using (var csproj = targetDir.CreateTextFile(csprojPath))
             {
                 var references = new HashSet<TargetRelativePath>();
-                foreach (var refBuilder in referenceBuilders)
+                foreach (var refBuilder in context.GetDependencies(this))
                 {
                     var builderResults = context.GetResults(refBuilder);
                     references.UnionWith(builderResults);
                 }
 
-                var generator = new CsprojGenerator(projectGuidManagement, "..", project, references, csproj); // TODO: path to suite root should not be hard coded
+                var generator = new CsprojGenerator(projectGuidManagement, "..", project, references, csproj, suite); // TODO: path to suite root should not be hard coded
                 generator.Generate();
             }
 
