@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.Csharp.VisualStudio
@@ -12,6 +13,8 @@ namespace Bari.Plugins.Csharp.VisualStudio
         private const string csprojGuid = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}";
 
         private readonly IProjectGuidManagement projectGuidManagement;
+        private readonly IFileSystemDirectory suiteRoot;
+        private readonly IFileSystemDirectory slnDir;
         private readonly IEnumerable<Project> projects;
         private readonly TextWriter output;
 
@@ -21,11 +24,15 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// <param name="projectGuidManagement">Project guid mapping to be used</param>
         /// <param name="projects">The set of projects to be added to the solution</param>
         /// <param name="output">Text writer to write the solution file</param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, TextWriter output)
+        /// <param name="suiteRoot">Suite's root directory </param>
+        /// <param name="slnDir">Directory where the sln is being generated </param>
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.projects = projects;
             this.output = output;
+            this.suiteRoot = suiteRoot;
+            this.slnDir = slnDir;
         }
 
         /// <summary>
@@ -40,11 +47,13 @@ namespace Bari.Plugins.Csharp.VisualStudio
             {
                 if (project.HasNonEmptySourceSet("cs"))
                 {
-                    string projectFileName = project.Name + ".csproj";
+                    string relativeCsprojPath = suiteRoot.GetRelativePathFrom(
+                        slnDir, GetSuiteRelativeCsprojPath(project));
+
                     string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");
 
                     output.WriteLine("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"",
-                                     csprojGuid, project.Name, projectFileName, projectGuid);
+                                     csprojGuid, project.Name, relativeCsprojPath, projectGuid);
                     output.WriteLine("EndProject");
                 }
             }
@@ -65,6 +74,12 @@ namespace Bari.Plugins.Csharp.VisualStudio
             
             output.WriteLine("\tEndGlobalSection");
             output.WriteLine("EndGlobal");
+        }
+
+        private string GetSuiteRelativeCsprojPath(Project project)
+        {
+            string projectFileName = project.Name + ".csproj";
+            return Path.Combine(suiteRoot.GetRelativePath(project.RootDirectory), projectFileName);
         }
     }
 }

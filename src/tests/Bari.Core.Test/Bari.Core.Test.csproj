@@ -98,6 +98,7 @@
     <Compile Include="Commands\InfoTest.cs" />
     <Compile Include="Discovery\ExplorerRunnerTest.cs" />
     <Compile Include="Discovery\ModuleProjectDiscoveryTest.cs" />
+    <Compile Include="Generic\FileSystemDirectoryExtensionsTest.cs" />
     <Compile Include="Generic\LocalFileSystemDirectoryTest.cs" />
     <Compile Include="Helper\TempDirectory.cs" />
     <Compile Include="Helper\TestFileSystemDirectory.cs" />

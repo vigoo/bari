@@ -92,6 +92,7 @@
     <Compile Include="Build\MSBuildRunner.cs" />
     <Compile Include="Build\SlnBuilder.cs" />
     <Compile Include="Build\VsProjectBuilderFactory.cs" />
+    <Compile Include="Commands\Clean\CsprojCleaner.cs" />
     <Compile Include="Exceptions\MSBuildFailedException.cs" />
     <Compile Include="Tools\IMSBuild.cs" />
     <Compile Include="Tools\MSBuild.cs" />

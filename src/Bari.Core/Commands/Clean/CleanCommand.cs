@@ -1,8 +1,9 @@
-﻿using Bari.Core.Exceptions;
+﻿using System.Collections.Generic;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
-namespace Bari.Core.Commands
+namespace Bari.Core.Commands.Clean
 {
     /// <summary>
     /// Implements the 'clean' command, which removes all the generated and cached files
@@ -11,14 +12,20 @@ namespace Bari.Core.Commands
     public class CleanCommand: ICommand
     {
         private readonly IFileSystemDirectory suiteRoot;
+        private readonly IFileSystemDirectory targetRoot;
+        private readonly IEnumerable<ICleanExtension> extensions;
 
         /// <summary>
         /// Constructs the command
         /// </summary>
         /// <param name="suiteRoot">Suite root directory</param>
-        public CleanCommand([SuiteRoot] IFileSystemDirectory suiteRoot)
+        /// <param name="targetRoot">Target root directory</param>
+        /// <param name="extensions">Additional cleaning steps to be performed </param>
+        public CleanCommand([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<ICleanExtension> extensions)
         {
             this.suiteRoot = suiteRoot;
+            this.targetRoot = targetRoot;
+            this.extensions = extensions;
         }
 
         /// <summary>
@@ -63,10 +70,13 @@ Example: `bari clean`
         public void Run(Suite suite, string[] parameters)
         {
             if (parameters.Length == 0)
-            {
-                // TODO: do not use hard coded directory names here
-                suiteRoot.DeleteDirectory("target");
-                suiteRoot.DeleteDirectory("cache");
+            {                
+                targetRoot.Delete();
+ 
+                foreach (var cleanExtension in extensions)
+                {
+                    cleanExtension.Clean();
+                }
             }
             else
             {

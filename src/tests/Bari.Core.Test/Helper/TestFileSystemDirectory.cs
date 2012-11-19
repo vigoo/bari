@@ -167,6 +167,23 @@ namespace Bari.Core.Test.Helper
         }
 
         /// <summary>
+        /// Deletes a file from this directory
+        /// </summary>
+        /// <param name="name">Name of the file</param>
+        public void DeleteFile(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deletes the directory
+        /// </summary>
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Checks whether a file exists at the given relative path
         /// </summary>
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>

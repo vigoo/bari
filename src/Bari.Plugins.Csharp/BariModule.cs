@@ -1,7 +1,9 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Commands;
+using Bari.Core.Commands.Clean;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.Commands;
+using Bari.Plugins.Csharp.Commands.Clean;
 using Bari.Plugins.Csharp.Tools;
 using Bari.Plugins.Csharp.VisualStudio;
 using Ninject.Modules;
@@ -24,6 +26,8 @@ namespace Bari.Plugins.Csharp
 
             Bind<ICommand>().To<VisualStudioCommand>().Named("vs");
             Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
+
+            Bind<ICleanExtension>().To<CsprojCleaner>();
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
             Bind<IMSBuild>().To<MSBuild>();

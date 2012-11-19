@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Model
 {
@@ -10,16 +11,17 @@ namespace Bari.Core.Model
     public class Module
     {
         private readonly string name;
+        private readonly IFileSystemDirectory suiteRoot;
 
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
-            StringComparer.InvariantCultureIgnoreCase);
-
+            StringComparer.InvariantCultureIgnoreCase);        
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(name != null);
             Contract.Invariant(projects != null);
+            Contract.Invariant(suiteRoot != null);
             Contract.Invariant(Contract.ForAll(projects,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) &&
@@ -54,14 +56,24 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the root directory of the module
+        /// </summary>
+        public IFileSystemDirectory RootDirectory
+        {
+            get { return suiteRoot.GetChildDirectory("src").GetChildDirectory(name); }
+        }
+
+        /// <summary>
         /// Creates the module instance
         /// </summary>
         /// <param name="name">The name of the module</param>
-        public Module(string name)
+        /// <param name="suiteRoot">Root directory of the suite</param>
+        public Module(string name, [SuiteRoot] IFileSystemDirectory suiteRoot)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
 
             this.name = name;
+            this.suiteRoot = suiteRoot;
         }
 
         /// <summary>

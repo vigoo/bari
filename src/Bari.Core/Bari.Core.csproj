@@ -124,8 +124,10 @@
     <Compile Include="Build\ReferenceBuilderResolver.cs" />
     <Compile Include="Build\SuiteReferenceBuilder.cs" />
     <Compile Include="Commands\BuildCommand.cs" />
-    <Compile Include="Commands\CleanCommand.cs" />
+    <Compile Include="Commands\Clean\CacheCleaner.cs" />
+    <Compile Include="Commands\Clean\CleanCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Commands\Clean\ICleanExtension.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\InfoCommand.cs" />
     <Compile Include="Exceptions\InvalidCommandException.cs" />

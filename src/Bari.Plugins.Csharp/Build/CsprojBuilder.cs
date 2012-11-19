@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
@@ -33,15 +34,16 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="projectGuidManagement">The project-guid mapper to use</param>
         /// <param name="root">Path to resolve instances</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
-        /// <param name="targetDir">The target directory where the csproj file should be put</param>
         /// <param name="suite">The suite the project belongs to </param>
-        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project, [TargetRoot] IFileSystemDirectory targetDir, Suite suite)
+        /// <param name="targetDir">The build target directory </param>
+        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project,
+                             Suite suite, [TargetRoot] IFileSystemDirectory targetDir)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.root = root;
             this.project = project;
-            this.targetDir = targetDir;
             this.suite = suite;
+            this.targetDir = targetDir;
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace Bari.Plugins.Csharp.Build
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {            
             var csprojPath = project.Name + ".csproj";
-            using (var csproj = targetDir.CreateTextFile(csprojPath))
+            using (var csproj = project.RootDirectory.CreateTextFile(csprojPath))
             {
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this))
@@ -126,14 +128,18 @@ namespace Bari.Plugins.Csharp.Build
                     references.UnionWith(builderResults);
                 }
 
-                var generator = new CsprojGenerator(projectGuidManagement, "..", project, references, csproj, suite); // TODO: path to suite root should not be hard coded
+                var generator = new CsprojGenerator(
+                    projectGuidManagement,
+                    project, references, csproj, suite, targetDir); 
                 generator.Generate();
             }
 
             return new HashSet<TargetRelativePath>(
                 new[]
                     {
-                        new TargetRelativePath(csprojPath)
+                        new TargetRelativePath(
+                            suite.SuiteRoot.GetRelativePathFrom(targetDir, 
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csprojPath)))
                     });
         }
 
@@ -174,7 +180,7 @@ namespace Bari.Plugins.Csharp.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((CsprojBuilder) obj);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Model
 {
@@ -11,8 +12,6 @@ namespace Bari.Core.Model
     /// </summary>
     public class Project
     {
-        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (Project));
-
         private readonly Module module;
         private readonly string name;
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
@@ -73,6 +72,14 @@ namespace Bari.Core.Model
 
                 return references;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the root directory of the project's sources
+        /// </summary>
+        public IFileSystemDirectory RootDirectory
+        {
+            get { return module.RootDirectory.GetChildDirectory(name); }
         }
 
         /// <summary>

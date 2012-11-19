@@ -2,6 +2,7 @@
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
+using Bari.Core.Commands.Clean;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;

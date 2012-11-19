@@ -193,6 +193,23 @@ namespace Bari.Core.Generic
         }
 
         /// <summary>
+        /// Deletes a file from this directory
+        /// </summary>
+        /// <param name="name">Name of the file</param>
+        public void DeleteFile(string name)
+        {
+            File.Delete(Path.Combine(path, name));
+        }
+
+        /// <summary>
+        /// Deletes the directory
+        /// </summary>
+        public void Delete()
+        {
+            Directory.Delete(path, recursive: true);
+        }
+
+        /// <summary>
         /// Checks whether a file exists at the given relative path
         /// </summary>
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>

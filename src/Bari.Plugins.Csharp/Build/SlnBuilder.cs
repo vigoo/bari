@@ -25,6 +25,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IResolutionRoot root;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
+        private readonly IFileSystemDirectory suiteRoot;
         private readonly IList<Project> projects;
         private ISet<IBuilder> projectBuilders;
         private IDependencies projectDependencies;
@@ -34,15 +35,19 @@ namespace Bari.Plugins.Csharp.Build
         /// </summary>
         /// <param name="projectGuidManagement">The project-guid mapper to use</param>
         /// <param name="projects">The projects to be included to the solution</param>
+        /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="targetDir">The target directory where the sln file should be put</param>
         /// <param name="root">Interface for creating new builder instances</param>
-        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root)
+        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projects != null);
             Contract.Requires(targetDir != null);
+            Contract.Requires(suiteRoot != null);
+            Contract.Requires(root != null);
 
             this.projectGuidManagement = projectGuidManagement;
+            this.suiteRoot = suiteRoot;
             this.projects = projects.ToList();
             this.targetDir = targetDir;
             this.root = root;
@@ -187,7 +192,7 @@ namespace Bari.Plugins.Csharp.Build
 
             using (var sln = targetDir.CreateTextFile(slnPath))
             {
-                var generator = new SlnGenerator(projectGuidManagement, projects, sln);
+                var generator = new SlnGenerator(projectGuidManagement, projects, sln, suiteRoot, targetDir);
                 generator.Generate();
             }
 
@@ -231,7 +236,7 @@ namespace Bari.Plugins.Csharp.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((SlnBuilder) obj);
         }
 

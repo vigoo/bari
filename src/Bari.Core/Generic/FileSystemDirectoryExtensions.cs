@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Bari.Core.Generic
 {
@@ -58,6 +59,18 @@ namespace Bari.Core.Generic
             else
             {
                 return root.CreateBinaryFile(relativePath);
+            }
+        }
+
+        public static string GetRelativePathFrom(this IFileSystemDirectory root, IFileSystemDirectory innerRoot, string outerRelativePath)
+        {
+            string innerFromOuter = root.GetRelativePath(innerRoot);
+            if (outerRelativePath.StartsWith(innerFromOuter + '\\', StringComparison.InvariantCultureIgnoreCase))
+                return outerRelativePath.Substring(innerFromOuter.Length).TrimStart('\\');
+            else
+            {
+                string prefix = String.Join("\\", innerFromOuter.Split('\\').Select(_ => ".."));
+                return Path.Combine(prefix, outerRelativePath);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.Test.Helper;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void ProjectInitiallyHasNoSourceSets()
         {
-            var project = new Project("testproject", new Module("testmod"));
+            var project = new Project("testproject", new Module("testmod", new TestFileSystemDirectory("module")));
             project.SourceSets.Should().NotBeNull();
             project.SourceSets.Should().BeEmpty();
         }
@@ -19,14 +20,14 @@ namespace Bari.Core.Test.Model
         [Test]
         public void ProjectNameCanBeQueried()
         {
-            var project = new Project("testproject", new Module("testmod"));
+            var project = new Project("testproject", new Module("testmod", new TestFileSystemDirectory("module")));
             project.Name.Should().Be("testproject");
         }
 
         [Test]
         public void GetSourceSetCreatesSetIfMissing()
         {
-            var project = new Project("test", new Module("testmod"));
+            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
             var set1 = project.GetSourceSet("cs");
 
             set1.Should().NotBeNull();
@@ -36,7 +37,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void GetSourceSetReturnsTheSameInstanceIfCalledTwice()
         {
-            var project = new Project("test", new Module("testmod"));
+            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
             var set1 = project.GetSourceSet("cs");
             var set2 = project.GetSourceSet("cs");
 
@@ -46,7 +47,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void CreatedSourceSetAddedToSourceSetsProperty()
         {
-            var project = new Project("test", new Module("testmod"));
+            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
             var set1 = project.GetSourceSet("cs");
             var set2 = project.GetSourceSet("cs");
 
@@ -57,7 +58,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void HasNonEmptySourceSetMethodWorks()
         {
-            var project = new Project("test", new Module("testmod"));
+            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
             var set1 = project.GetSourceSet("cs");
 
             project.HasNonEmptySourceSet("cs").Should().BeFalse();
@@ -72,7 +73,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void HasNonEmptySourceSetDoesNotCreateSet()
         {
-            var project = new Project("test", new Module("testmod"));
+            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
             project.HasNonEmptySourceSet("cs");
 
             project.SourceSets.Should().BeEmpty();

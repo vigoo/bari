@@ -17,24 +17,24 @@ namespace Bari.Plugins.Csharp.VisualStudio
         private readonly Project project;
         private readonly Suite suite;
         private readonly XmlWriter writer;
-        private readonly string pathToSuiteRoot;
         private readonly ISet<TargetRelativePath> references;
+        private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
         /// Initializes the project file generator
         /// </summary>
         /// <param name="projectGuidManagement">The project-guid mapper to be used</param>
-        /// <param name="pathToSuiteRoot">Relative path to be used in generate project file to get to the suite root directory</param>
         /// <param name="project">The project model to work on</param>
         /// <param name="references">Paths to the external references to be included in the project</param>
         /// <param name="output">Output where the csproj file will be written</param>
         /// <param name="suite">The suite the project belongs to </param>
-        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, string pathToSuiteRoot, Project project, IEnumerable<TargetRelativePath> references, TextWriter output, Suite suite)
+        /// <param name="targetDir">Build target directory </param>
+        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, Project project, IEnumerable<TargetRelativePath> references, TextWriter output, Suite suite, IFileSystemDirectory targetDir)
         {
             this.projectGuidManagement = projectGuidManagement;
-            this.pathToSuiteRoot = pathToSuiteRoot;
             this.project = project;
             this.suite = suite;
+            this.targetDir = targetDir;
             this.references = new HashSet<TargetRelativePath>(references);
 
             var settings = new XmlWriterSettings
@@ -74,7 +74,8 @@ namespace Bari.Plugins.Csharp.VisualStudio
             writer.WriteStartElement("PropertyGroup");
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
-            writer.WriteElementString("OutputPath", project.Module.Name);
+            writer.WriteElementString("OutputPath", ToProjectRelativePath(Path.Combine(suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name)));
+            writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(Path.Combine(suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));
             writer.WriteElementString("OutputType", GetOutputType(project.Type)); 
             writer.WriteEndElement();
         }
@@ -105,9 +106,12 @@ namespace Bari.Plugins.Csharp.VisualStudio
                     var moduleName = parts[0];
                     var projectName = parts[1];
 
+                    var referredProject = suite.GetModule(moduleName).GetProject(projectName);
+
                     writer.WriteStartElement("ProjectReference");
-                    writer.WriteAttributeString("Include", projectName + ".csproj");
-                    writer.WriteElementString("Project", projectGuidManagement.GetGuid(suite.GetModule(moduleName).GetProject(projectName)).ToString("B"));
+                    writer.WriteAttributeString("Include", 
+                        ToProjectRelativePath(Path.Combine(suite.SuiteRoot.GetRelativePath(referredProject.RootDirectory), projectName + ".csproj")));
+                    writer.WriteElementString("Project", projectGuidManagement.GetGuid(referredProject).ToString("B"));
                     writer.WriteElementString("Name", projectName);
                     writer.WriteEndElement();
                 }
@@ -149,7 +153,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
         private string ToProjectRelativePath(string suiteRelativePath)
         {
-            return Path.Combine(pathToSuiteRoot, suiteRelativePath);
+            return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory, suiteRelativePath);
         }
     }
 }
