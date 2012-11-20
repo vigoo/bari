@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Ninject;
@@ -91,36 +92,91 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 effectiveLength--;
 
             if (effectiveLength == 0)
-            {
+            {                
                 var projects = (from module in suite.Modules
                                 from project in module.Projects
                                 select project).ToList();
 
-                var context = root.Get<IBuildContext>();
+                log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
-                IBuilder rootBuilder = null;
-                foreach (var projectBuilder in projectBuilders)
-                {
-                    rootBuilder = projectBuilder.AddToContext(context, projects);
-                    // TODO: we have to make one builder above all the returned project builders and use it as root
-                }
+                RunWithProjects(projects, dumpMode);
+            }
+            else if (effectiveLength == 1)
+            {
+                string param = parameters[0];
 
-                if (dumpMode)
+                if (suite.HasModule(param))
                 {
-                    using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                        context.Dump(builderGraph, rootBuilder);
+                    var module = suite.GetModule(param);
+                    var projects = module.Projects.ToList();
+
+                    log.InfoFormat("Building module {0} ({1} projects)", module.Name, projects.Count);
+
+                    RunWithProjects(projects, dumpMode);
                 }
                 else
                 {
-                    var outputs = context.Run(rootBuilder);
+                    var matches = new HashSet<Project>();
+            
+                    // Looking for modulename.projectname matches
+                    foreach (var module in suite.Modules)
+                    {
+                        if (param.StartsWith(module.Name+'.', StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            string projectName = param.Substring(module.Name.Length + 1);
+                            if (module.HasProject(projectName))
+                                matches.Add(module.GetProject(projectName));
+                        }
+                    }
 
-                    foreach (var outputPath in outputs)
-                        log.InfoFormat("Generated output for build: {0}", outputPath);
+                    // If there is only one match
+                    if (matches.Count == 1)
+                    {
+                        var project = matches.First();
+                        log.InfoFormat("Building project {0}", project.Name);
+
+                        RunWithProjects(new[] {project}, dumpMode);
+                    }
+                    else
+                    {
+                        if (matches.Count > 1)
+                            throw new InvalidCommandParameterException("build", 
+                                "The given module and project name identifies more than one projects");
+                        else
+                            throw new InvalidCommandParameterException("build",
+                                "The given project does not exist");
+                    }
                 }
             }
             else
             {
-                throw new NotImplementedException();
+                throw new InvalidCommandParameterException("build",
+                                                           "The 'build' command must be called with zero or one module/project name parameter!");
+            }
+        }
+
+        private void RunWithProjects(IEnumerable<Project> projects, bool dumpMode)
+        {
+            var context = root.Get<IBuildContext>();
+
+            IBuilder rootBuilder = null;
+            foreach (var projectBuilder in projectBuilders)
+            {
+                rootBuilder = projectBuilder.AddToContext(context, projects);
+                // TODO: we have to make one builder above all the returned project builders and use it as root
+            }
+
+            if (dumpMode)
+            {
+                using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
+                    context.Dump(builderGraph, rootBuilder);
+            }
+            else
+            {
+                var outputs = context.Run(rootBuilder);
+
+                foreach (var outputPath in outputs)
+                    log.InfoFormat("Generated output for build: {0}", outputPath);
             }
         }
     }
