@@ -93,6 +93,13 @@ Example: `bari info`
             {
                 PrintProjectDetails(project);
             }
+
+            output.Message("  *Test projects:*");
+
+            foreach (var project in module.TestProjects)
+            {
+                PrintProjectDetails(project);
+            }
         }
 
         /// <summary>

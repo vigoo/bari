@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Monads;
 using Bari.Core.Generic;
@@ -39,8 +40,23 @@ namespace Bari.Core.Model.Discovery
                     var moduleDir = srcDir.GetChildDirectory(moduleName);
                     foreach (var projectName in moduleDir.ChildDirectories)
                     {
-                        Project project = module.GetProject(projectName);
-                        DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName));
+                        if (projectName.Equals("tests", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // This is the special subdirectory for test projects
+                            var testsDir = moduleDir.GetChildDirectory(projectName);
+                            foreach (var testProjectName in testsDir.ChildDirectories)
+                            {
+                                var testProject = module.GetTestProject(testProjectName);
+                                DiscoverProjectSources(testProject, testsDir.GetChildDirectory(testProjectName));
+                            }
+                        }
+                        else
+                        {
+                            // This is a project directory
+
+                            Project project = module.GetProject(projectName);
+                            DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName));
+                        }
                     }
                 }));
         }

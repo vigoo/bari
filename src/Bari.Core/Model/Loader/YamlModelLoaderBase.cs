@@ -71,6 +71,14 @@ namespace Bari.Core.Model.Loader
                 if (item.Value != null)
                     LoadProject(project, item.Value);
             }
+
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "tests"))
+            {
+                var testProject = module.GetTestProject(item.Key);
+
+                if (item.Value != null)
+                    LoadProject(testProject, item.Value);
+            }
         }
 
         private void LoadProject(Project project, YamlNode projectNode)

@@ -23,6 +23,9 @@ namespace Bari.Core.Test.Commands
         {
             kernel = new StandardKernel();
             Kernel.RegisterCoreBindings(kernel);
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
+                <SuiteRootAttribute>();
+
             output = new TestUserOutput();
             kernel.Bind<IUserOutput>().ToConstant(output).InSingletonScope();
 

@@ -4,7 +4,6 @@ using Bari.Core.Model.Discovery;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
 using NUnit.Framework;
-using Ninject;
 
 namespace Bari.Core.Test.Discovery
 {
@@ -21,7 +20,7 @@ namespace Bari.Core.Test.Discovery
                                                                              new TestFileSystemDirectory("Module3")),
                                                  new TestFileSystemDirectory("output"));
 
-            var suite =  Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             suite.Modules.Should().BeEmpty();
 
@@ -41,7 +40,7 @@ namespace Bari.Core.Test.Discovery
                                      new TestFileSystemDirectory("abc"),
                                      new TestFileSystemDirectory("output"));
 
-            var suite = Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             suite.Modules.Should().BeEmpty();
 
@@ -64,7 +63,7 @@ namespace Bari.Core.Test.Discovery
                                                                      new TestFileSystemDirectory("Project32"))),
                                      new TestFileSystemDirectory("output"));
 
-            var suite = Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             suite.Modules.Should().BeEmpty();
 
@@ -85,6 +84,31 @@ namespace Bari.Core.Test.Discovery
         }
 
         [Test]
+        public void TestProjectsDiscovered()
+        {
+            var fs = CreateFsWithSourcesAndTests();
+
+            var suite = new Suite(fs);
+            suite.Modules.Should().BeEmpty();
+
+            var discovery = new ModuleProjectDiscovery(fs);
+            discovery.ExtendWithDiscoveries(suite);
+
+            suite.Modules.Should().HaveCount(3);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module1" ||
+                                                    m.Name == "Module2" ||
+                                                    m.Name == "Module3");
+
+            var mod3 = suite.GetModule("Module3");
+            mod3.Projects.Should().HaveCount(2);
+            mod3.Projects.Should().Contain(p => p.Name == "Project31");
+            mod3.Projects.Should().Contain(p => p.Name == "Project32");
+            mod3.TestProjects.Should().HaveCount(2);
+            mod3.TestProjects.Should().Contain(p => p.Name == "Project31.Test");
+            mod3.TestProjects.Should().Contain(p => p.Name == "Project32.Test");
+        }
+
+        [Test]
         public void ExistingModulesMergedWithDiscoveredOnes()
         {
             var fs = new TestFileSystemDirectory("root",
@@ -93,7 +117,7 @@ namespace Bari.Core.Test.Discovery
                                                                                                          new TestFileSystemDirectory
                                                                                                              ("Project11"))));
 
-            var suite = Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             var module1 = suite.GetModule("Module1");
             var projectA = module1.GetProject("ProjectA");
@@ -116,7 +140,7 @@ namespace Bari.Core.Test.Discovery
         {
             var fs = CreateFsWithSources();
 
-            var suite = Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             suite.Modules.Should().BeEmpty();
 
@@ -177,12 +201,61 @@ namespace Bari.Core.Test.Discovery
             return fs;
         }
 
+        private static TestFileSystemDirectory CreateFsWithSourcesAndTests()
+        {
+            var fs = new TestFileSystemDirectory(
+                "root",
+                new TestFileSystemDirectory(
+                    "src",
+                    new TestFileSystemDirectory(
+                        "Module1",
+                        new TestFileSystemDirectory
+                            ("Project11",
+                             new TestFileSystemDirectory
+                                 ("cs",
+                                  new TestFileSystemDirectory
+                                      ("subdir")
+                                  {
+                                      Files = new[] { "source3.cs" }
+                                  })
+                             {
+                                 Files = new[] { "source1.cs", "source2.cs" }
+                             },
+                             new TestFileSystemDirectory
+                                 ("fs")
+                             {
+                                 Files = new[] { "a.fs" }
+                             })),
+                    new TestFileSystemDirectory(
+                        "Module2"),
+                    new TestFileSystemDirectory(
+                        "Module3",
+                        new TestFileSystemDirectory
+                            ("Project31"),
+                        new TestFileSystemDirectory
+                            ("Project32"))),
+                        new TestFileSystemDirectory(
+                            ("tests"),
+                            new TestFileSystemDirectory("Project31.Test",
+                                new TestFileSystemDirectory("cs")
+                                    {
+                                        Files = new[] { "test1.cs"}
+                                    }),
+                            new TestFileSystemDirectory("Project32.Test",
+                                new TestFileSystemDirectory("cs")
+                                    {
+                                        Files = new[] { "test2.cs, test3.cs" }
+                                    })),
+                new TestFileSystemDirectory("target"));
+            return fs;
+        }
+
         [Test]
         public void ExistingSourcesMergedWithDiscoveredOnes()
         {
             var fs = CreateFsWithSources();
 
-            var suite = Kernel.Root.Get<Suite>();
+            var suite = new Suite(fs);
 
             var fsSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("fs");
             var vbSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("vb");

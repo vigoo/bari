@@ -1,8 +1,11 @@
 ﻿using System.IO;
+using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.Test.Helper;
 using FluentAssertions;
 using NUnit.Framework;
 using Ninject;
+using Ninject.Extensions.ChildKernel;
 
 namespace Bari.Core.Test
 {
@@ -10,18 +13,28 @@ namespace Bari.Core.Test
     public class SuiteLoaderTest
     {
         private const string yaml = "---\nsuite: Test suite";
+        private IKernel kernel;
+
+        [SetUp]
+        public void Setup()
+        {
+            kernel = new StandardKernel();
+            Kernel.RegisterCoreBindings(kernel);
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
+                <SuiteRootAttribute>();
+        }
 
         [Test]
         public void HasSuiteLoaderImplementation()
         {
-            var loader = Kernel.Root.Get<ISuiteLoader>();
+            var loader = kernel.Get<ISuiteLoader>();
             loader.Should().NotBeNull();
         }
 
         [Test]
         public void DetectsAndReadInMemoryYAMLSpec()
         {
-            var loader = Kernel.Root.Get<ISuiteLoader>();
+            var loader = kernel.Get<ISuiteLoader>();
             loader.Should().NotBeNull();            
 
             var suite = loader.Load(yaml);
@@ -39,7 +52,7 @@ namespace Bari.Core.Test
             }
             try
             {
-                var loader = Kernel.Root.Get<ISuiteLoader>();
+                var loader = kernel.Get<ISuiteLoader>();
                 loader.Should().NotBeNull();
 
                 var suite = loader.Load(tempFile);

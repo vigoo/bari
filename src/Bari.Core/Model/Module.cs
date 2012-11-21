@@ -14,8 +14,11 @@ namespace Bari.Core.Model
         private readonly IFileSystemDirectory suiteRoot;
 
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
-            StringComparer.InvariantCultureIgnoreCase);        
+            StringComparer.InvariantCultureIgnoreCase);
 
+        private readonly IDictionary<string, Project> testProjects = new Dictionary<string, Project>(
+            StringComparer.InvariantCultureIgnoreCase);
+            
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
@@ -23,6 +26,11 @@ namespace Bari.Core.Model
             Contract.Invariant(projects != null);
             Contract.Invariant(suiteRoot != null);
             Contract.Invariant(Contract.ForAll(projects,
+                                               pair =>
+                                               !string.IsNullOrWhiteSpace(pair.Key) &&
+                                               pair.Value != null &&
+                                               pair.Value.Name == pair.Key));
+            Contract.Invariant(Contract.ForAll(testProjects,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) &&
                                                pair.Value != null &&
@@ -56,11 +64,29 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// GEts all the module's test projects
+        /// </summary>
+        public IEnumerable<Project> TestProjects
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<Project>>() != null);
+
+                return testProjects.Values;
+            }
+        }
+
+        /// <summary>
         /// Gets the root directory of the module
         /// </summary>
         public IFileSystemDirectory RootDirectory
         {
-            get { return suiteRoot.GetChildDirectory("src").GetChildDirectory(name); }
+            get
+            {
+                Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
+                
+                return suiteRoot.GetChildDirectory("src").GetChildDirectory(name);
+            }
         }
 
         /// <summary>
@@ -71,6 +97,7 @@ namespace Bari.Core.Model
         public Module(string name, [SuiteRoot] IFileSystemDirectory suiteRoot)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires(suiteRoot != null);
 
             this.name = name;
             this.suiteRoot = suiteRoot;
@@ -100,6 +127,29 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets a test project model by its name, or creates and adds it if it was not registered yet.
+        /// </summary>
+        /// <param name="testProjectName">Name of the test project</param>
+        /// <returns>Returns the test project model for the given test project name</returns>
+        public Project GetTestProject(string testProjectName)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(testProjectName));
+            Contract.Ensures(Contract.Result<Project>() != null);
+            Contract.Ensures(String.Equals(Contract.Result<Project>().Name, testProjectName, StringComparison.InvariantCultureIgnoreCase));
+            Contract.Ensures(testProjects.ContainsKey(testProjectName));
+
+            Project result;
+            if (testProjects.TryGetValue(testProjectName, out result))
+                return result;
+            else
+            {
+                result = new Project(testProjectName, this);
+                testProjects.Add(testProjectName, result);
+                return result;
+            }
+        }
+
+        /// <summary>
         /// Returns true if a project with the given name belongs to this module
         /// </summary>
         /// <param name="projectName">Project name to look for</param>
@@ -107,6 +157,16 @@ namespace Bari.Core.Model
         public bool HasProject(string projectName)
         {
             return projects.ContainsKey(projectName);
+        }
+
+        /// <summary>
+        /// Returns true if a test project with the given name belongs to this module
+        /// </summary>
+        /// <param name="testProjectName">Project name to look for</param>
+        /// <returns>Returns <c>true</c> if the module has the given test project</returns>
+        public bool HasTestProject(string testProjectName)
+        {
+            return projects.ContainsKey(testProjectName);
         }
     }
 }

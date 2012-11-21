@@ -1,6 +1,8 @@
 ﻿using System;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.Test.Helper;
 using FluentAssertions;
 using NUnit.Framework;
 using Ninject;
@@ -10,13 +12,24 @@ namespace Bari.Core.Test.Loader
     [TestFixture]
     public class YamlLoaderTest
     {
+        private IKernel kernel;
+
+        [SetUp]
+        public void Setup()
+        {
+            kernel = new StandardKernel();
+            Kernel.RegisterCoreBindings(kernel);
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
+                <SuiteRootAttribute>();
+        }
+
         [Test]
         public void SuiteNameRead()
         {
             const string yaml = @"---                   
 suite: Test suite";
 
-            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
             var suite = loader.Load(yaml);
@@ -34,7 +47,7 @@ suite: Test suite
 modules:
 ";
 
-            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
             var suite = loader.Load(yaml);
@@ -55,7 +68,7 @@ modules:
     - Module3
 ";
 
-            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
             var suite = loader.Load(yaml);
@@ -85,7 +98,7 @@ modules:
           type: executable
 ";
 
-            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
             var suite = loader.Load(yaml);
@@ -108,6 +121,58 @@ modules:
         }
 
         [Test]
+        public void MultipleModulesWithProjectsAndTestProjectsAreRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+    - name: Module1
+      projects: 
+        - Project11
+      tests:
+        - Project11.Test
+    - name: Module2
+      tests:
+        - SpecialTest
+    - name: Module3
+      projects:
+        - Project31
+        - name: Project32
+          type: executable
+      tests:
+        - name: Project31.Test
+        - name: Project32.Test
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Modules.Should().HaveCount(3);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module1" ||
+                                                    m.Name == "Module2" ||
+                                                    m.Name == "Module3");
+            suite.GetModule("Module1").Projects.Should().HaveCount(1);
+            suite.GetModule("Module1").Projects.Should().Contain(p => p.Name == "Project11");
+            suite.GetModule("Module1").TestProjects.Should().HaveCount(1);
+            suite.GetModule("Module1").TestProjects.Should().Contain(p => p.Name == "Project11.Test");
+
+            suite.GetModule("Module2").Projects.Should().HaveCount(0);
+            suite.GetModule("Module2").TestProjects.Should().HaveCount(1);
+            suite.GetModule("Module2").TestProjects.Should().Contain(p => p.Name == "SpecialTest");
+
+            suite.GetModule("Module3").Projects.Should().HaveCount(2);
+            suite.GetModule("Module3").Projects.Should().Contain(p => p.Name == "Project31");
+            suite.GetModule("Module3").Projects.Should().Contain(p => p.Name == "Project32");
+            suite.GetModule("Module3").TestProjects.Should().HaveCount(2);
+            suite.GetModule("Module3").TestProjects.Should().Contain(p => p.Name == "Project31.Test");
+            suite.GetModule("Module3").TestProjects.Should().Contain(p => p.Name == "Project32.Test");
+        }
+
+        [Test]
         public void ProjectReferencesRead()
         {
             const string yaml = @"---                   
@@ -123,7 +188,7 @@ modules:
             - test://ref3
 ";
 
-            var loader = Kernel.Root.Get<InMemoryYamlModelLoader>();
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
             var suite = loader.Load(yaml);
