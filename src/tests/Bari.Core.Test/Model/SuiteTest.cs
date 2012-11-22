@@ -35,7 +35,7 @@ namespace Bari.Core.Test.Model
         }
 
         [Test]
-        public void GetProjectReturnsTheSameInstanceIfCalledTwice()
+        public void GetModuleReturnsTheSameInstanceIfCalledTwice()
         {
             var suite = new Suite(new TestFileSystemDirectory("root"));
             var mod1 = suite.GetModule("mod");
@@ -43,5 +43,24 @@ namespace Bari.Core.Test.Model
 
             mod1.Should().BeSameAs(mod2);
         } 
+
+        [Test]
+        public void HasModuleWorksCorrectly()
+        {
+            var suite = new Suite(new TestFileSystemDirectory("root"));
+
+            suite.HasModule("mod").Should().BeFalse();
+            suite.GetModule("mod");
+            suite.HasModule("mod").Should().BeTrue();
+        }
+
+        [Test]
+        public void StoresReferenceToRoot()
+        {
+            var fs = new TestFileSystemDirectory("root");
+            var suite = new Suite(fs);
+
+            suite.SuiteRoot.Should().Be(fs);
+        }
     }
 }

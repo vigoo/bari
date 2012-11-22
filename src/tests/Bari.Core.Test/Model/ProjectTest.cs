@@ -78,5 +78,28 @@ namespace Bari.Core.Test.Model
 
             project.SourceSets.Should().BeEmpty();
         }
+
+        [Test]
+        public void StoresModuleReference()
+        {
+            var module = new Module("testmod", new TestFileSystemDirectory("module"));
+            var project = new Project("test", module);
+
+            project.Module.Should().Be(module);
+        }
+
+        [Test]
+        public void RootDirectoryIsSubdirectoryOfModuleRoot()
+        {
+            var projdir = new TestFileSystemDirectory("test");
+            var fs = new TestFileSystemDirectory(
+                "root", new TestFileSystemDirectory(
+                            "src", new TestFileSystemDirectory(
+                                "testmod", projdir)));
+            var module = new Module("testmod", fs);
+            var project = new Project("test", module);
+
+            project.RootDirectory.Should().Be(projdir);
+        }
     }
 }

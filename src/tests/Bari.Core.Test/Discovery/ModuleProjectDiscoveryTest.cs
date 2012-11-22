@@ -233,7 +233,7 @@ namespace Bari.Core.Test.Discovery
                         new TestFileSystemDirectory
                             ("Project31"),
                         new TestFileSystemDirectory
-                            ("Project32"))),
+                            ("Project32"),
                         new TestFileSystemDirectory(
                             ("tests"),
                             new TestFileSystemDirectory("Project31.Test",
@@ -245,7 +245,7 @@ namespace Bari.Core.Test.Discovery
                                 new TestFileSystemDirectory("cs")
                                     {
                                         Files = new[] { "test2.cs, test3.cs" }
-                                    })),
+                                    })))),
                 new TestFileSystemDirectory("target"));
             return fs;
         }

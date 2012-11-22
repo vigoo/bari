@@ -166,7 +166,7 @@ namespace Bari.Core.Model
         /// <returns>Returns <c>true</c> if the module has the given test project</returns>
         public bool HasTestProject(string testProjectName)
         {
-            return projects.ContainsKey(testProjectName);
+            return testProjects.ContainsKey(testProjectName);
         }
     }
 }

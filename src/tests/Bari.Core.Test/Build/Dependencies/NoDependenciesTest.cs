@@ -20,5 +20,15 @@ namespace Bari.Core.Test.Build.Dependencies
             fp2.Should().Be(fp1);
             fp1.Equals(fp2).Should().BeTrue();
         }
+
+        [Test]
+        public void HasNoProtocol()
+        {
+            var dep = new NoDependencies();
+            var fp1 = dep.CreateFingerprint();
+
+            var proto = fp1.Protocol;
+            proto.Should().BeNull();
+        }
     }
 }

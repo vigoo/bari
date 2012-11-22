@@ -3,7 +3,7 @@
 namespace Bari.Core.Build.Dependencies
 {
     /// <summary>
-    /// Represents dependency on another builde (<see cref="IBuilder"/>)
+    /// Represents dependency on another builder (<see cref="IBuilder"/>)
     /// </summary>
     public class SubtaskDependency: IDependencies
     {
