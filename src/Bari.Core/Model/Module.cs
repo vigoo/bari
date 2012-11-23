@@ -16,7 +16,7 @@ namespace Bari.Core.Model
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
             StringComparer.InvariantCultureIgnoreCase);
 
-        private readonly IDictionary<string, Project> testProjects = new Dictionary<string, Project>(
+        private readonly IDictionary<string, TestProject> testProjects = new Dictionary<string, TestProject>(
             StringComparer.InvariantCultureIgnoreCase);
             
         [ContractInvariantMethod]
@@ -66,7 +66,7 @@ namespace Bari.Core.Model
         /// <summary>
         /// GEts all the module's test projects
         /// </summary>
-        public IEnumerable<Project> TestProjects
+        public IEnumerable<TestProject> TestProjects
         {
             get
             {
@@ -131,19 +131,19 @@ namespace Bari.Core.Model
         /// </summary>
         /// <param name="testProjectName">Name of the test project</param>
         /// <returns>Returns the test project model for the given test project name</returns>
-        public Project GetTestProject(string testProjectName)
+        public TestProject GetTestProject(string testProjectName)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(testProjectName));
             Contract.Ensures(Contract.Result<Project>() != null);
             Contract.Ensures(String.Equals(Contract.Result<Project>().Name, testProjectName, StringComparison.InvariantCultureIgnoreCase));
             Contract.Ensures(testProjects.ContainsKey(testProjectName));
 
-            Project result;
+            TestProject result;
             if (testProjects.TryGetValue(testProjectName, out result))
                 return result;
             else
             {
-                result = new Project(testProjectName, this);
+                result = new TestProject(testProjectName, this);
                 testProjects.Add(testProjectName, result);
                 return result;
             }

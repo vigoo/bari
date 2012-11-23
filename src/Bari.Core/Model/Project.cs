@@ -77,7 +77,7 @@ namespace Bari.Core.Model
         /// <summary>
         /// Gets or sets the root directory of the project's sources
         /// </summary>
-        public IFileSystemDirectory RootDirectory
+        public virtual IFileSystemDirectory RootDirectory
         {
             get { return module.RootDirectory.GetChildDirectory(name); }
         }

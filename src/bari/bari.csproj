@@ -96,6 +96,10 @@
       <Project>{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}</Project>
       <Name>Bari.Plugins.Csharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Bari.Plugins.Gallio\Bari.Plugins.Gallio.csproj">
+      <Project>{a46a578b-51b6-4c14-801a-55bd836941ee}</Project>
+      <Name>Bari.Plugins.Gallio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Bari.Plugins.Nuget\Bari.Plugins.Nuget.csproj">
       <Project>{5b483a14-5f78-4995-a7ae-9093dcebea6e}</Project>
       <Name>Bari.Plugins.Nuget</Name>

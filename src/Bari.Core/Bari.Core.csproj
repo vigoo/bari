@@ -130,6 +130,8 @@
     <Compile Include="Commands\Clean\ICleanExtension.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\InfoCommand.cs" />
+    <Compile Include="Commands\Test\ITestRunner.cs" />
+    <Compile Include="Commands\Test\TestCommand.cs" />
     <Compile Include="Exceptions\InvalidCommandException.cs" />
     <Compile Include="Exceptions\InvalidCommandParameterException.cs" />
     <Compile Include="Exceptions\InvalidReferenceException.cs" />
@@ -172,6 +174,7 @@
     <Compile Include="Model\SourceSet.cs" />
     <Compile Include="Model\Suite.cs" />
     <Compile Include="Model\DefaultSuiteLoader.cs" />
+    <Compile Include="Model\TestProject.cs" />
     <Compile Include="Process\MainProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\IUserOutput.cs" />

@@ -29,7 +29,7 @@ namespace Bari.Plugins.Csharp.Commands.Clean
         public void Clean()
         {
             foreach (var projectRoot in from module in suite.Modules
-                                        from project in module.Projects
+                                        from project in module.Projects.Concat(module.TestProjects)
                                         select project.RootDirectory)
             {
                 foreach (var csproj in projectRoot.Files.Where(name => name.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase)))

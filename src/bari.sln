@@ -13,6 +13,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Core.Test", "tests\Bari.Core.Test\Bari.Core.Test.csproj", "{7AE51D83-BD38-42E0-A5F8-30D2D6714903}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bari", "bari\bari.csproj", "{EC03BDC4-FAA9-454F-9D03-21ED58669231}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A46A578B-51B6-4C14-801A-55BD836941EE} = {A46A578B-51B6-4C14-801A-55BD836941EE}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Csharp", "Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj", "{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}"
 EndProject
@@ -21,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Csharp.Test", "tests\Bari.Plugins.Csharp.Test\Bari.Plugins.Csharp.Test.csproj", "{313CBD98-BE4C-4DD0-AD63-C3CF3FBDC4BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Nuget", "Bari.Plugins.Nuget\Bari.Plugins.Nuget.csproj", "{5B483A14-5F78-4995-A7AE-9093DCEBEA6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Gallio", "Bari.Plugins.Gallio\Bari.Plugins.Gallio.csproj", "{A46A578B-51B6-4C14-801A-55BD836941EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +98,16 @@ Global
 		{5B483A14-5F78-4995-A7AE-9093DCEBEA6E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5B483A14-5F78-4995-A7AE-9093DCEBEA6E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5B483A14-5F78-4995-A7AE-9093DCEBEA6E}.Release|x86.ActiveCfg = Release|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

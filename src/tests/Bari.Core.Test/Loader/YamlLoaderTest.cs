@@ -207,5 +207,43 @@ modules:
                                                      r.Uri == new Uri("test://ref2") ||
                                                      r.Uri == new Uri("test://ref3"));
         }
+
+        [Test]
+        public void TestProjectReferencesRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:    
+    - name: Module
+      projects:
+        - name: Project
+      tests:
+        - name: Test1
+          references:
+            - test://ref1
+            - test://ref2
+            - test://ref3
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Modules.Should().HaveCount(1);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module");
+            suite.GetModule("Module").TestProjects.Should().HaveCount(1);
+            suite.GetModule("Module").TestProjects.Should().Contain(p => p.Name == "Test1");
+            var prj = suite.GetModule("Module").GetTestProject("Test1");
+
+            prj.Should().NotBeNull();
+            prj.References.Should().NotBeEmpty();
+            prj.References.Should().HaveCount(3);
+            prj.References.Should().OnlyContain(r => r.Uri == new Uri("test://ref1") ||
+                                                     r.Uri == new Uri("test://ref2") ||
+                                                     r.Uri == new Uri("test://ref3"));
+        }
     }
 }
