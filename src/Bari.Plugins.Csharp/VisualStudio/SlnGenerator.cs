@@ -69,7 +69,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
                 string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");
 
                 output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Debug|x86", projectGuid);
-                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Debug|x68", projectGuid);
+                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Debug|x86", projectGuid);
             }
             
             output.WriteLine("\tEndGlobalSection");
