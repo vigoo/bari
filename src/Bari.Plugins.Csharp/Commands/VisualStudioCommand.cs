@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
 using Ninject;
@@ -21,6 +24,7 @@ namespace Bari.Plugins.Csharp.Commands
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (VisualStudioCommand));
 
         private readonly IResolutionRoot root;
+        private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -53,6 +57,10 @@ Generates visual studio solution and project files for the given module or produ
 and launches Visual Studio to open them.
 
 Example: `bari vs HelloWorld`
+
+Optionally bari can start and load the generated solution into Visual Studio immediately:
+
+Example: `bari vs --open HelloWorld`
 ";
             }
         }
@@ -61,9 +69,11 @@ Example: `bari vs HelloWorld`
         /// Initializes the command
         /// </summary>
         /// <param name="root">The path to resolve instances</param>
-        public VisualStudioCommand(IResolutionRoot root)
+        /// <param name="targetDir">Target root directory</param>
+        public VisualStudioCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetDir)
         {
             this.root = root;
+            this.targetDir = targetDir;
         }
 
         /// <summary>
@@ -73,19 +83,36 @@ Example: `bari vs HelloWorld`
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
         {
-            if (parameters.Length != 1)
-                throw new InvalidCommandParameterException("vs", "Must be called with one parameter");
+            if (parameters.Length == 1 || parameters.Length == 2)
+            {
+                bool openSolution = false;
+                if (parameters.Length > 1)
+                    if (parameters[0] == "--open")
+                        openSolution = true;
+                    else
+                        throw new InvalidCommandParameterException("vs",
+                                                                   String.Format("The first parameter (`{0}`) must be --open, or a single parameter must be used.",
+                                                                   parameters[0]));
 
-            // TODO: project support
-            var module = suite.Modules.FirstOrDefault(m => String.Equals(m.Name, parameters[0], StringComparison.InvariantCultureIgnoreCase));
-            if (module == null)
-                throw new InvalidCommandParameterException("vs", 
-                    String.Format("The parameter `{0}` is not a valid module name!", parameters[0]));
+                // TODO: project support
+                var module =
+                    suite.Modules.FirstOrDefault(
+                        m => String.Equals(m.Name, parameters.Last(), StringComparison.InvariantCultureIgnoreCase));
+                if (module == null)
+                    throw new InvalidCommandParameterException("vs",
+                                                               String.Format(
+                                                                   "The parameter `{0}` is not a valid module name!",
+                                                                   parameters.Last()));
 
-            Run(module);
+                Run(module, openSolution);
+            }
+            else
+            {
+                throw new InvalidCommandParameterException("vs", "Must be called with one or two parameters");
+            }
         }
 
-        private void Run(Module module)
+        private void Run(Module module, bool openSolution)
         {
             var buildContext = root.Get<IBuildContext>();
             var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
@@ -95,6 +122,25 @@ Example: `bari vs HelloWorld`
 
             foreach (var outputPath in outputs)
                 log.InfoFormat("Generated output for module {0}: {1}", module.Name, outputPath);
+
+            if (openSolution)
+            {                
+                var slnRelativePath = buildContext.GetResults(slnBuilder).FirstOrDefault();
+                if (slnRelativePath != null)
+                {
+                    log.InfoFormat("Opening {0} with Visual Studio...", slnRelativePath);
+
+                    var localTargetDir = targetDir as LocalFileSystemDirectory;
+                    if (localTargetDir != null)
+                    {
+                        Process.Start(Path.Combine(localTargetDir.AbsolutePath, slnRelativePath));
+                    }
+                    else
+                    {
+                        log.Warn("The --open command only works with local target directory!");
+                    }
+                }
+            }
         }
     }
 }
