@@ -81,6 +81,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
 
             WriteAppConfig();
+            WriteManifest();
 
             writer.WriteEndElement();
         }
@@ -159,6 +160,26 @@ namespace Bari.Plugins.Csharp.VisualStudio
                 if (appConfigPath != null)
                 {
                     writer.WriteElementString("AppConfig", ToProjectRelativePath(appConfigPath));
+                }
+            }
+        }
+
+        private void WriteManifest()
+        {
+            // Must be called within an open PropertyGroup
+
+            if (project.HasNonEmptySourceSet("manifest"))
+            {
+                var sourceSet = project.GetSourceSet("manifest");
+                var manifests = sourceSet.Files.ToList();
+
+                if (manifests.Count > 1)
+                    throw new TooManyManifestsException(project);
+
+                var manifestPath = manifests.FirstOrDefault();
+                if (manifestPath != null)
+                {
+                    writer.WriteElementString("ApplicationManifest", ToProjectRelativePath(manifestPath));
                 }
             }
         }

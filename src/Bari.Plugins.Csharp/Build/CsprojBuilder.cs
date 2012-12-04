@@ -60,6 +60,7 @@ namespace Bari.Plugins.Csharp.Build
                             {
                                 new SourceSetDependencies(root, project.GetSourceSet("cs")),
                                 new SourceSetDependencies(root, project.GetSourceSet("appconfig")), 
+                                new SourceSetDependencies(root, project.GetSourceSet("manifest")), 
                                 new ProjectPropertiesDependencies(project, "Name", "Type")
                             }
                             .Concat(
