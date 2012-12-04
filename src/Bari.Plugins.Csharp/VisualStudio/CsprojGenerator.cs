@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Exceptions;
 
 namespace Bari.Plugins.Csharp.VisualStudio
 {
@@ -76,7 +78,10 @@ namespace Bari.Plugins.Csharp.VisualStudio
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
             writer.WriteElementString("OutputPath", ToProjectRelativePath(Path.Combine(suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name)));
             writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(Path.Combine(suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));
-            writer.WriteElementString("OutputType", GetOutputType(project.Type)); 
+            writer.WriteElementString("OutputType", GetOutputType(project.Type));
+
+            WriteAppConfig();
+
             writer.WriteEndElement();
         }
 
@@ -136,6 +141,26 @@ namespace Bari.Plugins.Csharp.VisualStudio
             }
 
             writer.WriteEndElement();
+        }
+
+        private void WriteAppConfig()
+        {
+            // Must be called within an open PropertyGroup 
+
+            if (project.HasNonEmptySourceSet("appconfig"))
+            {
+                var sourceSet = project.GetSourceSet("appconfig");
+                var configs = sourceSet.Files.ToList();
+
+                if (configs.Count > 1)
+                    throw new TooManyAppConfigsException(project);
+
+                var appConfigPath = configs.FirstOrDefault();
+                if (appConfigPath != null)
+                {
+                    writer.WriteElementString("AppConfig", ToProjectRelativePath(appConfigPath));
+                }
+            }
         }
 
         private void WriteSourceItems()

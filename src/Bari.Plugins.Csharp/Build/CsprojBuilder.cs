@@ -59,6 +59,7 @@ namespace Bari.Plugins.Csharp.Build
                         new IDependencies[]
                             {
                                 new SourceSetDependencies(root, project.GetSourceSet("cs")),
+                                new SourceSetDependencies(root, project.GetSourceSet("appconfig")), 
                                 new ProjectPropertiesDependencies(project, "Name", "Type")
                             }
                             .Concat(

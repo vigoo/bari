@@ -94,6 +94,7 @@
     <Compile Include="Build\VsProjectBuilderFactory.cs" />
     <Compile Include="Commands\Clean\CsprojCleaner.cs" />
     <Compile Include="Exceptions\MSBuildFailedException.cs" />
+    <Compile Include="Exceptions\TooManyAppConfigsException.cs" />
     <Compile Include="Tools\IMSBuild.cs" />
     <Compile Include="Tools\MSBuild.cs" />
     <Compile Include="VisualStudio\DefaultProjectGuidManagement.cs" />
