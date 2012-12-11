@@ -13,6 +13,12 @@ namespace Bari.Core.Test.Helper
         private readonly IList<TestFileSystemDirectory> childDirectories = new List<TestFileSystemDirectory>();
         private IList<string> files = new List<string>();
         private TestFileSystemDirectory parent;
+        private bool isDeleted;
+
+        public bool IsDeleted
+        {
+            get { return isDeleted; }
+        }
 
         public string Name
         {
@@ -180,7 +186,7 @@ namespace Bari.Core.Test.Helper
         /// </summary>
         public void Delete()
         {
-            throw new NotImplementedException();
+            isDeleted = true;
         }
 
         /// <summary>

@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Cache\CacheCleanerTest.cs" />
     <Compile Include="Build\Cache\CachedBuilderTest.cs" />
     <Compile Include="Build\Cache\MemoryBuildCacheTest.cs" />
     <Compile Include="Build\Dependencies\CombinedDependenciesTest.cs" />
@@ -98,9 +99,12 @@
     <Compile Include="Build\Dependencies\ProjectPropertiesDependenciesTest.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependenciesTest.cs" />
     <Compile Include="Build\Dependencies\SubtaskDependencyTest.cs" />
+    <Compile Include="Commands\BuildTest.cs" />
+    <Compile Include="Commands\CleanTest.cs" />
     <Compile Include="Commands\DummyCommand.cs" />
     <Compile Include="Commands\HelpTest.cs" />
     <Compile Include="Commands\InfoTest.cs" />
+    <Compile Include="Commands\TestTest.cs" />
     <Compile Include="Discovery\ExplorerRunnerTest.cs" />
     <Compile Include="Discovery\ModuleProjectDiscoveryTest.cs" />
     <Compile Include="Generic\FileSystemDirectoryExtensionsTest.cs" />
@@ -115,6 +119,7 @@
     <Compile Include="Model\ReferenceTest.cs" />
     <Compile Include="Model\SourceSetTest.cs" />
     <Compile Include="Model\SuiteTest.cs" />
+    <Compile Include="Model\TestProjectTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Loader\SuiteLoaderTest.cs" />
     <Compile Include="TestSetup.cs" />

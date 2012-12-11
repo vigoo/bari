@@ -39,6 +39,9 @@ namespace Bari.Core.Test.Commands
             var proj12 = mod1.GetProject("project 1.2");
             var proj31 = mod3.GetProject("project 3.1");
 
+            mod1.GetTestProject("test1");
+            mod2.GetTestProject("test2");
+
             var cs = proj31.GetSourceSet("cs");
             var vb = proj31.GetSourceSet("vb");
             var fs = proj31.GetSourceSet("fs");
@@ -109,6 +112,16 @@ namespace Bari.Core.Test.Commands
             output.Messages.Select(x => x.Trim()).Should().Contain("*Name:* project 1.1");
             output.Messages.Select(x => x.Trim()).Should().Contain("*Name:* project 1.2");
             output.Messages.Select(x => x.Trim()).Should().Contain("*Name:* project 3.1");
+        }
+
+        [Test]
+        public void PrintsAllTestProjectNames()
+        {
+            var cmd = kernel.Get<ICommand>("info");
+            cmd.Run(suite, new string[0]);
+
+            output.Messages.Select(x => x.Trim()).Should().Contain("*Name:* test1");
+            output.Messages.Select(x => x.Trim()).Should().Contain("*Name:* test2");
         }
 
         [Test]

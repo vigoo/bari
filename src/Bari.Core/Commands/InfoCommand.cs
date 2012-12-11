@@ -115,7 +115,7 @@ Example: `bari info`
 
             if (project.References.Any())
             {
-                output.Message("    *References:* {0}", project.Type);
+                output.Message("    *References:*");
 
                 foreach (var reference in project.References)
                 {
