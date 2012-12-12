@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\CsprojBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +67,10 @@
     <ProjectReference Include="..\..\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj">
       <Project>{a3f7c2d0-e715-476c-afa6-70e5baab84a7}</Project>
       <Name>Bari.Plugins.Csharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bari.Core.Test\Bari.Core.Test.csproj">
+      <Project>{7ae51d83-bd38-42e0-a5f8-30d2d6714903}</Project>
+      <Name>Bari.Core.Test</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -53,25 +53,34 @@ namespace Bari.Plugins.Csharp.Build
         {
             get
             {
+                var deps = new List<IDependencies>();
+
                 if (project.HasNonEmptySourceSet("cs"))
-                {
-                    return new MultipleDependencies(
-                        new IDependencies[]
-                            {
-                                new SourceSetDependencies(root, project.GetSourceSet("cs")),
-                                new SourceSetDependencies(root, project.GetSourceSet("appconfig")), 
-                                new SourceSetDependencies(root, project.GetSourceSet("manifest")), 
-                                new ProjectPropertiesDependencies(project, "Name", "Type")
-                            }
-                            .Concat(
-                                from refBuilder in referenceBuilders
-                                select new SubtaskDependency(refBuilder)));
-                }
-                else
-                {
+                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("cs")));
+                if (project.HasNonEmptySourceSet("appconfig"))
+                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("appconfig")));
+                if (project.HasNonEmptySourceSet("manifest"))
+                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("manifest")));
+
+                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type"));
+
+                if (referenceBuilders != null)
+                    deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
+
+                if (deps.Count == 0)
                     return new NoDependencies();
-                }
+                else if (deps.Count == 1)
+                    return deps.First();
+                else
+                    return new MultipleDependencies(deps);                    
             }
+        }
+
+        private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder)
+        {
+            return new MultipleDependencies(
+                new SubtaskDependency(refBuilder),
+                new ReferenceDependency(refBuilder.Reference));
         }
 
         /// <summary>
@@ -119,7 +128,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
-        {            
+        {
             var csprojPath = project.Name + ".csproj";
             using (var csproj = project.RootDirectory.CreateTextFile(csprojPath))
             {
@@ -132,7 +141,7 @@ namespace Bari.Plugins.Csharp.Build
 
                 var generator = new CsprojGenerator(
                     projectGuidManagement,
-                    project, references, csproj, suite, targetDir); 
+                    project, references, csproj, suite, targetDir);
                 generator.Generate();
             }
 
@@ -183,7 +192,7 @@ namespace Bari.Plugins.Csharp.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((CsprojBuilder) obj);
+            return Equals((CsprojBuilder)obj);
         }
 
         /// <summary>

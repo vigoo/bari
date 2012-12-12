@@ -114,6 +114,7 @@
     <Compile Include="Build\Dependencies\Protocol\BinarySerializer.cs" />
     <Compile Include="Build\Dependencies\Protocol\ObjectPropertiesProtocol.cs" />
     <Compile Include="Build\Dependencies\Protocol\SourceSetFingerprintProtocol.cs" />
+    <Compile Include="Build\Dependencies\ReferenceDependency.cs" />
     <Compile Include="Build\Dependencies\SourceSetDependencies.cs" />
     <Compile Include="Build\Dependencies\SourceSetFingerprint.cs" />
     <Compile Include="Build\Dependencies\SubtaskDependency.cs" />
