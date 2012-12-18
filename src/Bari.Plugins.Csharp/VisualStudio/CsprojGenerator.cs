@@ -17,6 +17,8 @@ namespace Bari.Plugins.Csharp.VisualStudio
     {
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly Project project;
+        private readonly TextWriter versionOutput;
+        private readonly string versionFileName;
         private readonly Suite suite;
         private readonly XmlWriter writer;
         private readonly ISet<TargetRelativePath> references;
@@ -29,12 +31,16 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// <param name="project">The project model to work on</param>
         /// <param name="references">Paths to the external references to be included in the project</param>
         /// <param name="output">Output where the csproj file will be written</param>
+        /// <param name="versionOutput">Output where the version info should be generated</param>
+        /// <param name="versionFileName">File name relative to the csproj file for the version info</param>
         /// <param name="suite">The suite the project belongs to </param>
         /// <param name="targetDir">Build target directory </param>
-        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, Project project, IEnumerable<TargetRelativePath> references, TextWriter output, Suite suite, IFileSystemDirectory targetDir)
+        public CsprojGenerator(IProjectGuidManagement projectGuidManagement, Project project, IEnumerable<TargetRelativePath> references, TextWriter output, TextWriter versionOutput, string versionFileName, Suite suite, IFileSystemDirectory targetDir)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.project = project;
+            this.versionOutput = versionOutput;
+            this.versionFileName = versionFileName;
             this.suite = suite;
             this.targetDir = targetDir;
             this.references = new HashSet<TargetRelativePath>(references);
@@ -62,6 +68,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
             WriteProperties();
             WriteReferences();
             WriteSourceItems();
+            WriteVersion();
 
             writer.WriteStartElement("Import");
             writer.WriteAttributeString("Project", @"$(MSBuildToolsPath)\Microsoft.CSharp.targets");
@@ -194,6 +201,18 @@ namespace Bari.Plugins.Csharp.VisualStudio
                 writer.WriteAttributeString("Include", ToProjectRelativePath(file));
                 writer.WriteEndElement();
             }
+            writer.WriteEndElement();
+        }
+
+        private void WriteVersion()
+        {
+            var generator = new CsharpVersionInfoGenerator(project);
+            generator.Generate(versionOutput);
+
+            writer.WriteStartElement("ItemGroup");
+            writer.WriteStartElement("Compile");
+            writer.WriteAttributeString("Include", versionFileName);
+            writer.WriteEndElement();
             writer.WriteEndElement();
         }
 

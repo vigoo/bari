@@ -11,7 +11,9 @@ namespace Bari.Core.Model
     public class Module
     {
         private readonly string name;
-        private readonly IFileSystemDirectory suiteRoot;
+        private string version;
+        
+        private readonly Suite suite;
 
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
             StringComparer.InvariantCultureIgnoreCase);
@@ -24,7 +26,7 @@ namespace Bari.Core.Model
         {
             Contract.Invariant(name != null);
             Contract.Invariant(projects != null);
-            Contract.Invariant(suiteRoot != null);
+            Contract.Invariant(suite != null);
             Contract.Invariant(Contract.ForAll(projects,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) &&
@@ -51,6 +53,25 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets or sets the module's version
+        /// 
+        /// <paraTo use the suite version in <see cref="EffectiveVersion"/>, set this property to <c>null</c>.</para>
+        /// </summary>
+        public string Version
+        {
+            get { return version; }
+            set { version = value; }
+        }
+
+        /// <summary>
+        /// Gets the module's version or the suite version if no module specific version was specified
+        /// </summary>
+        public string EffectiveVersion
+        {
+            get { return version ?? suite.Version; }
+        }
+
+        /// <summary>
         /// Gets all the module's projects
         /// </summary>
         public IEnumerable<Project> Projects
@@ -58,7 +79,7 @@ namespace Bari.Core.Model
             get
             {
                 Contract.Ensures(Contract.Result<IEnumerable<Project>>() != null);
-
+                
                 return projects.Values;
             }
         }
@@ -85,7 +106,7 @@ namespace Bari.Core.Model
             {
                 Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
                 
-                return suiteRoot.GetChildDirectory("src").GetChildDirectory(name);
+                return suite.SuiteRoot.GetChildDirectory("src").GetChildDirectory(name);
             }
         }
 
@@ -93,14 +114,14 @@ namespace Bari.Core.Model
         /// Creates the module instance
         /// </summary>
         /// <param name="name">The name of the module</param>
-        /// <param name="suiteRoot">Root directory of the suite</param>
-        public Module(string name, [SuiteRoot] IFileSystemDirectory suiteRoot)
+        /// <param name="suite">Suite the module belongs to</param>
+        public Module(string name, Suite suite)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires(suiteRoot != null);
+            Contract.Requires(suite != null);
 
             this.name = name;
-            this.suiteRoot = suiteRoot;
+            this.suite = suite;
         }
 
         /// <summary>

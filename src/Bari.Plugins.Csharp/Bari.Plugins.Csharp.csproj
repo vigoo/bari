@@ -98,6 +98,7 @@
     <Compile Include="Exceptions\TooManyManifestsException.cs" />
     <Compile Include="Tools\IMSBuild.cs" />
     <Compile Include="Tools\MSBuild.cs" />
+    <Compile Include="VisualStudio\CsharpVersionInfoGenerator.cs" />
     <Compile Include="VisualStudio\DefaultProjectGuidManagement.cs" />
     <Compile Include="VisualStudio\IProjectGuidManagement.cs" />
     <Compile Include="Commands\VisualStudioCommand.cs" />

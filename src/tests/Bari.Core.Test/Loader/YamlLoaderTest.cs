@@ -36,6 +36,24 @@ suite: Test suite";
 
             suite.Should().NotBeNull();
             suite.Name.Should().Be("Test suite");
+            suite.Version.Should().BeNull();
+        }
+
+        [Test]
+        public void SuiteVersionRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+version: 1.0";           
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Name.Should().Be("Test suite");
+            suite.Version.Should().Be("1.0");
         }
 
         [Test]
@@ -81,6 +99,28 @@ modules:
         }
 
         [Test]
+        public void ModuleVersionRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+    - name: Module1
+      version: 2.0
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Modules.Should().HaveCount(1);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module1");
+            suite.GetModule("Module1").Version.Should().Be("2.0");
+        }
+
+        [Test]
         public void MultipleModulesWithProjectsAreRead()
         {
             const string yaml = @"---                   
@@ -95,6 +135,7 @@ modules:
       projects:
         - Project31
         - name: Project32
+          version: 3.0
           type: executable
 ";
 
@@ -118,6 +159,10 @@ modules:
             suite.GetModule("Module1").GetProject("Project11").Type.Should().Be(ProjectType.Library);
             suite.GetModule("Module3").GetProject("Project31").Type.Should().Be(ProjectType.Library);
             suite.GetModule("Module3").GetProject("Project32").Type.Should().Be(ProjectType.Executable);
+
+            suite.GetModule("Module1").GetProject("Project11").Version.Should().BeNull();
+            suite.GetModule("Module3").GetProject("Project31").Version.Should().BeNull();
+            suite.GetModule("Module3").GetProject("Project32").Version.Should().Be("3.0");
         }
 
         [Test]

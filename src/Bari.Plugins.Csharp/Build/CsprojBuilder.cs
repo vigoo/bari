@@ -130,7 +130,10 @@ namespace Bari.Plugins.Csharp.Build
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var csprojPath = project.Name + ".csproj";
+            const string csversionPath = "version.cs";
+
             using (var csproj = project.RootDirectory.CreateTextFile(csprojPath))
+            using (var csversion = project.RootDirectory.CreateTextFile(csversionPath))
             {
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this))
@@ -141,7 +144,7 @@ namespace Bari.Plugins.Csharp.Build
 
                 var generator = new CsprojGenerator(
                     projectGuidManagement,
-                    project, references, csproj, suite, targetDir);
+                    project, references, csproj, csversion, csversionPath, suite, targetDir);
                 generator.Generate();
             }
 
@@ -150,7 +153,10 @@ namespace Bari.Plugins.Csharp.Build
                     {
                         new TargetRelativePath(
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
-                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csprojPath)))
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csprojPath))),
+                        new TargetRelativePath(
+                            suite.SuiteRoot.GetRelativePathFrom(targetDir, 
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csversionPath)))
                     });
         }
 

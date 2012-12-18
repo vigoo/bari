@@ -46,6 +46,7 @@ namespace Bari.Core.Model.Loader
             var suite = root.Get<Suite>();
 
             suite.Name = GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
+            suite.Version = GetOptionalScalarValue(yaml.RootNode, "version", null);
 
             foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(yaml.RootNode, "modules"))
             {
@@ -63,6 +64,8 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(module != null);
             Contract.Requires(moduleNode != null);
+
+            module.Version = GetOptionalScalarValue(moduleNode, "version", null);
 
             foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "projects"))
             {
@@ -96,10 +99,15 @@ namespace Bari.Core.Model.Loader
                     {
                         SetProjectType(project, ((YamlScalarNode) pair.Value).Value);
                     }
+                    else if (new YamlScalarNode("version").Equals(pair.Key) &&
+                    pair.Value is YamlScalarNode)
+                    {
+                        project.Version = ((YamlScalarNode) pair.Value).Value;
+                    }
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)
                     {
-                        SetProjectReferences(project, ((YamlSequenceNode) pair.Value).Children);
+                        SetProjectReferences(project, ((YamlSequenceNode)pair.Value).Children);
                     }
                 }
             }
@@ -194,6 +202,32 @@ namespace Bari.Core.Model.Loader
             catch (Exception ex)
             {
                 throw new InvalidSpecificationException(errorMessage ?? ex.Message, ex);
+            }
+        }
+
+        private string GetOptionalScalarValue(YamlNode parent, string key, string defaultValue)
+        {
+            Contract.Requires(parent != null);
+            Contract.Requires(key != null);
+            Contract.Ensures(Contract.Result<string>() != null || Contract.Result<string>() == defaultValue);
+
+            try
+            {
+                var mapping = (YamlMappingNode)parent;
+                var child = mapping.Children[new YamlScalarNode(key)];
+
+                if (child == null)
+                    return defaultValue;
+
+                string value = ((YamlScalarNode)child).Value;
+                if (value == null)
+                    return defaultValue;
+
+                return value;
+            }
+            catch (Exception ex)
+            {
+                return defaultValue;
             }
         }
     }

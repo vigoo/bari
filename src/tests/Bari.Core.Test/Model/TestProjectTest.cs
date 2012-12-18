@@ -17,7 +17,7 @@ namespace Bari.Core.Test.Model
                             "src", new TestFileSystemDirectory(
                                        "testmod", new TestFileSystemDirectory(
                                                       "tests", projdir))));
-            var module = new Module("testmod", fs);
+            var module = new Module("testmod", new Suite(fs));
             var project = new TestProject("test", module);
 
             project.RootDirectory.Should().Be(projdir);

@@ -11,6 +11,7 @@ namespace Bari.Core.Model
     public class Suite
     {
         private string name = string.Empty;
+        private string version;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IFileSystemDirectory suiteRoot;
 
@@ -44,6 +45,17 @@ namespace Bari.Core.Model
                 
                 name = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the suite's version 
+        /// 
+        /// <para>Can be <c>null</c>, in this case there is no suite-wise version specified.</para>
+        /// </summary>
+        public string Version
+        {
+            get { return version; }
+            set { version = value; }
         }
 
         /// <summary>
@@ -90,7 +102,7 @@ namespace Bari.Core.Model
                 return result;
             else
             {
-                result = new Module(moduleName, suiteRoot);
+                result = new Module(moduleName, this);
                 modules.Add(moduleName, result);
                 return result;
             }

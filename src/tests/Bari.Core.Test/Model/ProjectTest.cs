@@ -12,7 +12,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void ProjectInitiallyHasNoSourceSets()
         {
-            var project = new Project("testproject", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("testproject", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             project.SourceSets.Should().NotBeNull();
             project.SourceSets.Should().BeEmpty();
         }
@@ -20,14 +20,14 @@ namespace Bari.Core.Test.Model
         [Test]
         public void ProjectNameCanBeQueried()
         {
-            var project = new Project("testproject", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("testproject", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             project.Name.Should().Be("testproject");
         }
 
         [Test]
         public void GetSourceSetCreatesSetIfMissing()
         {
-            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             var set1 = project.GetSourceSet("cs");
 
             set1.Should().NotBeNull();
@@ -37,7 +37,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void GetSourceSetReturnsTheSameInstanceIfCalledTwice()
         {
-            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             var set1 = project.GetSourceSet("cs");
             var set2 = project.GetSourceSet("cs");
 
@@ -47,7 +47,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void CreatedSourceSetAddedToSourceSetsProperty()
         {
-            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             var set1 = project.GetSourceSet("cs");
             var set2 = project.GetSourceSet("cs");
 
@@ -58,7 +58,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void HasNonEmptySourceSetMethodWorks()
         {
-            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             var set1 = project.GetSourceSet("cs");
 
             project.HasNonEmptySourceSet("cs").Should().BeFalse();
@@ -73,7 +73,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void HasNonEmptySourceSetDoesNotCreateSet()
         {
-            var project = new Project("test", new Module("testmod", new TestFileSystemDirectory("module")));
+            var project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("module"))));
             project.HasNonEmptySourceSet("cs");
 
             project.SourceSets.Should().BeEmpty();
@@ -82,7 +82,7 @@ namespace Bari.Core.Test.Model
         [Test]
         public void StoresModuleReference()
         {
-            var module = new Module("testmod", new TestFileSystemDirectory("module"));
+            var module = new Module("testmod", new Suite(new TestFileSystemDirectory("module")));
             var project = new Project("test", module);
 
             project.Module.Should().Be(module);
@@ -96,7 +96,7 @@ namespace Bari.Core.Test.Model
                 "root", new TestFileSystemDirectory(
                             "src", new TestFileSystemDirectory(
                                 "testmod", projdir)));
-            var module = new Module("testmod", fs);
+            var module = new Module("testmod", new Suite(fs));
             var project = new Project("test", module);
 
             project.RootDirectory.Should().Be(projdir);

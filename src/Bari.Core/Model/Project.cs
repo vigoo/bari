@@ -17,6 +17,7 @@ namespace Bari.Core.Model
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
         private readonly ISet<Reference> references = new HashSet<Reference>();
         private ProjectType type = ProjectType.Library;
+        private string version;
 
         /// <summary>
         /// Gets the module this project belongs to
@@ -46,6 +47,27 @@ namespace Bari.Core.Model
         {
             get { return type; }
             set { type = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the project's version.
+        /// 
+        /// <para>Set this property to <c>null</c> to use the module's version in the
+        /// <see cref="EffectiveVersion"/> property.</para>
+        /// </summary>
+        public string Version
+        {
+            get { return version; }
+            set { version = value; }
+        }
+
+        /// <summary>
+        /// Gets the version of this project, which may come from the module's or suite's version if not explicitly
+        /// specified in the <see cref="Version"/> property.
+        /// </summary>
+        public string EffectiveVersion
+        {
+            get { return version ?? module.EffectiveVersion; }
         }
 
         /// <summary>

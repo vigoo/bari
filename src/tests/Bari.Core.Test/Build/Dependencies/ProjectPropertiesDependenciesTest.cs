@@ -16,7 +16,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [SetUp]
         public void SetUp()
         {
-            project = new Project("test", new Module("testmod", new TestFileSystemDirectory("modroot")))
+            project = new Project("test", new Module("testmod", new Suite(new TestFileSystemDirectory("modroot"))))
                 {
                     Type = ProjectType.Library
                 };

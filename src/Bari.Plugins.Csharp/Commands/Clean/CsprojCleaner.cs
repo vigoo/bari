@@ -36,6 +36,11 @@ namespace Bari.Plugins.Csharp.Commands.Clean
                 {
                     projectRoot.DeleteFile(csproj);
                 }
+
+                foreach (var csversion in projectRoot.Files.Where(name => name.Equals("version.cs", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    projectRoot.DeleteFile(csversion);
+                }
             }
         }
     }
