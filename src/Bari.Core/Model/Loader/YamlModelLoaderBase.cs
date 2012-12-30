@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Exceptions;
-using Ninject;
-using Ninject.Syntax;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -13,20 +12,24 @@ namespace Bari.Core.Model.Loader
     /// </summary>
     public abstract class YamlModelLoaderBase
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (YamlModelLoaderBase));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(YamlModelLoaderBase));
 
-        private readonly IResolutionRoot root;
+        private readonly Func<Suite> suiteFactory;
+        private readonly IEnumerable<IYamlProjectParametersLoader> parametersLoaders;
 
         /// <summary>
         /// Initializes the yaml loader
         /// </summary>
-        /// <param name="root">Path to resolve instances</param>
-        protected YamlModelLoaderBase(IResolutionRoot root)
+        /// <param name="suiteFactory">Factory method to create new suite instances</param>
+        /// <param name="parametersLoaders">Parameter loader implementations</param>
+        protected YamlModelLoaderBase(Func<Suite> suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
         {
-            Contract.Requires(root != null);
-            Contract.Ensures(this.root == root);
+            Contract.Requires(suiteFactory != null);
+            Contract.Ensures(this.suiteFactory == suiteFactory);
+            Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
-            this.root = root;
+            this.suiteFactory = suiteFactory;
+            this.parametersLoaders = parametersLoaders;            
         }
 
         /// <summary>
@@ -43,7 +46,7 @@ namespace Bari.Core.Model.Loader
 
             log.Debug("Processing YAML document...");
 
-            var suite = root.Get<Suite>();
+            var suite = suiteFactory();
 
             suite.Name = GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
             suite.Version = GetOptionalScalarValue(yaml.RootNode, "version", null);
@@ -55,9 +58,21 @@ namespace Bari.Core.Model.Loader
                 if (item.Value != null)
                     LoadModule(module, item.Value);
             }
+            
+            LoadParameters(suite, yaml.RootNode);
 
             log.Debug("Finished processing YAML document.");
             return suite;
+        }
+
+        private void LoadParameters(IProjectParametersHolder target, YamlNode node)
+        {
+            var mapping = node as YamlMappingNode;
+            if (mapping != null)
+            {
+                foreach (var pair in mapping)
+                    TryAddParameters(target, pair.Key, pair.Value);
+            }
         }
 
         private void LoadModule(Module module, YamlNode moduleNode)
@@ -65,22 +80,36 @@ namespace Bari.Core.Model.Loader
             Contract.Requires(module != null);
             Contract.Requires(moduleNode != null);
 
+            LoadModuleVersion(module, moduleNode);
+            LoadProjects(module, moduleNode);
+            LoadTestProjects(module, moduleNode);
+            LoadParameters(module, moduleNode);
+        }
+
+        private void LoadModuleVersion(Module module, YamlNode moduleNode)
+        {
             module.Version = GetOptionalScalarValue(moduleNode, "version", null);
+        }
 
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "projects"))
-            {
-                var project = module.GetProject(item.Key);
-
-                if (item.Value != null)
-                    LoadProject(project, item.Value);
-            }
-
+        private void LoadTestProjects(Module module, YamlNode moduleNode)
+        {
             foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "tests"))
             {
                 var testProject = module.GetTestProject(item.Key);
 
                 if (item.Value != null)
                     LoadProject(testProject, item.Value);
+            }
+        }
+
+        private void LoadProjects(Module module, YamlNode moduleNode)
+        {
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "projects"))
+            {
+                var project = module.GetProject(item.Key);
+
+                if (item.Value != null)
+                    LoadProject(project, item.Value);
             }
         }
 
@@ -109,6 +138,10 @@ namespace Bari.Core.Model.Loader
                     {
                         SetProjectReferences(project, ((YamlSequenceNode)pair.Value).Children);
                     }
+                    else
+                    {
+                        TryAddParameters(project, pair.Key, pair.Value);
+                    }
                 }
             }
         }
@@ -120,9 +153,10 @@ namespace Bari.Core.Model.Loader
 
             foreach (var referenceNode in referenceNodes)
             {
-                if (referenceNode is YamlScalarNode)
+                var scalar = referenceNode as YamlScalarNode;
+                if (scalar != null)
                 {
-                    var uri = ((YamlScalarNode) referenceNode).Value;
+                    var uri = scalar.Value;
                     project.AddReference(new Reference(new Uri(uri)));
                 }
             }
@@ -225,9 +259,28 @@ namespace Bari.Core.Model.Loader
 
                 return value;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return defaultValue;
+            }
+        }
+
+        private void TryAddParameters(IProjectParametersHolder target, YamlNode key, YamlNode value)
+        {
+            if (parametersLoaders != null)
+            {
+                var scalarKey = key as YamlScalarNode;
+
+                if (scalarKey != null)
+                {
+                    string name = scalarKey.Value;
+                    var loader = parametersLoaders.FirstOrDefault(l => l.Supports(name));
+                    if (loader != null)
+                    {
+                        var param = loader.Load(name, value);
+                        target.AddParameters(name, param);
+                    }
+                }
             }
         }
     }

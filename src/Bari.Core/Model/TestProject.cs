@@ -7,6 +7,9 @@ namespace Bari.Core.Model
     /// </summary>
     public class TestProject: Project
     {
+        /// <summary>
+        /// Gets or sets the root directory of the project's sources
+        /// </summary>
         public override IFileSystemDirectory RootDirectory
         {
             get { return Module.RootDirectory.GetChildDirectory("tests").GetChildDirectory(Name); }

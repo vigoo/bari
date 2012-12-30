@@ -21,29 +21,29 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class CsprojBuilder : IBuilder, IEquatable<CsprojBuilder>
     {
-        private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IResolutionRoot root;
         private readonly Project project;
         private readonly Suite suite;
         private readonly IFileSystemDirectory targetDir;
+        private readonly CsprojGenerator generator;
         private ISet<IBuilder> referenceBuilders;
 
         /// <summary>
         /// Creates the builder
         /// </summary>
-        /// <param name="projectGuidManagement">The project-guid mapper to use</param>
         /// <param name="root">Path to resolve instances</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
         /// <param name="suite">The suite the project belongs to </param>
         /// <param name="targetDir">The build target directory </param>
-        public CsprojBuilder(IProjectGuidManagement projectGuidManagement, IResolutionRoot root, Project project,
-                             Suite suite, [TargetRoot] IFileSystemDirectory targetDir)
+        /// <param name="generator">The csproj generator class to be used</param>
+        public CsprojBuilder(IResolutionRoot root, Project project,
+                             Suite suite, [TargetRoot] IFileSystemDirectory targetDir, CsprojGenerator generator)
         {
-            this.projectGuidManagement = projectGuidManagement;
             this.root = root;
             this.project = project;
             this.suite = suite;
             this.targetDir = targetDir;
+            this.generator = generator;
         }
 
         /// <summary>
@@ -142,10 +142,7 @@ namespace Bari.Plugins.Csharp.Build
                     references.UnionWith(builderResults);
                 }
 
-                var generator = new CsprojGenerator(
-                    projectGuidManagement,
-                    project, references, csproj, csversion, csversionPath, suite, targetDir);
-                generator.Generate();
+                generator.Generate(project, references, csproj, csversion, csversionPath);
             }
 
             return new HashSet<TargetRelativePath>(

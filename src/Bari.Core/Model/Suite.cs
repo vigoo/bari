@@ -8,11 +8,12 @@ namespace Bari.Core.Model
     /// <summary>
     /// Suite is the root item in the object model describing an application suite
     /// </summary>
-    public class Suite
+    public class Suite : IProjectParametersHolder
     {
         private string name = string.Empty;
         private string version;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
         private readonly IFileSystemDirectory suiteRoot;
 
         [ContractInvariantMethod]
@@ -21,6 +22,7 @@ namespace Bari.Core.Model
             Contract.Invariant(name != null);
             Contract.Invariant(modules != null);
             Contract.Invariant(suiteRoot != null);
+            Contract.Invariant(parameters != null);
             Contract.Invariant(Contract.ForAll(modules,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) && 
@@ -116,6 +118,38 @@ namespace Bari.Core.Model
         public bool HasModule(string moduleName)
         {
             return modules.ContainsKey(moduleName);
+        }
+
+        /// <summary>
+        /// Checks whether a parameter block exist with the given name
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns <c>true</c> if a parameter block with the given name is applied to this model item</returns>
+        public bool HasParameters(string paramsName)
+        {
+            return parameters.ContainsKey(paramsName);
+        }
+
+        /// <summary>
+        /// Gets a parameter block by its name
+        /// </summary>
+        /// <typeparam name="TParams">The expected type of the parameter block</typeparam>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns the parameter block</returns>
+        public TParams GetParameters<TParams>(string paramsName)
+            where TParams : IProjectParameters
+        {
+            return (TParams)parameters[paramsName];
+        }
+
+        /// <summary>
+        /// Adds a new parameter block to this model item
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <param name="projectParameters">The parameter block to be added</param>
+        public void AddParameters(string paramsName, IProjectParameters projectParameters)
+        {
+            parameters.Add(paramsName, projectParameters);
         }
     }
 }

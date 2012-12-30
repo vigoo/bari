@@ -72,12 +72,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.0.0.4001\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Factory">
+      <HintPath>..\packages\Ninject.Extensions.Factory.3.0.1.0\lib\net40\Ninject.Extensions.Factory.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -91,6 +97,10 @@
     <ProjectReference Include="..\Bari.Core\Bari.Core.csproj">
       <Project>{01851996-5B69-42C1-A6A3-409BE497132F}</Project>
       <Name>Bari.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bari.Plugins.CodeContracts\Bari.Plugins.CodeContracts.csproj">
+      <Project>{2ce5ff97-67d9-464f-83fd-851603d2bfc3}</Project>
+      <Name>Bari.Plugins.CodeContracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj">
       <Project>{A3F7C2D0-E715-476C-AFA6-70E5BAAB84A7}</Project>

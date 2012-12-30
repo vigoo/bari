@@ -8,7 +8,7 @@ namespace Bari.Core.Model
     /// <summary>
     /// Represents a module of the suite which consists of several projects
     /// </summary>
-    public class Module
+    public class Module : IProjectParametersHolder
     {
         private readonly string name;
         private string version;
@@ -17,9 +17,10 @@ namespace Bari.Core.Model
 
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
             StringComparer.InvariantCultureIgnoreCase);
-
         private readonly IDictionary<string, TestProject> testProjects = new Dictionary<string, TestProject>(
             StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, IProjectParameters> parameters =
+            new Dictionary<string, IProjectParameters>();
             
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -27,6 +28,7 @@ namespace Bari.Core.Model
             Contract.Invariant(name != null);
             Contract.Invariant(projects != null);
             Contract.Invariant(suite != null);
+            Contract.Invariant(parameters != null);
             Contract.Invariant(Contract.ForAll(projects,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) &&
@@ -55,7 +57,7 @@ namespace Bari.Core.Model
         /// <summary>
         /// Gets or sets the module's version
         /// 
-        /// <paraTo use the suite version in <see cref="EffectiveVersion"/>, set this property to <c>null</c>.</para>
+        /// <para>To use the suite version in <see cref="EffectiveVersion"/>, set this property to <c>null</c>.</para>
         /// </summary>
         public string Version
         {
@@ -188,6 +190,42 @@ namespace Bari.Core.Model
         public bool HasTestProject(string testProjectName)
         {
             return testProjects.ContainsKey(testProjectName);
+        }
+
+        /// <summary>
+        /// Checks whether a parameter block exist with the given name
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns <c>true</c> if a parameter block with the given name is applied to this model item</returns>
+        public bool HasParameters(string paramsName)
+        {
+            return parameters.ContainsKey(paramsName) || suite.HasParameters(paramsName);
+        }
+
+        /// <summary>
+        /// Gets a parameter block by its name
+        /// </summary>
+        /// <typeparam name="TParams">The expected type of the parameter block</typeparam>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns the parameter block</returns>
+        public TParams GetParameters<TParams>(string paramsName)
+            where TParams : IProjectParameters
+        {
+            IProjectParameters result;
+            if (!parameters.TryGetValue(paramsName, out result))
+                return suite.GetParameters<TParams>(paramsName);
+            else
+                return (TParams)result;
+        }
+
+        /// <summary>
+        /// Adds a new parameter block to this model item
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <param name="projectParameters">The parameter block to be added</param>
+        public void AddParameters(string paramsName, IProjectParameters projectParameters)
+        {
+            parameters.Add(paramsName, projectParameters);
         }
     }
 }

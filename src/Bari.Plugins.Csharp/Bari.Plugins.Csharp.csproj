@@ -99,7 +99,14 @@
     <Compile Include="Tools\IMSBuild.cs" />
     <Compile Include="Tools\MSBuild.cs" />
     <Compile Include="VisualStudio\CsharpVersionInfoGenerator.cs" />
+    <Compile Include="VisualStudio\CsprojSections\CsprojSectionBase.cs" />
+    <Compile Include="VisualStudio\CsprojSections\ICsprojSection.cs" />
+    <Compile Include="VisualStudio\CsprojSections\PropertiesSection.cs" />
+    <Compile Include="VisualStudio\CsprojSections\ReferencesSection.cs" />
+    <Compile Include="VisualStudio\CsprojSections\SourceItemsSection.cs" />
+    <Compile Include="VisualStudio\CsprojSections\VersionSection.cs" />
     <Compile Include="VisualStudio\DefaultProjectGuidManagement.cs" />
+    <Compile Include="VisualStudio\ICsprojGeneratorContext.cs" />
     <Compile Include="VisualStudio\IProjectGuidManagement.cs" />
     <Compile Include="Commands\VisualStudioCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

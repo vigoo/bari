@@ -86,6 +86,10 @@ namespace Bari.Core.Tools
             log.DebugFormat("Download completed");
         }
 
+        /// <summary>
+        /// Downloads the tool to the given target path
+        /// </summary>
+        /// <param name="target">Target directory</param>
         protected virtual void DownloadAndDeploy(string target)
         {
             var client = new WebClient();

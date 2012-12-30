@@ -4,8 +4,10 @@ using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Ninject;
+using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Test.Loader
 {
@@ -44,7 +46,7 @@ suite: Test suite";
         {
             const string yaml = @"---                   
 suite: Test suite
-version: 1.0";           
+version: 1.0";
 
             var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
@@ -289,6 +291,123 @@ modules:
             prj.References.Should().OnlyContain(r => r.Uri == new Uri("test://ref1") ||
                                                      r.Uri == new Uri("test://ref2") ||
                                                      r.Uri == new Uri("test://ref3"));
+        }
+
+        [Test]
+        public void AllLoadersAskedForUnknownSuiteSections()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+test1: something
+test2:
+    - one
+    - two
+    - three
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+            
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            paramLoader.Verify(l => l.Supports("test1"), Times.AtLeastOnce());
+            paramLoader.Verify(l => l.Supports("test2"), Times.AtLeastOnce());
+        }
+
+        [Test]
+        public void AllLoadersAskedForUnknownModuleSections()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+   - name: mod1
+     test1: something
+   - name: mod2
+     test2:
+       - one
+       - two
+       - three
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            paramLoader.Verify(l => l.Supports("test1"), Times.AtLeastOnce());
+            paramLoader.Verify(l => l.Supports("test2"), Times.AtLeastOnce());
+        }
+
+        [Test]
+        public void AllLoadersAskedForUnknownProjectSections()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+   - name: mod1
+     projects: 
+        - name: proj1
+          test1: anything
+     tests:
+        - name: testproj
+          test2:
+             - one
+             - two
+             - three
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            paramLoader.Verify(l => l.Supports("test1"), Times.AtLeastOnce());
+            paramLoader.Verify(l => l.Supports("test2"), Times.AtLeastOnce());
+        }
+
+        [Test]
+        public void LoaderCalledForUnknownSection()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+test1: something
+test2:
+    - one
+    - two
+    - three
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            paramLoader.Setup(l => l.Supports("test1")).Returns(true);
+
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            paramLoader.Verify(l => l.Load("test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode) node).Value == "something")), Times.Once());
+            paramLoader.Verify(l => l.Load("test2", It.IsAny<YamlNode>()), Times.Never());
         }
     }
 }

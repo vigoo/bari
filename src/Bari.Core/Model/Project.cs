@@ -10,12 +10,13 @@ namespace Bari.Core.Model
     /// 
     /// <example>An example is a set of C# sources compiled into one assembly.</example>
     /// </summary>
-    public class Project
+    public class Project: IProjectParametersHolder
     {
         private readonly Module module;
         private readonly string name;
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
         private readonly ISet<Reference> references = new HashSet<Reference>();
+        private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
         private ProjectType type = ProjectType.Library;
         private string version;
 
@@ -165,6 +166,42 @@ namespace Bari.Core.Model
             Contract.Ensures(References.Contains(reference));
 
             references.Add(reference);
+        }
+
+        /// <summary>
+        /// Checks whether a parameter block exist with the given name
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns <c>true</c> if a parameter block with the given name is applied to this model item</returns>
+        public bool HasParameters(string paramsName)
+        {
+            return parameters.ContainsKey(paramsName) || module.HasParameters(paramsName);
+        }
+
+        /// <summary>
+        /// Gets a parameter block by its name
+        /// </summary>
+        /// <typeparam name="TParams">The expected type of the parameter block</typeparam>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns the parameter block</returns>
+        public TParams GetParameters<TParams>(string paramsName)
+            where TParams: IProjectParameters
+        {
+            IProjectParameters result;
+            if (!parameters.TryGetValue(paramsName, out result))
+                return module.GetParameters<TParams>(paramsName);
+            else
+                return (TParams)result;
+        }
+
+        /// <summary>
+        /// Adds a new parameter block to this model item
+        /// </summary>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <param name="projectParameters">The parameter block to be added</param>
+        public void AddParameters(string paramsName, IProjectParameters projectParameters)
+        {
+            parameters.Add(paramsName, projectParameters);
         }
     }
 }

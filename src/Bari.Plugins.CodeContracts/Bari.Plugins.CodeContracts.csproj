@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A46A578B-51B6-4C14-801A-55BD836941EE}</ProjectGuid>
+    <ProjectGuid>{2CE5FF97-67D9-464F-83FD-851603D2BFC3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bari.Plugins.Gallio</RootNamespace>
-    <AssemblyName>Bari.Plugins.Gallio</AssemblyName>
+    <RootNamespace>Bari.Plugins.CodeContracts</RootNamespace>
+    <AssemblyName>Bari.Plugins.CodeContracts</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -55,6 +55,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <DocumentationFile>bin\Debug\Bari.Plugins.CodeContracts.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -78,13 +79,24 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet.Core, Version=0.2.4727.29286, Culture=neutral, PublicKeyToken=2b53052c5884d7a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.Core.1.1.17\lib\YamlDotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet.RepresentationModel, Version=0.2.4727.29287, Culture=neutral, PublicKeyToken=2b53052c5884d7a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.RepresentationModel.1.1.17\lib\YamlDotNet.RepresentationModel.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BariModule.cs" />
-    <Compile Include="Commands\Test\GallioTestRunner.cs" />
+    <Compile Include="Model\ContractAssemblyMode.cs" />
+    <Compile Include="Model\ContractCheckingLevel.cs" />
+    <Compile Include="Model\ContractReferenceMode.cs" />
+    <Compile Include="Model\ContractsProjectParameters.cs" />
+    <Compile Include="Model\Loader\YamlContractsParametersLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\Gallio.cs" />
-    <Compile Include="Tools\IGallio.cs" />
+    <Compile Include="VisualStudio\CsprojSections\CodeContractsSection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -93,6 +105,10 @@
     <ProjectReference Include="..\Bari.Core\Bari.Core.csproj">
       <Project>{01851996-5b69-42c1-a6a3-409be497132f}</Project>
       <Name>Bari.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj">
+      <Project>{a3f7c2d0-e715-476c-afa6-70e5baab84a7}</Project>
+      <Name>Bari.Plugins.Csharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Nuget", "Bari.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.Gallio", "Bari.Plugins.Gallio\Bari.Plugins.Gallio.csproj", "{A46A578B-51B6-4C14-801A-55BD836941EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bari.Plugins.CodeContracts", "Bari.Plugins.CodeContracts\Bari.Plugins.CodeContracts.csproj", "{2CE5FF97-67D9-464F-83FD-851603D2BFC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,16 @@ Global
 		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A46A578B-51B6-4C14-801A-55BD836941EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2CE5FF97-67D9-464F-83FD-851603D2BFC3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

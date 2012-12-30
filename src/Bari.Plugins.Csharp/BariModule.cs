@@ -6,6 +6,7 @@ using Bari.Plugins.Csharp.Commands;
 using Bari.Plugins.Csharp.Commands.Clean;
 using Bari.Plugins.Csharp.Tools;
 using Bari.Plugins.Csharp.VisualStudio;
+using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
 using Ninject.Modules;
 
 namespace Bari.Plugins.Csharp
@@ -33,6 +34,11 @@ namespace Bari.Plugins.Csharp
             Bind<IMSBuild>().To<MSBuild>();
 
             Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
+
+            Bind<ICsprojSection>().To<PropertiesSection>();
+            Bind<ICsprojSection>().To<ReferencesSection>();
+            Bind<ICsprojSection>().To<SourceItemsSection>();
+            Bind<ICsprojSection>().To<VersionSection>();
         }
     }
 }

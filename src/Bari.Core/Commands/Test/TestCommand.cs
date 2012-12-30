@@ -9,6 +9,9 @@ using Ninject.Syntax;
 
 namespace Bari.Core.Commands.Test
 {
+    /// <summary>
+    /// Implements 'test' command, which builds and executes test projects 
+    /// </summary>
     public class TestCommand : ICommand
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(TestCommand));
@@ -51,6 +54,13 @@ Example: `bari test`
             }
         }
 
+        /// <summary>
+        /// Constructs the test command
+        /// </summary>
+        /// <param name="root">Path to create new instances</param>
+        /// <param name="targetRoot">Target file system directory</param>
+        /// <param name="projectBuilders">Available project builders</param>
+        /// <param name="testRunners">Available test runners</param>
         public TestCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners)
         {
             this.root = root;

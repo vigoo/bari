@@ -62,6 +62,33 @@ namespace Bari.Core.Generic
             }
         }
 
+        /// <summary>
+        /// Gets the relative path from a given directory to given file in a larger common directory subtree.
+        /// 
+        /// r.Object.GetRelativePathFrom(a.Object, @"a\c.txt").Should().Be(@"c.txt");
+        /// r.Object.GetRelativePathFrom(a.Object, @"a.test\e.txt").Should().Be(@"..\a.test\e.txt");
+        /// r.Object.GetRelativePathFrom(a.Object, @"b\d.txt").Should().Be(@"..\b\d.txt");
+        /// </summary>
+        /// <example>
+        /// Consider the following hierarchy:
+        /// r 
+        /// -> a
+        ///   -> c.txt
+        /// -> a.test
+        ///   -> e.txt
+        /// -> b
+        ///   -> d.txt
+        /// 
+        /// In this case:
+        /// <c>r.GetRelativePathFrom(a, "a\c.txt")</c> is <c>c.txt</c>
+        /// <c>r.GetRelativePathFrom(a, "a.test\e.txt")</c> is <c>..\a.test\e.txt</c>
+        /// <c>r.GetRelativePathFrom(a, "b\d.txt")</c> is <c>..\b\d.txt</c>
+        /// </example>
+        /// <param name="root">The directory subtree which contains both <c>innerRoot</c> and <c>outerRelativePath</c></param>
+        /// <param name="innerRoot">The directory to get the path relative to</param>
+        /// <param name="outerRelativePath">The target path, relative to the <c>root</c> directory</param>
+        /// <returns>Returns the relative path from <c>innerRoot</c> to <c>outerRelativePath</c> (which is specified as a relative path
+        /// to <c>root</c>)</returns>
         public static string GetRelativePathFrom(this IFileSystemDirectory root, IFileSystemDirectory innerRoot, string outerRelativePath)
         {
             string innerFromOuter = root.GetRelativePath(innerRoot);
