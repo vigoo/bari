@@ -151,6 +151,7 @@
     <Compile Include="Exceptions\InvalidSpecificationException.cs" />
     <Compile Include="Exceptions\NoPluginForTaskException.cs" />
     <Compile Include="Exceptions\ToolMustBeInstalledManually.cs" />
+    <Compile Include="Generic\CacheRootAttribute.cs" />
     <Compile Include="Generic\FileSystemDirectoryExtensions.cs" />
     <Compile Include="Generic\Graph\DotWriter.cs" />
     <Compile Include="Generic\Graph\GraphTraversal.cs" />

@@ -50,7 +50,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
                     string relativeCsprojPath = suiteRoot.GetRelativePathFrom(
                         slnDir, GetSuiteRelativeCsprojPath(project));
 
-                    string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");
+                    string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
 
                     output.WriteLine("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"",
                                      csprojGuid, project.Name, relativeCsprojPath, projectGuid);
@@ -66,12 +66,15 @@ namespace Bari.Plugins.Csharp.VisualStudio
             
             foreach (var project in projects)
             {
-                string projectGuid = projectGuidManagement.GetGuid(project).ToString("B");
+                string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
 
-                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Debug|x86", projectGuid);
-                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Debug|x86", projectGuid);
+                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Bari|Bari", projectGuid);
+                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Bari|Bari", projectGuid);
             }
             
+            output.WriteLine("\tEndGlobalSection");
+            output.WriteLine("\tGlobalSection(SolutionProperties) = preSolution");
+            output.WriteLine("\t\tHideSolutionNode = FALSE");
             output.WriteLine("\tEndGlobalSection");
             output.WriteLine("EndGlobal");
         }

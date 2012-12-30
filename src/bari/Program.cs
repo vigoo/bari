@@ -4,7 +4,6 @@ using System.Reflection;
 using Bari.Console.UI;
 using Bari.Core;
 using Bari.Core.Build.Cache;
-using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
 using Bari.Core.Process;
@@ -45,11 +44,11 @@ namespace Bari.Console
             Kernel.RegisterCoreBindings();
 
             // Binding default cache
-            var cacheDir = suiteRoot.GetChildDirectory("cache", createIfMissing: true);
-            var buildCache = new FileBuildCache(
-                cacheDir,
-                root.Get<IProtocolSerializer>());
-            root.Bind<IBuildCache>().ToConstant(buildCache);
+            var cacheDir = suiteRoot.GetChildDirectory("cache", createIfMissing: true);            
+            root.Bind<IFileSystemDirectory>()
+                .ToConstant(cacheDir)
+                .WhenTargetHas<CacheRootAttribute>();
+            root.Bind<IBuildCache>().To<FileBuildCache>();
             root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir));
 
             // Loading fix plugins

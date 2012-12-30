@@ -31,7 +31,7 @@ namespace Bari.Plugins.Csharp.Test.Build
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas
                 <TargetRootAttribute>();
-            kernel.Bind<IProjectGuidManagement>().ToConstant(new DefaultProjectGuidManagement());
+            kernel.Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>();
 
             suite = kernel.Get<Suite>();
             suite.Name = "test suite";

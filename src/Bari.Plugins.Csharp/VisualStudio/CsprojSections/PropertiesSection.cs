@@ -38,11 +38,14 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         public override void Write(XmlWriter writer, Project project, ICsprojGeneratorContext context)
         {
             writer.WriteStartElement("PropertyGroup");
+            writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
+
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
             writer.WriteElementString("OutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name)));
             writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
+            writer.WriteElementString("Platform", "AnyCPU");
 
             WriteAppConfig(writer, project);
             WriteManifest(writer, project);

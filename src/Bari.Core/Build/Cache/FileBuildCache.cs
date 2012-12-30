@@ -27,7 +27,7 @@ namespace Bari.Core.Build.Cache
         /// </summary>
         /// <param name="cacheRoot">Root directory where the cache will store its contents.</param>
         /// <param name="protocolSerializer">The serializer to be used for saving dependency fingerprint protocols</param>
-        public FileBuildCache(IFileSystemDirectory cacheRoot, IProtocolSerializer protocolSerializer)
+        public FileBuildCache([CacheRoot] IFileSystemDirectory cacheRoot, IProtocolSerializer protocolSerializer)
         {
             this.cacheRoot = cacheRoot;
             this.protocolSerializer = protocolSerializer;
