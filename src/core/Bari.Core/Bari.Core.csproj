@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  ToolsVersion="4.0"
+  DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>false</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>true</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>false</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>false</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>false</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>true</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>true</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>true</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>true</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>true</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>false</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>true</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>false</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>false</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>false</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>true</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>true</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>true</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>false</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>true</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>true</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
+  </PropertyGroup>
+  <PropertyGroup
+    Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <AssemblyName>Bari.Core</AssemblyName>
+    <ProjectGuid>{010632ed-a0ca-4e89-a6cb-a919740bb6e1}</ProjectGuid>
+    <OutputPath>..\..\..\target\core</OutputPath>
+    <IntermediateOutputPath>..\..\..\target\tmp\core</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <Platform>AnyCPU</Platform>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference
+      Include="microsoft.csharp" />
+    <Reference
+      Include="system" />
+    <Reference
+      Include="system.core" />
+    <Reference
+      Include="system.data" />
+    <Reference
+      Include="system.data.datasetextensions" />
+    <Reference
+      Include="system.xml" />
+    <Reference
+      Include="system.xml.linq" />
+    <Reference
+      Include="Ninject">
+      <HintPath>..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Monads">
+      <HintPath>..\..\..\target\deps\monads\Monads.1.1.5.0\lib\net40\Monads.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="log4net">
+      <HintPath>..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.Core">
+      <HintPath>..\..\..\target\deps\yamldotnet.core\YamlDotNet.Core.1.1.17\lib\YamlDotNet.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.RepresentationModel">
+      <HintPath>..\..\..\target\deps\yamldotnet.representationmodel\YamlDotNet.RepresentationModel.1.1.17\lib\YamlDotNet.RepresentationModel.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Ionic.Zip">
+      <HintPath>..\..\..\target\deps\dotnetzip\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="cs\Build\BuildContext.cs" />
+    <Compile
+      Include="cs\Build\Cache\BuildKey.cs" />
+    <Compile
+      Include="cs\Build\Cache\CachedBuilder.cs" />
+    <Compile
+      Include="cs\Build\Cache\FileBuildCache.cs" />
+    <Compile
+      Include="cs\Build\Cache\IBuildCache.cs" />
+    <Compile
+      Include="cs\Build\Cache\MemoryBuildCache.cs" />
+    <Compile
+      Include="cs\Build\Cache\MemoryCacheItem.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\CombinedFingerprint.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\MultipleDependencies.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\NoDependencies.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\ObjectPropertiesFingerprint.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\ProjectPropertiesDependencies.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\BinarySerializer.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\CombinedFingerprintProtocol.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\IDependencyFingerprintProtocol.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\IProtocolSerializer.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\ObjectPropertiesProtocol.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\Protocol\SourceSetFingerprintProtocol.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\ReferenceDependency.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\SourceSetDependencies.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\SourceSetFingerprint.cs" />
+    <Compile
+      Include="cs\Build\Dependencies\SubtaskDependency.cs" />
+    <Compile
+      Include="cs\Build\IBuildContext.cs" />
+    <Compile
+      Include="cs\Build\IBuilder.cs" />
+    <Compile
+      Include="cs\Build\IDependencies.cs" />
+    <Compile
+      Include="cs\Build\IDependencyFingerprint.cs" />
+    <Compile
+      Include="cs\Build\IProjectBuilderFactory.cs" />
+    <Compile
+      Include="cs\Build\IReferenceBuilder.cs" />
+    <Compile
+      Include="cs\Build\ModuleReferenceBuilder.cs" />
+    <Compile
+      Include="cs\Build\ReferenceBuilderResolver.cs" />
+    <Compile
+      Include="cs\Build\SuiteReferenceBuilder.cs" />
+    <Compile
+      Include="cs\Commands\BuildCommand.cs" />
+    <Compile
+      Include="cs\Commands\Clean\CacheCleaner.cs" />
+    <Compile
+      Include="cs\Commands\Clean\CleanCommand.cs" />
+    <Compile
+      Include="cs\Commands\Clean\ICleanExtension.cs" />
+    <Compile
+      Include="cs\Commands\HelpCommand.cs" />
+    <Compile
+      Include="cs\Commands\ICommand.cs" />
+    <Compile
+      Include="cs\Commands\InfoCommand.cs" />
+    <Compile
+      Include="cs\Commands\Test\ITestRunner.cs" />
+    <Compile
+      Include="cs\Commands\Test\TestCommand.cs" />
+    <Compile
+      Include="cs\Exceptions\InvalidCommandException.cs" />
+    <Compile
+      Include="cs\Exceptions\InvalidCommandParameterException.cs" />
+    <Compile
+      Include="cs\Exceptions\InvalidReferenceException.cs" />
+    <Compile
+      Include="cs\Exceptions\InvalidReferenceTypeException.cs" />
+    <Compile
+      Include="cs\Exceptions\InvalidSpecificationException.cs" />
+    <Compile
+      Include="cs\Exceptions\NoPluginForTaskException.cs" />
+    <Compile
+      Include="cs\Exceptions\ToolMustBeInstalledManually.cs" />
+    <Compile
+      Include="cs\Generic\CacheRootAttribute.cs" />
+    <Compile
+      Include="cs\Generic\FileSystemDirectoryExtensions.cs" />
+    <Compile
+      Include="cs\Generic\Graph\DotWriter.cs" />
+    <Compile
+      Include="cs\Generic\Graph\GraphTraversal.cs" />
+    <Compile
+      Include="cs\Generic\Graph\IDirectedGraphEdge.cs" />
+    <Compile
+      Include="cs\Generic\Graph\IDirectedGraphNode.cs" />
+    <Compile
+      Include="cs\Generic\Graph\IUndirectedGraphEdge.cs" />
+    <Compile
+      Include="cs\Generic\Graph\IUndirectedGraphNode.cs" />
+    <Compile
+      Include="cs\Generic\Graph\NodeBuilder.cs" />
+    <Compile
+      Include="cs\Generic\Graph\SimpleDirectedGraphEdge.cs" />
+    <Compile
+      Include="cs\Generic\Graph\SimpleDirectedGraphNode.cs" />
+    <Compile
+      Include="cs\Generic\Graph\SimpleUndirectedGraphEdge.cs" />
+    <Compile
+      Include="cs\Generic\Graph\SimpleUndirectedGraphNode.cs" />
+    <Compile
+      Include="cs\Generic\Graph\TopologicalSorting.cs" />
+    <Compile
+      Include="cs\Generic\IFileSystemDirectory.cs" />
+    <Compile
+      Include="cs\Generic\LocalFileSystemDirectory.cs" />
+    <Compile
+      Include="cs\Generic\MD5.cs" />
+    <Compile
+      Include="cs\Generic\SuiteRelativePath.cs" />
+    <Compile
+      Include="cs\Generic\SuiteRootAttribute.cs" />
+    <Compile
+      Include="cs\Generic\TargetRelativePath.cs" />
+    <Compile
+      Include="cs\Generic\TargetRootAttribute.cs" />
+    <Compile
+      Include="cs\Kernel.cs" />
+    <Compile
+      Include="cs\Model\DefaultSuiteLoader.cs" />
+    <Compile
+      Include="cs\Model\Discovery\ExplorerRunner.cs" />
+    <Compile
+      Include="cs\Model\Discovery\ISuiteExplorer.cs" />
+    <Compile
+      Include="cs\Model\Discovery\ModuleProjectDiscovery.cs" />
+    <Compile
+      Include="cs\Model\IProjectParameters.cs" />
+    <Compile
+      Include="cs\Model\IProjectParametersHolder.cs" />
+    <Compile
+      Include="cs\Model\ISuiteLoader.cs" />
+    <Compile
+      Include="cs\Model\Loader\IModelLoader.cs" />
+    <Compile
+      Include="cs\Model\Loader\InMemoryYamlModelLoader.cs" />
+    <Compile
+      Include="cs\Model\Loader\IYamlProjectParametersLoader.cs" />
+    <Compile
+      Include="cs\Model\Loader\LocalYamlModelLoader.cs" />
+    <Compile
+      Include="cs\Model\Loader\YamlModelLoaderBase.cs" />
+    <Compile
+      Include="cs\Model\Module.cs" />
+    <Compile
+      Include="cs\Model\Project.cs" />
+    <Compile
+      Include="cs\Model\ProjectType.cs" />
+    <Compile
+      Include="cs\Model\Reference.cs" />
+    <Compile
+      Include="cs\Model\SourceSet.cs" />
+    <Compile
+      Include="cs\Model\Suite.cs" />
+    <Compile
+      Include="cs\Model\TestProject.cs" />
+    <Compile
+      Include="cs\Process\MainProcess.cs" />
+    <Compile
+      Include="cs\Properties\AssemblyInfo.cs" />
+    <Compile
+      Include="cs\Tools\DownloadableExternalTool.cs" />
+    <Compile
+      Include="cs\Tools\DownloadablePackedExternalTool.cs" />
+    <Compile
+      Include="cs\Tools\ExternalTool.cs" />
+    <Compile
+      Include="cs\Tools\ManuallyInstallableExternalTool.cs" />
+    <Compile
+      Include="cs\UI\IParameters.cs" />
+    <Compile
+      Include="cs\UI\IUserOutput.cs" />
+    <Compile
+      Include="cs\UI\UserOutputExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="version.cs" />
+  </ItemGroup>
+  <Import
+    Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

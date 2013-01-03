@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  ToolsVersion="4.0"
+  DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <AssemblyName>Bari.Plugins.CodeContracts</AssemblyName>
+    <ProjectGuid>{cfde57ee-d019-4c96-8943-56eaa052f436}</ProjectGuid>
+    <OutputPath>..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <Platform>AnyCPU</Platform>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference
+      Include="microsoft.csharp" />
+    <Reference
+      Include="system" />
+    <Reference
+      Include="system.core" />
+    <Reference
+      Include="system.data" />
+    <Reference
+      Include="system.data.datasetextensions" />
+    <Reference
+      Include="system.xml" />
+    <Reference
+      Include="system.xml.linq" />
+    <Reference
+      Include="log4net">
+      <HintPath>..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Ninject">
+      <HintPath>..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.Core">
+      <HintPath>..\..\..\target\deps\yamldotnet.core\YamlDotNet.Core.1.1.17\lib\YamlDotNet.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.RepresentationModel">
+      <HintPath>..\..\..\target\deps\yamldotnet.representationmodel\YamlDotNet.RepresentationModel.1.1.17\lib\YamlDotNet.RepresentationModel.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <ProjectReference
+      Include="..\..\..\src\core\Bari.Core\Bari.Core.csproj">
+      <Project>{010632ed-a0ca-4e89-a6cb-a919740bb6e1}</Project>
+      <Name>Bari.Core</Name>
+    </ProjectReference>
+    <ProjectReference
+      Include="..\..\..\src\dotnetplugins\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj">
+      <Project>{2fc569af-2602-434c-a2bb-db50b22eda03}</Project>
+      <Name>Bari.Plugins.Csharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="cs\BariModule.cs" />
+    <Compile
+      Include="cs\Model\ContractAssemblyMode.cs" />
+    <Compile
+      Include="cs\Model\ContractCheckingLevel.cs" />
+    <Compile
+      Include="cs\Model\ContractReferenceMode.cs" />
+    <Compile
+      Include="cs\Model\ContractsProjectParameters.cs" />
+    <Compile
+      Include="cs\Model\Loader\YamlContractsParametersLoader.cs" />
+    <Compile
+      Include="cs\Properties\AssemblyInfo.cs" />
+    <Compile
+      Include="cs\VisualStudio\CsprojSections\CodeContractsSection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="version.cs" />
+  </ItemGroup>
+  <Import
+    Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

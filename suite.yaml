@@ -1,10 +1,10 @@
 ---
 suite:      bari
 version:    0.3.0.0
+contracts:  enabled
 
 modules:
     - name: core
-      contracts: enabled
       projects:
         - name: Bari.Core         
           references:
@@ -20,6 +20,7 @@ modules:
             - nuget://log4net
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
+            - nuget://DotNetZip
         - name: bari
           type: executable
           references:
@@ -95,7 +96,10 @@ modules:
             - gac://System.Xml.Linq
             - nuget://log4net
             - nuget://Ninject
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
+            - module://Bari.Plugins.Csharp
       tests:
         - name: Bari.Plugins.Csharp.Test
           references:
