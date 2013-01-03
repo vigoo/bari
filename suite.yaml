@@ -1,0 +1,117 @@
+---
+suite:      bari
+version:    0.3.0.0
+
+modules:
+    - name: core
+      contracts: enabled
+      projects:
+        - name: Bari.Core         
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq            
+            - nuget://Ninject
+            - nuget://Monads
+            - nuget://log4net
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+        - name: bari
+          type: executable
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://Ninject
+            - module://Bari.Core
+      tests:
+        - name: Bari.Core.Test
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://FluentAssertions
+            - nuget://Moq
+            - nuget://Ninject
+            - nuget://Ninject.Extensions.ChildKernel
+            - nuget://NUnit
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - module://Bari.Core
+    - name: dotnetplugins
+      projects:
+        - name: Bari.Plugins.Csharp
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://log4net
+            - nuget://Ninject
+            - nuget://Ninject.Extensions.ChildKernel
+            - suite://core/Bari.Core
+        - name: Bari.Plugins.Nuget
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core
+        - name: Bari.Plugins.Gallio
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core            
+        - name: Bari.Plugins.CodeContracts
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core
+      tests:
+        - name: Bari.Plugins.Csharp.Test
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://FluentAssertions
+            - nuget://Moq
+            - nuget://Ninject
+            - nuget://Ninject.Extensions.ChildKernel
+            - nuget://NUnit
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - suite://core/Bari.Core
+            - module://Bari.Plugins.Csharp            
