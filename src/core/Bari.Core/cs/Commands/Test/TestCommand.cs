@@ -76,7 +76,16 @@ Example: `bari test`
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
         {
-            if (parameters.Length == 0)
+            int effectiveLength = parameters.Length;
+            bool dumpMode = false;
+
+            if (effectiveLength > 0)
+                dumpMode = parameters[effectiveLength - 1] == "--dump";
+
+            if (dumpMode)
+                effectiveLength--;
+
+            if (effectiveLength == 0)
             {
                 var projects = (from module in suite.Modules
                                 from project in module.TestProjects
@@ -84,7 +93,7 @@ Example: `bari test`
 
                 log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
-                var buildOutputs = RunWithProjects(projects);
+                var buildOutputs = RunWithProjects(projects, dumpMode);
                 RunTests(projects, buildOutputs);
             }
             else
@@ -102,7 +111,7 @@ Example: `bari test`
                 testRunner.Run(testProjects, buildOutputPaths);
         }
 
-        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects)
+        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode)
         {
             var context = root.Get<IBuildContext>();
 
@@ -113,9 +122,18 @@ Example: `bari test`
                 // TODO: we have to make one builder above all the returned project builders and use it as root
             }
 
-            context.Run(rootBuilder);
+            if (dumpMode)
+            {
+                using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
+                    context.Dump(builderGraph, rootBuilder);
 
-            return context.GetResults(rootBuilder);
+                return new TargetRelativePath[0];
+            }
+            else 
+            {
+                context.Run(rootBuilder);
+                return context.GetResults(rootBuilder);
+            }        
         }
     }
 }
