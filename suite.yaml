@@ -14,8 +14,10 @@ modules:
             - gac://System.Data
             - gac://System.Data.DataSetExtensions
             - gac://System.Xml
-            - gac://System.Xml.Linq            
+            - gac://System.Xml.Linq   
+            - nuget://Castle.Core         
             - nuget://Ninject
+            - nuget://Ninject.Extensions.Factory
             - nuget://Monads
             - nuget://log4net
             - nuget://YamlDotNet.Core
@@ -40,8 +42,10 @@ modules:
             - gac://System.Xml.Linq
             - nuget://FluentAssertions
             - nuget://Moq
+            - nuget://Castle.Core
             - nuget://Ninject
             - nuget://Ninject.Extensions.ChildKernel
+            - nuget://Ninject.Extensions.Factory
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
@@ -60,6 +64,7 @@ modules:
             - nuget://log4net
             - nuget://Ninject
             - nuget://Ninject.Extensions.ChildKernel
+            - nuget://Ninject.Extensions.Factory
             - suite://core/Bari.Core
         - name: Bari.Plugins.Nuget
           references:
@@ -113,9 +118,12 @@ modules:
             - nuget://FluentAssertions
             - nuget://Moq
             - nuget://Ninject
+            - nuget://Castle.Core
             - nuget://Ninject.Extensions.ChildKernel
+            - nuget://Ninject.Extensions.Factory
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
-            - module://Bari.Plugins.Csharp            
+            - suite://core/Bari.Core.Test
+            - module://Bari.Plugins.Csharp                        

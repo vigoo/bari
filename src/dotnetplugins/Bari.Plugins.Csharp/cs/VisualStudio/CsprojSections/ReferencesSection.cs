@@ -40,7 +40,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     var moduleName = parts[0];
                     var projectName = parts[1];
 
-                    var referredProject = Suite.GetModule(moduleName).GetProject(projectName);
+                    var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
 
                     writer.WriteStartElement("ProjectReference");
                     writer.WriteAttributeString("Include", 

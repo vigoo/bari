@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
@@ -76,19 +77,10 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
         private Project FindProject(string moduleAndProject)
         {
-            foreach (var module in suite.Modules)
-            {
-                if (moduleAndProject.StartsWith(module.Name + '.', StringComparison.InvariantCultureIgnoreCase))
-                {
-                    string projectName = moduleAndProject.Substring(module.Name.Length + 1);
-                    if (module.HasProject(projectName))
-                        return module.GetProject(projectName);
-                    else if (module.HasTestProject(projectName))
-                        return module.GetTestProject(projectName);
-                }
-            }
-
-            return null;
+            return (from module in suite.Modules
+                    where moduleAndProject.StartsWith(module.Name + '.', StringComparison.InvariantCultureIgnoreCase)
+                    let projectName = moduleAndProject.Substring(module.Name.Length + 1)
+                    select module.GetProjectOrTestProject(projectName)).FirstOrDefault();
         }
 
         private void SaveToCache()

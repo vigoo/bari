@@ -17,7 +17,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the given module.
     /// </para>
     /// </summary>
-    public class SuiteReferenceBuilder: IReferenceBuilder
+    public class SuiteReferenceBuilder : IReferenceBuilder
     {
         private readonly Suite suite;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -55,7 +55,7 @@ namespace Bari.Core.Build
                     return new NoDependencies();
                 else if (subtasks.Count == 1)
                     return new SubtaskDependency(subtasks.First());
-                else 
+                else
                     return new MultipleDependencies(
                         subtasks.Select(subtask => new SubtaskDependency(subtask)));
             }
@@ -83,11 +83,10 @@ namespace Bari.Core.Build
             if (suite.HasModule(moduleName))
             {
                 var module = suite.GetModule(moduleName);
+                referencedProject = module.GetProjectOrTestProject(projectName);
 
-                if (module.HasProject(projectName))
+                if (referencedProject != null)
                 {
-                    referencedProject = module.GetProject(projectName);
-
                     subtasks = new HashSet<IBuilder>();
                     foreach (var projectBuilder in projectBuilders)
                     {

@@ -193,6 +193,22 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Returns a project or test project with the given name, or returns <c>null</c>
+        /// if there is no such project in this module.
+        /// </summary>
+        /// <param name="projectName">Project name to look for</param>
+        /// <returns>Returns a project or test project with the given name, or <c>null</c></returns>
+        public Project GetProjectOrTestProject(string projectName)
+        {
+            if (HasProject(projectName))
+                return GetProject(projectName);
+            else if (HasTestProject(projectName))
+                return GetTestProject(projectName);
+            else
+                return null;
+        }
+
+        /// <summary>
         /// Checks whether a parameter block exist with the given name
         /// </summary>
         /// <param name="paramsName">Name of the parameter block</param>

@@ -37,10 +37,10 @@
     <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
-    <AssemblyName>Bari.Core.Test</AssemblyName>
-    <ProjectGuid>{EF5C3FF7-2A3D-4C52-975A-F8E187A50699}</ProjectGuid>
-    <OutputPath>..\..\..\..\target\core</OutputPath>
-    <IntermediateOutputPath>..\..\..\..\target\tmp\core</IntermediateOutputPath>
+    <AssemblyName>Bari.Plugins.Csharp.Test</AssemblyName>
+    <ProjectGuid>{1210E02C-A3D6-4B0E-A2DB-175A39ED128B}</ProjectGuid>
+    <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <Platform>AnyCPU</Platform>
   </PropertyGroup>
@@ -60,12 +60,12 @@
       <HintPath>..\..\..\..\target\deps\moq\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\..\..\target\deps\castle.core\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\target\deps\castle.core\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Ninject.Extensions.ChildKernel">
@@ -92,42 +92,20 @@
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Bari.Plugins.Csharp">
+      <HintPath>..\..\..\..\target\dotnetplugins\Bari.Plugins.Csharp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <ProjectReference Include="..\..\..\..\src\core\tests\Bari.Core.Test\Bari.Core.Test.csproj">
+      <Project>{ef5c3ff7-2a3d-4c52-975a-f8e187a50699}</Project>
+      <Name>Bari.Core.Test</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cs\Build\Cache\CacheCleanerTest.cs" />
-    <Compile Include="cs\Build\Cache\CachedBuilderTest.cs" />
-    <Compile Include="cs\Build\Cache\MemoryBuildCacheTest.cs" />
-    <Compile Include="cs\Build\Dependencies\CombinedDependenciesTest.cs" />
-    <Compile Include="cs\Build\Dependencies\NoDependenciesTest.cs" />
-    <Compile Include="cs\Build\Dependencies\ObjectPropertiesFingerprintTest.cs" />
-    <Compile Include="cs\Build\Dependencies\ProjectPropertiesDependenciesTest.cs" />
-    <Compile Include="cs\Build\Dependencies\SourceSetDependenciesTest.cs" />
-    <Compile Include="cs\Build\Dependencies\SubtaskDependencyTest.cs" />
-    <Compile Include="cs\Commands\BuildTest.cs" />
-    <Compile Include="cs\Commands\CleanTest.cs" />
-    <Compile Include="cs\Commands\DummyCommand.cs" />
-    <Compile Include="cs\Commands\HelpTest.cs" />
-    <Compile Include="cs\Commands\InfoTest.cs" />
-    <Compile Include="cs\Commands\TestTest.cs" />
-    <Compile Include="cs\Discovery\ExplorerRunnerTest.cs" />
-    <Compile Include="cs\Discovery\ModuleProjectDiscoveryTest.cs" />
-    <Compile Include="cs\Generic\FileSystemDirectoryExtensionsTest.cs" />
-    <Compile Include="cs\Generic\GraphTraversalTest.cs" />
-    <Compile Include="cs\Generic\LocalFileSystemDirectoryTest.cs" />
-    <Compile Include="cs\Generic\NodeBuilderTest.cs" />
-    <Compile Include="cs\Helper\TempDirectory.cs" />
-    <Compile Include="cs\Helper\TestFileSystemDirectory.cs" />
-    <Compile Include="cs\Helper\TestUserOutput.cs" />
-    <Compile Include="cs\Loader\SuiteLoaderTest.cs" />
-    <Compile Include="cs\Loader\YamlLoaderTest.cs" />
-    <Compile Include="cs\Model\ModuleTest.cs" />
-    <Compile Include="cs\Model\ProjectTest.cs" />
-    <Compile Include="cs\Model\ReferenceTest.cs" />
-    <Compile Include="cs\Model\SourceSetTest.cs" />
-    <Compile Include="cs\Model\SuiteTest.cs" />
-    <Compile Include="cs\Model\TestProjectTest.cs" />
+    <Compile Include="cs\Build\CsprojBuilderTest.cs" />
     <Compile Include="cs\Properties\AssemblyInfo.cs" />
-    <Compile Include="cs\TestSetup.cs" />
+    <Compile Include="cs\VisualStudio\CsharpVersionInfoGeneratorTest.cs" />
+    <Compile Include="cs\VisualStudio\CsprojGeneratorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="version.cs" />

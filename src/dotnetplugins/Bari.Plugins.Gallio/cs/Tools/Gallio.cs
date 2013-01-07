@@ -21,7 +21,9 @@ namespace Bari.Plugins.Gallio.Tools
 
         public void RunTests(IEnumerable<TargetRelativePath> testAssemblies)
         {
-            Run(targetDir, testAssemblies.Select(p => (string)p).ToArray());
+            List<string> ps = testAssemblies.Select(p => (string)p).ToList();
+            ps.Add("/r:Local");
+            Run(targetDir, ps.ToArray());
         }
     }
 }

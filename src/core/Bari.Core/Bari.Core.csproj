@@ -41,7 +41,7 @@
   <PropertyGroup
     Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
     <AssemblyName>Bari.Core</AssemblyName>
-    <ProjectGuid>{010632ed-a0ca-4e89-a6cb-a919740bb6e1}</ProjectGuid>
+    <ProjectGuid>{1bc47fce-9793-41b0-8369-0f678f025952}</ProjectGuid>
     <OutputPath>..\..\..\target\core</OutputPath>
     <IntermediateOutputPath>..\..\..\target\tmp\core</IntermediateOutputPath>
     <OutputType>Library</OutputType>
@@ -63,8 +63,18 @@
     <Reference
       Include="system.xml.linq" />
     <Reference
+      Include="Castle.Core">
+      <HintPath>..\..\..\target\deps\castle.core\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
       Include="Ninject">
       <HintPath>..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Ninject.Extensions.Factory">
+      <HintPath>..\..\..\target\deps\ninject.extensions.factory\Ninject.Extensions.Factory.3.0.1.0\lib\net40\Ninject.Extensions.Factory.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference

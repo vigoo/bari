@@ -45,12 +45,18 @@ namespace Bari.Plugins.Nuget.Tools
                     {
                         var lib40full = libRoot.GetDirectories("net40-full").FirstOrDefault();
                         var lib40 = libRoot.GetDirectories("net40").FirstOrDefault();
+                        var lib40client = libRoot.GetDirectories("net40-client").FirstOrDefault();
+                        var lib35 = libRoot.GetDirectories("net35").FirstOrDefault();
                         var lib20 = libRoot.GetDirectories("net20").FirstOrDefault();
 
                         if (lib40full != null)
                             return GetDllsIn(localRoot.AbsolutePath, lib40full);
                         else if (lib40 != null)
                             return GetDllsIn(localRoot.AbsolutePath, lib40);
+                        else if (lib40client != null)
+                            return GetDllsIn(localRoot.AbsolutePath, lib40client);
+                        else if (lib35 != null)
+                            return GetDllsIn(localRoot.AbsolutePath, lib35);
                         else if (lib20 != null)
                             return GetDllsIn(localRoot.AbsolutePath, lib20);
                         else

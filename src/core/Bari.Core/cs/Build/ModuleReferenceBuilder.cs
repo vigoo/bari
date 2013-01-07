@@ -77,10 +77,11 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            if (module.HasProject(reference.Uri.Host))
-            {
-                referencedProject = module.GetProject(reference.Uri.Host);
+            string projectName = reference.Uri.Host;
+            referencedProject = module.GetProjectOrTestProject(projectName);
 
+            if (referencedProject != null)
+            {                
                 subtasks = new HashSet<IBuilder>();
                 foreach (var projectBuilder in projectBuilders)
                 {
@@ -92,7 +93,7 @@ namespace Bari.Core.Build
             else
             {
                 throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name,
-                                                                  reference.Uri.Host));
+                                                                  projectName));
             }
         }
 
