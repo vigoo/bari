@@ -17,24 +17,25 @@ packages
 *.suo
 *.user
 
-src\bari.sln.DotSettings
-src\bari.sln.DotSettings.user
+src/bari.sln.DotSettings
+src/bari.sln.DotSettings.user
 
 
 # generated files
-src\core\Bari.Core\Bari.Core.csproj
-src\core\Bari.Core\version.cs
-src\core\tests\Bari.Core.Test\Bari.Core.Test.csproj
-src\core\tests\Bari.Core.Test\version.cs
-src\core\bari\bari.csproj
-src\core\bari\version.cs
-src\dotnetplugins\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj
-src\dotnetplugins\Bari.Plugins.Csharp\version.cs
-src\dotnetplugins\Bari.Plugins.CodeContracts\Bari.Plugins.CodeContracts.csproj
-src\dotnetplugins\Bari.Plugins.CodeContracts\version.cs
-src\dotnetplugins\Bari.Plugins.Gallio\Bari.Plugins.Gallio.csproj
-src\dotnetplugins\Bari.Plugins.Gallio\version.cs
-src\dotnetplugins\Bari.Plugins.Nuget\Bari.Plugins.Nuget.csproj
-src\dotnetplugins\Bari.Plugins.Nuget\version.cs
-src\dotnetplugins\tests\Bari.Plugins.Csharp.Test\Bari.Plugins.Csharp.Test.csproj
-src\dotnetplugins\tests\Bari.Plugins.Csharp.Test\version.cs
+src/core/Bari.Core/Bari.Core.csproj
+src/core/Bari.Core/version.cs
+src/core/tests/Bari.Core.Test/Bari.Core.Test.csproj
+src/core/tests/Bari.Core.Test/version.cs
+src/core/bari/bari.csproj
+src/core/bari/version.cs
+src/dotnetplugins/Bari.Plugins.Csharp/Bari.Plugins.Csharp.csproj
+src/dotnetplugins/Bari.Plugins.Csharp/version.cs
+src/dotnetplugins/Bari.Plugins.CodeContracts/Bari.Plugins.CodeContracts.csproj
+src/dotnetplugins/Bari.Plugins.CodeContracts/version.cs
+src/dotnetplugins/Bari.Plugins.Gallio/Bari.Plugins.Gallio.csproj
+src/dotnetplugins/Bari.Plugins.Gallio/version.cs
+src/dotnetplugins/Bari.Plugins.Nuget/Bari.Plugins.Nuget.csproj
+src/dotnetplugins/Bari.Plugins.Nuget/version.cs
+src/dotnetplugins/tests/Bari.Plugins.Csharp.Test/Bari.Plugins.Csharp.Test.csproj
+src/dotnetplugins/tests/Bari.Plugins.Csharp.Test/version.cs
+

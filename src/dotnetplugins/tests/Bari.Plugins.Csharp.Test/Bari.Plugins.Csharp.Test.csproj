@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
     <AssemblyName>Bari.Plugins.Csharp.Test</AssemblyName>
-    <ProjectGuid>{1210E02C-A3D6-4B0E-A2DB-175A39ED128B}</ProjectGuid>
+    <ProjectGuid>{ED5F4BFC-BE75-47C3-A341-7B1C42CAA2ED}</ProjectGuid>
     <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
@@ -88,17 +88,17 @@
       <HintPath>..\..\..\..\target\deps\yamldotnet.representationmodel\YamlDotNet.RepresentationModel.1.1.17\lib\YamlDotNet.RepresentationModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Bari.Core">
-      <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Bari.Plugins.Csharp">
-      <HintPath>..\..\..\..\target\dotnetplugins\Bari.Plugins.Csharp.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\src\core\Bari.Core\Bari.Core.csproj">
+      <Project>{86062b0e-8ba6-4081-b964-f10529272d81}</Project>
+      <Name>Bari.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\core\tests\Bari.Core.Test\Bari.Core.Test.csproj">
-      <Project>{ef5c3ff7-2a3d-4c52-975a-f8e187a50699}</Project>
+      <Project>{21849822-5ea3-43e7-a8a9-51d0a1fc5723}</Project>
       <Name>Bari.Core.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\dotnetplugins\Bari.Plugins.Csharp\Bari.Plugins.Csharp.csproj">
+      <Project>{ff086935-e726-4719-962d-5a0b29c9477f}</Project>
+      <Name>Bari.Plugins.Csharp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
