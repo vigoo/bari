@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -61,6 +62,8 @@ Example: `bari vs HelloWorld`
 Optionally bari can start and load the generated solution into Visual Studio immediately:
 
 Example: `bari vs --open HelloWorld`
+
+If called without any module or product name, it adds *every module* to the generated solution.
 ";
             }
         }
@@ -83,45 +86,44 @@ Example: `bari vs --open HelloWorld`
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
         {
-            if (parameters.Length == 1 || parameters.Length == 2)
+            bool openSolution = false;
+            if (parameters.Length > 0)
             {
-                bool openSolution = false;
-                if (parameters.Length > 1)
-                    if (parameters[0] == "--open")
-                        openSolution = true;
-                    else
+                if (parameters[0] == "--open")
+                    openSolution = true;
+
+                if (parameters.Length == 2)
+                {
+                    var module = suite.Modules.FirstOrDefault(m => String.Equals(m.Name, parameters.Last(), StringComparison.InvariantCultureIgnoreCase));
+                    if (module == null)
                         throw new InvalidCommandParameterException("vs",
-                                                                   String.Format("The first parameter (`{0}`) must be --open, or a single parameter must be used.",
-                                                                   parameters[0]));
+                                                                   String.Format(
+                                                                       "The parameter `{0}` is not a valid module name!",
+                                                                       parameters.Last()));
 
-                // TODO: project support
-                var module =
-                    suite.Modules.FirstOrDefault(
-                        m => String.Equals(m.Name, parameters.Last(), StringComparison.InvariantCultureIgnoreCase));
-                if (module == null)
-                    throw new InvalidCommandParameterException("vs",
-                                                               String.Format(
-                                                                   "The parameter `{0}` is not a valid module name!",
-                                                                   parameters.Last()));
+                    Run(module, openSolution);    
+                }
+                else
+                {
+                    throw new InvalidCommandParameterException("vs", "Must be called with zero, one or two parameters");
+                }
+            }
 
-                Run(module, openSolution);
-            }
-            else
-            {
-                throw new InvalidCommandParameterException("vs", "Must be called with one or two parameters");
-            }
+            Run(suite.Modules, openSolution);
         }
 
         private void Run(Module module, bool openSolution)
         {
+            Run(new[] {module}, openSolution);
+        }
+
+        private void Run(IEnumerable<Module> modules, bool openSolution)
+        {
             var buildContext = root.Get<IBuildContext>();
-            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", module.Projects));
+            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", modules.SelectMany(m => m.Projects.Concat(m.TestProjects))));
             slnBuilder.AddToContext(buildContext);
             
-            var outputs = buildContext.Run(slnBuilder);
-
-            foreach (var outputPath in outputs)
-                log.InfoFormat("Generated output for module {0}: {1}", module.Name, outputPath);
+            buildContext.Run(slnBuilder);
 
             if (openSolution)
             {                

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
@@ -15,7 +16,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory slnDir;
-        private readonly IEnumerable<Project> projects;
+        private readonly IList<Project> projects;
         private readonly TextWriter output;
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir)
         {
             this.projectGuidManagement = projectGuidManagement;
-            this.projects = projects;
+            this.projects = projects.ToList();
             this.output = output;
             this.suiteRoot = suiteRoot;
             this.slnDir = slnDir;
@@ -40,8 +41,17 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// </summary>
         public void Generate()
         {
-            output.WriteLine("Microsoft Visual Studio Solution File, Format Version 11.00");
-            output.WriteLine("# Visual Studio 2010");
+            const string testProjectNode = "{6181E5C5-1B34-46C3-9917-0E6779125067}";
+
+            output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+            output.WriteLine("# Visual Studio 2012");
+
+            var testProjects = new HashSet<TestProject>(projects.OfType<TestProject>());
+            if (testProjects.Count > 0)
+            {
+                output.WriteLine("Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"Tests\", \"Tests\", \"{0}\"", testProjectNode);
+                output.WriteLine("EndProject");
+            }
 
             foreach (var project in projects)
             {
@@ -76,6 +86,15 @@ namespace Bari.Plugins.Csharp.VisualStudio
             output.WriteLine("\tGlobalSection(SolutionProperties) = preSolution");
             output.WriteLine("\t\tHideSolutionNode = FALSE");
             output.WriteLine("\tEndGlobalSection");
+
+            output.WriteLine("\tGlobalSection(NestedProjects) = preSolution");
+            foreach (var testProject in testProjects)
+            {
+                string projectGuid = projectGuidManagement.GetGuid(testProject).ToString("B").ToUpperInvariant();
+                output.WriteLine("\t\t{0} = {1}", projectGuid, testProjectNode);
+            }
+            output.WriteLine("\tEndGlobalSection");
+
             output.WriteLine("EndGlobal");
         }
 
