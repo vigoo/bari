@@ -41,10 +41,11 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     var projectName = parts[1];
 
                     var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
+                    var referredProjectCsDir = referredProject.RootDirectory.GetChildDirectory("cs");
 
                     writer.WriteStartElement("ProjectReference");
                     writer.WriteAttributeString("Include", 
-                        ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(referredProject.RootDirectory), projectName + ".csproj")));
+                        ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(referredProjectCsDir), projectName + ".csproj")));
                     writer.WriteElementString("Project", projectGuidManagement.GetGuid(referredProject).ToString("B"));
                     writer.WriteElementString("Name", projectName);
                     writer.WriteEndElement();

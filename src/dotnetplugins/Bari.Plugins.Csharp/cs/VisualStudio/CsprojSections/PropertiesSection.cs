@@ -22,7 +22,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="suite">Active suite</param>
         /// <param name="projectGuidManagement">Project GUID management service</param>
         /// <param name="targetDir">Target directory where the compiled files will be placed</param>
-        public PropertiesSection(Suite suite, IProjectGuidManagement projectGuidManagement, [TargetRoot] IFileSystemDirectory targetDir) 
+        public PropertiesSection(Suite suite, IProjectGuidManagement projectGuidManagement, [TargetRoot] IFileSystemDirectory targetDir)
             : base(suite)
         {
             this.projectGuidManagement = projectGuidManagement;
@@ -46,11 +46,24 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("Platform", "AnyCPU");
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("PropertyGroup");
+            writer.WriteElementString("RootNamespace", GetProjectRootNamespace(project));
 
             WriteAppConfig(writer, project);
             WriteManifest(writer, project);
 
             writer.WriteEndElement();
+        }
+
+        protected string GetProjectRootNamespace(Project project)
+        {
+            string ns = project.Name;
+
+            // TODO: implement root namespace customization here based on project properties
+
+            return ns;
         }
 
         private string GetOutputType(ProjectType type)

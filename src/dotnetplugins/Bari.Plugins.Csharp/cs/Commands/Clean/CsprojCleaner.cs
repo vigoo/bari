@@ -32,9 +32,10 @@ namespace Bari.Plugins.Csharp.Commands.Clean
                                         from project in module.Projects.Concat(module.TestProjects)
                                         select project.RootDirectory)
             {
-                foreach (var csproj in projectRoot.GetChildDirectory("cs").Files.Where(name => name.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase)))
+                var csRoot = projectRoot.GetChildDirectory("cs");
+                foreach (var csproj in csRoot.Files.Where(name => name.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    projectRoot.DeleteFile(csproj);
+                    csRoot.DeleteFile(csproj);
                 }
 
                 foreach (var csversion in projectRoot.Files.Where(name => name.Equals("version.cs", StringComparison.InvariantCultureIgnoreCase)))
