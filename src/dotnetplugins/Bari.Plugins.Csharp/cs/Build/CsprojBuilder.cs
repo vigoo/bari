@@ -132,7 +132,7 @@ namespace Bari.Plugins.Csharp.Build
             var csprojPath = project.Name + ".csproj";
             const string csversionPath = "version.cs";
 
-            using (var csproj = project.RootDirectory.CreateTextFile(csprojPath))
+            using (var csproj = project.RootDirectory.GetChildDirectory("cs").CreateTextFile(csprojPath))
             using (var csversion = project.RootDirectory.CreateTextFile(csversionPath))
             {
                 var references = new HashSet<TargetRelativePath>();

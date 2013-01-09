@@ -44,7 +44,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <returns>Returns the path relative to the project's root directory</returns>
         protected string ToProjectRelativePath(Project project, string suiteRelativePath)
         {
-            return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory, suiteRelativePath);
+            return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory("cs"), suiteRelativePath);
         }
     }
 }

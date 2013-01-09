@@ -31,7 +31,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Adding reference to it to the .csproj file
             writer.WriteStartElement("ItemGroup");
             writer.WriteStartElement("Compile");
-            writer.WriteAttributeString("Include", context.VersionFileName);
+            writer.WriteAttributeString("Include", "..\\"+context.VersionFileName);
             writer.WriteEndElement();
             writer.WriteEndElement();
         }        

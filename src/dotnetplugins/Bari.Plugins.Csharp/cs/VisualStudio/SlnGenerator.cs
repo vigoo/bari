@@ -101,7 +101,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         private string GetSuiteRelativeCsprojPath(Project project)
         {
             string projectFileName = project.Name + ".csproj";
-            return Path.Combine(suiteRoot.GetRelativePath(project.RootDirectory), projectFileName);
+            return Path.Combine(suiteRoot.GetRelativePath(project.RootDirectory.GetChildDirectory("cs")), projectFileName);
         }
     }
 }
