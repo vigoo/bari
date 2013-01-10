@@ -56,7 +56,9 @@ namespace Bari.Plugins.Csharp.Build
                 var deps = new List<IDependencies>();
 
                 if (project.HasNonEmptySourceSet("cs"))
-                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("cs")));
+                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("cs"),
+                        fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
+                              fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
                 if (project.HasNonEmptySourceSet("appconfig"))
                     deps.Add(new SourceSetDependencies(root, project.GetSourceSet("appconfig")));
                 if (project.HasNonEmptySourceSet("manifest"))

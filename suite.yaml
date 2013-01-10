@@ -15,7 +15,7 @@ modules:
             - gac://System.Data.DataSetExtensions
             - gac://System.Xml
             - gac://System.Xml.Linq   
-            - nuget://Castle.Core         
+            - nuget://Castle.Core/3.0.0.4001
             - nuget://Ninject
             - nuget://Ninject.Extensions.Factory
             - nuget://Monads
@@ -42,7 +42,7 @@ modules:
             - gac://System.Xml.Linq
             - nuget://FluentAssertions
             - nuget://Moq
-            - nuget://Castle.Core
+            - nuget://Castle.Core/3.0.0.4001
             - nuget://Ninject
             - nuget://Ninject.Extensions.ChildKernel
             - nuget://Ninject.Extensions.Factory
@@ -118,7 +118,7 @@ modules:
             - nuget://FluentAssertions
             - nuget://Moq
             - nuget://Ninject
-            - nuget://Castle.Core
+            - nuget://Castle.Core/3.0.0.4001
             - nuget://Ninject.Extensions.ChildKernel
             - nuget://Ninject.Extensions.Factory
             - nuget://NUnit

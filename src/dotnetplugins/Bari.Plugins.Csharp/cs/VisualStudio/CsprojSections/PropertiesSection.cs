@@ -39,17 +39,22 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
             writer.WriteStartElement("PropertyGroup");
             writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
-
-            writer.WriteElementString("AssemblyName", project.Name);
-            writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
             writer.WriteElementString("OutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name)));
-            writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));
-            writer.WriteElementString("OutputType", GetOutputType(project.Type));
+            writer.WriteElementString("IntermediateOutputPath", ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name)));            
             writer.WriteElementString("Platform", "AnyCPU");
+
+            // TODO: this should be controlled by whether the build is debug or not
+            writer.WriteElementString("DebugSymbols", "true");
+            writer.WriteElementString("DebugType", "full");
+            writer.WriteElementString("Optimize", "false");
+
             writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
             writer.WriteElementString("RootNamespace", GetProjectRootNamespace(project));
+            writer.WriteElementString("OutputType", GetOutputType(project.Type));
+            writer.WriteElementString("AssemblyName", project.Name);
+            writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
             WriteAppConfig(writer, project);
             WriteManifest(writer, project);

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Ninject;
 
 namespace Bari.Core.Test
 {
@@ -9,8 +10,13 @@ namespace Bari.Core.Test
         public void Setup()
         {
             Kernel.RegisterCoreBindings();
-            Kernel.Root.Load(new[] {typeof (Ninject.Extensions.Factory.FuncModule).Assembly});
+            EnsureFactoryExtensionLoaded(Kernel.Root);
         }
 
+        internal static void EnsureFactoryExtensionLoaded(IKernel kernel)
+        {
+            if (!kernel.HasModule(typeof (Ninject.Extensions.Factory.FuncModule).FullName))
+                kernel.Load(new[] {typeof (Ninject.Extensions.Factory.FuncModule).Assembly});
+        }
     }
 }

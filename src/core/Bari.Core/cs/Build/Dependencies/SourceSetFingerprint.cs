@@ -29,20 +29,25 @@ namespace Bari.Core.Build.Dependencies
         /// </summary>
         /// <param name="root">The suite's root directory</param>
         /// <param name="files">The files in the source set, in suite relative path form</param>
+        /// <param name="exclusions">Exclusion function, if returns true for a file name, it won't be taken into account as a dependency</param>
         [Inject]
-        public SourceSetFingerprint([SuiteRoot] IFileSystemDirectory root, IEnumerable<SuiteRelativePath> files)
+        public SourceSetFingerprint([SuiteRoot] IFileSystemDirectory root, IEnumerable<SuiteRelativePath> files, Func<string, bool> exclusions)
         {
             Contract.Requires(root != null);
             Contract.Requires(files != null);
 
-            fileNames = new SortedSet<SuiteRelativePath>(files);
+            fileNames = new SortedSet<SuiteRelativePath>();
             lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
             lastSizes = new Dictionary<SuiteRelativePath, long>();
 
-            foreach (var file in fileNames)
+            foreach (var file in files)
             {
-                lastModifiedDates.Add(file, root.GetLastModifiedDate(file));
-                lastSizes.Add(file, root.GetFileSize(file));
+                if (exclusions == null || !exclusions(file))
+                {
+                    fileNames.Add(file);
+                    lastModifiedDates.Add(file, root.GetLastModifiedDate(file));
+                    lastSizes.Add(file, root.GetFileSize(file));
+                }
             }
         }
 

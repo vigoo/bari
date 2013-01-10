@@ -22,7 +22,7 @@ namespace Bari.Core.Test
             Kernel.RegisterCoreBindings(kernel);
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
-            kernel.Load(new[] { typeof(Ninject.Extensions.Factory.FuncModule).Assembly });
+            TestSetup.EnsureFactoryExtensionLoaded(kernel);
         }
 
         [Test]

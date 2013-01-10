@@ -16,8 +16,9 @@ namespace Bari.Plugins.Nuget.Build
     /// <para>
     /// The reference URIs are interpreted in the following way:
     /// 
-    /// <example>nuget://Ninject</example>
+    /// <example>nuget://Ninject/Version</example>
     /// means that the latest version of the Ninject package should be downloaded and added as a reference.
+    /// The version part is optional.
     /// </para>
     /// </summary>
     public class NugetReferenceBuilder: IReferenceBuilder, IEquatable<NugetReferenceBuilder>
@@ -75,10 +76,13 @@ namespace Bari.Plugins.Nuget.Build
         {
             log.DebugFormat("Resolving reference {0}", reference.Uri);
 
-            var depsRoot = targetRoot.CreateDirectory("deps");
-            var depDir = depsRoot.CreateDirectory(reference.Uri.Host);
+            string pkgName = reference.Uri.Host;
+            string pkgVersion = reference.Uri.AbsolutePath.TrimStart('/');            
 
-            var dlls = nuget.InstallPackage(reference.Uri.Host, depDir, "");
+            var depsRoot = targetRoot.CreateDirectory("deps");
+            var depDir = depsRoot.CreateDirectory(pkgName);
+
+            var dlls = nuget.InstallPackage(pkgName, pkgVersion, depDir, "");
             return new HashSet<TargetRelativePath>(
                 from path in dlls
                 select new TargetRelativePath(

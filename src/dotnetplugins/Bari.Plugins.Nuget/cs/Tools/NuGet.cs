@@ -24,12 +24,16 @@ namespace Bari.Plugins.Nuget.Tools
         /// Installs a package and returns the path to the DLLs to be linked
         /// </summary>
         /// <param name="name">Package name</param>
+        /// <param name="version">Package version, if null or empty then the latest one will be used</param>
         /// <param name="root">Root directory for storing the downloaded packages</param>
         /// <param name="relativeTargetDirectory">Path relative to <c>root</c> where the downloaded package should be placed</param>
         /// <returns>Returns the <c>root</c> relative paths of the DLL files to be used</returns>
-        public IEnumerable<TargetRelativePath> InstallPackage(string name, IFileSystemDirectory root, string relativeTargetDirectory)
+        public IEnumerable<TargetRelativePath> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory)
         {
-            Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"");
+            if (String.IsNullOrWhiteSpace(version))
+                Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"");
+            else
+                Run(root, "install", name, "-Version", version, "-o", "\"" + relativeTargetDirectory + "\"");
 
             var localRoot = root as LocalFileSystemDirectory;
             if (localRoot != null)
