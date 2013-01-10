@@ -9,6 +9,7 @@ namespace Bari.Core.Test
         public void Setup()
         {
             Kernel.RegisterCoreBindings();
+            Kernel.Root.Load(new[] {typeof (Ninject.Extensions.Factory.FuncModule).Assembly});
         }
 
     }

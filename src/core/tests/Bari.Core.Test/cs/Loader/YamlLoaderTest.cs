@@ -23,6 +23,7 @@ namespace Bari.Core.Test.Loader
             Kernel.RegisterCoreBindings(kernel);
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
+            kernel.Load(new[] { typeof(Ninject.Extensions.Factory.FuncModule).Assembly });
         }
 
         [Test]
@@ -395,7 +396,9 @@ test2:
 ";
 
             var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            var paramBlock = new Mock<IProjectParameters>();
             paramLoader.Setup(l => l.Supports("test1")).Returns(true);
+            paramLoader.Setup(l => l.Load("test1", It.IsAny<YamlNode>())).Returns(paramBlock.Object);
 
             kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
 
@@ -408,6 +411,8 @@ test2:
 
             paramLoader.Verify(l => l.Load("test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode) node).Value == "something")), Times.Once());
             paramLoader.Verify(l => l.Load("test2", It.IsAny<YamlNode>()), Times.Never());
+
+            suite.GetParameters<IProjectParameters>("test1").Should().Be(paramBlock.Object);
         }
     }
 }
