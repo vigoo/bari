@@ -13,6 +13,7 @@ namespace Bari.Core.Model
         private string name = string.Empty;
         private string version;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, Product> products = new Dictionary<string, Product>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
         private readonly IFileSystemDirectory suiteRoot;
 
@@ -21,6 +22,7 @@ namespace Bari.Core.Model
         {
             Contract.Invariant(name != null);
             Contract.Invariant(modules != null);
+            Contract.Invariant(products != null);
             Contract.Invariant(suiteRoot != null);
             Contract.Invariant(parameters != null);
             Contract.Invariant(Contract.ForAll(modules,
@@ -88,6 +90,14 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Get all the products of the suite
+        /// </summary>
+        public IEnumerable<Product> Products
+        {
+            get { return products.Values; }
+        }
+
+        /// <summary>
         /// Gets a module's model and creates it if it is not registered yet
         /// </summary>
         /// <param name="moduleName">Name of the module</param>
@@ -150,6 +160,39 @@ namespace Bari.Core.Model
         public void AddParameters(string paramsName, IProjectParameters projectParameters)
         {
             parameters.Add(paramsName, projectParameters);
+        }
+
+        /// <summary>
+        /// Checks whether the suite has a product with the given name
+        /// </summary>
+        /// <param name="productName">Name of the product to look for</param>
+        /// <returns>Returns <c>true</c> if the suite has a product with the given name registered.</returns>
+        public bool HasProduct(string productName)
+        {
+            return products.ContainsKey(productName);
+        }
+
+        /// <summary>
+        /// Gets a product with the given name, or creates a new one if it does not exist yet.
+        /// </summary>
+        /// <param name="productName">Name of the product to be returned</param>
+        /// <returns>Returns a product of the suite with the given name.</returns>
+        public Product GetProduct(string productName)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(productName));
+            Contract.Ensures(Contract.Result<Product>() != null);
+            Contract.Ensures(String.Equals(Contract.Result<Product>().Name, productName, StringComparison.InvariantCultureIgnoreCase));
+            Contract.Ensures(products.ContainsKey(productName));
+
+            Product result;
+            if (products.TryGetValue(productName, out result))
+                return result;
+            else
+            {
+                result = new Product(productName);
+                products.Add(productName, result);
+                return result;
+            }           
         }
     }
 }

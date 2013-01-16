@@ -127,3 +127,9 @@ modules:
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.Csharp                        
+
+products:
+    - name: full
+      modules:
+          - core
+          - dotnetplugins

@@ -58,6 +58,14 @@ namespace Bari.Core.Model.Loader
                 if (item.Value != null)
                     LoadModule(module, item.Value);
             }
+
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(yaml.RootNode, "products"))
+            {
+                var product = suite.GetProduct(item.Key);
+
+                if (item.Value != null)
+                    LoadProduct(suite, product, item.Value);
+            }
             
             LoadParameters(suite, yaml.RootNode);
 
@@ -72,6 +80,18 @@ namespace Bari.Core.Model.Loader
             {
                 foreach (var pair in mapping)
                     TryAddParameters(target, pair.Key, pair.Value);
+            }
+        }
+
+        private void LoadProduct(Suite suite, Product product, YamlNode productNode)
+        {
+            Contract.Requires(product != null);
+            Contract.Requires(productNode != null);
+
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(productNode, "modules"))
+            {
+                var module = suite.GetModule(item.Key);
+                product.AddModule(module);
             }
         }
 

@@ -414,5 +414,43 @@ test2:
 
             suite.GetParameters<IProjectParameters>("test1").Should().Be(paramBlock.Object);
         }
+
+        [Test]
+        public void ProductsLoaded()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+    - Module1
+    - Module2
+    - Module3
+
+products:
+    - name: one_three
+      modules:
+        - Module1
+        - Module3
+    - name: mod2
+      modules:
+        - Module2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Products.Should().HaveCount(2);
+            suite.HasProduct("one_three").Should().BeTrue();
+            suite.HasProduct("mod2").Should().BeTrue();
+            suite.Products.Should().Contain(p => p.Name == "one_three");
+            suite.Products.Should().Contain(p => p.Name == "mod2");
+
+            suite.GetProduct("one_three").Modules.Should().BeEquivalentTo(
+                new[] {suite.GetModule("Module1"), suite.GetModule("Module3")});
+            suite.GetProduct("mod2").Modules.Should().BeEquivalentTo(
+                new[] { suite.GetModule("Module2") });
+        }
     }
 }
