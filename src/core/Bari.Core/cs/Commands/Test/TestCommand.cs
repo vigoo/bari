@@ -50,6 +50,10 @@ namespace Bari.Core.Commands.Test
 
 When used without parameter, it builds and runs every unit test project in the suite. 
 Example: `bari test`
+
+When the special `--dump` argument is specified, the tests are not executed, but the build graph and the dependency graph will be dumped
+to GraphViz dot files.
+Example: `bari test --dump`
 ";
             }
         }

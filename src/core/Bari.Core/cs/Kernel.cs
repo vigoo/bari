@@ -3,6 +3,7 @@ using Bari.Core.Build;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
+using Bari.Core.Commands.Helper;
 using Bari.Core.Commands.Test;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
@@ -73,6 +74,9 @@ namespace Bari.Core
             // Builders 
             kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
+
+            // Default command target parser
+            kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -21,6 +21,7 @@ namespace Bari.Core.Commands
         private readonly IResolutionRoot root;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
+        private readonly ICommandTargetParser targetParser;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -47,13 +48,13 @@ namespace Bari.Core.Commands
             get { return
 @"=Build command=
 
-When used without parameter, it builds every module in the suite. 
+When used without parameter, it builds every module in the *suite*. 
 Example: `bari build`
 
-When used with a module name, it builds the specified module together with every required dependency of it.
+When used with a *module* or *product* name, it builds the specified module together with every required dependency of it.
 Example: `bari build HelloWorldModule`
 
-When used with a project name prefixed by its module, it builds the specified project only, together with every required dependency of it.
+When used with a *project* name prefixed by its module, it builds the specified project only, together with every required dependency of it.
 Example: `bari build HelloWorldModule.HelloWorld`
 
 When the special `--dump` argument is specified, the build is not executed, but the build graph and the dependency graph will be dumped
@@ -68,11 +69,13 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// <param name="root">Interface for creating new objects</param>
         /// <param name="projectBuilders">The set of registered project builder factories</param>
         /// <param name="targetRoot">Build target root directory </param>
-        public BuildCommand(IResolutionRoot root, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot)
+        /// <param name="targetParser">Command target parser implementation to be used</param>
+        public BuildCommand(IResolutionRoot root, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser)
         {
             this.root = root;
             this.projectBuilders = projectBuilders;
             this.targetRoot = targetRoot;
+            this.targetParser = targetParser;
         }
 
         /// <summary>
@@ -91,61 +94,22 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             if (dumpMode)
                 effectiveLength--;
 
-            if (effectiveLength == 0)
-            {                
-                var projects = (from module in suite.Modules
-                                from project in module.Projects
-                                select project).ToList();
-
-                log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
-
-                RunWithProjects(projects, dumpMode);
-            }
-            else if (effectiveLength == 1)
+            if (effectiveLength < 2)
             {
-                string param = parameters[0];
-
-                if (suite.HasModule(param))
-                {
-                    var module = suite.GetModule(param);
-                    var projects = module.Projects.ToList();
-
-                    log.InfoFormat("Building module {0} ({1} projects)", module.Name, projects.Count);
-
-                    RunWithProjects(projects, dumpMode);
-                }
+                string targetStr;
+                if (effectiveLength == 0)
+                    targetStr = String.Empty;
                 else
+                    targetStr = parameters[0];
+
+                try
                 {
-                    var matches = new HashSet<Project>();
-            
-                    // Looking for modulename.projectname matches
-                    foreach (var module in suite.Modules)
-                    {
-                        if (param.StartsWith(module.Name+'.', StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            string projectName = param.Substring(module.Name.Length + 1);
-                            if (module.HasProject(projectName))
-                                matches.Add(module.GetProject(projectName));
-                        }
-                    }
-
-                    // If there is only one match
-                    if (matches.Count == 1)
-                    {
-                        var project = matches.First();
-                        log.InfoFormat("Building project {0}", project.Name);
-
-                        RunWithProjects(new[] {project}, dumpMode);
-                    }
-                    else
-                    {
-                        if (matches.Count > 1)
-                            throw new InvalidCommandParameterException("build", 
-                                "The given module and project name identifies more than one projects");
-                        else
-                            throw new InvalidCommandParameterException("build",
-                                "The given project does not exist");
-                    }
+                    var target = targetParser.ParseTarget(targetStr);
+                    RunWithProjects(target.Projects, dumpMode);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new InvalidCommandParameterException("build", ex.Message);
                 }
             }
             else

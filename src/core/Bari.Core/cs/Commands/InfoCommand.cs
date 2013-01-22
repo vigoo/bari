@@ -76,6 +76,25 @@ Example: `bari info`
             {
                 PrintModuleDetails(module);
             }
+
+            output.Message("*Products:*");
+            foreach (var product in suite.Products)
+            {
+                PrintProductDetails(product);
+            }
+        }
+
+        private void PrintProductDetails(Product product)
+        {
+            Contract.Requires(product != null);
+
+            output.Message("  *Name:* {0}", product.Name);
+            output.Message("  *Modules:*");
+            
+            foreach (var module in product.Modules)
+            {
+                output.Message("    - {0}", module.Name);
+            }
         }
 
         /// <summary>

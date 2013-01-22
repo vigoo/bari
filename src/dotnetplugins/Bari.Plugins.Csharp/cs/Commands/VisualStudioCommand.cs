@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands;
+using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -20,12 +21,13 @@ namespace Bari.Plugins.Csharp.Commands
     /// files for a given module or product, and launches Microsoft Visual Studio loading the generated
     /// solution.
     /// </summary>
-    public class VisualStudioCommand: ICommand
+    public class VisualStudioCommand : ICommand
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (VisualStudioCommand));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(VisualStudioCommand));
 
         private readonly IResolutionRoot root;
         private readonly IFileSystemDirectory targetDir;
+        private readonly ICommandTargetParser targetParser;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -73,10 +75,12 @@ If called without any module or product name, it adds *every module* to the gene
         /// </summary>
         /// <param name="root">The path to resolve instances</param>
         /// <param name="targetDir">Target root directory</param>
-        public VisualStudioCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetDir)
+        /// <param name="targetParser">Parser used for parsing the target parameter</param>
+        public VisualStudioCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetDir, ICommandTargetParser targetParser)
         {
             this.root = root;
             this.targetDir = targetDir;
+            this.targetParser = targetParser;
         }
 
         /// <summary>
@@ -87,46 +91,48 @@ If called without any module or product name, it adds *every module* to the gene
         public void Run(Suite suite, string[] parameters)
         {
             bool openSolution = false;
-            if (parameters.Length > 0)
+            string targetStr;
+
+            if (parameters.Length == 0)
+                targetStr = String.Empty;
+            else if (parameters.Length < 3)
             {
                 if (parameters[0] == "--open")
                     openSolution = true;
 
-                if (parameters.Length == 2)
-                {
-                    var module = suite.Modules.FirstOrDefault(m => String.Equals(m.Name, parameters.Last(), StringComparison.InvariantCultureIgnoreCase));
-                    if (module == null)
-                        throw new InvalidCommandParameterException("vs",
-                                                                   String.Format(
-                                                                       "The parameter `{0}` is not a valid module name!",
-                                                                       parameters.Last()));
-
-                    Run(module, openSolution);    
-                }
-                else
-                {
-                    throw new InvalidCommandParameterException("vs", "Must be called with zero, one or two parameters");
-                }
+                targetStr = parameters.Last();
+            }
+            else
+            {
+                throw new InvalidCommandParameterException("vs", "Must be called with zero, one or two parameters");
             }
 
-            Run(suite.Modules, openSolution);
+            try
+            {
+                var target = targetParser.ParseTarget(targetStr);
+                Run(target, openSolution);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new InvalidCommandParameterException("vs", ex.Message);
+            }
         }
 
-        private void Run(Module module, bool openSolution)
+        private void Run(CommandTarget target, bool openSolution)
         {
-            Run(new[] {module}, openSolution);
+            Run(target.Projects.Concat(target.TestProjects), openSolution);
         }
 
-        private void Run(IEnumerable<Module> modules, bool openSolution)
+        private void Run(IEnumerable<Project> projects, bool openSolution)
         {
             var buildContext = root.Get<IBuildContext>();
-            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", modules.SelectMany(m => m.Projects.Concat(m.TestProjects))));
+            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", projects));
             slnBuilder.AddToContext(buildContext);
-            
+
             buildContext.Run(slnBuilder);
 
             if (openSolution)
-            {                
+            {
                 var slnRelativePath = buildContext.GetResults(slnBuilder).FirstOrDefault();
                 if (slnRelativePath != null)
                 {
