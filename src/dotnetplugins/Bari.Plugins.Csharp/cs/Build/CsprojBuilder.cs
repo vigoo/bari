@@ -64,7 +64,7 @@ namespace Bari.Plugins.Csharp.Build
                 if (project.HasNonEmptySourceSet("manifest"))
                     deps.Add(new SourceSetDependencies(root, project.GetSourceSet("manifest")));
 
-                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type"));
+                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
