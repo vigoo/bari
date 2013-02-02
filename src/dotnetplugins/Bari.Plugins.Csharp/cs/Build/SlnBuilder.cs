@@ -8,6 +8,7 @@ using Bari.Core.Generic;
 using Bari.Core.Generic.Graph;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
+using Bari.Plugins.Csharp.VisualStudio.SolutionName;
 using Ninject;
 using Ninject.Extensions.ChildKernel;
 using Ninject.Parameters;
@@ -27,6 +28,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IFileSystemDirectory targetDir;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IList<Project> projects;
+        private readonly ISlnNameGenerator slnNameGenerator;
         private ISet<IBuilder> projectBuilders;
         private IDependencies projectDependencies;
 
@@ -38,19 +40,22 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="targetDir">The target directory where the sln file should be put</param>
         /// <param name="root">Interface for creating new builder instances</param>
-        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root)
+        /// <param name="slnNameGenerator">Name generator implementation for the sln file </param>
+        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root, ISlnNameGenerator slnNameGenerator)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projects != null);
             Contract.Requires(targetDir != null);
             Contract.Requires(suiteRoot != null);
             Contract.Requires(root != null);
+            Contract.Requires(slnNameGenerator != null);
 
             this.projectGuidManagement = projectGuidManagement;
             this.suiteRoot = suiteRoot;
             this.projects = projects.ToList();
             this.targetDir = targetDir;
             this.root = root;
+            this.slnNameGenerator = slnNameGenerator;
         }
 
         /// <summary>
@@ -66,14 +71,7 @@ namespace Bari.Plugins.Csharp.Build
         /// </summary>
         public string Uid
         {
-            get
-            {
-                return MD5.Encode(string.Join(",",
-                                   from project in projects
-                                   let module = project.Module
-                                   let fullName = module + "." + project.Name
-                                   select fullName));
-            }
+            get { return slnNameGenerator.GetName(projects); }
         }
 
         /// <summary>

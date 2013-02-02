@@ -1,12 +1,15 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
+using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.Commands;
 using Bari.Plugins.Csharp.Commands.Clean;
 using Bari.Plugins.Csharp.Tools;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
+using Bari.Plugins.Csharp.VisualStudio.SolutionName;
+using Ninject;
 using Ninject.Modules;
 
 namespace Bari.Plugins.Csharp
@@ -39,6 +42,10 @@ namespace Bari.Plugins.Csharp
             Bind<ICsprojSection>().To<ReferencesSection>();
             Bind<ICsprojSection>().To<SourceItemsSection>();
             Bind<ICsprojSection>().To<VersionSection>();
+
+            Bind<ISuiteContentsAnalyzer>().To<DefaultSuiteContentsAnalyzer>();
+            Bind<ISlnNameGenerator>().To<HashBasedSlnNameGenerator>().WhenInjectedInto<ReadableSlnNameGenerator>();
+            Bind<ISlnNameGenerator>().To<ReadableSlnNameGenerator>();
         }
     }
 }
