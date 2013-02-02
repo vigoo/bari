@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Bari.Core.Build.Dependencies.Protocol;
@@ -159,7 +158,7 @@ namespace Bari.Core.Build.Cache
                                 {
                                     using (var source = cacheDir.ReadBinaryFile(cacheFileName))
                                     using (var target = targetRoot.CreateBinaryFileWithDirectories(line))
-                                        Copy(source, target);
+                                        StreamOperations.Copy(source, target);
                                 }
 
                                 result.Add(new TargetRelativePath(line));
@@ -213,7 +212,7 @@ namespace Bari.Core.Build.Cache
                         using (var source = targetRoot.ReadBinaryFile(outputPath))
                         using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
                         {
-                            Copy(source, target);
+                            StreamOperations.Copy(source, target);
                         }
                     }
 
@@ -232,25 +231,6 @@ namespace Bari.Core.Build.Cache
         {
             using (var depStream = cacheDir.CreateBinaryFile(DepsFileName))
                 fingerprint.Save(protocolSerializer, depStream);
-        }
-
-        /// <summary>
-        /// Copies a stream to another one
-        /// </summary>
-        /// <param name="source">Source stream</param>
-        /// <param name="target">Target stream</param>
-        private void Copy(Stream source, Stream target)
-        {
-            const int localBufferSize = 4096;
-
-            var buf = new byte[localBufferSize];
-
-            int count;
-            do
-            {
-                count = source.Read(buf, 0, localBufferSize);
-                target.Write(buf, 0, count);
-            } while (count == localBufferSize);
         }
 
         /// <summary>

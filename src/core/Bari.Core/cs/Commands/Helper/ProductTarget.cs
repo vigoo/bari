@@ -8,6 +8,11 @@ namespace Bari.Core.Commands.Helper
     {
         private readonly Product product;
 
+        public Product Product
+        {
+            get { return product; }
+        }
+
         public ProductTarget(Product product)
         {
             this.product = product;

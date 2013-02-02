@@ -59,6 +59,14 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         /// <summary>
+        /// Gets the projects added to the solution built by this builder
+        /// </summary>
+        public IEnumerable<Project> Projects
+        {
+            get { return projects; }
+        }
+
+        /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
         public IDependencies Dependencies

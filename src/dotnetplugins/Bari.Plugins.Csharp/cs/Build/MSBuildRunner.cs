@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
+using Bari.Core.Model;
 using Bari.Plugins.Csharp.Tools;
 
 namespace Bari.Plugins.Csharp.Build
@@ -12,26 +15,23 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class MSBuildRunner: IBuilder, IEquatable<MSBuildRunner>
     {
-        private readonly IBuilder slnBuilder;
+        private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IMSBuild msbuild;
-        private readonly ISet<TargetRelativePath> outputs;
 
         /// <summary>
         /// Constructs the builder
         /// </summary>
         /// <param name="slnBuilder">Sub task building the solution file, used as a dependency</param>
         /// <param name="slnPath">Path of the generated solution file</param>
-        /// <param name="outputs">Expected outputs of the MSBuild process</param>
         /// <param name="targetRoot">Target directory</param>
         /// <param name="msbuild">The MSBuild implementation to use</param>
-        public MSBuildRunner(IBuilder slnBuilder, TargetRelativePath slnPath, IEnumerable<TargetRelativePath> outputs,
+        public MSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath,
                              [TargetRoot] IFileSystemDirectory targetRoot, IMSBuild msbuild)
         {
             this.slnBuilder = slnBuilder;
             this.slnPath = slnPath;
-            this.outputs = new HashSet<TargetRelativePath>(outputs);
             this.targetRoot = targetRoot;
             this.msbuild = msbuild;
         }
@@ -74,6 +74,17 @@ namespace Bari.Plugins.Csharp.Build
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             msbuild.Run(targetRoot, slnPath);
+
+            // Collecting all the files in 'targetdir/modulename' directories as results
+            var modules = new HashSet<Module>(from proj in slnBuilder.Projects select proj.Module);
+            var outputs = new HashSet<TargetRelativePath>();
+            foreach (var module in modules)
+            {
+                var moduleTargetDir = targetRoot.GetChildDirectory(module.Name);
+                foreach (var fileName in moduleTargetDir.Files)
+                    outputs.Add(new TargetRelativePath(Path.Combine(module.Name, fileName)));
+            }
+
             return outputs;
         }
 

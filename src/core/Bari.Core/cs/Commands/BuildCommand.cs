@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
@@ -105,7 +107,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 try
                 {
                     var target = targetParser.ParseTarget(targetStr);
-                    RunWithProjects(target.Projects, dumpMode);
+                    RunWithProjects(target, dumpMode);
                 }
                 catch (ArgumentException ex)
                 {
@@ -119,11 +121,13 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
         }
 
-        private void RunWithProjects(IEnumerable<Project> projects, bool dumpMode)
+        private void RunWithProjects(CommandTarget target, bool dumpMode)
         {
             var context = root.Get<IBuildContext>();
 
             IBuilder rootBuilder = null;
+            var projects = target.Projects.ToList();
+
             foreach (var projectBuilder in projectBuilders)
             {
                 rootBuilder = projectBuilder.AddToContext(context, projects);
@@ -137,10 +141,33 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
             else
             {
-                var outputs = context.Run(rootBuilder);
+                context.Run(rootBuilder);
 
+                var outputs = context.GetResults(rootBuilder);
                 foreach (var outputPath in outputs)
-                    log.InfoFormat("Generated output for build: {0}", outputPath);
+                    log.DebugFormat("Generated output for build: {0}", outputPath);
+
+                var productTarget = target as ProductTarget;
+                if (productTarget != null)
+                {
+                    MergeOutputForProduct(productTarget.Product, outputs);
+                }
+            }
+        }
+
+        private void MergeOutputForProduct(Product product, ISet<TargetRelativePath> outputs)
+        {            
+            log.InfoFormat("Merging {0} files to product output directory {1}...",
+                outputs.Count,
+                new TargetRelativePath(product.Name));
+
+            var productOutput = targetRoot.GetChildDirectory(product.Name, createIfMissing: true);
+
+            foreach (var sourcePath in outputs)
+            {
+                using (var source = targetRoot.ReadBinaryFile(sourcePath))
+                using (var target = productOutput.CreateBinaryFile(Path.GetFileName(sourcePath)))
+                    StreamOperations.Copy(source, target);
             }
         }
     }
