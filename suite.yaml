@@ -65,6 +65,8 @@ modules:
             - nuget://Ninject
             - nuget://Ninject.Extensions.ChildKernel
             - nuget://Ninject.Extensions.Factory
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel            
             - suite://core/Bari.Core
         - name: Bari.Plugins.Nuget
           references:

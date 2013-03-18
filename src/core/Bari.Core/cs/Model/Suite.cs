@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Model
@@ -10,12 +11,18 @@ namespace Bari.Core.Model
     /// </summary>
     public class Suite : IProjectParametersHolder
     {
+        private static readonly Goal DebugGoal = new Goal("debug");
+        private static readonly Goal ReleaseGoal = new Goal("release");
+
         private string name = string.Empty;
         private string version;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, Product> products = new Dictionary<string, Product>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
+        private readonly IDictionary<string, Goal> goals = new Dictionary<string, Goal>();        
         private readonly IFileSystemDirectory suiteRoot;
+
+        private readonly Goal activeGoal;
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -25,11 +32,23 @@ namespace Bari.Core.Model
             Contract.Invariant(products != null);
             Contract.Invariant(suiteRoot != null);
             Contract.Invariant(parameters != null);
+            Contract.Invariant(goals != null);
             Contract.Invariant(Contract.ForAll(modules,
                                                pair =>
                                                !string.IsNullOrWhiteSpace(pair.Key) && 
                                                pair.Value != null &&
                                                pair.Value.Name == pair.Key));
+            Contract.Invariant(Contract.ForAll(products,
+                                               pair =>
+                                               !string.IsNullOrWhiteSpace(pair.Key) &&
+                                               pair.Value != null &&
+                                               pair.Value.Name == pair.Key));
+            Contract.Invariant(Contract.ForAll(goals,
+                                   pair =>
+                                   !string.IsNullOrWhiteSpace(pair.Key) &&
+                                   pair.Value != null &&
+                                   pair.Value.Name == pair.Key));
+            Contract.Invariant(activeGoal != null  && goals.ContainsKey(activeGoal.Name));
         }
 
         /// <summary>
@@ -75,10 +94,27 @@ namespace Bari.Core.Model
         /// </summary>
         /// <param name="suiteRoot">Root directory of the suite</param>
         public Suite([SuiteRoot] IFileSystemDirectory suiteRoot)
+            : this(suiteRoot, new Goal[] { DebugGoal, ReleaseGoal }, DebugGoal)
+        {
+        }
+
+        /// <summary>
+        /// Creates the suite definition
+        /// </summary>
+        /// <param name="suiteRoot">Root directory of the suite</param>
+        /// <param name="goals">The set of goals available for the suite</param>
+        /// <param name="activeGoal">The goal selected for this run</param>
+        public Suite([SuiteRoot] IFileSystemDirectory suiteRoot, IEnumerable<Goal> goals, Goal activeGoal)
         {
             Contract.Requires(suiteRoot != null);
+            Contract.Requires(goals != null);
+            Contract.Requires(activeGoal != null);
+            Contract.Requires(goals.Contains(activeGoal));
 
             this.suiteRoot = suiteRoot;
+            foreach (var goal in goals)
+                this.goals.Add(goal.Name, goal);
+            this.activeGoal = activeGoal;
         }
 
         /// <summary>
@@ -95,6 +131,30 @@ namespace Bari.Core.Model
         public IEnumerable<Product> Products
         {
             get { return products.Values; }
+        }
+
+        /// <summary>
+        /// Get all the goals defined for this suite
+        /// 
+        /// <para>This information can be used to help the user selecting another goal,
+        /// but otherwise the active goal is selected before loading the suite and all
+        /// the suite model is loaded according to the selected goal.</para>
+        /// </summary>
+        public IEnumerable<Goal> Goals
+        {
+            get { return goals.Values; }
+        }
+
+        /// <summary>
+        /// Gets the active goal.
+        /// 
+        /// <para>The active goal is selected before the suite model has been loaded,
+        /// and all the model data are loaded according the active goal. This means that
+        /// the active goal cannot be changed after the suite has been loaded.</para>
+        /// </summary>
+        public Goal ActiveGoal
+        {
+            get { return activeGoal; }
         }
 
         /// <summary>
