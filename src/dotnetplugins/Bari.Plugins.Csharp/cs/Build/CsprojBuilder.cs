@@ -152,7 +152,7 @@ namespace Bari.Plugins.Csharp.Build
                     {
                         new TargetRelativePath(
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
-                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csprojPath))),
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "cs", csprojPath))),
                         new TargetRelativePath(
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csversionPath)))
