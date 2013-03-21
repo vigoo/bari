@@ -39,10 +39,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.SolutionName
         /// <returns>Returns a valid file name without extension</returns>
         public string GetName(IEnumerable<Project> projects)
         {
-            Contract.Requires(projects != null);
-            Contract.Requires(Contract.ForAll(projects, p => p != null));
-            Contract.Ensures(Contract.Result<string>() != null);
-
             var prjs = projects.ToList();
             var matches = analyzer.GetCoveredModules(prjs).ToList();
             if (matches.Count > 0 && matches.All(m => !m.Partial))
