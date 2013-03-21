@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Xml;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
@@ -10,15 +11,19 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
     public class ReferencesSection: CsprojSectionBase
     {
         private readonly IProjectGuidManagement projectGuidManagement;
+        private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
         /// Initializes the class
         /// </summary>
         /// <param name="suite">Active suite</param>
         /// <param name="projectGuidManagement">Project GUID management service</param>
-        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement) : base(suite)
+        /// <param name="targetDir">Target directory where the compiled files will be placed</param>
+        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, [TargetRoot] IFileSystemDirectory targetDir)
+            : base(suite)
         {
             this.projectGuidManagement = projectGuidManagement;
+            this.targetDir = targetDir;
         }
 
         /// <summary>
@@ -41,13 +46,14 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     var projectName = parts[1];
 
                     var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
-                    var referredProjectCsDir = referredProject.RootDirectory.GetChildDirectory("cs");
 
-                    writer.WriteStartElement("ProjectReference");
-                    writer.WriteAttributeString("Include", 
-                        ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(referredProjectCsDir), projectName + ".csproj")));
-                    writer.WriteElementString("Project", projectGuidManagement.GetGuid(referredProject).ToString("B"));
-                    writer.WriteElementString("Name", projectName);
+                    writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(project));
+                    writer.WriteStartElement("Reference");
+                    writer.WriteAttributeString("Include", projectName);                        
+                    writer.WriteElementString("HintPath", 
+                        ToProjectRelativePath(project,
+                        Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name, referredProject.Name + ".dll")));
+                    writer.WriteElementString("SpecificVersion", "False");
                     writer.WriteEndElement();
                 }
                 else
