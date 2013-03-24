@@ -5,6 +5,7 @@ using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Exceptions;
+using Bari.Plugins.Csharp.Model;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
@@ -36,7 +37,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="project">The project to generate .csproj for</param>
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, ICsprojGeneratorContext context)
-        {
+        {            
             writer.WriteStartElement("PropertyGroup");
             writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
             WriteConfigurationSpecificPart(writer, project);
@@ -51,6 +52,11 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
+
+            CsharpProjectParameters parameters = project.HasParameters("csharp")
+                                                     ? project.GetParameters<CsharpProjectParameters>("csharp")
+                                                     : new CsharpProjectParameters();
+            parameters.ToCsprojProperties(writer);       
 
             WriteAppConfig(writer, project);
             WriteManifest(writer, project);
@@ -68,12 +74,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                                       ToProjectRelativePath(project,
                                                             Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp",
                                                                          project.Module.Name)));
-            writer.WriteElementString("Platform", "AnyCPU");
-
-            // TODO: this should be controlled by whether the build is debug or not
-            writer.WriteElementString("DebugSymbols", "true");
-            writer.WriteElementString("DebugType", "full");
-            writer.WriteElementString("Optimize", "false");
         }
 
         protected string GetProjectRootNamespace(Project project)
