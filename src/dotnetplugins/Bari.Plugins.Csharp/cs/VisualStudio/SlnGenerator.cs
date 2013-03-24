@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
@@ -17,6 +18,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory slnDir;
         private readonly IList<Project> projects;
+        private readonly Func<Project, IEnumerable<Project>> getProjectSolutionReferences;
         private readonly TextWriter output;
 
         /// <summary>
@@ -27,13 +29,15 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// <param name="output">Text writer to write the solution file</param>
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="slnDir">Directory where the sln is being generated </param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir)
+        /// <param name="getProjectSolutionReferences">Function which returns all the referenced projects which are in the same solution</param>
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.projects = projects.ToList();
             this.output = output;
             this.suiteRoot = suiteRoot;
             this.slnDir = slnDir;
+            this.getProjectSolutionReferences = getProjectSolutionReferences;
         }
 
         /// <summary>
@@ -64,6 +68,19 @@ namespace Bari.Plugins.Csharp.VisualStudio
 
                     output.WriteLine("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"",
                                      csprojGuid, project.Name, relativeCsprojPath, projectGuid);
+
+                    var projectDeps = new HashSet<Project>(getProjectSolutionReferences(project));
+                    if (projectDeps.Count > 0)
+                    {
+                        output.WriteLine("\tProjectSection(ProjectDependencies) = postProject");
+                        foreach (var dependentProject in projectDeps)
+                        {
+                            var depGuid = projectGuidManagement.GetGuid(dependentProject).ToString("B").ToUpperInvariant();
+                            output.WriteLine("\t\t{0} = {0}", depGuid);
+                        }
+                        output.WriteLine("\tEndProjectSection");
+                    }
+
                     output.WriteLine("EndProject");
                 }
             }

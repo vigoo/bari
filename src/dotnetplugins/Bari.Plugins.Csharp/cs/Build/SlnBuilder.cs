@@ -29,6 +29,7 @@ namespace Bari.Plugins.Csharp.Build
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IList<Project> projects;
         private readonly ISlnNameGenerator slnNameGenerator;
+        private readonly IDictionary<Project, ISet<Project>> inSolutionReferences;
         private ISet<IBuilder> projectBuilders;
         private IDependencies projectDependencies;
 
@@ -56,6 +57,8 @@ namespace Bari.Plugins.Csharp.Build
             this.targetDir = targetDir;
             this.root = root;
             this.slnNameGenerator = slnNameGenerator;
+
+            inSolutionReferences = new Dictionary<Project, ISet<Project>>();
         }
 
         /// <summary>
@@ -114,7 +117,8 @@ namespace Bari.Plugins.Csharp.Build
         }
 
         private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
-        {            if (project.HasNonEmptySourceSet("cs"))
+        {            
+            if (project.HasNonEmptySourceSet("cs"))
             {
                 var childKernel = new ChildKernel(root);
                 childKernel.Bind<Project>().ToConstant(project);
@@ -153,12 +157,24 @@ namespace Bari.Plugins.Csharp.Build
                     {
                         log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
 
-                        ConvertToInSolutionReference(builders, suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);
+                        ConvertToInSolutionReference(builders, suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);                        
                     }
                 }
             }
 
             return true;
+        }
+
+        private void RegisterInSolutionProjectReference(Project project, Project dependency)
+        {
+            ISet<Project> deps;
+            if (!inSolutionReferences.TryGetValue(project, out deps))
+            {
+                deps = new HashSet<Project>();
+                inSolutionReferences.Add(project, deps);
+            }
+
+            deps.Add(dependency);
         }
 
         private void ConvertToInSolutionReference(List<IDirectedGraphEdge<IBuilder>> builders, IReferenceBuilder moduleReferenceBuilder, Project referencedProject)
@@ -169,7 +185,7 @@ namespace Bari.Plugins.Csharp.Build
             // removing these edges
             foreach (var edge in edges)
                 builders.Remove(edge);
-            var sourceNodes = edges.Select(edge => edge.Source);
+            var sourceNodes = edges.Select(edge => edge.Source).ToList();
 
             // creating new, in-solution reference builder node (ISB)
             var inSolutionBuilder = root.Get<InSolutionReferenceBuilder>(
@@ -185,6 +201,12 @@ namespace Bari.Plugins.Csharp.Build
             var edgesToRemove = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder) || Equals(edge.Source, moduleReferenceBuilder)).ToList();
             foreach (var edge in edgesToRemove)
                 builders.Remove(edge);
+
+            // registering these project references for later use (in sln generator)
+            foreach (var sourceNode in sourceNodes.OfType<CsprojBuilder>())
+            {
+                RegisterInSolutionProjectReference(sourceNode.Project, referencedProject);
+            }
         }
 
         /// <summary>
@@ -198,11 +220,20 @@ namespace Bari.Plugins.Csharp.Build
 
             using (var sln = targetDir.CreateTextFile(slnPath))
             {
-                var generator = new SlnGenerator(projectGuidManagement, projects, sln, suiteRoot, targetDir);
+                var generator = new SlnGenerator(projectGuidManagement, projects, sln, suiteRoot, targetDir, GetInSolutionReferences);
                 generator.Generate();
             }
 
             return new HashSet<TargetRelativePath> { new TargetRelativePath(slnPath) };
+        }
+
+        private IEnumerable<Project> GetInSolutionReferences(Project project)
+        {
+            ISet<Project> result;
+            if (inSolutionReferences.TryGetValue(project, out result))
+                return result;
+            else
+                return new Project[0];
         }
 
         /// <summary>

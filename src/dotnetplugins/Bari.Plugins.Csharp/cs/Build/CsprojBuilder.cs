@@ -29,6 +29,14 @@ namespace Bari.Plugins.Csharp.Build
         private ISet<IBuilder> referenceBuilders;
 
         /// <summary>
+        /// Gets the project this builder is working on
+        /// </summary>
+        public Project Project
+        {
+            get { return project; }
+        }
+
+        /// <summary>
         /// Creates the builder
         /// </summary>
         /// <param name="root">Path to resolve instances</param>
