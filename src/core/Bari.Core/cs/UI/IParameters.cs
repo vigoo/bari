@@ -32,6 +32,11 @@ namespace Bari.Core.UI
         /// True if verbose output should be printed
         /// </summary>
         bool VerboseOutput { get; }
+
+        /// <summary>
+        /// Gets the goal name
+        /// </summary>
+        string Goal { get; }
     }
 
     /// <summary>
@@ -83,5 +88,14 @@ namespace Bari.Core.UI
         /// True if verbose output should be printed
         /// </summary>
         public abstract bool VerboseOutput { get; }
+
+        public string Goal
+        {
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                return null; // dummy value
+            }
+        }
     }
 }

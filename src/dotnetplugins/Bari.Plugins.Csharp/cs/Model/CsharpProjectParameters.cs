@@ -32,14 +32,13 @@ namespace Bari.Plugins.Csharp.Model
         public WarningLevel WarningLevel { get; set; }
         public bool AllWarningsAsError { get; set; }
         public int[] SpecificWarningsAsError { get; set; }
+        public string RootNamespace { get; set; }
 
-        public CsharpProjectParameters()
+        public CsharpProjectParameters(Suite suite)
         {
             BaseAddress = null;
             Checked = false;
-            CodePage = null;
-            Debug = DebugLevel.Full;
-            Defines = new[] {"DEBUG"};
+            CodePage = null;            
             DelaySign = false;
             DocOutput = null;
             FileAlign = null;
@@ -51,7 +50,6 @@ namespace Bari.Plugins.Csharp.Model
             NoStdLib = false;
             SuppressedWarnings = null;
             NoWin32Manifest = false;
-            Optimize = false;
             Platform = CLRPlatform.AnyCPU;
             PreferredUILang = null;
             SubsystemVersion = null;
@@ -59,6 +57,25 @@ namespace Bari.Plugins.Csharp.Model
             WarningLevel = WarningLevel.All;
             AllWarningsAsError = false;
             SpecificWarningsAsError = null;
+
+            if (suite.ActiveGoal.Has(Suite.DebugGoal.Name))
+            {
+                Debug = DebugLevel.Full;
+                Optimize = false;
+                Defines = new[] { "DEBUG" };
+            }
+            else if (suite.ActiveGoal.Has(Suite.ReleaseGoal.Name))
+            {
+                Debug = DebugLevel.None;
+                Optimize = true;
+                Defines = new string[0];
+            }
+        }
+
+        public void FillProjectSpecificMissingInfo(Project project)
+        {
+            if (RootNamespace == null)
+                RootNamespace = project.Name;
         }
 
         public void ToCsprojProperties(XmlWriter writer)
@@ -101,6 +118,8 @@ namespace Bari.Plugins.Csharp.Model
             if (SpecificWarningsAsError != null)
                 writer.WriteElementString("WarningsAsErrors",
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
+            if (RootNamespace != null)
+                writer.WriteElementString("RootNamespace", RootNamespace);
         }
 
         private string ToParameter(CsharpLanguageVersion languageVersion)

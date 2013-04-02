@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using Bari.Core.Test.Helper;
+using Bari.Core.UI;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -15,6 +18,7 @@ namespace Bari.Core.Test.Loader
     public class YamlLoaderTest
     {
         private IKernel kernel;
+        private Mock<IParameters> parameters;
 
         [SetUp]
         public void Setup()
@@ -23,6 +27,10 @@ namespace Bari.Core.Test.Loader
             Kernel.RegisterCoreBindings(kernel);
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
+            
+            parameters = new Mock<IParameters>();
+            parameters.SetupGet(p => p.Goal).Returns("debug");
+            kernel.Bind<IParameters>().ToConstant(parameters.Object);
             TestSetup.EnsureFactoryExtensionLoaded(kernel);
         }
 
@@ -451,6 +459,82 @@ products:
                 new[] {suite.GetModule("Module1"), suite.GetModule("Module3")});
             suite.GetProduct("mod2").Modules.Should().BeEquivalentTo(
                 new[] { suite.GetModule("Module2") });
+        }
+
+        [Test]
+        public void TestDefaultGoals()
+        {
+            const string yaml = @"---                   
+suite: Test suite";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            var suite = loader.Load(yaml);
+
+            suite.Goals.Should().BeEquivalentTo(new[]
+                {
+                    Suite.DebugGoal, Suite.ReleaseGoal
+                });
+        }
+
+        [Test]
+        public void DefiningSimpleGoals()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+goals:
+  - a
+  - b
+  - c
+";
+
+            parameters.SetupGet(p => p.Goal).Returns("b");
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            var suite = loader.Load(yaml);
+
+            suite.Goals.Should().BeEquivalentTo(new[]
+                {
+                    new Goal("a"), new Goal("b"), new Goal("c")
+                });
+            suite.ActiveGoal.Should().Be(new Goal("b"));
+        }
+
+        [Test]
+        [ExpectedException(typeof (InvalidGoalException))]
+        public void ExceptionThrownIfTargetGoalIsNotInTheGoalList()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+goals:
+  - a
+  - b
+  - c
+";
+            parameters.SetupGet(p => p.Goal).Returns("X");
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Load(yaml);
+        }
+
+        [Test]
+        public void GoalsDependingOnDefaultGoals()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+goals:
+  - name: test-goal
+    incorporates:
+      - debug
+";
+            parameters.SetupGet(p => p.Goal).Returns("test-goal");
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            var suite = loader.Load(yaml);
+
+            suite.Goals.Should().HaveCount(1);
+            suite.Goals.First().Name.Should().Be("test-goal");
+            suite.Goals.First().IncorporatedGoals.Should().BeEquivalentTo(
+                new[] {Suite.DebugGoal});
         }
     }
 }

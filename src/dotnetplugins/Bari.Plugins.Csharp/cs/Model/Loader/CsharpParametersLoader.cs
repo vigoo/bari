@@ -13,6 +13,13 @@ namespace Bari.Plugins.Csharp.Model.Loader
     /// </summary>
     public class CsharpParametersLoader : IYamlProjectParametersLoader
     {
+        private readonly Suite suite;
+
+        public CsharpParametersLoader(Suite suite)
+        {
+            this.suite = suite;
+        }
+
         public bool Supports(string name)
         {
             return "csharp".Equals(name, StringComparison.InvariantCultureIgnoreCase);
@@ -20,7 +27,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
 
         public IProjectParameters Load(string name, YamlNode value)
         {
-            var result = new CsharpProjectParameters();
+            var result = new CsharpProjectParameters(suite);
             var mapping = value as YamlMappingNode;
 
             if (mapping != null)
@@ -62,7 +69,8 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"subsystem-version", () => { target.SubsystemVersion = ParseString(value); }},
                     {"unsafe", () => { target.Unsafe = ParseBool(value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
-                    {"warnings-as-error", () => ParseWarningsAsError(target, value)}
+                    {"warnings-as-error", () => ParseWarningsAsError(target, value) },
+                    {"root-namespace", () => { target.RootNamespace = ParseString(value); }}
                     };
 
             foreach (var pair in mapping)

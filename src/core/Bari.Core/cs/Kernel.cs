@@ -51,6 +51,7 @@ namespace Bari.Core
 
             kernel.Bind<IBindingRoot>().ToConstant(kernel);
 
+            kernel.Bind<ISuiteFactory>().To<DefaultSuiteFactory>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<LocalYamlModelLoader>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();

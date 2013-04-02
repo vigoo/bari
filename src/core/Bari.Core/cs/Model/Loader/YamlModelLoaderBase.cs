@@ -14,22 +14,22 @@ namespace Bari.Core.Model.Loader
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(YamlModelLoaderBase));
 
-        private readonly Func<Suite> suiteFactory;
+        private readonly ISuiteFactory suiteFactory;
         private readonly IEnumerable<IYamlProjectParametersLoader> parametersLoaders;
 
         /// <summary>
         /// Initializes the yaml loader
         /// </summary>
-        /// <param name="suiteFactory">Factory method to create new suite instances</param>
+        /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
-        protected YamlModelLoaderBase(Func<Suite> suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
+        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Ensures(this.suiteFactory == suiteFactory);
             Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
             this.suiteFactory = suiteFactory;
-            this.parametersLoaders = parametersLoaders;            
+            this.parametersLoaders = parametersLoaders;
         }
 
         /// <summary>
@@ -46,7 +46,8 @@ namespace Bari.Core.Model.Loader
 
             log.Debug("Processing YAML document...");
 
-            var suite = suiteFactory();
+            var goals = new HashSet<Goal>(LoadGoals(yaml.RootNode));
+            var suite = suiteFactory.CreateSuite(goals);
 
             suite.Name = GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
             suite.Version = GetOptionalScalarValue(yaml.RootNode, "version", null);
@@ -66,11 +67,50 @@ namespace Bari.Core.Model.Loader
                 if (item.Value != null)
                     LoadProduct(suite, product, item.Value);
             }
-            
+
             LoadParameters(suite, yaml.RootNode);
 
             log.Debug("Finished processing YAML document.");
             return suite;
+        }
+
+        private IEnumerable<Goal> LoadGoals(YamlNode rootNode)
+        {
+            var result = new Dictionary<string, Goal>();
+            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(rootNode, "goals"))
+            {
+                var goal = LoadGoal(item.Key, item.Value, result);
+                result.Add(goal.Name, goal);
+            }
+
+            return result.Values;
+        }
+
+        private Goal LoadGoal(string name, YamlNode value, IDictionary<string, Goal> loadedGoals)
+        {
+            var mappingNode = value as YamlMappingNode;
+            if (mappingNode != null)
+            {
+                var incorporates = new List<Goal>();
+                foreach (var pair in EnumerateNamedNodesOf(value, "incorporates"))
+                {
+                    string childName = pair.Key;
+
+                    Goal g;
+                    if (!loadedGoals.TryGetValue(childName, out g))
+                    {
+                        g = new Goal(childName);
+                    }
+
+                    incorporates.Add(g);
+                }
+
+                return new Goal(name, incorporates);
+            }
+            else
+            {
+                return new Goal(name);
+            }
         }
 
         private void LoadParameters(IProjectParametersHolder target, YamlNode node)
@@ -146,12 +186,12 @@ namespace Bari.Core.Model.Loader
                     if (new YamlScalarNode("type").Equals(pair.Key) &&
                         pair.Value is YamlScalarNode)
                     {
-                        SetProjectType(project, ((YamlScalarNode) pair.Value).Value);
+                        SetProjectType(project, ((YamlScalarNode)pair.Value).Value);
                     }
                     else if (new YamlScalarNode("version").Equals(pair.Key) &&
                     pair.Value is YamlScalarNode)
                     {
-                        project.Version = ((YamlScalarNode) pair.Value).Value;
+                        project.Version = ((YamlScalarNode)pair.Value).Value;
                     }
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)
@@ -169,7 +209,7 @@ namespace Bari.Core.Model.Loader
         private void SetProjectReferences(Project project, IEnumerable<YamlNode> referenceNodes)
         {
             Contract.Requires(project != null);
-            Contract.Requires(referenceNodes!= null);
+            Contract.Requires(referenceNodes != null);
 
             foreach (var referenceNode in referenceNodes)
             {
@@ -218,7 +258,7 @@ namespace Bari.Core.Model.Loader
                         {
                             if (item is YamlScalarNode)
                             {
-                                yield return new KeyValuePair<string, YamlNode>(((YamlScalarNode) item).Value, null);
+                                yield return new KeyValuePair<string, YamlNode>(((YamlScalarNode)item).Value, null);
                             }
                             else if (item is YamlMappingNode)
                             {
@@ -237,17 +277,17 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(parent != null);
             Contract.Requires(key != null);
-            Contract.Ensures(Contract.Result<string>() != null);            
+            Contract.Ensures(Contract.Result<string>() != null);
 
             try
             {
-                var mapping = (YamlMappingNode) parent;
+                var mapping = (YamlMappingNode)parent;
                 var child = mapping.Children[new YamlScalarNode(key)];
 
                 if (child == null)
                     throw new InvalidSpecificationException(String.Format("Parent has no child with key {0}", key));
 
-                string value = ((YamlScalarNode) child).Value;
+                string value = ((YamlScalarNode)child).Value;
                 if (value == null)
                     throw new InvalidSpecificationException(errorMessage ?? String.Format("No value for key {0}", key));
 

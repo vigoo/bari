@@ -11,8 +11,8 @@ namespace Bari.Core.Model
     /// </summary>
     public class Suite : IProjectParametersHolder
     {
-        private static readonly Goal DebugGoal = new Goal("debug");
-        private static readonly Goal ReleaseGoal = new Goal("release");
+        public static readonly Goal DebugGoal = new Goal("debug");
+        public static readonly Goal ReleaseGoal = new Goal("release");
 
         private string name = string.Empty;
         private string version;

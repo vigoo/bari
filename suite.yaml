@@ -30,6 +30,8 @@ modules:
             - nuget://log4net
             - nuget://Ninject
             - module://Bari.Core
+          csharp:
+            root-namespace: Bari.Console
       tests:
         - name: Bari.Core.Test
           references:

@@ -11,7 +11,7 @@ namespace Bari.Console.UI
     /// <summary>
     /// Implements the <see cref="IParameters"/> interface by parsing the command line    
     /// </summary>
-    public class ConsoleParameters: IParameters
+    public class ConsoleParameters : IParameters
     {
         private readonly string cmd;
         private readonly string[] cmdParams;
@@ -82,7 +82,7 @@ namespace Bari.Console.UI
         public string Suite
         {
             get
-            {                
+            {
                 return Path.Combine(initialCurrentDirectory, "suite.yaml");
             }
         }
@@ -95,6 +95,24 @@ namespace Bari.Console.UI
             get
             {
                 return globalParams.Any(opt => opt == "-v" || opt == "/v");
+            }
+        }
+
+        /// <summary>
+        /// Gets the goal name
+        /// </summary>
+        public string Goal
+        {
+            get
+            {
+                for (int i = 0; i < globalParams.Length - 1; i++)
+                {
+                    if (globalParams[i] == "--target" ||
+                        globalParams[i] == "/target")
+                        return globalParams[i + 1];
+                }
+
+                return "debug";
             }
         }
     }

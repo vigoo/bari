@@ -48,14 +48,15 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Writing out configuration specific part to the non conditional block as well
             WriteConfigurationSpecificPart(writer, project);
 
-            writer.WriteElementString("RootNamespace", GetProjectRootNamespace(project));
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
             CsharpProjectParameters parameters = project.HasParameters("csharp")
                                                      ? project.GetParameters<CsharpProjectParameters>("csharp")
-                                                     : new CsharpProjectParameters();
+                                                     : new CsharpProjectParameters(Suite);
+
+            parameters.FillProjectSpecificMissingInfo(project);
             parameters.ToCsprojProperties(writer);       
 
             WriteAppConfig(writer, project);
@@ -74,15 +75,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                                       ToProjectRelativePath(project,
                                                             Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp",
                                                                          project.Module.Name)));
-        }
-
-        protected string GetProjectRootNamespace(Project project)
-        {
-            string ns = project.Name;
-
-            // TODO: implement root namespace customization here based on project properties
-
-            return ns;
         }
 
         private string GetOutputType(ProjectType type)

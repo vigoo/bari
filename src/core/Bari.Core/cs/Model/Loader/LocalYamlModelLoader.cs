@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Exceptions;
@@ -17,9 +16,9 @@ namespace Bari.Core.Model.Loader
         /// <summary>
         /// Creates the model loader
         /// </summary>
-        /// <param name="suiteFactory">Factory method to create new suite instances</param>
+        /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
-        public LocalYamlModelLoader(Func<Suite> suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
+        public LocalYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
             : base(suiteFactory, parametersLoaders)
         {
             Contract.Requires(suiteFactory != null);

@@ -2,7 +2,9 @@
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
+using Bari.Core.UI;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Ninject;
 using Ninject.Extensions.ChildKernel;
@@ -22,6 +24,10 @@ namespace Bari.Core.Test
             Kernel.RegisterCoreBindings(kernel);
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
+
+            var parameters = new Mock<IParameters>();
+            parameters.SetupGet(p => p.Goal).Returns("debug");
+            kernel.Bind<IParameters>().ToConstant(parameters.Object);
             TestSetup.EnsureFactoryExtensionLoaded(kernel);
         }
 
