@@ -52,6 +52,20 @@ modules:
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - module://Bari.Core
+        - name: bari.Test
+          references:
+            - gac://System
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://log4net
+            - nuget://Ninject
+            - nuget://FluentAssertions
+            - nuget://Moq
+            - nuget://NUnit
+            - module://Bari.Core
+            - module://bari
+          csharp:
+            root-namespace: Bari.Console.Test
     - name: dotnetplugins
       projects:
         - name: Bari.Plugins.Csharp

@@ -33,9 +33,16 @@ namespace Bari.Console.UI
             for (; i < args.Length; i++)
             {
                 string current = args[i];
-                if (current.StartsWith("-") ||
-                    current.StartsWith("/"))
+                if (IsGlobalParameter(current))
+                {
                     gp.Add(current);
+                    int xtraCount = GetGlobalParameterExtraArgCount(current);
+
+                    for (int j = 0; j < xtraCount; j++)
+                        gp.Add(args[i + j + 1]);
+
+                    i += xtraCount;
+                }
                 else
                     break;
             }
@@ -55,6 +62,20 @@ namespace Bari.Console.UI
                 cmd = "help";
                 cmdParams = new string[0];
             }
+        }
+
+        private bool IsGlobalParameter(string arg)
+        {
+            return arg == "-v" || arg == "/v" ||
+                   arg == "--target" || arg == "/target";
+        }
+
+        private int GetGlobalParameterExtraArgCount(string arg)
+        {
+            if (arg == "--target" || arg == "/target")
+                return 1;
+            else
+                return 0;
         }
 
         /// <summary>

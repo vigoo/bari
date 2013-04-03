@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  ToolsVersion="4.0"
+  DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>false</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>true</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>false</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>false</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>false</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>true</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>true</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>true</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>true</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>true</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>false</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>true</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>false</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>false</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>false</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>true</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>true</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>true</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>false</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>true</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>true</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
+  </PropertyGroup>
+  <PropertyGroup
+    Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <OutputPath>..\..\..\..\..\target\core</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\..\target\tmp\core</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>..\..\..\..\..\target\core</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\..\target\tmp\core</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <AssemblyName>bari.Test</AssemblyName>
+    <ProjectGuid>{4c2358e2-c423-4e5f-8302-85e16ccd71a5}</ProjectGuid>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DelaySign>false</DelaySign>
+    <HighEntropyVA>false</HighEntropyVA>
+    <LangVersion>default</LangVersion>
+    <NoWin32Manifest>false</NoWin32Manifest>
+    <Optimize>false</Optimize>
+    <PlatformTarget>anycpu</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RootNamespace>Bari.Console.Test</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference
+      Include="system" />
+    <Reference
+      Include="system.xml" />
+    <Reference
+      Include="system.xml.linq" />
+    <Reference
+      Include="log4net">
+      <HintPath>..\..\..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Ninject">
+      <HintPath>..\..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="FluentAssertions">
+      <HintPath>..\..\..\..\..\target\deps\fluentassertions\FluentAssertions.2.0.1\lib\net40\FluentAssertions.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="Moq">
+      <HintPath>..\..\..\..\..\target\deps\moq\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference
+      Include="nunit.framework">
+      <HintPath>..\..\..\..\..\target\deps\nunit\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <!--Project reference 4c2358e2-c423-4e5f-8302-85e16ccd71a5-->
+    <Reference
+      Include="Bari.Core">
+      <HintPath>..\..\..\..\..\target\core\Bari.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <!--Project reference 4c2358e2-c423-4e5f-8302-85e16ccd71a5-->
+    <Reference
+      Include="bari">
+      <HintPath>..\..\..\..\..\target\core\bari.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="ConsoleParametersTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="..\version.cs" />
+  </ItemGroup>
+  <Import
+    Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

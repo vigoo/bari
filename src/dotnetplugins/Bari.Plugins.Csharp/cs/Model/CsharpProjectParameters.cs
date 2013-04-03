@@ -45,7 +45,7 @@ namespace Bari.Plugins.Csharp.Model
             HighEntropyVirtualAddressSpace = false;
             KeyContainer = null;
             KeyFile = null;
-            LanguageVersion = CsharpLanguageVersion.V3;
+            LanguageVersion = CsharpLanguageVersion.Default;
             MainClass = null;
             NoStdLib = false;
             SuppressedWarnings = null;
@@ -101,7 +101,8 @@ namespace Bari.Plugins.Csharp.Model
             writer.WriteElementString("LangVersion", ToParameter(LanguageVersion));
             if (MainClass != null)
                 writer.WriteElementString("StartupObject", MainClass);
-            writer.WriteElementString("NoCompilerStandardLib", XmlConvert.ToString(NoStdLib));
+            if (NoStdLib)
+                writer.WriteElementString("NoCompilerStandardLib", XmlConvert.ToString(NoStdLib));
             if (SuppressedWarnings != null)
                 writer.WriteElementString("NoWarn", 
                     String.Join(";", SuppressedWarnings.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
