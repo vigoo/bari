@@ -26,14 +26,15 @@ namespace Bari.Plugins.CodeContracts.Model.Loader
         /// </summary>
         /// <param name="name">Name of the block (same that was passed to <see cref="IYamlProjectParametersLoader.Supports"/>)</param>
         /// <param name="value">The YAML node representing the value</param>
+        /// <param name="parser"></param>
         /// <returns>Returns the loaded node</returns>
-        public IProjectParameters Load(string name, YamlNode value)
+        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
         {
             var result = new ContractsProjectParameters();
             var mapping = value as YamlMappingNode;
             if (mapping != null)
             {
-                foreach (var pair in mapping)
+                foreach (var pair in parser.EnumerateNodesOf(mapping))
                 {
                     var scalarKey = pair.Key as YamlScalarNode;
                     if (scalarKey != null)

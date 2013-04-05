@@ -25,14 +25,14 @@ namespace Bari.Plugins.Csharp.Model.Loader
             return "csharp".Equals(name, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public IProjectParameters Load(string name, YamlNode value)
+        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
         {
             var result = new CsharpProjectParameters(suite);
             var mapping = value as YamlMappingNode;
 
             if (mapping != null)
             {
-                foreach (var pair in mapping)
+                foreach (var pair in parser.EnumerateNodesOf(mapping))
                 {
                     var scalarKey = pair.Key as YamlScalarNode;
                     if (scalarKey != null)

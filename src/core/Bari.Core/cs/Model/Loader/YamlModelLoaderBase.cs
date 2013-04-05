@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Bari.Core.Exceptions;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -16,6 +15,7 @@ namespace Bari.Core.Model.Loader
 
         private readonly ISuiteFactory suiteFactory;
         private readonly IEnumerable<IYamlProjectParametersLoader> parametersLoaders;
+        private readonly YamlParser parser;
 
         /// <summary>
         /// Initializes the yaml loader
@@ -30,6 +30,8 @@ namespace Bari.Core.Model.Loader
 
             this.suiteFactory = suiteFactory;
             this.parametersLoaders = parametersLoaders;
+            
+            parser = new YamlParser();
         }
 
         /// <summary>
@@ -49,10 +51,12 @@ namespace Bari.Core.Model.Loader
             var goals = new HashSet<Goal>(LoadGoals(yaml.RootNode));
             var suite = suiteFactory.CreateSuite(goals);
 
-            suite.Name = GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
-            suite.Version = GetOptionalScalarValue(yaml.RootNode, "version", null);
+            parser.SetActiveGoal(suite.ActiveGoal);
 
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(yaml.RootNode, "modules"))
+            suite.Name = parser.GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
+            suite.Version = parser.GetOptionalScalarValue(yaml.RootNode, "version", null);
+
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(yaml.RootNode, "modules"))
             {
                 var module = suite.GetModule(item.Key);
 
@@ -60,7 +64,7 @@ namespace Bari.Core.Model.Loader
                     LoadModule(module, item.Value);
             }
 
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(yaml.RootNode, "products"))
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(yaml.RootNode, "products"))
             {
                 var product = suite.GetProduct(item.Key);
 
@@ -77,7 +81,7 @@ namespace Bari.Core.Model.Loader
         private IEnumerable<Goal> LoadGoals(YamlNode rootNode)
         {
             var result = new Dictionary<string, Goal>();
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(rootNode, "goals"))
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(rootNode, "goals"))
             {
                 var goal = LoadGoal(item.Key, item.Value, result);
                 result.Add(goal.Name, goal);
@@ -92,7 +96,7 @@ namespace Bari.Core.Model.Loader
             if (mappingNode != null)
             {
                 var incorporates = new List<Goal>();
-                foreach (var pair in EnumerateNamedNodesOf(value, "incorporates"))
+                foreach (var pair in parser.EnumerateNamedNodesOf(value, "incorporates"))
                 {
                     string childName = pair.Key;
 
@@ -118,7 +122,7 @@ namespace Bari.Core.Model.Loader
             var mapping = node as YamlMappingNode;
             if (mapping != null)
             {
-                foreach (var pair in mapping)
+                foreach (var pair in parser.EnumerateNodesOf(mapping))
                     TryAddParameters(target, pair.Key, pair.Value);
             }
         }
@@ -128,7 +132,7 @@ namespace Bari.Core.Model.Loader
             Contract.Requires(product != null);
             Contract.Requires(productNode != null);
 
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(productNode, "modules"))
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(productNode, "modules"))
             {
                 var module = suite.GetModule(item.Key);
                 product.AddModule(module);
@@ -148,12 +152,12 @@ namespace Bari.Core.Model.Loader
 
         private void LoadModuleVersion(Module module, YamlNode moduleNode)
         {
-            module.Version = GetOptionalScalarValue(moduleNode, "version", null);
+            module.Version = parser.GetOptionalScalarValue(moduleNode, "version", null);
         }
 
         private void LoadTestProjects(Module module, YamlNode moduleNode)
         {
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "tests"))
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(moduleNode, "tests"))
             {
                 var testProject = module.GetTestProject(item.Key);
 
@@ -164,7 +168,7 @@ namespace Bari.Core.Model.Loader
 
         private void LoadProjects(Module module, YamlNode moduleNode)
         {
-            foreach (KeyValuePair<string, YamlNode> item in EnumerateNamedNodesOf(moduleNode, "projects"))
+            foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(moduleNode, "projects"))
             {
                 var project = module.GetProject(item.Key);
 
@@ -181,7 +185,7 @@ namespace Bari.Core.Model.Loader
             var mapping = projectNode as YamlMappingNode;
             if (mapping != null)
             {
-                foreach (var pair in mapping)
+                foreach (var pair in parser.EnumerateNodesOf(mapping))
                 {
                     if (new YamlScalarNode("type").Equals(pair.Key) &&
                         pair.Value is YamlScalarNode)
@@ -238,93 +242,6 @@ namespace Bari.Core.Model.Loader
             }
         }
 
-        private IEnumerable<KeyValuePair<string, YamlNode>> EnumerateNamedNodesOf(YamlNode parent, string groupName)
-        {
-            Contract.Requires(parent != null);
-            Contract.Requires(!String.IsNullOrWhiteSpace(groupName));
-            Contract.Ensures(Contract.Result<IEnumerable<YamlNode>>() != null);
-
-            var mapping = parent as YamlMappingNode;
-            if (mapping != null)
-            {
-                var groupNameNode = new YamlScalarNode(groupName);
-                if (mapping.Children.ContainsKey(groupNameNode))
-                {
-                    var groupSeq = mapping.Children[groupNameNode] as YamlSequenceNode;
-
-                    if (groupSeq != null)
-                    {
-                        foreach (var item in groupSeq.Children)
-                        {
-                            if (item is YamlScalarNode)
-                            {
-                                yield return new KeyValuePair<string, YamlNode>(((YamlScalarNode)item).Value, null);
-                            }
-                            else if (item is YamlMappingNode)
-                            {
-                                var mappingChild = (YamlMappingNode)item;
-                                yield return new KeyValuePair<string, YamlNode>(
-                                    GetScalarValue(mappingChild, "name"),
-                                    mappingChild);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private string GetScalarValue(YamlNode parent, string key, string errorMessage = null)
-        {
-            Contract.Requires(parent != null);
-            Contract.Requires(key != null);
-            Contract.Ensures(Contract.Result<string>() != null);
-
-            try
-            {
-                var mapping = (YamlMappingNode)parent;
-                var child = mapping.Children[new YamlScalarNode(key)];
-
-                if (child == null)
-                    throw new InvalidSpecificationException(String.Format("Parent has no child with key {0}", key));
-
-                string value = ((YamlScalarNode)child).Value;
-                if (value == null)
-                    throw new InvalidSpecificationException(errorMessage ?? String.Format("No value for key {0}", key));
-
-                return value;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidSpecificationException(errorMessage ?? ex.Message, ex);
-            }
-        }
-
-        private string GetOptionalScalarValue(YamlNode parent, string key, string defaultValue)
-        {
-            Contract.Requires(parent != null);
-            Contract.Requires(key != null);
-            Contract.Ensures(Contract.Result<string>() != null || Contract.Result<string>() == defaultValue);
-
-            try
-            {
-                var mapping = (YamlMappingNode)parent;
-                var child = mapping.Children[new YamlScalarNode(key)];
-
-                if (child == null)
-                    return defaultValue;
-
-                string value = ((YamlScalarNode)child).Value;
-                if (value == null)
-                    return defaultValue;
-
-                return value;
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
         private void TryAddParameters(IProjectParametersHolder target, YamlNode key, YamlNode value)
         {
             if (parametersLoaders != null)
@@ -337,7 +254,7 @@ namespace Bari.Core.Model.Loader
                     var loader = parametersLoaders.FirstOrDefault(l => l.Supports(name));
                     if (loader != null)
                     {
-                        var param = loader.Load(name, value);
+                        var param = loader.Load(name, value, parser);
                         target.AddParameters(name, param);
                     }
                 }
