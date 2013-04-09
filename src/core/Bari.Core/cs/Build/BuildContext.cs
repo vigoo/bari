@@ -5,9 +5,6 @@ using System.Linq;
 using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
 using Bari.Core.Generic.Graph;
-using Ninject;
-using Ninject.Parameters;
-using Ninject.Syntax;
 
 namespace Bari.Core.Build
 {
@@ -28,15 +25,15 @@ namespace Bari.Core.Build
         private readonly ISet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>> graphTransformations =
             new HashSet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>>();
 
-        private readonly IResolutionRoot root;
+        private readonly ICachedBuilderFactory cachedBuilderFactory;
 
         /// <summary>
         /// Initializes the build context
         /// </summary>
-        /// <param name="root">Interface to create new builder instances</param>
-        public BuildContext(IResolutionRoot root)
+        /// <param name="cachedBuilderFactory">Interface to create new cached builders</param>
+        public BuildContext(ICachedBuilderFactory cachedBuilderFactory)
         {
-            this.root = root;
+            this.cachedBuilderFactory = cachedBuilderFactory;
         }
 
         /// <summary>
@@ -90,7 +87,7 @@ namespace Bari.Core.Build
 
                 foreach (var builder in sortedBuilders)
                 {
-                    var cachedBuilder = root.Get<CachedBuilder>(new ConstructorArgument("wrappedBuilder", builder));
+                    var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
                     var builderResult = cachedBuilder.Run(this);
 
                     partialResults.Add(builder, builderResult);

@@ -8,9 +8,6 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.VisualStudio;
-using Ninject.Extensions.ChildKernel;
-using Ninject.Parameters;
-using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
 {
@@ -21,7 +18,9 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class CsprojBuilder : IBuilder, IEquatable<CsprojBuilder>
     {
-        private readonly IResolutionRoot root;
+        private readonly IReferenceBuilderFactory referenceBuilderFactory;
+        private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
+
         private readonly Project project;
         private readonly Suite suite;
         private readonly IFileSystemDirectory targetDir;
@@ -39,15 +38,17 @@ namespace Bari.Plugins.Csharp.Build
         /// <summary>
         /// Creates the builder
         /// </summary>
-        /// <param name="root">Path to resolve instances</param>
+        /// <param name="referenceBuilderFactory">Interface to create new reference builder instances</param>
+        /// <param name="sourceSetDependencyFactory">Interface to create new source set dependencies</param>
         /// <param name="project">The project for which the csproj file will be generated</param>
         /// <param name="suite">The suite the project belongs to </param>
         /// <param name="targetDir">The build target directory </param>
         /// <param name="generator">The csproj generator class to be used</param>
-        public CsprojBuilder(IResolutionRoot root, Project project,
-                             Suite suite, [TargetRoot] IFileSystemDirectory targetDir, CsprojGenerator generator)
+        public CsprojBuilder(IReferenceBuilderFactory referenceBuilderFactory, ISourceSetDependencyFactory sourceSetDependencyFactory, 
+                             Project project, Suite suite, [TargetRoot] IFileSystemDirectory targetDir, CsprojGenerator generator)
         {
-            this.root = root;
+            this.referenceBuilderFactory = referenceBuilderFactory;
+            this.sourceSetDependencyFactory = sourceSetDependencyFactory;
             this.project = project;
             this.suite = suite;
             this.targetDir = targetDir;
@@ -64,13 +65,13 @@ namespace Bari.Plugins.Csharp.Build
                 var deps = new List<IDependencies>();
 
                 if (project.HasNonEmptySourceSet("cs"))
-                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("cs"),
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cs"),
                         fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
                               fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
                 if (project.HasNonEmptySourceSet("appconfig"))
-                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("appconfig")));
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
                 if (project.HasNonEmptySourceSet("manifest"))
-                    deps.Add(new SourceSetDependencies(root, project.GetSourceSet("manifest")));
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
@@ -111,9 +112,6 @@ namespace Bari.Plugins.Csharp.Build
         {
             referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
 
-            var childKernel = new ChildKernel(root);
-            childKernel.Bind<Project>().ToConstant(project);
-
             foreach (var refBuilder in referenceBuilders)
                 refBuilder.AddToContext(context);
 
@@ -123,7 +121,7 @@ namespace Bari.Plugins.Csharp.Build
 
         private IBuilder CreateReferenceBuilder(Reference reference)
         {
-            var builder = root.GetReferenceBuilder<IReferenceBuilder>(reference, new ConstructorArgument("project", project, shouldInherit: true));
+            var builder = referenceBuilderFactory.CreateReferenceBuilder(reference, project);
             if (builder != null)
             {
                 return builder;

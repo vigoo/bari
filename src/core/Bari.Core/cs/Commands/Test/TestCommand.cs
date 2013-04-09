@@ -4,8 +4,6 @@ using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Ninject;
-using Ninject.Syntax;
 
 namespace Bari.Core.Commands.Test
 {
@@ -16,7 +14,7 @@ namespace Bari.Core.Commands.Test
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(TestCommand));
 
-        private readonly IResolutionRoot root;
+        private readonly IBuildContextFactory buildContextFactory;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly IEnumerable<ITestRunner> testRunners;
@@ -61,13 +59,13 @@ Example: `bari test --dump`
         /// <summary>
         /// Constructs the test command
         /// </summary>
-        /// <param name="root">Path to create new instances</param>
+        /// <param name="buildContextFactory">Factory interface to create build contexts</param>
         /// <param name="targetRoot">Target file system directory</param>
         /// <param name="projectBuilders">Available project builders</param>
         /// <param name="testRunners">Available test runners</param>
-        public TestCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners)
+        public TestCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners)
         {
-            this.root = root;
+            this.buildContextFactory = buildContextFactory;
             this.targetRoot = targetRoot;
             this.projectBuilders = projectBuilders;
             this.testRunners = testRunners;
@@ -117,7 +115,7 @@ Example: `bari test --dump`
 
         private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode)
         {
-            var context = root.Get<IBuildContext>();
+            var context = buildContextFactory.CreateBuildContext();
 
             IBuilder rootBuilder = null;
             foreach (var projectBuilder in projectBuilders)

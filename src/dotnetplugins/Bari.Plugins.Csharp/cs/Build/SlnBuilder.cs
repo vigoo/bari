@@ -11,7 +11,6 @@ using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.SolutionName;
 using Ninject;
 using Ninject.Extensions.ChildKernel;
-using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
@@ -23,7 +22,8 @@ namespace Bari.Plugins.Csharp.Build
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SlnBuilder));
 
-        private readonly IResolutionRoot root;
+        private readonly IResolutionRoot root; // TODO: Remove this dependency by removing child kernel creation
+        private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
         private readonly IFileSystemDirectory suiteRoot;
@@ -42,7 +42,8 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="targetDir">The target directory where the sln file should be put</param>
         /// <param name="root">Interface for creating new builder instances</param>
         /// <param name="slnNameGenerator">Name generator implementation for the sln file </param>
-        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root, ISlnNameGenerator slnNameGenerator)
+        /// <param name="inSolutionReferenceBuilderFactory">Interface to create new in-solution reference builder instances</param>
+        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, IResolutionRoot root, ISlnNameGenerator slnNameGenerator, IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projects != null);
@@ -50,6 +51,7 @@ namespace Bari.Plugins.Csharp.Build
             Contract.Requires(suiteRoot != null);
             Contract.Requires(root != null);
             Contract.Requires(slnNameGenerator != null);
+            Contract.Requires(inSolutionReferenceBuilderFactory != null);
 
             this.projectGuidManagement = projectGuidManagement;
             this.suiteRoot = suiteRoot;
@@ -57,6 +59,7 @@ namespace Bari.Plugins.Csharp.Build
             this.targetDir = targetDir;
             this.root = root;
             this.slnNameGenerator = slnNameGenerator;
+            this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
 
             inSolutionReferences = new Dictionary<Project, ISet<Project>>();
         }
@@ -188,8 +191,7 @@ namespace Bari.Plugins.Csharp.Build
             var sourceNodes = edges.Select(edge => edge.Source).ToList();
 
             // creating new, in-solution reference builder node (ISB)
-            var inSolutionBuilder = root.Get<InSolutionReferenceBuilder>(
-                new ConstructorArgument("project", referencedProject));
+            var inSolutionBuilder = inSolutionReferenceBuilderFactory.CreateInSolutionReferenceBuilder(referencedProject);
             inSolutionBuilder.Reference = moduleReferenceBuilder.Reference;
 
             // creating new edges: X -> ISB                        

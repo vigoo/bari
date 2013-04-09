@@ -1,12 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Ninject;
-using Ninject.Parameters;
-using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Build
 {
@@ -15,15 +10,18 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class VsProjectBuilderFactory: IProjectBuilderFactory
     {
-        private readonly IResolutionRoot root;
+        private readonly ISlnBuilderFactory slnBuilderFactory;
+        private readonly IMSBuildRunnerFactory msBuildRunnerFactory;
 
         /// <summary>
         /// Constructs the project builder factory
         /// </summary>
-        /// <param name="root">Interface for creating new instances</param>
-        public VsProjectBuilderFactory(IResolutionRoot root)
+        /// <param name="slnBuilderFactory">Interface for creating new SLN builders</param>
+        /// <param name="msBuildRunnerFactory">Interface to create new MSBuild runners</param>
+        public VsProjectBuilderFactory(ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory)
         {
-            this.root = root;
+            this.slnBuilderFactory = slnBuilderFactory;
+            this.msBuildRunnerFactory = msBuildRunnerFactory;
         }
 
         /// <summary>
@@ -34,27 +32,13 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="projects">Projects to be built</param>
         public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
         {
-            var prjs = projects.ToList();
-            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", projects));
+            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects);
             slnBuilder.AddToContext(context);
 
-            var msbuild = root.Get<MSBuildRunner>(
-                new ConstructorArgument("slnBuilder", slnBuilder),
-                new ConstructorArgument("slnPath", new TargetRelativePath(slnBuilder.Uid+".sln")), 
-                new ConstructorArgument("outputs", prjs.Select(GetExpectedOutput)));
+            var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder, new TargetRelativePath(slnBuilder.Uid + ".sln"));
             msbuild.AddToContext(context);
 
             return msbuild;
-        }
-
-        private TargetRelativePath GetExpectedOutput(Project project)
-        {
-            var module = project.Module;
-            return new TargetRelativePath(
-                Path.Combine(module.Name, project.Name) +
-                (project.Type == ProjectType.Executable
-                     ? ".exe"
-                     : ".dll"));
         }
     }
 }

@@ -1,5 +1,9 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
+using Bari.Core.Build.Dependencies;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
@@ -9,6 +13,8 @@ using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
 using Ninject;
+using Ninject.Extensions.Factory;
+using Ninject.Parameters;
 using Ninject.Syntax;
 
 namespace Bari.Core
@@ -28,7 +34,7 @@ namespace Bari.Core
             get
             {
                 Contract.Ensures(Contract.Result<IKernel>() != null);
-                
+
                 return root;
             }
         }
@@ -56,6 +62,10 @@ namespace Bari.Core
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
 
+            // Command factory and enumerator
+            kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
+            kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));
+
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
             kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
@@ -71,13 +81,89 @@ namespace Bari.Core
 
             // Default build context
             kernel.Bind<IBuildContext>().To<BuildContext>();
+            kernel.Bind<IBuildContextFactory>().ToFactory();
 
             // Builders 
             kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
 
+            // Builder factories
+            kernel.Bind<ICachedBuilderFactory>().ToFactory();
+            kernel.Bind<IReferenceBuilderFactory>().ToFactory(() => new ReferenceBuilderInstanceProvider());
+
+            kernel.Bind<ISourceSetDependencyFactory>().ToFactory();
+            kernel.Bind<ISourceSetFingerprintFactory>().ToFactory();
+
             // Default command target parser
             kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
+        }
+
+        class CommandInstanceProvider : StandardInstanceProvider
+        {
+            protected override string GetName(System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                return (string)arguments[0];
+            }
+
+            protected override ConstructorArgument[] GetConstructorArguments(System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                return base.GetConstructorArguments(methodInfo, arguments).Skip(1).ToArray();
+            }
+
+            public override object GetInstance(Ninject.Extensions.Factory.Factory.IInstanceResolver instanceResolver, System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                try
+                {
+                    return base.GetInstance(instanceResolver, methodInfo, arguments);
+                }
+                catch (ActivationException)
+                {
+                    return null;
+                }
+            }
+        }
+
+        class ReferenceBuilderInstanceProvider : StandardInstanceProvider
+        {
+            protected override string GetName(System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                var reference = (Reference) arguments[0];
+                return reference.Uri.Scheme;
+            }
+
+            protected override ConstructorArgument[] GetConstructorArguments(System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                return base.GetConstructorArguments(methodInfo, arguments).Skip(1).ToArray();
+            }
+
+            public override object GetInstance(Ninject.Extensions.Factory.Factory.IInstanceResolver instanceResolver, System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                try
+                {
+                    var builder = (IReferenceBuilder)base.GetInstance(instanceResolver, methodInfo, arguments);
+                    builder.Reference = (Reference)arguments[0];
+                    return builder;
+                }
+                catch (ActivationException)
+                {
+                    return null;
+                }
+            }
+        }
+
+        class CommandEnumerator : ICommandEnumerator
+        {
+            private readonly IResolutionRoot localRoot;
+
+            public CommandEnumerator(IResolutionRoot localRoot)
+            {
+                this.localRoot = localRoot;
+            }
+
+            public IEnumerable<string> AvailableCommands
+            {
+                get { return localRoot.GetAll<ICommand>().Select(cmd => cmd.Name).OrderBy(n => n); }
+            }
         }
     }
 }

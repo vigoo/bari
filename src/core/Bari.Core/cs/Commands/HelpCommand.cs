@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
-using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.UI;
-using Ninject;
-using Ninject.Syntax;
 
 namespace Bari.Core.Commands
 {
@@ -14,7 +11,8 @@ namespace Bari.Core.Commands
     /// </summary>
     public class HelpCommand: ICommand
     {
-        private readonly IResolutionRoot root;
+        private readonly ICommandEnumerator commandEnumerator;
+        private readonly ICommandFactory commandFactory;
         private readonly IUserOutput output;
 
         /// <summary>
@@ -54,14 +52,17 @@ Example: `bari help clean`
         /// <summary>
         /// Constructs the help command
         /// </summary>
-        /// <param name="root">Path to resolve instances, needed to access other registered commands</param>
+        /// <param name="commandFactory">Factory to create command instances</param>
+        /// <param name="commandEnumerator">Interface to get all the available commands</param>
         /// <param name="output">The user output interface where help content will be printed</param>
-        public HelpCommand(IResolutionRoot root, IUserOutput output)
+        public HelpCommand(ICommandFactory commandFactory, ICommandEnumerator commandEnumerator, IUserOutput output)
         {
-            Contract.Requires(root != null);
+            Contract.Requires(commandFactory != null);
+            Contract.Requires(commandEnumerator != null);
             Contract.Requires(output != null);
 
-            this.root = root;
+            this.commandEnumerator = commandEnumerator;
+            this.commandFactory = commandFactory;
             this.output = output;
         }
 
@@ -87,7 +88,7 @@ Example: `bari help clean`
         /// <param name="cmdName">Name of the command</param>
         private void PrintCommandHelp(string cmdName)
         {
-            var cmd = root.TryGet<ICommand>(cmdName);
+            var cmd = commandFactory.CreateCommand(cmdName);
             if (cmd == null)
                 throw new InvalidCommandParameterException(
                     "help",
@@ -104,9 +105,10 @@ Example: `bari help clean`
         {
             output.Message("The following commands can be used for this suite:");
 
-            foreach (var cmd in root.GetAll<ICommand>().OrderBy(cmd => cmd.Name))
+            foreach (var cmdName in commandEnumerator.AvailableCommands)
             {
-                output.Describe(cmd.Name, cmd.Description);
+                var cmd = commandFactory.CreateCommand(cmdName);
+                output.Describe(cmdName, cmd.Description);
             }
         }
     }

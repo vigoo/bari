@@ -10,9 +10,6 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
-using Ninject;
-using Ninject.Parameters;
-using Ninject.Syntax;
 
 namespace Bari.Plugins.Csharp.Commands
 {
@@ -25,7 +22,8 @@ namespace Bari.Plugins.Csharp.Commands
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(VisualStudioCommand));
 
-        private readonly IResolutionRoot root;
+        private readonly IBuildContextFactory buildContextFactory;
+        private readonly ISlnBuilderFactory slnBuilderFactory;
         private readonly IFileSystemDirectory targetDir;
         private readonly ICommandTargetParser targetParser;
 
@@ -73,12 +71,14 @@ If called without any module or product name, it adds *every module* to the gene
         /// <summary>
         /// Initializes the command
         /// </summary>
-        /// <param name="root">The path to resolve instances</param>
+        /// <param name="buildContextFactory">Interface to create new build contexts</param>
+        /// <param name="slnBuilderFactory">Interface to create new SLN builders</param>
         /// <param name="targetDir">Target root directory</param>
         /// <param name="targetParser">Parser used for parsing the target parameter</param>
-        public VisualStudioCommand(IResolutionRoot root, [TargetRoot] IFileSystemDirectory targetDir, ICommandTargetParser targetParser)
+        public VisualStudioCommand(IBuildContextFactory buildContextFactory, ISlnBuilderFactory slnBuilderFactory, [TargetRoot] IFileSystemDirectory targetDir, ICommandTargetParser targetParser)
         {
-            this.root = root;
+            this.buildContextFactory = buildContextFactory;
+            this.slnBuilderFactory = slnBuilderFactory;
             this.targetDir = targetDir;
             this.targetParser = targetParser;
         }
@@ -125,8 +125,8 @@ If called without any module or product name, it adds *every module* to the gene
 
         private void Run(IEnumerable<Project> projects, bool openSolution)
         {
-            var buildContext = root.Get<IBuildContext>();
-            var slnBuilder = root.Get<SlnBuilder>(new ConstructorArgument("projects", projects));
+            var buildContext = buildContextFactory.CreateBuildContext();
+            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects);
             slnBuilder.AddToContext(buildContext);
 
             buildContext.Run(slnBuilder);

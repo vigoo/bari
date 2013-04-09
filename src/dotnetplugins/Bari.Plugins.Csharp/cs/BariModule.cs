@@ -1,7 +1,6 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
-using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.Commands;
@@ -11,7 +10,7 @@ using Bari.Plugins.Csharp.Tools;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
 using Bari.Plugins.Csharp.VisualStudio.SolutionName;
-using Ninject;
+using Ninject.Extensions.Factory;
 using Ninject.Modules;
 
 namespace Bari.Plugins.Csharp
@@ -37,8 +36,12 @@ namespace Bari.Plugins.Csharp
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
             Bind<IMSBuild>().To<MSBuild>();
+            
+            Bind<IMSBuildRunnerFactory>().ToFactory();
+            Bind<ISlnBuilderFactory>().ToFactory();
 
             Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
+            Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
 
             Bind<ICsprojSection>().To<PropertiesSection>();
             Bind<ICsprojSection>().To<ReferencesSection>();

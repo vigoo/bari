@@ -19,14 +19,15 @@ namespace Bari.Core.Test.Commands
         [SetUp]
         public void SetUp()
         {
-            kernel = new StandardKernel();
-            Kernel.RegisterCoreBindings(kernel);
+            kernel = new StandardKernel();            
             output = new TestUserOutput();
             kernel.Bind<IUserOutput>().ToConstant(output).InSingletonScope();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas
                 <TargetRootAttribute>();
+
+            Kernel.RegisterCoreBindings(kernel);
         }
 
         [TearDown]

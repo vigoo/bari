@@ -7,8 +7,6 @@ using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Ninject;
-using Ninject.Syntax;
 
 namespace Bari.Core.Commands
 {
@@ -20,7 +18,7 @@ namespace Bari.Core.Commands
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildCommand));
 
-        private readonly IResolutionRoot root;
+        private readonly IBuildContextFactory buildContextFactory;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly ICommandTargetParser targetParser;
@@ -68,13 +66,13 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// <summary>
         /// Constructs the build command
         /// </summary>
-        /// <param name="root">Interface for creating new objects</param>
+        /// <param name="buildContextFactory">Interface for creating new build contexts</param>
         /// <param name="projectBuilders">The set of registered project builder factories</param>
         /// <param name="targetRoot">Build target root directory </param>
         /// <param name="targetParser">Command target parser implementation to be used</param>
-        public BuildCommand(IResolutionRoot root, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser)
+        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser)
         {
-            this.root = root;
+            this.buildContextFactory = buildContextFactory;
             this.projectBuilders = projectBuilders;
             this.targetRoot = targetRoot;
             this.targetParser = targetParser;
@@ -123,7 +121,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
         private void RunWithProjects(CommandTarget target, bool dumpMode)
         {
-            var context = root.Get<IBuildContext>();
+            var context = buildContextFactory.CreateBuildContext();
 
             IBuilder rootBuilder = null;
             var projects = target.Projects.ToList();

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Build.Dependencies.Protocol;
@@ -6,6 +8,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Ninject;
 
@@ -19,6 +22,7 @@ namespace Bari.Core.Test.Build.Dependencies
         private LocalFileSystemDirectory rootDir;
         private SourceSet sourceSet1;
         private SourceSet sourceSet2;
+        private ISourceSetFingerprintFactory fingerprintFactory;
 
         [SetUp]
         public void SetUp()
@@ -43,6 +47,14 @@ namespace Bari.Core.Test.Build.Dependencies
             sourceSet2.Add(new SuiteRelativePath("file3"));
 
             kernel.Bind<IFileSystemDirectory>().ToConstant(rootDir).WhenTargetHas<SuiteRootAttribute>();
+
+            var factoryMock = new Mock<ISourceSetFingerprintFactory>();
+            factoryMock.Setup(
+                f =>
+                f.CreateSourceSetFingerprint(It.IsAny<IEnumerable<SuiteRelativePath>>(), It.IsAny<Func<string, bool>>()))
+                       .Returns<IEnumerable<SuiteRelativePath>, Func<string, bool>>(
+                            (files, exclusions) => new SourceSetFingerprint(rootDir, files, exclusions));
+            fingerprintFactory = factoryMock.Object;
         }
 
         [TearDown]
@@ -68,9 +80,9 @@ namespace Bari.Core.Test.Build.Dependencies
         {
             return new MultipleDependencies(new IDependencies[]
                 {
-                    new SourceSetDependencies(kernel, sourceSet1),
+                    new SourceSetDependencies(fingerprintFactory, sourceSet1),
                     new NoDependencies(),
-                    new SourceSetDependencies(kernel, sourceSet2)
+                    new SourceSetDependencies(fingerprintFactory, sourceSet2)
                 });
         }
 

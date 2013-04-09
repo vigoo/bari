@@ -5,7 +5,6 @@ using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.UI;
-using Ninject;
 using Ninject.Syntax;
 
 namespace Bari.Core.Process
@@ -14,7 +13,7 @@ namespace Bari.Core.Process
     /// This class controls the main process which bari can perform
     /// 
     /// <para>
-    /// It is resposinble to load a suite model and perform a command with all the necessary
+    /// It is responsible to load a suite model and perform a command with all the necessary
     /// setup.
     /// </para>
     /// </summary>
@@ -23,7 +22,8 @@ namespace Bari.Core.Process
         private readonly IUserOutput output;
         private readonly IParameters parameters;
         private readonly ISuiteLoader loader;
-        private readonly IResolutionRoot root;
+        private readonly ICommandFactory commandFactory;
+        private readonly ExplorerRunner explorer;
         private readonly IBindingRoot binding;
 
         /// <summary>
@@ -32,19 +32,22 @@ namespace Bari.Core.Process
         /// <param name="output">User output interface to write messages to</param>
         /// <param name="parameters">User defined parameters describing the process to be performed</param>
         /// <param name="loader">The suite model loader implementation to be used</param>
-        /// <param name="root">Path to resolve instances</param>
+        /// <param name="commandFactory">Factory for command objects</param>
+        /// <param name="explorer">Suite explorer runner</param>
         /// <param name="binding">Interface to bind new dependencies</param>
-        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, IResolutionRoot root, IBindingRoot binding)
+        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, ICommandFactory commandFactory, ExplorerRunner explorer, IBindingRoot binding)
         {
             Contract.Requires(output != null);
             Contract.Requires(parameters != null);
-            Contract.Requires(root != null);
+            Contract.Requires(commandFactory != null);
             Contract.Requires(loader != null);
+            Contract.Requires(explorer != null);
 
             this.output = output;
             this.parameters = parameters;
             this.loader = loader;
-            this.root = root;
+            this.commandFactory = commandFactory;
+            this.explorer = explorer;
             this.binding = binding;
         }
 
@@ -58,10 +61,9 @@ namespace Bari.Core.Process
             var suite = loader.Load(parameters.Suite);
             binding.Bind<Suite>().ToConstant(suite);
             
-            var explorer = root.Get<ExplorerRunner>();
             explorer.RunAll(suite);
 
-            var cmd = root.TryGet<ICommand>(parameters.Command);
+            var cmd = commandFactory.CreateCommand(parameters.Command);
             if (cmd != null)
             {
                 cmd.Run(suite, parameters.CommandParameters);

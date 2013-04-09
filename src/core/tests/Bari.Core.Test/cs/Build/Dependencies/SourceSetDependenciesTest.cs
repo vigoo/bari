@@ -1,10 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Ninject;
 
@@ -17,6 +20,7 @@ namespace Bari.Core.Test.Build.Dependencies
         private TempDirectory tmp;
         private IFileSystemDirectory rootDir;
         private SourceSet sourceSet;
+        private ISourceSetFingerprintFactory fingerprintFactory;
 
         [SetUp]
         public void SetUp()
@@ -35,6 +39,14 @@ namespace Bari.Core.Test.Build.Dependencies
             sourceSet.Add(new SuiteRelativePath("file2"));
 
             kernel.Bind<IFileSystemDirectory>().ToConstant(rootDir).WhenTargetHas<SuiteRootAttribute>();
+
+            var factoryMock = new Mock<ISourceSetFingerprintFactory>();
+            factoryMock.Setup(
+                f =>
+                f.CreateSourceSetFingerprint(It.IsAny<IEnumerable<SuiteRelativePath>>(), It.IsAny<Func<string, bool>>()))
+                       .Returns<IEnumerable<SuiteRelativePath>, Func<string, bool>>(
+                            (files, exclusions) => new SourceSetFingerprint(rootDir, files, exclusions));
+            fingerprintFactory = factoryMock.Object;
         }
 
         [TearDown]
@@ -47,7 +59,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
             var fp2 = dep.CreateFingerprint();
 
@@ -58,7 +70,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void RemovingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             File.Delete(Path.Combine(tmp, "file1"));
@@ -72,7 +84,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void AddingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             using (var writer = rootDir.CreateTextFile("file3"))
@@ -87,7 +99,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ModifyingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             using (var writer = File.CreateText(Path.Combine(tmp, "file2")))
@@ -104,7 +116,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void AddingFileToSubdirectoryChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
@@ -120,7 +132,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ModifyingFileInSubdirectoryChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
@@ -140,7 +152,7 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ConvertToProtocolAndBack()
         {
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             var proto = fp1.Protocol;
@@ -153,7 +165,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void SerializeAndReadBack()
         {
             var ser = new BinarySerializer();
-            var dep = new SourceSetDependencies(kernel, sourceSet);
+            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp1 = dep.CreateFingerprint();
 
             byte[] data;
