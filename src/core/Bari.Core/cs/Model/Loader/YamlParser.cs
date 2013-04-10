@@ -11,6 +11,7 @@ namespace Bari.Core.Model.Loader
     /// </summary>
     public class YamlParser
     {
+        private const string ConditionalPrefix = "when ";
         private Goal activeGoal = Suite.DebugGoal;
 
         /// <summary>
@@ -100,24 +101,21 @@ namespace Bari.Core.Model.Loader
             Contract.Requires(key != null);
             Contract.Ensures(Contract.Result<string>() != null || Contract.Result<string>() == defaultValue);
 
-            try
+            var mapping = parent as YamlMappingNode;
+            if (mapping != null)
             {
-                var mapping = (YamlMappingNode)parent;
-                var child = mapping.Children[new YamlScalarNode(key)];
+                var pairs = EnumerateNodesOf(mapping);
+                var keyNode = new YamlScalarNode(key);
 
-                if (child == null)
-                    return defaultValue;
-
-                string value = ((YamlScalarNode)child).Value;
-                if (value == null)
-                    return defaultValue;
-
-                return value;
+                foreach (var pair in pairs)
+                {
+                    if (keyNode.Equals(pair.Key) &&
+                        pair.Value is YamlScalarNode)
+                        return ((YamlScalarNode) pair.Value).Value;
+                }
             }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
+
+            return defaultValue;
         }
 
         /// <summary>
@@ -127,7 +125,32 @@ namespace Bari.Core.Model.Loader
         /// <returns>Returns a sequence of key-value pairs, both key and value are generic YAML nodes</returns>
         public IEnumerable<KeyValuePair<YamlNode, YamlNode>> EnumerateNodesOf(YamlMappingNode mapping)
         {
-            return mapping;
+            foreach (var pair in mapping)
+            {
+                var keyScalar = pair.Key as YamlScalarNode;
+                if (keyScalar != null)
+                {
+                    if (keyScalar.Value.StartsWith(ConditionalPrefix))
+                    {
+                        // This is a conditional node
+                        var condition = keyScalar.Value.Substring(ConditionalPrefix.Length);
+                        if (activeGoal.Has(condition))
+                        {
+                            var mappingValue = pair.Value as YamlMappingNode;
+                            if (mappingValue != null)
+                            {
+                                foreach (var child in EnumerateNodesOf(mappingValue))
+                                    yield return child;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // This is a normal node
+                        yield return pair;
+                    }
+                }
+            }
         }
 
         /// <summary>
