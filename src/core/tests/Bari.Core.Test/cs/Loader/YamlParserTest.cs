@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
@@ -187,6 +188,128 @@ third:  3
             var v2 = parser.GetOptionalScalarValue(doc.RootNode, "second", "fallback");
             v2.Should().Be("2");
         }
+
+        [Test]
+        public void GetScalarValueUnconditional()
+        {
+            var doc = Load(@"---
+first:  1
+second: 2
+third:  3
+");
+            var v = parser.GetScalarValue(doc.RootNode, "second");
+            v.Should().Be("2");
+        }
+
+        [Test]
+        [ExpectedException(typeof (InvalidSpecificationException))]
+        public void GetNonExistingScalarValue()
+        {
+            var doc = Load(@"---
+first:  1
+second: 2
+third:  3
+");
+            parser.GetScalarValue(doc.RootNode, "fifth");
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidSpecificationException))]
+        public void GetScalarValueConditionalNoMatch()
+        {
+            var doc = Load(@"---
+first:  1
+when X:
+  second: 2
+third:  3
+");
+            parser.GetScalarValue(doc.RootNode, "second");
+        }
+
+        [Test]
+        public void GetScalarValueConditionalMatch()
+        {
+            var doc = Load(@"---
+first:  1
+when X:
+  second: 2
+third:  3
+");
+            parser.SetActiveGoal(new Goal("X"));
+
+            var v2 = parser.GetScalarValue(doc.RootNode, "second");
+            v2.Should().Be("2");
+        }
+
+        [Test]
+        public void GetScalarValueNestedConditional()
+        {
+            var doc = Load(@"---
+first:  1
+when X:
+  when Y:
+    second: 2
+third:  3
+");
+            parser.SetActiveGoal(new Goal("Y", new[] { new Goal("X") }));
+
+            var v2 = parser.GetScalarValue(doc.RootNode, "second");
+            v2.Should().Be("2");
+        }
+
+        [Test]
+        public void EnumerateNamedNodesWithNestedConditions()
+        {
+            var doc = Load(@"---
+items:
+  - first
+  - when X:
+     - when Y:
+        - name: second
+          other: xyz
+     - third
+  - name: fourth
+");
+
+            var nodesWithoutGoal = parser.EnumerateNamedNodesOf(doc.RootNode, "items");
+
+            nodesWithoutGoal.Should()
+                            .NotBeNull()
+                            .And.HaveCount(2)
+                            .And.Contain(pair => pair.Key == "first")
+                            .And.Contain(pair => pair.Key == "fourth");
+
+            parser.SetActiveGoal(new Goal("X"));
+            var nodesWithX = parser.EnumerateNamedNodesOf(doc.RootNode, "items");
+
+            nodesWithX.Should()
+                      .NotBeNull()
+                      .And.HaveCount(3)
+                      .And.Contain(pair => pair.Key == "first")
+                      .And.Contain(pair => pair.Key == "third")
+                      .And.Contain(pair => pair.Key == "fourth");
+
+            parser.SetActiveGoal(new Goal("Y"));
+            var nodesWithY = parser.EnumerateNamedNodesOf(doc.RootNode, "items");
+
+            nodesWithY.Should()
+                .NotBeNull()
+                .And.HaveCount(2)
+                .And.Contain(pair => pair.Key == "first")
+                .And.Contain(pair => pair.Key == "fourth");
+
+            parser.SetActiveGoal(new Goal("Y", new[] { new Goal("X") }));
+            var nodesWithXY = parser.EnumerateNamedNodesOf(doc.RootNode, "items");
+
+            nodesWithXY.Should()
+                       .NotBeNull()
+                       .And.HaveCount(4)
+                       .And.Contain(pair => pair.Key == "first")
+                       .And.Contain(pair => pair.Key == "second")
+                       .And.Contain(pair => pair.Key == "third")
+                       .And.Contain(pair => pair.Key == "fourth");
+        }
+
 
         private KeyValuePair<YamlNode, YamlNode> NodePair(YamlNode k, YamlNode v)
         {

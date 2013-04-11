@@ -36,7 +36,7 @@ namespace Bari.Core.Model.Loader
 
                     if (groupSeq != null)
                     {
-                        foreach (var item in groupSeq.Children)
+                        foreach (var item in EnumerateNodesOf(groupSeq))
                         {
                             if (item is YamlScalarNode)
                             {
@@ -71,16 +71,25 @@ namespace Bari.Core.Model.Loader
             try
             {
                 var mapping = (YamlMappingNode)parent;
-                var child = mapping.Children[new YamlScalarNode(key)];
+                var pairs = EnumerateNodesOf(mapping);
+                var keyNode = new YamlScalarNode(key);
 
-                if (child == null)
-                    throw new InvalidSpecificationException(String.Format("Parent has no child with key {0}", key));
+                foreach (var pair in pairs)
+                {
+                    if (keyNode.Equals(pair.Key))
+                    {
+                        if (pair.Value is YamlScalarNode)
+                        {
+                            var v = ((YamlScalarNode) pair.Value).Value;
+                            if (v != null)
+                                return v;
+                        }
 
-                string value = ((YamlScalarNode)child).Value;
-                if (value == null)
-                    throw new InvalidSpecificationException(errorMessage ?? String.Format("No value for key {0}", key));
+                        throw new InvalidSpecificationException(errorMessage ?? String.Format("No value for key {0}", key));
+                    }
+                }
 
-                return value;
+                throw new InvalidSpecificationException(String.Format("Parent has no child with key {0}", key));
             }
             catch (Exception ex)
             {
@@ -111,7 +120,7 @@ namespace Bari.Core.Model.Loader
                 {
                     if (keyNode.Equals(pair.Key) &&
                         pair.Value is YamlScalarNode)
-                        return ((YamlScalarNode) pair.Value).Value;
+                        return ((YamlScalarNode)pair.Value).Value;
                 }
             }
 
@@ -149,6 +158,66 @@ namespace Bari.Core.Model.Loader
                         // This is a normal node
                         yield return pair;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates the nodes in a sequence node while resolving the conditional expressions
+        /// </summary>
+        /// <param name="seq">Sequence node to be enumerated</param>
+        /// <returns>Returns a sequence of YAML nodes</returns>
+        public IEnumerable<YamlNode> EnumerateNodesOf(YamlSequenceNode seq)
+        {
+            foreach (var node in seq)
+            {
+                var mapping = node as YamlMappingNode;
+                if (mapping != null)
+                {
+                    bool allConditional = true;
+
+                    foreach (var pair in mapping)
+                    {
+                        var keyScalar = pair.Key as YamlScalarNode;
+                        if (keyScalar != null)
+                        {
+                            if (keyScalar.Value.StartsWith(ConditionalPrefix))
+                            {
+                                // This is a conditional node
+                                var condition = keyScalar.Value.Substring(ConditionalPrefix.Length);
+                                if (activeGoal.Has(condition))
+                                {
+                                    var seqValue = pair.Value as YamlSequenceNode;
+                                    if (seqValue != null)
+                                    {
+                                        foreach (var child in EnumerateNodesOf(seqValue))
+                                            yield return child;
+                                    }
+                                    else
+                                    {
+                                        yield return pair.Value;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                allConditional = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            allConditional = false;
+                            break;
+                        }
+                    }
+
+                    if (!allConditional)
+                        yield return mapping;
+                }
+                else
+                {
+                    yield return node;
                 }
             }
         }
