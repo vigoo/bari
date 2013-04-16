@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.UI;
@@ -49,6 +50,14 @@ Example: `bari help clean`
             }
         }
 
+        private const string GlobalParameters =
+@"=Global parameters=
+
+Global parameters must be placed before the command name. 
+ `-v` enables verbose logging
+ `--target X` sets the target goal to X. Default goals are `debug` and `release`
+";
+
         /// <summary>
         /// Constructs the help command
         /// </summary>
@@ -94,7 +103,10 @@ Example: `bari help clean`
                     "help",
                     string.Format("The given command ({0}) does no exist", cmdName));
             else
+            {
                 output.Message(cmd.Help);
+                output.Message(GlobalParameters);
+            }
         }
 
         /// <summary>
