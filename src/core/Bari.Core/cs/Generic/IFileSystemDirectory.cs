@@ -163,8 +163,8 @@ namespace Bari.Core.Generic
         public IFileSystemDirectory GetChildDirectory(string name)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
-            Contract.Ensures(ChildDirectories.Contains(name) && Contract.Result<IFileSystemDirectory>() != null ||
-                             !ChildDirectories.Contains(name) && Contract.Result<IFileSystemDirectory>() == null);
+            Contract.Ensures(ChildDirectories.Any(d => d.Equals(name, StringComparison.InvariantCultureIgnoreCase)) && Contract.Result<IFileSystemDirectory>() != null ||
+                             ChildDirectories.All(d => !d.Equals(name, StringComparison.InvariantCultureIgnoreCase)) && Contract.Result<IFileSystemDirectory>() == null);
             
             return null; // dummy value
         }
@@ -207,7 +207,7 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<TextWriter>() != null);
-            Contract.Ensures(Files.Contains(name));
+            Contract.Ensures(Files.Any(f => f.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
 
             return null; // dummy value
         }
