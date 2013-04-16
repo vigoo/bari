@@ -68,6 +68,12 @@ modules:
             root-namespace: Bari.Console.Test
     - name: dotnetplugins
       projects:
+        - name: Bari.Plugins.VsCore 
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp
           references:
             - gac://Microsoft.CSharp
@@ -82,8 +88,16 @@ modules:
             - nuget://Ninject.Extensions.ChildKernel
             - nuget://Ninject.Extensions.Factory
             - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel            
+            - nuget://YamlDotNet.RepresentationModel
+            - module://BAri.Plugins.VsCore
             - suite://core/Bari.Core
+        - name: Bari.Plugins.Fsharp
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core
+            - module://BAri.Plugins.VsCore
         - name: Bari.Plugins.Nuget
           references:
             - gac://Microsoft.CSharp
