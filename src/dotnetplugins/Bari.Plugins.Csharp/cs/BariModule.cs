@@ -6,10 +6,13 @@ using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.Commands;
 using Bari.Plugins.Csharp.Commands.Clean;
 using Bari.Plugins.Csharp.Model.Loader;
-using Bari.Plugins.Csharp.Tools;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
-using Bari.Plugins.Csharp.VisualStudio.SolutionName;
+using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.Tools;
+using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
+using Bari.Plugins.VsCore.VisualStudio.SolutionName;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
 
@@ -30,7 +33,6 @@ namespace Bari.Plugins.Csharp
             log.Info("Csharp plugin loaded");
 
             Bind<ICommand>().To<VisualStudioCommand>().Named("vs");
-            Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
 
             Bind<ICleanExtension>().To<CsprojCleaner>();
 
@@ -39,14 +41,17 @@ namespace Bari.Plugins.Csharp
             
             Bind<IMSBuildRunnerFactory>().ToFactory();
             Bind<ISlnBuilderFactory>().ToFactory();
+            Bind<ICsprojBuilderFactory>().ToFactory();
 
             Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
             Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
 
-            Bind<ICsprojSection>().To<PropertiesSection>();
-            Bind<ICsprojSection>().To<ReferencesSection>();
-            Bind<ICsprojSection>().To<SourceItemsSection>();
-            Bind<ICsprojSection>().To<VersionSection>();
+            Bind<ISlnProject>().To<CsharpSlnProject>();
+
+            Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<CsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<CsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<CsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<CsprojGenerator>(); 
             
             Bind<IYamlProjectParametersLoader>().To<CsharpParametersLoader>();
 

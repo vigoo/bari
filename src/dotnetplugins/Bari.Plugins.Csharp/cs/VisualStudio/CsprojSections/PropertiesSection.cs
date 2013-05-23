@@ -6,13 +6,15 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Exceptions;
 using Bari.Plugins.Csharp.Model;
+using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
     /// <summary>
     /// .csproj section for generic project properties
     /// </summary>
-    public class PropertiesSection : CsprojSectionBase
+    public class PropertiesSection : MSBuildProjectSectionBase
     {
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IFileSystemDirectory targetDir;
@@ -36,7 +38,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="writer">XML writer to use</param>
         /// <param name="project">The project to generate .csproj for</param>
         /// <param name="context">Current .csproj generation context</param>
-        public override void Write(XmlWriter writer, Project project, ICsprojGeneratorContext context)
+        public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {            
             writer.WriteStartElement("PropertyGroup");
             writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");

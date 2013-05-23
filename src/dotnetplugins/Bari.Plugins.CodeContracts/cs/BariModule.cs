@@ -1,7 +1,8 @@
 ﻿using Bari.Core.Model.Loader;
 using Bari.Plugins.CodeContracts.Model.Loader;
 using Bari.Plugins.CodeContracts.VisualStudio.CsprojSections;
-using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
+using Bari.Plugins.Csharp.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 using Ninject.Modules;
 
 namespace Bari.Plugins.CodeContracts
@@ -20,7 +21,7 @@ namespace Bari.Plugins.CodeContracts
         {
             log.Info("CodeContracts plugin loaded");
 
-            Bind<ICsprojSection>().To<CodeContractsSection>();
+            Bind<IMSBuildProjectSection>().To<CodeContractsSection>().WhenInjectedInto<CsprojGenerator>();
             Bind<IYamlProjectParametersLoader>().To<YamlContractsParametersLoader>();
         }
     }

@@ -8,6 +8,7 @@ using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.Csharp.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;

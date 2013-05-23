@@ -1,12 +1,14 @@
 ﻿using System.Xml;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
     /// <summary>
     /// .csproj section generating and referring to the version information
     /// </summary>
-    public class VersionSection: CsprojSectionBase
+    public class VersionSection: MSBuildProjectSectionBase
     {
         /// <summary>
         /// Initializes the class
@@ -22,7 +24,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="writer">XML writer to use</param>
         /// <param name="project">The project to generate .csproj for</param>
         /// <param name="context">Current .csproj generation context</param>
-        public override void Write(XmlWriter writer, Project project, ICsprojGeneratorContext context)
+        public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
             // Generating the version file (C# source code)
             var generator = new CsharpVersionInfoGenerator(project);

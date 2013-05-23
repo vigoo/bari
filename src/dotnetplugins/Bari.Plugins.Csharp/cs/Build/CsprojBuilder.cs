@@ -16,7 +16,7 @@ namespace Bari.Plugins.Csharp.Build
     /// 
     /// <para>Uses the <see cref="CsprojGenerator"/> class internally.</para>
     /// </summary>
-    public class CsprojBuilder : IBuilder, IEquatable<CsprojBuilder>
+    public class CsprojBuilder : IProjectBuilder, IEquatable<CsprojBuilder>
     {
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
@@ -74,6 +74,8 @@ namespace Bari.Plugins.Csharp.Build
                     deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
+
+                // TODO: depend on C# properties
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));

@@ -71,6 +71,7 @@ modules:
         - name: Bari.Plugins.VsCore 
           references:
             - gac://System
+            - gac://System.Xml
             - nuget://log4net
             - nuget://Ninject
             - suite://core/Bari.Core          
@@ -84,20 +85,23 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.ChildKernel
+            - nuget://Ninject            
             - nuget://Ninject.Extensions.Factory
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
-            - module://BAri.Plugins.VsCore
+            - module://Bari.Plugins.VsCore
             - suite://core/Bari.Core
         - name: Bari.Plugins.Fsharp
           references:
             - gac://System
+            - gac://System.Xml
             - nuget://log4net
             - nuget://Ninject
+            - nuget://Ninject.Extensions.Factory
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
-            - module://BAri.Plugins.VsCore
+            - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.Nuget
           references:
             - gac://Microsoft.CSharp
@@ -137,6 +141,7 @@ modules:
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
             - module://Bari.Plugins.Csharp
+            - module://Bari.Plugins.VsCore
       tests:
         - name: Bari.Plugins.Csharp.Test
           references:
@@ -159,6 +164,7 @@ modules:
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.Csharp                        
+            - module://Bari.Plugins.VsCore
 
 products:
     - name: full

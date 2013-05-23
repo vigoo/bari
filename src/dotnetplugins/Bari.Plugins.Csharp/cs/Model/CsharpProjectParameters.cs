@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Csharp.Model
 {

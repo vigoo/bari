@@ -406,7 +406,7 @@ test2:
             var paramLoader = new Mock<IYamlProjectParametersLoader>();
             var paramBlock = new Mock<IProjectParameters>();
             paramLoader.Setup(l => l.Supports("test1")).Returns(true);
-            paramLoader.Setup(l => l.Load("test1", It.IsAny<YamlNode>(), new YamlParser())).Returns(paramBlock.Object);
+            paramLoader.Setup(l => l.Load("test1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>())).Returns(paramBlock.Object);
 
             kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
 
@@ -417,8 +417,8 @@ test2:
 
             suite.Should().NotBeNull();
 
-            paramLoader.Verify(l => l.Load("test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode) node).Value == "something"), new YamlParser()), Times.Once());
-            paramLoader.Verify(l => l.Load("test2", It.IsAny<YamlNode>(), new YamlParser()), Times.Never());
+            paramLoader.Verify(l => l.Load("test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode) node).Value == "something"), It.IsAny<YamlParser>()), Times.Once());
+            paramLoader.Verify(l => l.Load("test2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()), Times.Never());
 
             suite.GetParameters<IProjectParameters>("test1").Should().Be(paramBlock.Object);
         }

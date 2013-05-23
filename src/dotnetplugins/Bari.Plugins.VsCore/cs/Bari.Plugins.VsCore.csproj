@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>false</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>true</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>false</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>false</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>false</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>true</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>true</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>true</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>true</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>true</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>false</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>true</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>false</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>false</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>false</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>true</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>true</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>true</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>false</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>true</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>true</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
+    <ProjectGuid>{7968CEB4-EC27-4A0D-BF6A-00A980A8E01A}</ProjectGuid>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DelaySign>false</DelaySign>
+    <HighEntropyVA>false</HighEntropyVA>
+    <LangVersion>default</LangVersion>
+    <NoWin32Manifest>false</NoWin32Manifest>
+    <Optimize>false</Optimize>
+    <PlatformTarget>anycpu</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RootNamespace>Bari.Plugins.VsCore</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="system" />
+    <Reference Include="system.xml" />
+    <Reference Include="log4net">
+      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <!--Project reference 7968ceb4-ec27-4a0d-bf6a-00a980a8e01a-->
+    <Reference Include="Bari.Core">
+      <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BariModule.cs" />
+    <Compile Include="Build\IInSolutionReferenceBuilderFactory.cs" />
+    <Compile Include="Build\IMSBuildRunnerFactory.cs" />
+    <Compile Include="Build\InSolutionReferenceBuilder.cs" />
+    <Compile Include="Build\ISlnBuilderFactory.cs" />
+    <Compile Include="Build\MSBuildRunner.cs" />
+    <Compile Include="Build\SlnBuilder.cs" />
+    <Compile Include="Build\VsProjectBuilderFactory.cs" />
+    <Compile Include="Exceptions\MSBuildFailedException.cs" />
+    <Compile Include="Model\CLRPlatform.cs" />
+    <Compile Include="Model\DebugLevel.cs" />
+    <Compile Include="Model\WarningLevel.cs" />
+    <Compile Include="Tools\IMSBuild.cs" />
+    <Compile Include="Tools\MSBuild.cs" />
+    <Compile Include="VisualStudio\IMSBuildProjectGeneratorContext.cs" />
+    <Compile Include="VisualStudio\IProjectGuidManagement.cs" />
+    <Compile Include="VisualStudio\ISlnProject.cs" />
+    <Compile Include="VisualStudio\ProjectSections\IMSBuildProjectSection.cs" />
+    <Compile Include="VisualStudio\ProjectSections\MSBuildProjectSectionBase.cs" />
+    <Compile Include="VisualStudio\ProjectSections\ReferencesSection.cs" />
+    <Compile Include="VisualStudio\ProjectSections\SourceItemsSectionBase.cs" />
+    <Compile Include="VisualStudio\SlnGenerator.cs" />
+    <Compile Include="VisualStudio\SlnProjectBase.cs" />
+    <Compile Include="VisualStudio\SolutionName\DefaultSuiteContentsAnalyzer.cs" />
+    <Compile Include="VisualStudio\SolutionName\HashBasedSlnNameGenerator.cs" />
+    <Compile Include="VisualStudio\SolutionName\ISlnNameGenerator.cs" />
+    <Compile Include="VisualStudio\SolutionName\ISuiteContentsAnalyzer.cs" />
+    <Compile Include="VisualStudio\SolutionName\ModuleMatch.cs" />
+    <Compile Include="VisualStudio\SolutionName\ReadableSlnNameGenerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\version.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

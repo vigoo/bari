@@ -1,4 +1,6 @@
-﻿using Ninject.Modules;
+﻿using Bari.Core.Build;
+using Bari.Plugins.VsCore.Build;
+using Ninject.Modules;
 
 namespace Bari.Plugins.VsCore
 {
@@ -15,6 +17,8 @@ namespace Bari.Plugins.VsCore
         public override void Load()
         {
             log.Info("VsCore plugin loaded");
+
+            Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
         }
     }
 }

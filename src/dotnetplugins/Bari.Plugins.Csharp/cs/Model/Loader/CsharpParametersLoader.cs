@@ -4,6 +4,7 @@ using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Plugins.VsCore.Model;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.Csharp.Model.Loader

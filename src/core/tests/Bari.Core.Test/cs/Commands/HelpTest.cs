@@ -85,7 +85,7 @@ namespace Bari.Core.Test.Commands
             var cmd = kernel.Get<ICommand>("help");
             cmd.Run(kernel.Get<Suite>(), new[] {"help"});
 
-            string.Join("\n", output.Messages).Should().Be(cmd.Help);
+            string.Join("\n", output.Messages).Should().StartWith(cmd.Help);
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace Bari.Core.Test.Commands
             output.Reset();
             cmd.Run(kernel.Get<Suite>(), new[] { "dummy" });
 
-            output.Messages.Should().HaveCount(1);
+            output.Messages.Should().HaveCount(2);
             output.Messages.Should().HaveElementAt(0, "dummy help");
             output.Descriptions.Should().BeEmpty();
         }

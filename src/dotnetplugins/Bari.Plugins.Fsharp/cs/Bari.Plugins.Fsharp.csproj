@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>false</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>true</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>false</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>false</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>false</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>true</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>true</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>true</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>true</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>true</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>false</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>true</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>false</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>false</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>false</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>true</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>true</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>true</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>false</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>true</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>true</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Bari.Plugins.Fsharp</AssemblyName>
+    <ProjectGuid>{245FB41D-162A-4B1A-AAA9-476BAF3D8D3D}</ProjectGuid>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DelaySign>false</DelaySign>
+    <HighEntropyVA>false</HighEntropyVA>
+    <LangVersion>default</LangVersion>
+    <NoWin32Manifest>false</NoWin32Manifest>
+    <Optimize>false</Optimize>
+    <PlatformTarget>anycpu</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RootNamespace>Bari.Plugins.Fsharp</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\target\core\Ninject.Extensions.Factory.dll</HintPath>
+    </Reference>
+    <Reference Include="system" />
+    <Reference Include="log4net">
+      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <!--Project reference 245fb41d-162a-4b1a-aaa9-476baf3d8d3d-->
+    <Reference Include="Bari.Core">
+      <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <!--Project reference 245fb41d-162a-4b1a-aaa9-476baf3d8d3d-->
+    <Reference Include="Bari.Plugins.VsCore">
+      <HintPath>..\..\..\..\target\dotnetplugins\Bari.Plugins.VsCore.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet.RepresentationModel, Version=0.2.4818.23331, Culture=neutral, PublicKeyToken=2b53052c5884d7a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\target\core\YamlDotNet.RepresentationModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BariModule.cs" />
+    <Compile Include="Build\FsprojBuilder.cs" />
+    <Compile Include="Build\IFsprojBuilderFactory.cs" />
+    <Compile Include="Model\FsharpProjectParameters.cs" />
+    <Compile Include="Model\Loader\FsharpParametersLoader.cs" />
+    <Compile Include="VisualStudio\FsharpSlnProject.cs" />
+    <Compile Include="VisualStudio\FsprojGenerator.cs" />
+    <Compile Include="VisualStudio\FsprojSections\PropertiesSection.cs" />
+    <Compile Include="VisualStudio\FsprojSections\SourceItemsSection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\version.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

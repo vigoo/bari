@@ -10,6 +10,7 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
+using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.Csharp.Commands
 {

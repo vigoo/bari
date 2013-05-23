@@ -5,6 +5,8 @@ using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
+using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 using Moq;
 using NUnit.Framework;
 
@@ -16,9 +18,9 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
         [Test]
         public void SectionsAreCalled()
         {
-            var secA = new Mock<ICsprojSection>();
-            var secB = new Mock<ICsprojSection>();
-            var secC = new Mock<ICsprojSection>();
+            var secA = new Mock<IMSBuildProjectSection>();
+            var secB = new Mock<IMSBuildProjectSection>();
+            var secC = new Mock<IMSBuildProjectSection>();
 
             var project = new Project("testproject", new Module("testmodule", new Suite(new TestFileSystemDirectory("test"))));
             var refs = new[] {new TargetRelativePath("test")};
@@ -29,9 +31,9 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
                 var generator = new CsprojGenerator(new[] {secA.Object, secB.Object, secC.Object});
                 generator.Generate(project, refs, output, versionOutput, "version.cs");
 
-                secA.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<ICsprojGeneratorContext>()), Times.Once());
-                secB.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<ICsprojGeneratorContext>()), Times.Once());
-                secC.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<ICsprojGeneratorContext>()), Times.Once());
+                secA.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<IMSBuildProjectGeneratorContext>()), Times.Once());
+                secB.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<IMSBuildProjectGeneratorContext>()), Times.Once());
+                secC.Verify(s => s.Write(It.IsAny<XmlWriter>(), project, It.IsAny<IMSBuildProjectGeneratorContext>()), Times.Once());
             }
         }
     }

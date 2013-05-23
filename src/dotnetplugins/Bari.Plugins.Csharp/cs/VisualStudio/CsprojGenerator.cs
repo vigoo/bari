@@ -4,16 +4,17 @@ using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
+using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio
 {
     /// <summary>
     /// Class for generating a Visual C# project file from a bari project model
     /// </summary>
-    public class CsprojGenerator: ICsprojGeneratorContext
+    public class CsprojGenerator: IMSBuildProjectGeneratorContext
     {
-        private readonly IEnumerable<ICsprojSection> sections;
+        private readonly IEnumerable<IMSBuildProjectSection> sections;
 
         private TextWriter versionOutput;
         private string versionFileName;
@@ -36,7 +37,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         }
 
         /// <summary>
-        /// Gets the name of the file the <see cref="ICsprojGeneratorContext.VersionOutput"/> writer generates
+        /// Gets the name of the file the <see cref="IMSBuildProjectGeneratorContext.VersionOutput"/> writer generates
         /// </summary>
         public string VersionFileName
         {
@@ -47,7 +48,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// Initializes the project file generator
         /// </summary>
         /// <param name="sections">Csproj section writers to be used</param>
-        public CsprojGenerator(IEnumerable<ICsprojSection> sections)
+        public CsprojGenerator(IEnumerable<IMSBuildProjectSection> sections)
         {            
             this.sections = sections;
         }

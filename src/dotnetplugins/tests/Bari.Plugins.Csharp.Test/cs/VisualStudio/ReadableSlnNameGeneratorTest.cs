@@ -1,6 +1,6 @@
 ﻿using Bari.Core.Model;
 using Bari.Core.Test.Helper;
-using Bari.Plugins.Csharp.VisualStudio.SolutionName;
+using Bari.Plugins.VsCore.VisualStudio.SolutionName;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
