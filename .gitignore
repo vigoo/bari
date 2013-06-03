@@ -30,6 +30,10 @@ src/core/bari/cs/bari.csproj
 src/core/bari/version.cs
 src/dotnetplugins/Bari.Plugins.Csharp/cs/Bari.Plugins.Csharp.csproj
 src/dotnetplugins/Bari.Plugins.Csharp/version.cs
+src/dotnetplugins/Bari.Plugins.Fsharp/cs/Bari.Plugins.Fsharp.csproj
+src/dotnetplugins/Bari.Plugins.Fsharp/version.cs
+src/dotnetplugins/Bari.Plugins.VsCore/cs/Bari.Plugins.VsCore.csproj
+src/dotnetplugins/Bari.Plugins.VsCore/version.cs
 src/dotnetplugins/Bari.Plugins.CodeContracts/cs/Bari.Plugins.CodeContracts.csproj
 src/dotnetplugins/Bari.Plugins.CodeContracts/version.cs
 src/dotnetplugins/Bari.Plugins.Gallio/cs/Bari.Plugins.Gallio.csproj
@@ -38,4 +42,6 @@ src/dotnetplugins/Bari.Plugins.Nuget/cs/Bari.Plugins.Nuget.csproj
 src/dotnetplugins/Bari.Plugins.Nuget/version.cs
 src/dotnetplugins/tests/Bari.Plugins.Csharp.Test/cs/Bari.Plugins.Csharp.Test.csproj
 src/dotnetplugins/tests/Bari.Plugins.Csharp.Test/version.cs
+src/core/tests/bari.Test/cs/bari.Test.csproj
+src/core/tests/bari.Test/version.cs
 
