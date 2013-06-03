@@ -3,14 +3,14 @@ using System.Linq;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Model;
 
-namespace Bari.Plugins.Csharp.Commands.Clean
+namespace Bari.Plugins.Fsharp.Commands.Clean
 {
     /// <summary>
-    /// .csproj files must be generated outside the target directory, into the project source tree otherwise
+    /// .fsproj files must be generated outside the target directory, into the project source tree otherwise
     /// visual studio does not show the hierarchy only a flat set of file references. This class performs the
     /// additional cleaning step to remove these generated project files.
     /// </summary>
-    public class CsprojCleaner : ICleanExtension
+    public class FsprojCleaner : ICleanExtension
     {
         private readonly Suite suite;
 
@@ -18,7 +18,7 @@ namespace Bari.Plugins.Csharp.Commands.Clean
         /// Constructs the cleaner
         /// </summary>
         /// <param name="suite">Current suite</param>
-        public CsprojCleaner(Suite suite)
+        public FsprojCleaner(Suite suite)
         {
             this.suite = suite;
         }
@@ -32,25 +32,25 @@ namespace Bari.Plugins.Csharp.Commands.Clean
                                         from project in module.Projects.Concat(module.TestProjects)
                                         select project.RootDirectory)
             {
-                var csRoot = projectRoot.GetChildDirectory("cs");
-                if (csRoot != null)
+                var fsRoot = projectRoot.GetChildDirectory("fs");
+                if (fsRoot != null)
                 {
-                    foreach (var csproj in csRoot.Files.Where(
-                        name => name.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase)))
+                    foreach (var fsproj in fsRoot.Files.Where(
+                        name => name.EndsWith(".fsproj", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        csRoot.DeleteFile(csproj);
+                        fsRoot.DeleteFile(fsproj);
                     }
 
-                    foreach (var csproj in csRoot.Files.Where(
-                                name => name.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)))
+                    foreach (var fsproj in fsRoot.Files.Where(
+                                name => name.EndsWith(".fsproj.user", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        csRoot.DeleteFile(csproj);
+                        fsRoot.DeleteFile(fsproj);
                     }
 
-                    foreach (var csversion in projectRoot.Files.Where(
-                                name => name.Equals("version.cs", StringComparison.InvariantCultureIgnoreCase)))
+                    foreach (var fsversion in projectRoot.Files.Where(
+                                name => name.Equals("version.fs", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        projectRoot.DeleteFile(csversion);
+                        projectRoot.DeleteFile(fsversion);
                     }
                 }
             }

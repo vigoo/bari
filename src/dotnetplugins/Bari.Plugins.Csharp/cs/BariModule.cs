@@ -49,7 +49,7 @@ namespace Bari.Plugins.Csharp
             Bind<ISlnProject>().To<CsharpSlnProject>();
 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<CsprojGenerator>(); 
-            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<CsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<CsprojGenerator>().WithConstructorArgument("sourceSetName", "cs"); 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<CsprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<CsprojGenerator>(); 
             

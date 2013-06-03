@@ -72,11 +72,11 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("OutputPath",
                                       ToProjectRelativePath(project,
                                                             Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
-                                                                         project.Module.Name)));
+                                                                         project.Module.Name), "cs"));
             writer.WriteElementString("IntermediateOutputPath",
                                       ToProjectRelativePath(project,
                                                             Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp",
-                                                                         project.Module.Name)));
+                                                                         project.Module.Name), "cs"));
         }
 
         private string GetOutputType(ProjectType type)
@@ -108,7 +108,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 var appConfigPath = configs.FirstOrDefault();
                 if (appConfigPath != null)
                 {
-                    writer.WriteElementString("AppConfig", ToProjectRelativePath(project, appConfigPath));
+                    writer.WriteElementString("AppConfig", ToProjectRelativePath(project, appConfigPath, "cs"));
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 var manifestPath = manifests.FirstOrDefault();
                 if (manifestPath != null)
                 {
-                    writer.WriteElementString("ApplicationManifest", ToProjectRelativePath(project, manifestPath));
+                    writer.WriteElementString("ApplicationManifest", ToProjectRelativePath(project, manifestPath, "cs"));
                 }
             }
         }

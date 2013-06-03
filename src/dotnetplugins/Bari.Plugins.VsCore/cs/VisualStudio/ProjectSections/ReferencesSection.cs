@@ -11,6 +11,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
     public class ReferencesSection: MSBuildProjectSectionBase
     {
         private readonly IProjectGuidManagement projectGuidManagement;
+        private readonly string sourceSetName;
         private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
@@ -18,11 +19,13 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// </summary>
         /// <param name="suite">Active suite</param>
         /// <param name="projectGuidManagement">Project GUID management service</param>
+        /// <param name="sourceSetName">Source set name</param>
         /// <param name="targetDir">Target directory where the compiled files will be placed</param>
-        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, [TargetRoot] IFileSystemDirectory targetDir)
+        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, string sourceSetName, [TargetRoot] IFileSystemDirectory targetDir)
             : base(suite)
         {
             this.projectGuidManagement = projectGuidManagement;
+            this.sourceSetName = sourceSetName;
             this.targetDir = targetDir;
         }
 
@@ -52,7 +55,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                     writer.WriteAttributeString("Include", projectName);                        
                     writer.WriteElementString("HintPath", 
                         ToProjectRelativePath(project,
-                        Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name, referredProject.Name + ".dll")));
+                        Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name, referredProject.Name + ".dll"), sourceSetName));
                     writer.WriteElementString("SpecificVersion", "False");
                     writer.WriteEndElement();
                 }
@@ -66,7 +69,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                     }
                     else
                     {
-                        string relativePath = ToProjectRelativePath(project, Path.Combine("target", refPath));
+                        string relativePath = ToProjectRelativePath(project, Path.Combine("target", refPath), sourceSetName);
 
                         writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
                         writer.WriteElementString("HintPath", relativePath);

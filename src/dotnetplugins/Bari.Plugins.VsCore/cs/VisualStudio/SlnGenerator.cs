@@ -100,13 +100,13 @@ namespace Bari.Plugins.VsCore.VisualStudio
 
         private void GenerateProjectSection(Project project, ISlnProject slnProject)
         {
-            string relativeCsprojPath = suiteRoot.GetRelativePathFrom(
+            string relativeProjectFilePath = suiteRoot.GetRelativePathFrom(
                 slnDir, slnProject.GetSuiteRelativeProjectFilePath(project));
 
             string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
 
             output.WriteLine("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"",
-                             slnProject.ProjectTypeGuid, project.Name, relativeCsprojPath, projectGuid);
+                             slnProject.ProjectTypeGuid, project.Name, relativeProjectFilePath, projectGuid);
 
             var projectDeps = new HashSet<Project>(getProjectSolutionReferences(project));
             if (projectDeps.Count > 0)

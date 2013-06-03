@@ -41,10 +41,11 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// </summary>
         /// <param name="project">Project to be relative to</param>
         /// <param name="suiteRelativePath">Suite relative path</param>
+        /// <param name="sourceSetName">Source set name where the project being built stores its files</param>
         /// <returns>Returns the path relative to the project's root directory</returns>
-        protected string ToProjectRelativePath(Project project, string suiteRelativePath)
+        protected string ToProjectRelativePath(Project project, string suiteRelativePath, string sourceSetName)
         {
-            return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory("cs"), suiteRelativePath);
+            return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory(sourceSetName), suiteRelativePath);
         }
     }
 }

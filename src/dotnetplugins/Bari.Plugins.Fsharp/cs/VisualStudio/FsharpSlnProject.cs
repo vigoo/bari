@@ -26,7 +26,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio
 
         protected override string ProjectFileExtension
         {
-            get { return "fsproj"; }
+            get { return ".fsproj"; }
         }
 
         public override string ProjectTypeGuid

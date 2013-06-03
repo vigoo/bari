@@ -1,5 +1,7 @@
-﻿using Bari.Core.Model.Loader;
+﻿using Bari.Core.Commands.Clean;
+using Bari.Core.Model.Loader;
 using Bari.Plugins.Fsharp.Build;
+using Bari.Plugins.Fsharp.Commands.Clean;
 using Bari.Plugins.Fsharp.Model.Loader;
 using Bari.Plugins.Fsharp.VisualStudio;
 using Bari.Plugins.Fsharp.VisualStudio.FsprojSections;
@@ -27,10 +29,12 @@ namespace Bari.Plugins.Fsharp
             Bind<ISlnProject>().To<FsharpSlnProject>();
             Bind<IFsprojBuilderFactory>().ToFactory();
 
+            Bind<ICleanExtension>().To<FsprojCleaner>();
+
             Bind<IYamlProjectParametersLoader>().To<FsharpParametersLoader>();
 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<FsprojGenerator>();
-            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<FsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<FsprojGenerator>().WithConstructorArgument("sourceSetName", "fs"); ; 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<FsprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<FsprojGenerator>(); 
         }
