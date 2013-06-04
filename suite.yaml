@@ -102,6 +102,17 @@ modules:
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
             - module://Bari.Plugins.VsCore
+        - name: Bari.Plugins.VCpp
+          references:
+            - gac://System
+            - gac://System.Xml
+            - nuget://log4net
+            - nuget://Ninject
+            - nuget://Ninject.Extensions.Factory
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - suite://core/Bari.Core
+            - module://Bari.Plugins.VsCore            
         - name: Bari.Plugins.Nuget
           references:
             - gac://Microsoft.CSharp
