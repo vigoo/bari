@@ -1,4 +1,8 @@
-﻿using Ninject.Modules;
+﻿using Bari.Plugins.VCpp.Build;
+using Bari.Plugins.VCpp.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio;
+using Ninject.Extensions.Factory;
+using Ninject.Modules;
 
 namespace Bari.Plugins.VCpp
 {
@@ -15,6 +19,9 @@ namespace Bari.Plugins.VCpp
         public override void Load()
         {
             log.Info("Visual C++ plugin loaded");
+
+            Bind<ISlnProject>().To<CppSlnProject>();
+            Bind<IVcxprojBuilderFactory>().ToFactory();
         }
     }
 }

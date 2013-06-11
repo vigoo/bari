@@ -15,9 +15,6 @@ namespace Bari.Plugins.VCpp.VisualStudio
     public class VcxprojGenerator: IMSBuildProjectGeneratorContext
     {
         private readonly IEnumerable<IMSBuildProjectSection> sections;
-
-        private TextWriter versionOutput;
-        private string versionFileName;
         private ISet<TargetRelativePath> references;
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// </summary>
         public TextWriter VersionOutput
         {
-            get { return versionOutput; }
+            get { return null; }
         }
 
         /// <summary>
@@ -41,7 +38,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// </summary>
         public string VersionFileName
         {
-            get { return versionFileName; }
+            get { return null; }
         }
 
         /// <summary>
@@ -59,12 +56,8 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// <param name="project">The project to generate vcxproj file for</param>
         /// <param name="references">Paths to the external references to be included in the project</param>
         /// <param name="output">Output where the vcxproj file will be written</param>
-        /// <param name="versionOutput">Output where the version info should be generated</param>
-        /// <param name="versionFileName">File name relative to the vcxproj file for the version info</param>        
-        public void Generate(Project project, IEnumerable<TargetRelativePath> references, TextWriter output, TextWriter versionOutput, string versionFileName)
+        public void Generate(Project project, IEnumerable<TargetRelativePath> references, TextWriter output)
         {
-            this.versionOutput = versionOutput;
-            this.versionFileName = versionFileName;
             this.references = new HashSet<TargetRelativePath>(references);
 
             var settings = new XmlWriterSettings

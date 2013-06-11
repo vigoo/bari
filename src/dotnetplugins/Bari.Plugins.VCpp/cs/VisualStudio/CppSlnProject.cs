@@ -1,6 +1,7 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Build;
 using Bari.Plugins.VsCore.VisualStudio;
 
 namespace Bari.Plugins.VCpp.VisualStudio
@@ -10,11 +11,14 @@ namespace Bari.Plugins.VCpp.VisualStudio
     /// </summary>
     public class CppSlnProject: SlnProjectBase
     {
-        public CppSlnProject([SuiteRoot] IFileSystemDirectory suiteRoot) 
+        private readonly IVcxprojBuilderFactory builderFactory;
+
+        public CppSlnProject([SuiteRoot] IFileSystemDirectory suiteRoot, IVcxprojBuilderFactory builderFactory) 
             : base(suiteRoot)
         {
+            this.builderFactory = builderFactory;
         }
-        
+
         protected override string SourceSetName
         {
             get { return "cpp"; }
@@ -32,7 +36,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
         public override IBuilder CreateBuilder(Project project)
         {
-            throw new System.NotImplementedException();
+            return builderFactory.CreateFsprojBuilder(project);
         }
     }
 }
