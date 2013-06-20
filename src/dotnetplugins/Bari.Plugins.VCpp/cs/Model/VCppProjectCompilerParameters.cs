@@ -93,7 +93,7 @@ namespace Bari.Plugins.VCpp.Model
         /// <summary>
         /// Enable enhanced instruction set (/arch)
         /// </summary>
-        EnhancedInstructionSet EnableEnhancedInstructionSet { get; set; }
+        public EnhancedInstructionSet EnableEnhancedInstructionSet { get; set; }
 
         /// <summary>
         /// Fiber safety for TLS (/GT)
@@ -134,5 +134,136 @@ namespace Bari.Plugins.VCpp.Model
         /// Standard C++ behavior in for loops using Microsoft extensions (/Zc:forScope)
         /// </summary>
         public bool ForceConformanceInForLoopScope { get; set; }
+
+        /// <summary>
+        /// Header files to be processed by the preprocessor (/FI)
+        /// </summary>
+        public string[] ForcedIncludeFiles { get; set; }
+
+        /// <summary>
+        /// #using files to be processed by the preprocessor (/FU)
+        /// </summary>
+        public string[] ForcedUsingFiles { get; set; }
+
+        /// <summary>
+        /// Package individual functions in the form of packaged functions (COMDATs) (/Gy)
+        /// </summary>
+        public bool FunctionLevelLinking { get; set; }
+
+        /// <summary>
+        /// Generate XML documentation .xdc files for each source code file (/doc)
+        /// </summary>
+        public bool GenerateXMLDocumentationFiles { get; set; }
+
+        /// <summary>
+        /// Ignore the standard directories when searching for include files (/X)
+        /// </summary>
+        public bool IgnoreStandardIncludePath { get; set; }
+
+        /// <summary>
+        /// Sets the inline expansion level (/Ob)
+        /// </summary>
+        public InlineExpansion InlineFunctionExpansion { get; set; }
+
+        /// <summary>
+        /// If <c>true</c>, some function calls will be replaced with intrinsic forms (/Oi)
+        /// </summary>
+        public bool IntrinsicFunctions { get; set; }
+
+        /// <summary>
+        /// Enables minimal rebuild (/Gm)
+        /// </summary>
+        public bool MinimalRebuild { get; set; }
+
+        /// <summary>
+        /// Use multiple processors to compile (/MP)
+        /// </summary>
+        public bool MultiProcessorCompilation { get; set; }
+
+        /// <summary>
+        /// Omit the default run time library's name from the generated object files (/Zl)
+        /// </summary>
+        public bool OmitDefaultLibName { get; set; }
+
+        /// <summary>
+        /// Suppress creation of frame pointers on the call stack (/Oy)
+        /// </summary>
+        public bool OmitFramePointers { get; set; }
+
+        /// <summary>
+        /// Support for OpenMP 2.0 constructs (/openmp)
+        /// </summary>
+        public bool OpenMPSupport { get; set; }
+
+        /// <summary>
+        /// Optimization level (/O)
+        /// </summary>
+        public OptimizationLevel Optimization { get; set; }
+
+        /// <summary>
+        /// Preprocessor defines (/D)
+        /// </summary>
+        public string[] Defines { get; set; }
+
+        /// <summary>
+        /// Maximum number of processors to use if <see cref="MultiProcessorCompilation"/> is enabled
+        /// </summary>
+        public int ProcessorNumber { get; set; }
+
+        /// <summary>
+        /// The runtime library to use (/MD, /MT, /LD)
+        /// </summary>
+        public RuntimeLibraryType RuntimeLibrary { get; set; }
+
+        /// <summary>
+        /// Add code to check C++ types at runtime (RTI) (/GR)
+        /// </summary>
+        public bool RuntimeTypeInfo { get; set; }
+
+        /// <summary>
+        /// Report a runtime error if value is assigned to a smaller data type and causes data loss (/RTCc)
+        /// </summary>
+        public bool SmallerTypeCheck { get; set; }
+
+        /// <summary>
+        /// Enables string pooling (/GF)
+        /// </summary>
+        public bool StringPooling { get; set; }
+
+        /// <summary>
+        /// Byte alignment for members in a structure
+        /// 
+        /// <para><c>null</c> means default. Other possible values: 1, 2, 4, 8, 16
+        /// </para>
+        /// </summary>
+        public int? StructMemberAlignment { get; set; }
+
+        public bool AllWarningsAsError { get; set; }
+        public int[] SpecificWarningsAsError { get; set; }
+
+        /// <summary>
+        /// Treat <c>wchar_t</c> as a native type (/Zc:wchar_t)
+        /// </summary>
+        public bool TreatWCharTAsBuiltInType { get; set; }
+
+        /// <summary>
+        /// Undefine Microsoft-specific symbols defined by the compiler (/u)
+        /// </summary>
+        public bool UndefineAllPreprocessorDefinitions { get; set; }
+
+        /// <summary>
+        /// A specific set of defines to be undefined (/U)
+        /// </summary>
+        public string[] UndefinePreprocessorDefinitions { get; set; }
+
+        /// <summary>
+        /// Warning level (/Wn)
+        /// </summary>
+        public CppWarningLevel WarningLevel { get; set; }
+
+        /// <summary>
+        /// Enables whole program optimization (/GL)
+        /// </summary>
+        public bool WholeProgramOptimization { get; set; }
     }
 }
