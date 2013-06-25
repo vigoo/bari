@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Xml;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.VCpp.Model
@@ -208,7 +209,7 @@ namespace Bari.Plugins.VCpp.Model
         /// <summary>
         /// Maximum number of processors to use if <see cref="MultiProcessorCompilation"/> is enabled
         /// </summary>
-        public int ProcessorNumber { get; set; }
+        public int? ProcessorNumber { get; set; }
 
         /// <summary>
         /// The runtime library to use (/MD, /MT, /LD)
@@ -265,5 +266,83 @@ namespace Bari.Plugins.VCpp.Model
         /// Enables whole program optimization (/GL)
         /// </summary>
         public bool WholeProgramOptimization { get; set; }
+
+        public VCppProjectCompilerParameters(Suite suite)
+        {
+            AdditionalIncludeDirectories = new string[0];
+            AdditionalOptions = new string[0];
+            AdditionalUsingDirectories = new string[0];
+            AssemblerListingLocation = null;
+            AssemblerOutput = AssemblerOutputType.NoListing;
+            BasicRuntimeChecks = RuntimeCheckType.Default;
+            BrowseInformationFile = null;
+            BufferSecurityCheck = true;
+            CallingConvention = CallingConvention.Cdecl;
+            CompileAs = CLanguage.Default;
+            CompileAsManaged = ManagedCppType.NotManaged;
+            CreateHotpatchableImage = false;
+
+            DebugInformationFormat = suite.ActiveGoal.Has(Suite.DebugGoal.Name)
+                                         ? DebugInformationFormat.EditAndContinue
+                                         : DebugInformationFormat.None;
+
+            DisableLanguageExtensions = false;
+            SuppressedWarnings = new int[0];
+            EnableEnhancedInstructionSet = EnhancedInstructionSet.SSE2;
+            EnableFiberSafeOptimizations = true;
+            CodeAnalysis = true;
+            ExceptionHandling = ExceptionHandlingType.NotSpecified;
+            ExpandAttributedSource = false;
+            Favor = OptimizationFavor.Speed;
+            FloatingPointExceptions = true;
+            FloatingPointModel = FloatingPointModel.Precise;
+            ForceConformanceInForLoopScope = false;
+            ForcedIncludeFiles = new string[0];
+            ForcedUsingFiles = new string[0];
+            FunctionLevelLinking = false;
+            GenerateXMLDocumentationFiles = false;
+            IgnoreStandardIncludePath = false;
+            InlineFunctionExpansion = InlineExpansion.Default;
+            IntrinsicFunctions = true;
+            MinimalRebuild = true;
+            MultiProcessorCompilation = true;
+            OmitDefaultLibName = false;
+            OmitFramePointers = false;
+            OpenMPSupport = false;
+
+            Optimization = suite.ActiveGoal.Has(Suite.DebugGoal.Name)
+                               ? OptimizationLevel.Disabled
+                               : OptimizationLevel.Full;
+
+            Defines = suite.ActiveGoal.Has(Suite.DebugGoal.Name)
+                          ? new[] { "_DEBUG" }
+                          : new[] { "NDEBUG" };
+
+            ProcessorNumber = null;
+
+            RuntimeLibrary = suite.ActiveGoal.Has(Suite.DebugGoal.Name)
+                                 ? RuntimeLibraryType.MultiThreadedDebugDLL
+                                 : RuntimeLibraryType.MultiThreadedDLL;
+
+            RuntimeTypeInfo = true;
+            SmallerTypeCheck = true;
+            StringPooling = true;
+            StructMemberAlignment = null;
+            AllWarningsAsError = false;
+            SpecificWarningsAsError = new int[0];
+            TreatWCharTAsBuiltInType = true;
+            UndefineAllPreprocessorDefinitions = false;
+            UndefinePreprocessorDefinitions = new string[0];
+            WarningLevel = CppWarningLevel.All;
+            WholeProgramOptimization = suite.ActiveGoal.Has(Suite.ReleaseGoal.Name);
+        }
+
+        public void FillProjectSpecificMissingInfo(Project project)
+        {
+        }
+
+        public void ToVcxprojProperties(XmlWriter writer)
+        {
+        }
     }
 }

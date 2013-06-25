@@ -7,7 +7,7 @@
     /// </summary>
     public enum ExceptionHandlingType
     {
-        None,
+        NotSpecified,
         Async,          // EHa
         Sync,           // EHsc
         SyncCThrow      // EHs
