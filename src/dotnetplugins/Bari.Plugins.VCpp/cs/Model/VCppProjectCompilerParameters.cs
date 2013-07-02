@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Bari.Core.Model;
 
@@ -343,6 +346,95 @@ namespace Bari.Plugins.VCpp.Model
 
         public void ToVcxprojProperties(XmlWriter writer)
         {
+            if (AdditionalIncludeDirectories != null && AdditionalIncludeDirectories.Length > 0)
+                writer.WriteElementString("AdditionalIncludeDirectories", string.Join(";", AdditionalIncludeDirectories));
+            if (AdditionalOptions != null && AdditionalOptions.Length > 0)
+                writer.WriteElementString("AdditionalOptions", string.Join(";", AdditionalOptions));
+            if (AdditionalUsingDirectories != null && AdditionalUsingDirectories.Length > 0)
+                writer.WriteElementString("AdditionalUsingDirectories", string.Join(";", AdditionalUsingDirectories));
+            if (!string.IsNullOrWhiteSpace(AssemblerListingLocation))
+                writer.WriteElementString("AssemblerListingLocation", AssemblerListingLocation);
+            writer.WriteElementString("AssemblerOutput", AssemblerOutput.ToString());
+            if (BasicRuntimeChecks != RuntimeCheckType.Default)
+                writer.WriteElementString("BasicRuntimeChecks", BasicRuntimeChecks.ToString());
+            if (!string.IsNullOrWhiteSpace("BrowseInformationFile"))
+                writer.WriteElementString("BrowseInformationFile", BrowseInformationFile);
+            writer.WriteElementString("BufferSecurityCheck", XmlConvert.ToString(BufferSecurityCheck));
+            writer.WriteElementString("CallingConvention", CallingConvention.ToString());
+            if (CompileAs != CLanguage.Default)
+                writer.WriteElementString("CompileAs", CompileAs.ToString());
+            writer.WriteElementString("CompileAsManaged", CompileAsManagedToString(CompileAsManaged));
+            writer.WriteElementString("CreateHotpatchableImage", XmlConvert.ToString(CreateHotpatchableImage));
+            if (DebugInformationFormat != DebugInformationFormat.None)
+                writer.WriteElementString("DebugInformationFormat", DebugInformationFormat.ToString());
+            writer.WriteElementString("DisableLanguageExtensions", XmlConvert.ToString(DisableLanguageExtensions));
+            WriteStringArray(writer, "DisableSpecificWarnings", SuppressedWarnings.Select(warn => warn.ToString(CultureInfo.InvariantCulture)).ToArray());
+            if (EnableEnhancedInstructionSet != EnhancedInstructionSet.None)
+                writer.WriteElementString("EnhancedInstructionSet", EnableEnhancedInstructionSet.ToString());
+            writer.WriteElementString("EnableFiberSafeOptimizations", XmlConvert.ToString(EnableFiberSafeOptimizations));
+            writer.WriteElementString("CodeAnalysis", XmlConvert.ToString(CodeAnalysis));
+            if (ExceptionHandling != ExceptionHandlingType.NotSpecified)
+                writer.WriteElementString("ExceptionHandling", ExceptionHandling.ToString());
+            writer.WriteElementString("ExpandAttributedSource", XmlConvert.ToString(ExpandAttributedSource));
+            writer.WriteElementString("FavorSizeOrSpeed", Favor.ToString());
+            writer.WriteElementString("FloatingPointExceptions", XmlConvert.ToString(FloatingPointExceptions));
+            writer.WriteElementString("FloatingPointModel", FloatingPointModel.ToString());
+            writer.WriteElementString("ForceConformanceInForLoopScope", XmlConvert.ToString(ForceConformanceInForLoopScope));
+            WriteStringArray(writer, "ForcedUsingFiles", ForcedUsingFiles);
+            writer.WriteElementString("FunctionLevelLinking", XmlConvert.ToString(FunctionLevelLinking));
+            writer.WriteElementString("GenerateXMLDocumentationFiles", XmlConvert.ToString(GenerateXMLDocumentationFiles));
+            writer.WriteElementString("IgnoreStandardIncludePath", XmlConvert.ToString(IgnoreStandardIncludePath));
+            if (InlineFunctionExpansion != InlineExpansion.Default)
+                writer.WriteElementString("InlineFunctionExpansion", InlineFunctionExpansion.ToString());
+            writer.WriteElementString("IntrinsicFunctions", XmlConvert.ToString(IntrinsicFunctions));
+            writer.WriteElementString("MinimalRebuild", XmlConvert.ToString(MinimalRebuild));
+            writer.WriteElementString("MultiProcessorCompilation", XmlConvert.ToString(MultiProcessorCompilation));
+            writer.WriteElementString("OmitDefaultLibName", XmlConvert.ToString(OmitDefaultLibName));
+            writer.WriteElementString("OmitFramePointers", XmlConvert.ToString(OmitFramePointers));
+            writer.WriteElementString("OpenMPSupport", XmlConvert.ToString(OpenMPSupport));
+            writer.WriteElementString("Optimization", Optimization.ToString());
+            WriteStringArray(writer, "Defines", Defines);
+            if (ProcessorNumber.HasValue)
+                writer.WriteElementString("ProcessorNumber", ProcessorNumber.Value.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("RuntimeLibrary", RuntimeLibrary.ToString());
+            writer.WriteElementString("RuntimeTypeInfo", XmlConvert.ToString(RuntimeTypeInfo));
+            writer.WriteElementString("SmallerTypeCheck", XmlConvert.ToString(SmallerTypeCheck));
+            writer.WriteElementString("StringPooling", XmlConvert.ToString(StringPooling));
+            if (StructMemberAlignment.HasValue)
+                writer.WriteElementString("StructMemberAlignment", StructMemberAlignment.Value.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("AllWarningsAsError", XmlConvert.ToString(AllWarningsAsError));
+            WriteStringArray(writer, "SpecificWarningsAsError", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture)).ToArray());
+            writer.WriteElementString("TreatWCharTAsBuiltInType", XmlConvert.ToString(TreatWCharTAsBuiltInType));
+            writer.WriteElementString("UndefineAllPreprocessorDefinitions", XmlConvert.ToString(UndefineAllPreprocessorDefinitions));
+            WriteStringArray(writer, "UndefinePreprocessorDefinitions", UndefinePreprocessorDefinitions);
+            writer.WriteElementString("WarningLevel", WarningLevel.ToString());
+            writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(WholeProgramOptimization));
+        }
+
+        private void WriteStringArray(XmlWriter writer, string name, string[] array)
+        {
+            if (array != null && array.Length > 0)
+                writer.WriteElementString(name,
+                    String.Join(";", array.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        private string CompileAsManagedToString(ManagedCppType managedCppType)
+        {
+            switch (managedCppType)
+            {
+                case ManagedCppType.NotManaged:
+                    return "false";
+                case ManagedCppType.Managed:
+                    return "true";
+                case ManagedCppType.Pure:
+                    return "Pure";
+                case ManagedCppType.Safe:
+                    return "Safe";
+                case ManagedCppType.OldSyntax:
+                    return "OldSyntax";
+                default:
+                    throw new ArgumentOutOfRangeException("managedCppType");
+            }
         }
     }
 }
