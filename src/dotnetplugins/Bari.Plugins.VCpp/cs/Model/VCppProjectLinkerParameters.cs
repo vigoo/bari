@@ -41,7 +41,7 @@ namespace Bari.Plugins.VCpp.Model
         public int? HeapReserveSize { get; set; }
         public bool IgnoreAllDefaultLibraries { get; set; }
         public bool IgnoreEmbeddedIDL { get; set; }
-        public bool IgnoreImprotLibrary { get; set; }
+        public bool IgnoreImportLibrary { get; set; }
         public string[] IgnoreSpecificDefaultLibraries { get; set; }
         public bool ImageHasSafeExceptionHandlers { get; set; }
         public string ImportLibrary { get; set; }
@@ -78,6 +78,71 @@ namespace Bari.Plugins.VCpp.Model
 
         public VCppProjectLinkerParameters(Suite suite)
         {
+            AdditionalDependencies = new string[0];
+            AdditionalLibraryDirectories = new string[0];
+            AdditionalManifestDependencies = new string[0];
+            AdditionalOptions = new string[0];
+            AddModuleNamesToAssembly = new string[0];
+            AllowIsolation = false;
+            AssemblyDebug = suite.ActiveGoal.Has(Suite.DebugGoal.Name);
+            BaseAddress = null;
+            CLRImageType = CLRImageType.Default;
+            CLRSupportLastError = CLRSupportLastError.Enabled;
+            CLRThreadAttribute = ApartmentState.Unknown;
+            CLRUnmanagedCodeCheck = true;
+            CreateHotPatchableImage = LinkerHotPatchingOption.Disabled;
+            DataExecutionPrevention = true;
+            DelayLoadDLLs = new string[0];
+            DelaySign = false;
+            Driver = LinkerDriverOption.NotSet;
+            EnableCOMDATFolding = false;
+            EnableUAC = true;
+            EntryPointSymbol = null;
+            FixedBaseAddress = false;
+            ForceFileOutput = LinkerForceOption.Disabled;
+            ForceSymbolReferences = new string[0];
+            FunctionOrder = null;
+            GenerateDebugInformation = suite.ActiveGoal.Has(Suite.DebugGoal.Name);
+            GenerateManifest = false;
+            GenerateMapFile = false;
+            HeapCommitSize = null;
+            HeapReserveSize = null;
+            IgnoreAllDefaultLibraries = false;
+            IgnoreEmbeddedIDL = false;
+            IgnoreImportLibrary = false;
+            IgnoreSpecificDefaultLibraries = new string[0];
+            ImageHasSafeExceptionHandlers = true;
+            ImportLibrary = null;
+            KeyContainer = null;
+            KeyFile = null;
+            LargeAddressAware = true;
+            LinkDLL = false;
+            LinkIncremental = true;
+            MapExports = false;
+            MapFileName = null;
+            MergedIDLBaseFileName = null;
+            MergeSections = new Dictionary<string, string>();
+            MinimumRequiredVersion = null;
+            NoEntryPoint = false;
+            OptimizeReferences = true;
+            PreventDllBinding = false;
+            RandomizedBaseAddress = true;
+            SectionAlignment = null;
+            SetChecksum = false;
+            StackCommitSize = null;
+            StackReserveSize = null;
+            SubSystem = LinkerSubSystemOption.Windows;
+            SupportNobindOfDelayLoadedDLL = false;
+            SupportUnloadOfDelayLoadedDLL = false;
+            SwapRunFromCD = false;
+            SwapRunFromNet = false;
+            TargetMachine = LinkerTargetMachine.MachineX86;
+            TerminalServerAware = false;
+            TreatLinkerWarningAsErrors = false;
+            TurnOffAssemblyGeneration = false;
+            TypeLibraryResourceID = null;
+            UACExecutionLevel = UACExecutionLevel.AsInvoker;
+            UACUIAccess = true;
         }
 
         public void FillProjectSpecificMissingInfo(Project project)
