@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Xml;
 using Bari.Core.Model;
@@ -8,7 +9,7 @@ namespace Bari.Plugins.VCpp.Model
     /// <summary>
     /// Parameters for the linker (Link MSBuild task)
     /// </summary>
-    public class VCppProjectLinkerParameters : IProjectParameters
+    public class VCppProjectLinkerParameters : VCppProjectParametersBase
     {
         public string[] AdditionalDependencies { get; set; }
         public string[] AdditionalLibraryDirectories { get; set; }
@@ -152,6 +153,98 @@ namespace Bari.Plugins.VCpp.Model
 
         public void ToVcxprojProperties(XmlWriter writer)
         {
+            WriteStringArray(writer, "AdditionalDependencies", AdditionalDependencies);
+            WriteStringArray(writer, "AdditionalLibraryDirectories", AdditionalLibraryDirectories);
+            WriteStringArray(writer, "AdditionalManifestDependencies", AdditionalManifestDependencies);
+            WriteStringArray(writer, "AdditionalOptions", AdditionalOptions);
+            WriteStringArray(writer, "AddModuleNamesToAssembly", AddModuleNamesToAssembly);
+            writer.WriteElementString("AllowIsolation", XmlConvert.ToString(AllowIsolation));
+            writer.WriteElementString("AssemblyDebug", XmlConvert.ToString(AssemblyDebug));
+            if (!string.IsNullOrWhiteSpace(BaseAddress))
+                writer.WriteElementString("BaseAddress", BaseAddress);
+            if (CLRImageType != CLRImageType.Default)
+                writer.WriteElementString("CLRImageType", CLRImageType.ToString());
+            if (CLRSupportLastError != CLRSupportLastError.Disabled)
+                writer.WriteElementString("CLRSupportLastError", CLRSupportLastError.ToString());
+            if (CLRThreadAttribute != ApartmentState.Unknown)
+                writer.WriteElementString("CLRThreadAttribute", CLRThreadAttribute.ToString());
+            writer.WriteElementString("CLRUnmanagedCodeCheck", XmlConvert.ToString(CLRUnmanagedCodeCheck));
+            if (CreateHotPatchableImage != LinkerHotPatchingOption.Disabled)
+                writer.WriteElementString("CreateHotPatchableImage", CreateHotPatchableImage.ToString());
+            writer.WriteElementString("DataExecutionPrevention", XmlConvert.ToString(DataExecutionPrevention));
+            WriteStringArray(writer, "DelayLoadDLLs", DelayLoadDLLs);
+            writer.WriteElementString("DelaySign", XmlConvert.ToString(DelaySign));
+            if (Driver != LinkerDriverOption.NotSet)
+                writer.WriteElementString("Driver", Driver.ToString());
+            writer.WriteElementString("EnableCOMDATFolding", XmlConvert.ToString(EnableCOMDATFolding));
+            writer.WriteElementString("EnableUAC", XmlConvert.ToString(EnableUAC));
+            if (!string.IsNullOrWhiteSpace(EntryPointSymbol))
+                writer.WriteElementString("EntryPointSymbol", EntryPointSymbol);
+            writer.WriteElementString("FixedBaseAddress", XmlConvert.ToString(FixedBaseAddress));   
+            if (ForceFileOutput != LinkerForceOption.Disabled)
+                writer.WriteElementString("ForceFileOutput", ForceFileOutput.ToString());
+            WriteStringArray(writer, "ForceSymbolReferences", ForceSymbolReferences);
+            if (!string.IsNullOrWhiteSpace(FunctionOrder))
+                writer.WriteElementString("FunctionOrder", FunctionOrder);
+            writer.WriteElementString("GenerateDebugInformation", XmlConvert.ToString(GenerateDebugInformation));
+            writer.WriteElementString("GenerateManifest", XmlConvert.ToString(GenerateManifest));
+            writer.WriteElementString("GenerateMapFile", XmlConvert.ToString(GenerateMapFile));
+            if (HeapCommitSize.HasValue)
+                writer.WriteElementString("HeapCommitSize", XmlConvert.ToString(HeapCommitSize.Value));
+            if (HeapReserveSize.HasValue)
+                writer.WriteElementString("HeapReserveSize", XmlConvert.ToString(HeapReserveSize.Value));
+            writer.WriteElementString("IgnoreAllDefaultLibraries", XmlConvert.ToString(IgnoreAllDefaultLibraries));
+            writer.WriteElementString("IgnoreEmbeddedIDL", XmlConvert.ToString(IgnoreEmbeddedIDL));
+            writer.WriteElementString("IgnoreImportLibrary", XmlConvert.ToString(IgnoreImportLibrary));
+            WriteStringArray(writer, "IgnoreSpecificDefaultLibraries", IgnoreSpecificDefaultLibraries);
+            writer.WriteElementString("ImageHasSafeExceptionHandlers", XmlConvert.ToString(ImageHasSafeExceptionHandlers));
+            if (!string.IsNullOrWhiteSpace(ImportLibrary))
+                writer.WriteElementString("ImportLibrary", ImportLibrary);
+            if (!string.IsNullOrWhiteSpace(KeyContainer))
+                writer.WriteElementString("KeyContainer", KeyContainer);
+            if (!string.IsNullOrWhiteSpace(KeyFile))
+                writer.WriteElementString("KeyFile", KeyFile);
+            writer.WriteElementString("LargeAddressAware", XmlConvert.ToString(LargeAddressAware));
+            writer.WriteElementString("LinkDLL", XmlConvert.ToString(LinkDLL));
+            writer.WriteElementString("LinkIncremental", XmlConvert.ToString(LinkIncremental));
+            writer.WriteElementString("MapExports", XmlConvert.ToString(MapExports));
+            if (!string.IsNullOrWhiteSpace(MapFileName))
+                writer.WriteElementString("MapFileName", MapFileName);
+            if (!string.IsNullOrWhiteSpace(MergedIDLBaseFileName))
+                writer.WriteElementString("MergedIDLBaseFileName", MergedIDLBaseFileName);
+            if (MergeSections != null && MergeSections.Count > 0)
+            {
+                string merges = string.Join(";", MergeSections.Select(pair => pair.Key + "=" + pair.Value));
+                writer.WriteElementString("MergeSections", merges);
+            }
+            if (MinimumRequiredVersion.HasValue)
+                writer.WriteElementString("MinimumRequiredVersion", XmlConvert.ToString(MinimumRequiredVersion.Value));
+            writer.WriteElementString("NoEntryPoint", XmlConvert.ToString(NoEntryPoint));
+            writer.WriteElementString("OptimizeReferences", XmlConvert.ToString(OptimizeReferences));
+            writer.WriteElementString("PreventDllBinding", XmlConvert.ToString(PreventDllBinding));
+            writer.WriteElementString("RandomizedBaseAddress", XmlConvert.ToString(RandomizedBaseAddress));
+            if (SectionAlignment.HasValue)
+                writer.WriteElementString("SectionAlignment", XmlConvert.ToString(SectionAlignment.Value));
+            writer.WriteElementString("SetChecksum", XmlConvert.ToString(SetChecksum));
+            if (StackCommitSize.HasValue)
+                writer.WriteElementString("StackCommitSize", XmlConvert.ToString(StackCommitSize.Value));
+            if (StackReserveSize.HasValue)
+                writer.WriteElementString("StackReserveSize", XmlConvert.ToString(StackReserveSize.Value));
+            if (SubSystem != LinkerSubSystemOption.NotSet)
+                writer.WriteElementString("SubSystem", SubSystem.ToString());
+            writer.WriteElementString("SupportNobindOfDelayLoadedDLL", XmlConvert.ToString(SupportNobindOfDelayLoadedDLL));
+            writer.WriteElementString("SupportUnloadOfDelayLoadedDLL", XmlConvert.ToString(SupportUnloadOfDelayLoadedDLL));
+            writer.WriteElementString("SwapRunFromCD", XmlConvert.ToString(SwapRunFromCD));
+            writer.WriteElementString("SwapRunFromNet", XmlConvert.ToString(SwapRunFromNet));
+            if (TargetMachine != LinkerTargetMachine.NotSet)
+                writer.WriteElementString("TargetMachine", TargetMachine.ToString());
+            writer.WriteElementString("TerminalServerAware", XmlConvert.ToString(TerminalServerAware));
+            writer.WriteElementString("TreatLinkerWarningAsErrors", XmlConvert.ToString(TreatLinkerWarningAsErrors));
+            writer.WriteElementString("TurnOffAssemblyGeneration", XmlConvert.ToString(TurnOffAssemblyGeneration));
+            if (TypeLibraryResourceID.HasValue)
+                writer.WriteElementString("TypeLibraryResourceID", XmlConvert.ToString(TypeLibraryResourceID.Value));
+            writer.WriteElementString("UACExecutionLevel", UACExecutionLevel.ToString());
+            writer.WriteElementString("UACUIAccess", XmlConvert.ToString(UACUIAccess));
         }
     }
 }

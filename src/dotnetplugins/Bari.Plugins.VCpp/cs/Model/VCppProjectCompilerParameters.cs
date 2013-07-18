@@ -10,7 +10,7 @@ namespace Bari.Plugins.VCpp.Model
     /// <summary>
     /// Parameters for the C++ compiler (cl.exe, ClCompile MSBuild task) 
     /// </summary>
-    public class VCppProjectCompilerParameters : IProjectParameters
+    public class VCppProjectCompilerParameters : VCppProjectParametersBase
     {
         /// <summary>
         /// Adds a directory to the list of directories that are searched for include files. (/I)
@@ -409,13 +409,6 @@ namespace Bari.Plugins.VCpp.Model
             WriteStringArray(writer, "UndefinePreprocessorDefinitions", UndefinePreprocessorDefinitions);
             writer.WriteElementString("WarningLevel", WarningLevel.ToString());
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(WholeProgramOptimization));
-        }
-
-        private void WriteStringArray(XmlWriter writer, string name, string[] array)
-        {
-            if (array != null && array.Length > 0)
-                writer.WriteElementString(name,
-                    String.Join(";", array.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
         }
 
         private string CompileAsManagedToString(ManagedCppType managedCppType)
