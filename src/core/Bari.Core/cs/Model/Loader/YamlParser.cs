@@ -24,7 +24,7 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(parent != null);
             Contract.Requires(!String.IsNullOrWhiteSpace(groupName));
-            Contract.Ensures(Contract.Result<IEnumerable<YamlNode>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<KeyValuePair<string, YamlNode>>>() != null);
 
             var mapping = parent as YamlMappingNode;
             if (mapping != null)
