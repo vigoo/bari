@@ -1,4 +1,6 @@
-﻿using Bari.Plugins.VCpp.Build;
+﻿using Bari.Core.Model.Loader;
+using Bari.Plugins.VCpp.Build;
+using Bari.Plugins.VCpp.Model.Loader;
 using Bari.Plugins.VCpp.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio;
 using Ninject.Extensions.Factory;
@@ -22,6 +24,9 @@ namespace Bari.Plugins.VCpp
 
             Bind<ISlnProject>().To<CppSlnProject>();
             Bind<IVcxprojBuilderFactory>().ToFactory();
+
+            Bind<IYamlProjectParametersLoader>().To<VCppCompilerParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<VCppLinkerParametersLoader>();
         }
     }
 }

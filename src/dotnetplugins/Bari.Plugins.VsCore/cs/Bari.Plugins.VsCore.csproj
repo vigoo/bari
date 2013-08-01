@@ -48,7 +48,7 @@
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
-    <ProjectGuid>{326edd50-0f47-45d9-89cc-348738851c22}</ProjectGuid>
+    <ProjectGuid>{b28ba7f9-9719-43de-8db7-489659a07c73}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG</DefineConstants>
@@ -78,7 +78,7 @@
       <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <!--Project reference 326edd50-0f47-45d9-89cc-348738851c22-->
+    <!--Project reference b28ba7f9-9719-43de-8db7-489659a07c73-->
     <Reference
       Include="Bari.Core">
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>

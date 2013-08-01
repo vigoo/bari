@@ -48,7 +48,7 @@
     <IntermediateOutputPath>..\..\..\..\..\target\tmp\core</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>bari.Test</AssemblyName>
-    <ProjectGuid>{43d737b5-b82e-4c48-b965-9edaa95fb13e}</ProjectGuid>
+    <ProjectGuid>{8fd6d8cc-4f16-4edb-9e98-18c1a5fba378}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG</DefineConstants>
@@ -95,13 +95,13 @@
       <HintPath>..\..\..\..\..\target\deps\nunit\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <!--Project reference 43d737b5-b82e-4c48-b965-9edaa95fb13e-->
+    <!--Project reference 8fd6d8cc-4f16-4edb-9e98-18c1a5fba378-->
     <Reference
       Include="Bari.Core">
       <HintPath>..\..\..\..\..\target\core\Bari.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <!--Project reference 43d737b5-b82e-4c48-b965-9edaa95fb13e-->
+    <!--Project reference 8fd6d8cc-4f16-4edb-9e98-18c1a5fba378-->
     <Reference
       Include="bari">
       <HintPath>..\..\..\..\..\target\core\bari.dll</HintPath>
