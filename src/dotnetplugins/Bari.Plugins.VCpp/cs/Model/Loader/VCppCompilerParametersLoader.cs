@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
@@ -13,54 +12,43 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// <summary>
     /// Loads <see cref="VCppProjectCompilerParameters"/> parameter block from YAML files
     /// </summary>
-    // TODO: merge parsing code with all parameter loaders
-    public class VCppCompilerParametersLoader : IYamlProjectParametersLoader
+    public class VCppCompilerParametersLoader : YamlProjectParametersLoaderBase<VCppProjectCompilerParameters>
     {
-        private readonly Suite suite;
-
         public VCppCompilerParametersLoader(Suite suite)
+            : base(suite)
         {
-            this.suite = suite;
         }
 
         /// <summary>
-        /// Checks whether a given parameter block is supported
+        /// Gets the name of the yaml block the loader supports
         /// </summary>
-        /// <param name="name">Name of the block</param>
-        /// <returns>Returns <c>true</c> if the given block is supported.</returns>
-        public bool Supports(string name)
+        protected override string BlockName
         {
-            return "cpp-compiler".Equals(name, StringComparison.InvariantCultureIgnoreCase);
+            get { return "cpp-compiler"; }
         }
 
         /// <summary>
-        /// Loads the YAML block
+        /// Creates a new instance of the parameter model type 
         /// </summary>
-        /// <param name="name">Name of the block (same that was passed to <see cref="IYamlProjectParametersLoader.Supports"/>)</param>
-        /// <param name="value">The YAML node representing the value</param>
-        /// <param name="parser">The YAML parser to be used</param>
-        /// <returns>Returns the loaded node</returns>
-        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        /// <param name="suite">Current suite</param>
+        /// <returns>Returns the new instance to be filled with loaded data</returns>
+        protected override VCppProjectCompilerParameters CreateNewParameters(Suite suite)
         {
-            var result = new VCppProjectCompilerParameters(suite);
-            var mapping = value as YamlMappingNode;
-
-            if (mapping != null)
-            {
-                foreach (var pair in parser.EnumerateNodesOf(mapping))
-                {
-                    var scalarKey = pair.Key as YamlScalarNode;
-                    if (scalarKey != null)
-                        TryAddParameter(result, scalarKey.Value, pair.Value);
-                }
-            }
-
-            return result;
+            return new VCppProjectCompilerParameters(suite);
         }
 
-        private void TryAddParameter(VCppProjectCompilerParameters target, string name, YamlNode value)
+        /// <summary>
+        /// Gets the mapping table
+        /// 
+        /// <para>The table contains the action to be performed for each supported option key</para>
+        /// </summary>
+        /// <param name="target">Target model object to be filled</param>
+        /// <param name="value">Value to be parsed</param>
+        /// <param name="parser">Parser to be used</param>
+        /// <returns>Returns the mapping</returns>
+        protected override Dictionary<string, Action> GetActions(VCppProjectCompilerParameters target, YamlNode value, YamlParser parser)
         {
-            var mapping = new Dictionary<string, Action>
+            return new Dictionary<string, Action>
                 {
                     {"additional-include-directories", () => target.AdditionalIncludeDirectories = ParseStringArray(value) },
                     {"additional-options", () => target.AdditionalOptions = ParseStringArray(value) },
@@ -100,22 +88,18 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"openmp-support", () => target.OpenMPSupport = ParseBool(value)},
                     {"optimization", () => target.Optimization = ParseEnum<OptimizationLevel>(value, "optimization level")},
                     {"defines", () => target.Defines = ParseStringArray(value) },
-                    {"processor-count", () => target.ProcessorNumber = (int?)ParseUint23(value)},
+                    {"processor-count", () => target.ProcessorNumber = (int?)ParseUint32(value)},
                     {"runtime-library", () => target.RuntimeLibrary = ParseEnum<RuntimeLibraryType>(value, "runtime library")},
                     {"runtime-type-info", () => target.RuntimeTypeInfo = ParseBool(value)},
                     {"smaller-type-check", () => target.SmallerTypeCheck = ParseBool(value)},
                     {"string-pooling", () => target.StringPooling = ParseBool(value)},
-                    {"struct-member-alignment", () => target.StructMemberAlignment = (int?) ParseUint23(value)},
+                    {"struct-member-alignment", () => target.StructMemberAlignment = (int?) ParseUint32(value)},
                     {"warnings-as-error", () => ParseWarningsAsError(target, value)},
                     {"treat-wchart-as-buildin-type", () => target.TreatWCharTAsBuiltInType = ParseBool(value)},
                     {"undefine-preprocessor-definitions", () => ParseUndefinePreprocessorDefinitions(target, value)},
                     {"warning-level", () => target.WarningLevel = ParseWarningLevel(value)},
                     {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(value)}
                     };
-
-            foreach (var pair in mapping)
-                if (NameIs(name, pair.Key))
-                    pair.Value();
         }
 
         private CppWarningLevel ParseWarningLevel(YamlNode value)
@@ -182,71 +166,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     return CLanguage.CompileAsCpp;
                 default:
                     throw new InvalidSpecificationException(String.Format("Invalid language specification: {0}. Should be 'default', 'c' or 'c++'", sval));
-            }
-        }
-
-        private T ParseEnum<T>(YamlNode value, string description) where T : struct
-        {
-            var sval = ParseString(value);
-            T result;
-            if (!Enum.TryParse(sval, ignoreCase: true, result: out result))
-            {
-                var msg = new StringBuilder();
-                msg.AppendFormat("Invalid {0}: {1}. Must be ", description, sval);
-                
-                var names = Enum.GetNames(typeof (T));
-                for (int i = 0; i < names.Length; i++)
-                {
-                    msg.Append('\'');
-                    msg.Append(names[i]);
-                    msg.Append('\'');
-
-                    if (i < names.Length - 2)
-                        msg.Append(", ");
-                    else if (i < names.Length - 1)
-                        msg.Append(" or ");
-                }
-
-                throw new InvalidSpecificationException(msg.ToString());
-            }
-
-            return result;
-        }
-
-        private string ParseString(YamlNode value)
-        {
-            return ((YamlScalarNode)value).Value;
-        }
-
-        private uint ParseUint23(YamlNode value)
-        {
-            return Convert.ToUInt32(ParseString(value));
-        }
-
-        private bool ParseBool(YamlNode value)
-        {
-            var scalarValue = (YamlScalarNode)value;
-            return "true".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase) ||
-                   "yes".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private string[] ParseStringArray(YamlNode value)
-        {
-            var seq = value as YamlSequenceNode;
-            if (seq != null)
-                return seq.Children.OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
-            else
-                return new string[0];
-        }
-
-        private bool NameIs(string name, string expectedName)
-        {
-            if (name.Equals(expectedName, StringComparison.InvariantCultureIgnoreCase))
-                return true;
-            else
-            {
-                var alternativeName = expectedName.Replace("-", "");
-                return name.Equals(alternativeName, StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }

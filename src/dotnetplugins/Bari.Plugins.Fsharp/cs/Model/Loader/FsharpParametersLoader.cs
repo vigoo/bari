@@ -12,44 +12,45 @@ namespace Bari.Plugins.Fsharp.Model.Loader
     /// <summary>
     /// Loads <see cref="FsharpProjectParameters"/> parameter block from YAML files
     /// </summary>
-    // TODO: merge common code with CsharpParametersLoader
-    public class FsharpParametersLoader : IYamlProjectParametersLoader
+    public class FsharpParametersLoader : YamlProjectParametersLoaderBase<FsharpProjectParameters>
     {
-        private readonly Suite suite;
-
         public FsharpParametersLoader(Suite suite)
+            : base(suite)
         {
-            this.suite = suite;
         }
 
-        public bool Supports(string name)
+        /// <summary>
+        /// Gets the name of the yaml block the loader supports
+        /// </summary>
+        protected override string BlockName
         {
-            return "fsharp".Equals(name, StringComparison.InvariantCultureIgnoreCase);
+            get { return "fsharp"; }
         }
 
-        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        /// <summary>
+        /// Creates a new instance of the parameter model type 
+        /// </summary>
+        /// <param name="suite">Current suite</param>
+        /// <returns>Returns the new instance to be filled with loaded data</returns>
+        protected override FsharpProjectParameters CreateNewParameters(Suite suite)
         {
-            var result = new FsharpProjectParameters(suite);
-            var mapping = value as YamlMappingNode;
+            return new FsharpProjectParameters(suite);
+        }
 
-            if (mapping != null)
-            {
-                foreach (var pair in parser.EnumerateNodesOf(mapping))
+        /// <summary>
+        /// Gets the mapping table
+        /// 
+        /// <para>The table contains the action to be performed for each supported option key</para>
+        /// </summary>
+        /// <param name="target">Target model object to be filled</param>
+        /// <param name="value">Value to be parsed</param>
+        /// <param name="parser">Parser to be used</param>
+        /// <returns>Returns the mapping</returns>
+        protected override Dictionary<string, Action> GetActions(FsharpProjectParameters target, YamlNode value, YamlParser parser)
+        {
+            return new Dictionary<string, Action>
                 {
-                    var scalarKey = pair.Key as YamlScalarNode;
-                    if (scalarKey != null)
-                        TryAddParameter(result, scalarKey.Value, pair.Value);
-                }
-            }
-
-            return result;
-        }
-
-        private void TryAddParameter(FsharpProjectParameters target, string name, YamlNode value)
-        {
-            var mapping = new Dictionary<string, Action>
-                {
-                    {"base-address", () => { target.BaseAddress = ParseUint23(value); }},
+                    {"base-address", () => { target.BaseAddress = ParseUint32(value); }},
                     {"code-page", () => { target.CodePage = ParseString(value); }},
                     {"debug", () => { target.Debug = ParseDebugLevel(value); }},
                     {"defines", () => { target.Defines = ParseDefines(value); }},
@@ -60,14 +61,10 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"optimize", () => { target.Optimize = ParseBool(value); }},
                     {"platform", () => { target.Platform = ParsePlatform(value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
-                    {"warnings-as-error", () => ParseWarningsAsError(target, value) },
+                    {"warnings-as-error", () => ParseWarningsAsError(target, value)},
                     {"other-flags", () => { target.OtherFlags = ParseString(value); }},
                     {"tailcalls", () => { target.Tailcalls = ParseBool(value); }}
-                    };
-
-            foreach (var pair in mapping)
-                if (NameIs(name, pair.Key))
-                    pair.Value();
+                };
         }
 
         private void ParseWarningsAsError(FsharpProjectParameters target, YamlNode value)
@@ -157,34 +154,6 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                 default:
                     throw new InvalidSpecificationException(
                         String.Format("Invalid debug level: {0}. Must be 'none', 'pdbonly' or 'full'", sval));
-            }
-        }
-
-        private string ParseString(YamlNode value)
-        {
-            return ((YamlScalarNode)value).Value;
-        }
-
-        private uint ParseUint23(YamlNode value)
-        {
-            return Convert.ToUInt32(ParseString(value));
-        }
-
-        private bool ParseBool(YamlNode value)
-        {
-            var scalarValue = (YamlScalarNode)value;
-            return "true".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase) ||
-                   "yes".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private bool NameIs(string name, string expectedName)
-        {
-            if (name.Equals(expectedName, StringComparison.InvariantCultureIgnoreCase))
-                return true;
-            else
-            {
-                var alternativeName = expectedName.Replace("-", "");
-                return name.Equals(alternativeName, StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }

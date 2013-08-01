@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
@@ -9,43 +10,37 @@ namespace Bari.Plugins.CodeContracts.Model.Loader
     /// <summary>
     /// Loads <see cref="ContractsProjectParameters"/> parameter block from YAML files
     /// </summary>
-    public class YamlContractsParametersLoader : IYamlProjectParametersLoader
+    public class YamlContractsParametersLoader : YamlProjectParametersLoaderBase<ContractsProjectParameters>
     {
-        /// <summary>
-        /// Checks whether a given parameter block is supported
-        /// </summary>
-        /// <param name="name">Name of the block</param>
-        /// <returns>Returns <c>true</c> if the given block is supported.</returns>
-        public bool Supports(string name)
+        public YamlContractsParametersLoader(Suite suite) : base(suite)
         {
-            return "contracts".Equals(name, StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
-        /// Loads the YAML block
+        /// Gets the name of the yaml block the loader supports
         /// </summary>
-        /// <param name="name">Name of the block (same that was passed to <see cref="IYamlProjectParametersLoader.Supports"/>)</param>
-        /// <param name="value">The YAML node representing the value</param>
-        /// <param name="parser"></param>
-        /// <returns>Returns the loaded node</returns>
-        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        protected override string BlockName
         {
-            var result = new ContractsProjectParameters();
-            var mapping = value as YamlMappingNode;
-            if (mapping != null)
-            {
-                foreach (var pair in parser.EnumerateNodesOf(mapping))
-                {
-                    var scalarKey = pair.Key as YamlScalarNode;
-                    if (scalarKey != null)
-                        TryAddParameter(result, scalarKey.Value, pair.Value);
-                }
-            }
-
-            return result;
+            get { return "contracts"; }
         }
 
-        private void TryAddParameter(ContractsProjectParameters target, string name, YamlNode value)
+
+        /// <summary>
+        /// Creates a new instance of the parameter model type 
+        /// </summary>
+        /// <param name="suite">Current suite</param>
+        /// <returns>Returns the new instance to be filled with loaded data</returns>
+        protected override ContractsProjectParameters CreateNewParameters(Suite suite)
+        {
+            return new ContractsProjectParameters();
+        }
+
+        protected override Dictionary<string, Action> GetActions(ContractsProjectParameters target, YamlNode value, YamlParser parser)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TryAddParameter(ContractsProjectParameters target, string name, YamlNode value, YamlParser parser)
         {
             var T = typeof(ContractsProjectParameters);
             var pi = T.GetProperty(name, BindingFlags.IgnoreCase);

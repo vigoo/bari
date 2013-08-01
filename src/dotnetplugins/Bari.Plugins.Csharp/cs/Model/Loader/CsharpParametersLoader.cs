@@ -12,50 +12,35 @@ namespace Bari.Plugins.Csharp.Model.Loader
     /// <summary>
     /// Loads <see cref="CsharpProjectParameters"/> parameter block from YAML files
     /// </summary>
-    public class CsharpParametersLoader : IYamlProjectParametersLoader
+    public class CsharpParametersLoader : YamlProjectParametersLoaderBase<CsharpProjectParameters>
     {
-        private readonly Suite suite;
-
         public CsharpParametersLoader(Suite suite)
+            : base(suite)
         {
-            this.suite = suite;
         }
 
-        public bool Supports(string name)
+        protected override string BlockName
         {
-            return "csharp".Equals(name, StringComparison.InvariantCultureIgnoreCase);
+            get { return "csharp"; }
         }
 
-        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        protected override CsharpProjectParameters CreateNewParameters(Suite suite)
         {
-            var result = new CsharpProjectParameters(suite);
-            var mapping = value as YamlMappingNode;
+            return new CsharpProjectParameters(suite);            
+        }
 
-            if (mapping != null)
-            {
-                foreach (var pair in parser.EnumerateNodesOf(mapping))
+        protected override Dictionary<string, Action> GetActions(CsharpProjectParameters target, YamlNode value, YamlParser parser)
+        {
+            return new Dictionary<string, Action>
                 {
-                    var scalarKey = pair.Key as YamlScalarNode;
-                    if (scalarKey != null)
-                        TryAddParameter(result, scalarKey.Value, pair.Value);
-                }
-            }
-
-            return result;
-        }
-
-        private void TryAddParameter(CsharpProjectParameters target, string name, YamlNode value)
-        {
-            var mapping = new Dictionary<string, Action>
-                {
-                    {"base-address", () => { target.BaseAddress = ParseUint23(value); }},
+                    {"base-address", () => { target.BaseAddress = ParseUint32(value); }},
                     {"checked", () => { target.Checked = ParseBool(value); }},
                     {"code-page", () => { target.CodePage = ParseString(value); }},
                     {"debug", () => { target.Debug = ParseDebugLevel(value); }},
                     {"defines", () => { target.Defines = ParseDefines(value); }},
                     {"delay-sign", () => { target.DelaySign = ParseBool(value); }},
                     {"doc-output", () => { target.DocOutput = ParseString(value); }},
-                    {"file-align", () => { target.FileAlign = ParseUint23(value); }},
+                    {"file-align", () => { target.FileAlign = ParseUint32(value); }},
                     {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(value); }},
                     {"key-container", () => { target.KeyContainer = ParseString(value); }},
                     {"key-file", () => { target.KeyFile = ParseString(value); }},
@@ -73,10 +58,6 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"warnings-as-error", () => ParseWarningsAsError(target, value) },
                     {"root-namespace", () => { target.RootNamespace = ParseString(value); }}
                     };
-
-            foreach (var pair in mapping)
-                if (NameIs(name, pair.Key))
-                    pair.Value();
         }
 
         private void ParseWarningsAsError(CsharpProjectParameters target, YamlNode value)
@@ -185,34 +166,6 @@ namespace Bari.Plugins.Csharp.Model.Loader
                 default:
                     throw new InvalidSpecificationException(
                         String.Format("Invalid debug level: {0}. Must be 'none', 'pdbonly' or 'full'", sval));
-            }
-        }
-
-        private string ParseString(YamlNode value)
-        {
-            return ((YamlScalarNode)value).Value;
-        }
-
-        private uint ParseUint23(YamlNode value)
-        {
-            return Convert.ToUInt32(ParseString(value));
-        }
-
-        private bool ParseBool(YamlNode value)
-        {
-            var scalarValue = (YamlScalarNode)value;
-            return "true".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase) ||
-                   "yes".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private bool NameIs(string name, string expectedName)
-        {
-            if (name.Equals(expectedName, StringComparison.InvariantCultureIgnoreCase))
-                return true;
-            else
-            {
-                var alternativeName = expectedName.Replace("-", "");
-                return name.Equals(alternativeName, StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }
