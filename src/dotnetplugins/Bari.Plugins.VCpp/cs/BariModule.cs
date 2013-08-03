@@ -1,5 +1,7 @@
-﻿using Bari.Core.Model.Loader;
+﻿using Bari.Core.Commands.Clean;
+using Bari.Core.Model.Loader;
 using Bari.Plugins.VCpp.Build;
+using Bari.Plugins.VCpp.Commands.Clean;
 using Bari.Plugins.VCpp.Model.Loader;
 using Bari.Plugins.VCpp.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio;
@@ -24,6 +26,8 @@ namespace Bari.Plugins.VCpp
 
             Bind<ISlnProject>().To<CppSlnProject>();
             Bind<IVcxprojBuilderFactory>().ToFactory();
+
+            Bind<ICleanExtension>().To<VcxprojCleaner>();
 
             Bind<IYamlProjectParametersLoader>().To<VCppCompilerParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppLinkerParametersLoader>();
