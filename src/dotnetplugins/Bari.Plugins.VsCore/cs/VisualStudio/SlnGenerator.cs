@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
@@ -13,6 +14,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
     public class SlnGenerator
     {        
         private readonly IProjectGuidManagement projectGuidManagement;
+        private readonly IProjectPlatformManagement projectPlatformManagement;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory slnDir;
         private readonly IList<Project> projects;
@@ -24,15 +26,26 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// Initializes the solution file generator
         /// </summary>
         /// <param name="projectGuidManagement">Project guid mapping to be used</param>
+        /// <param name="projectPlatformManagement">For getting project's default platform name</param>
         /// <param name="supportedSlnProjects">All the supported SLN project implementations</param>
         /// <param name="projects">The set of projects to be added to the solution</param>
         /// <param name="output">Text writer to write the solution file</param>
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="slnDir">Directory where the sln is being generated </param>
         /// <param name="getProjectSolutionReferences">Function which returns all the referenced projects which are in the same solution</param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences)
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences)
         {
+            Contract.Requires(projectGuidManagement != null);
+            Contract.Requires(projectPlatformManagement != null);
+            Contract.Requires(projects != null);
+            Contract.Requires(output != null);
+            Contract.Requires(suiteRoot != null);
+            Contract.Requires(slnDir != null);
+            Contract.Requires(getProjectSolutionReferences != null);
+            Contract.Requires(supportedSlnProjects != null);
+
             this.projectGuidManagement = projectGuidManagement;
+            this.projectPlatformManagement = projectPlatformManagement;
             this.projects = projects.ToList();
             this.output = output;
             this.suiteRoot = suiteRoot;
@@ -70,9 +83,10 @@ namespace Bari.Plugins.VsCore.VisualStudio
             foreach (var project in projects)
             {
                 string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
+                string platform = projectPlatformManagement.GetDefaultPlatform(project);
 
-                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Bari|Bari", projectGuid);
-                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Bari|Bari", projectGuid);
+                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Bari|{1}", projectGuid, platform);
+                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Bari|{1}", projectGuid, platform);
             }
 
             output.WriteLine("\tEndGlobalSection");

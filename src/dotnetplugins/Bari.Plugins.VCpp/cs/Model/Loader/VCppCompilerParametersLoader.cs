@@ -98,7 +98,8 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"treat-wchart-as-buildin-type", () => target.TreatWCharTAsBuiltInType = ParseBool(value)},
                     {"undefine-preprocessor-definitions", () => ParseUndefinePreprocessorDefinitions(target, value)},
                     {"warning-level", () => target.WarningLevel = ParseWarningLevel(value)},
-                    {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(value)}
+                    {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(value)},
+                    {"pdb-file-name", () => target.PDBFileName = ParseString(value)}
                     };
         }
 

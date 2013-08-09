@@ -115,9 +115,13 @@
     <Compile
       Include="Tools\MSBuild.cs" />
     <Compile
+      Include="VisualStudio\DefaultProjectPlatformManagement.cs" />
+    <Compile
       Include="VisualStudio\IMSBuildProjectGeneratorContext.cs" />
     <Compile
       Include="VisualStudio\IProjectGuidManagement.cs" />
+    <Compile
+      Include="VisualStudio\IProjectPlatformManagement.cs" />
     <Compile
       Include="VisualStudio\ISlnProject.cs" />
     <Compile

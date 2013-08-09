@@ -1,5 +1,6 @@
 ﻿using Bari.Core.Build;
 using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.VisualStudio;
 using Ninject.Modules;
 
 namespace Bari.Plugins.VsCore
@@ -19,6 +20,7 @@ namespace Bari.Plugins.VsCore
             log.Info("VsCore plugin loaded");
 
             Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
+            Bind<IProjectPlatformManagement>().To<DefaultProjectPlatformManagement>().InSingletonScope();
         }
     }
 }

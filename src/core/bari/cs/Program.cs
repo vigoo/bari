@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Bari.Console.UI;
 using Bari.Core;
 using Bari.Core.Build.Cache;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
+using Bari.Core.Generic.Graph;
 using Bari.Core.Process;
 using Bari.Core.UI;
 using Ninject;
+using Ninject.Modules;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
@@ -52,9 +56,7 @@ namespace Bari.Console
             root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir));
 
             // Loading fix plugins
-            string fixPluginPattern = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                                                   "Bari.Plugins.*.dll");
-            root.Load(fixPluginPattern);           
+            root.Load(GetOrderedModuleList(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Bari.Plugins.*.dll"));
 
             var process = root.Get<MainProcess>();
             try
@@ -67,6 +69,51 @@ namespace Bari.Console
                 System.Console.WriteLine(ex.ToString());
                 System.Console.ForegroundColor = ConsoleColor.Gray;
             }
+        }
+
+        private static IEnumerable<IDirectedGraphEdge<INinjectModule>> GetModuleGraph(string path, string pattern)
+        {
+            var instanceCache = new Dictionary<Type, INinjectModule>();
+
+            foreach (var file in Directory.GetFiles(path, pattern))
+            {
+                var assembly = Assembly.LoadFile(file);
+                var modules = from type in assembly.GetTypes()
+                              where type.GetInterfaces().Contains(typeof(INinjectModule))
+                              select type;
+
+                foreach (var module in modules)
+                {
+                    var instance = CreateModuleInstance(module, instanceCache);
+
+                    yield return new SimpleDirectedGraphEdge<INinjectModule>(instance, instance);
+
+                    var deps = module.GetCustomAttributes(typeof (DependsOnAttribute), false).Cast<DependsOnAttribute>();
+                    foreach (var dep in deps)
+                    {
+                        var dependentInstance = CreateModuleInstance(dep.DependentModuleType, instanceCache);
+                        yield return new SimpleDirectedGraphEdge<INinjectModule>(instance, dependentInstance);
+                    }
+                }
+            }
+        }
+
+        private static INinjectModule CreateModuleInstance(Type module, Dictionary<Type, INinjectModule> instanceCache)
+        {
+            INinjectModule instance;
+            if (!instanceCache.TryGetValue(module, out instance))
+            {
+                instance = (INinjectModule) Activator.CreateInstance(module);
+                instanceCache.Add(module, instance);
+            }
+
+            return instance;
+        }
+
+        private static IEnumerable<INinjectModule> GetOrderedModuleList(string path, string pattern)
+        {
+            var graph = GetModuleGraph(path, pattern).BuildNodes(removeSelfLoops: true);
+            return graph.TopologicalSort();
         }
 
         private static void EnableConsoleDebugLog()

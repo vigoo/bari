@@ -270,6 +270,11 @@ namespace Bari.Plugins.VCpp.Model
         /// </summary>
         public bool WholeProgramOptimization { get; set; }
 
+        /// <summary>
+        /// Name of the PDB file to be generated
+        /// </summary>
+        public string PDBFileName { get; set; }
+
         public VCppProjectCompilerParameters(Suite suite)
         {
             AdditionalIncludeDirectories = new string[0];
@@ -342,6 +347,7 @@ namespace Bari.Plugins.VCpp.Model
 
         public void FillProjectSpecificMissingInfo(Project project)
         {
+            PDBFileName = string.Format("{0}.{1}.pdb", project.Module.Name, project.Name);
         }
 
         public void ToVcxprojProperties(XmlWriter writer)
@@ -407,8 +413,30 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("TreatWCharTAsBuiltInType", XmlConvert.ToString(TreatWCharTAsBuiltInType));
             writer.WriteElementString("UndefineAllPreprocessorDefinitions", XmlConvert.ToString(UndefineAllPreprocessorDefinitions));
             WriteStringArray(writer, "UndefinePreprocessorDefinitions", UndefinePreprocessorDefinitions);
-            writer.WriteElementString("WarningLevel", WarningLevel.ToString());
+            writer.WriteElementString("WarningLevel", WarningLevelToString(WarningLevel));
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(WholeProgramOptimization));
+            writer.WriteElementString("ProgramDataBaseFileName", PDBFileName);
+        }
+
+        private string WarningLevelToString(CppWarningLevel warningLevel)
+        {
+            switch (warningLevel)
+            {
+                case CppWarningLevel.Off:
+                    return "TurnOffAllWarnings";
+                case CppWarningLevel.Level1:
+                    return "Level1";
+                case CppWarningLevel.Level2:
+                    return "Level2";
+                case CppWarningLevel.Level3:
+                    return "Level3";
+                case CppWarningLevel.Level4:
+                    return "Level4";
+                case CppWarningLevel.All:
+                    return "EnableAllWarnings";
+                default:
+                    throw new ArgumentOutOfRangeException("warningLevel");
+            }
         }
 
         private string CompileAsManagedToString(ManagedCppType managedCppType)
