@@ -158,7 +158,8 @@ namespace Bari.Plugins.VCpp.Model
             WriteStringArray(writer, "AdditionalManifestDependencies", AdditionalManifestDependencies);
             WriteStringArray(writer, "AdditionalOptions", AdditionalOptions);
             WriteStringArray(writer, "AddModuleNamesToAssembly", AddModuleNamesToAssembly);
-            writer.WriteElementString("AllowIsolation", XmlConvert.ToString(AllowIsolation));
+            if (AllowIsolation)
+                writer.WriteElementString("AllowIsolation", XmlConvert.ToString(AllowIsolation));
             writer.WriteElementString("AssemblyDebug", XmlConvert.ToString(AssemblyDebug));
             if (!string.IsNullOrWhiteSpace(BaseAddress))
                 writer.WriteElementString("BaseAddress", BaseAddress);

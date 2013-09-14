@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.VCpp.Model
@@ -345,9 +346,14 @@ namespace Bari.Plugins.VCpp.Model
             WholeProgramOptimization = suite.ActiveGoal.Has(Suite.ReleaseGoal.Name);
         }
 
-        public void FillProjectSpecificMissingInfo(Project project)
+        public void FillProjectSpecificMissingInfo(Project project, LocalFileSystemDirectory targetDir)
         {
-            PDBFileName = string.Format("{0}.{1}.pdb", project.Module.Name, project.Name);
+            if (targetDir != null)
+            {
+                PDBFileName = string.Format("{0}\\{1}.{2}.pdb",
+                                            targetDir.AbsolutePath,
+                                            project.Module.Name, project.Name);
+            }
         }
 
         public void ToVcxprojProperties(XmlWriter writer)

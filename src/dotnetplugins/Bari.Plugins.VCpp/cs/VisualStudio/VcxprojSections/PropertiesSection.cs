@@ -36,9 +36,19 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
-            writer.WriteAttributeString("Label", "Global");
+            writer.WriteAttributeString("Label", "Globals");
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
             writer.WriteElementString("Keyword", "Win32Proj");
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("PropertyGroup");
+            writer.WriteAttributeString("Condition", string.Format("'$(Configuration)|$(Platform)' == 'Bari|{0}' ", platform));
+            writer.WriteAttributeString("Label", "Configuration");
+            WriteHighLevelConfigurationSpecificPart(writer, project);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Import");
+            writer.WriteAttributeString("Project", @"$(VCTargetsPath)\Microsoft.Cpp.props");
             writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
@@ -53,6 +63,15 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             writer.WriteEndElement();
         }
 
+        private void WriteHighLevelConfigurationSpecificPart(XmlWriter writer, Project project)
+        {
+            writer.WriteElementString("ConfigurationType", "Application"); // TODO
+            writer.WriteElementString("UseDebugLibraries", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.DebugGoal.Name)));
+            writer.WriteElementString("PlatformToolset", "v110");
+            writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
+            writer.WriteElementString("CharacterSet", "Unicode");
+        }
+
         private void WriteCompilerParameters(XmlWriter writer, Project project)
         {
             VCppProjectCompilerParameters compilerParameters = project.HasParameters("cpp-compiler")
@@ -60,7 +79,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                                                                        "cpp-compiler")
                                                                    : new VCppProjectCompilerParameters(Suite);
 
-            compilerParameters.FillProjectSpecificMissingInfo(project);
+            compilerParameters.FillProjectSpecificMissingInfo(project, targetDir as LocalFileSystemDirectory);
 
             writer.WriteStartElement("ClCompile");
             compilerParameters.ToVcxprojProperties(writer);
