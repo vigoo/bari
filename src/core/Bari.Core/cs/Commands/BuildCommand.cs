@@ -121,6 +121,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
         private void RunWithProjects(CommandTarget target, bool dumpMode)
         {
+            log.InfoFormat("Building...");
+
             var context = buildContextFactory.CreateBuildContext();
 
             IBuilder rootBuilder = null;
@@ -151,6 +153,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                     MergeOutputForProduct(productTarget.Product, outputs);
                 }
             }
+
+            log.InfoFormat("Build completed.");
         }
 
         private void MergeOutputForProduct(Product product, ISet<TargetRelativePath> outputs)
