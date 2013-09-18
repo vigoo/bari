@@ -3,29 +3,45 @@ using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
-{
+{        
     /// <summary>
-    /// .csproj section listing all the source files
+    /// .csproj section listing all the embedded resources
     /// </summary>
-    public class SourceItemsSection: SourceItemsSectionBase
+    public class EmbeddedResourcesSection: SourceItemsSectionBase
     {
         /// <summary>
         /// Initializes the class
         /// </summary>
         /// <param name="suite">Active suite</param>
-        public SourceItemsSection(Suite suite) : base(suite)
+        public EmbeddedResourcesSection(Suite suite)
+            : base(suite)
         {
         }
 
+        /// <summary>
+        /// Gets the source sets to include 
+        /// </summary>
+        /// <param name="project">The project to get its source sets</param>
+        /// <returns>Returns an enumeration of source sets, all belonging to the given project</returns>
         protected override IEnumerable<SourceSet> GetSourceSets(Project project)
         {
-            return new[] {project.GetSourceSet("cs")};
+            return new[] {project.GetSourceSet("resources")};
+        }
+
+        /// <summary>
+        /// Gets the element name for a given compilation item.
+        /// 
+        /// <para>The default implementation always returns <c>Compile</c></para>
+        /// </summary>
+        /// <param name="file">File name from the source set</param>
+        /// <returns>Returns a valid XML element name</returns>
+        protected override string GetElementNameFor(string file)
+        {
+            return "EmbeddedResource";
         }
 
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
-                ".csproj",
-                ".csproj.user"
             };
 
         /// <summary>

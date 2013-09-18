@@ -51,5 +51,13 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         {
             get { return ignoredExtensions; }
         }
+
+        /// <summary>
+        /// Source set name where the project file is placed
+        /// </summary>
+        protected override string ProjectSourceSetName
+        {
+            get { return "cpp"; }
+        }
     }
 }

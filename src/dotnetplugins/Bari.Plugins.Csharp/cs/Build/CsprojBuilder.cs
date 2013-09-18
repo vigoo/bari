@@ -72,6 +72,8 @@ namespace Bari.Plugins.Csharp.Build
                     deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
                 if (project.HasNonEmptySourceSet("manifest"))
                     deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
+                if (project.HasNonEmptySourceSet("resources"))
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("resources"), null));
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
