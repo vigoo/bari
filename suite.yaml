@@ -125,6 +125,14 @@ modules:
             - nuget://log4net
             - nuget://Ninject
             - suite://core/Bari.Core
+        - name: Bari.Plugins.FSRepository
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core            
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core
         - name: Bari.Plugins.Gallio
           references:
             - gac://Microsoft.CSharp
