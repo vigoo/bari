@@ -29,6 +29,7 @@ bari.csproj
 Bari.Plugins.Csharp.csproj
 Bari.Plugins.Fsharp.csproj
 Bari.Plugins.FSRepository.csproj
+Bari.Plugins.FSRepository.Test.csproj
 Bari.Plugins.VsCore.csproj
 Bari.Plugins.VCpp.csproj
 Bari.Plugins.CodeContracts.csproj
