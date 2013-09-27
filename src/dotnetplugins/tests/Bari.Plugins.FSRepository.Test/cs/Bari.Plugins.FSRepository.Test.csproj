@@ -122,5 +122,6 @@
   <ItemGroup>
     <Compile Include="..\version.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

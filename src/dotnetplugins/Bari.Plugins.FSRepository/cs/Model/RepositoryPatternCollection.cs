@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.Model;
 
 namespace Bari.Plugins.FSRepository.Model
 {
@@ -8,10 +9,17 @@ namespace Bari.Plugins.FSRepository.Model
     /// An ordered collection of available <see cref="RepositoryPattern"/> patterns, with the
     /// ability to find the best match for a given context.
     /// </summary>
-    public class RepositoryPatternCollection
+    public class RepositoryPatternCollection: IProjectParameters
     {
         private readonly IList<RepositoryPattern> patterns = new List<RepositoryPattern>();
         private readonly IFileSystemRepositoryAccess fsAccess;
+
+        public static readonly RepositoryPatternCollection Empty = new RepositoryPatternCollection();
+
+        private RepositoryPatternCollection()
+        {
+            // Only used for the Empty collection
+        }
 
         public RepositoryPatternCollection(IFileSystemRepositoryAccess fsAccess)
         {
