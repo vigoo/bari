@@ -143,7 +143,7 @@ namespace Bari.Plugins.VCpp.Model
             TurnOffAssemblyGeneration = false;
             TypeLibraryResourceID = null;
             UACExecutionLevel = UACExecutionLevel.AsInvoker;
-            UACUIAccess = true;
+            UACUIAccess = false;
         }
 
         public void FillProjectSpecificMissingInfo(Project project)
