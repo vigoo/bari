@@ -34,9 +34,9 @@ namespace Bari.Plugins.Fsharp
             Bind<IYamlProjectParametersLoader>().To<FsharpParametersLoader>();
 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<FsprojGenerator>();
-            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<FsprojGenerator>().WithConstructorArgument("sourceSetName", "fs"); ; 
-            Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<FsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<FsprojGenerator>().WithConstructorArgument("sourceSetName", "fs"); ;
             Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<FsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<FsprojGenerator>();             
         }
     }
 }
