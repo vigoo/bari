@@ -20,6 +20,19 @@ packages
 src/bari.sln.DotSettings
 src/bari.sln.DotSettings.user
 
+# Systest caches
+systest/single-fs-exe/cache
+systest/single-cs-exe/cache
+systest/single-cpp-exe/cache
+
+# Systest generated files
+hello.vcxproj
+HelloWorld.csproj
+Exe1.fsproj
+
+# Systest results
+systest/logs
+systest/tmp
 
 # generated files
 Bari.Core.csproj

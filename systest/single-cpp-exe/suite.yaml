@@ -1,0 +1,11 @@
+---
+suite:      bari systemtest single-cpp-exe
+
+modules:
+    - name: Module1
+      projects:
+        - name: hello
+          type: executable
+          cpp-linker:
+            subsystem: Console
+

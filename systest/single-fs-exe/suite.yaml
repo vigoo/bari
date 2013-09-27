@@ -1,0 +1,12 @@
+---
+suite:      bari systemtest single-fs-exe
+
+modules:
+    - name: Module
+      projects:
+        - name: Exe1
+          type: executable
+          references:
+            - gac://mscorlib            
+            - gac://System
+            - gac://FSharp.Core
