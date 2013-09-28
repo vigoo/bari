@@ -62,6 +62,8 @@ namespace Bari.Core
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
 
+            kernel.Bind<IYamlProjectParametersLoader>().To<YamlReferenceAliasesLoader>();
+
             // Command factory and enumerator
             kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
             kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));
@@ -86,6 +88,7 @@ namespace Bari.Core
             // Builders 
             kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
+            kernel.Bind<IReferenceBuilder>().To<AliasReferenceBuilder>().Named("alias");
 
             // Builder factories
             kernel.Bind<ICachedBuilderFactory>().ToFactory();

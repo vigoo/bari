@@ -50,13 +50,13 @@
     <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
     <ProjectGuid>{5538f57d-3780-47fc-a9d3-ddfdf41f8f71}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <DebugType>none</DebugType>
-    <DefineConstants />
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
     <DelaySign>false</DelaySign>
     <HighEntropyVA>false</HighEntropyVA>
     <LangVersion>default</LangVersion>
     <NoWin32Manifest>false</NoWin32Manifest>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <PlatformTarget>anycpu</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
