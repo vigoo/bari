@@ -23,6 +23,7 @@ The project is already usable for smaller projects, but there is no documentatio
 
 # Getting bari #
 
-Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. Currently it is just a simple archive containing a compiled version of bari which is capable to compile its own source pulled from github.
+Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. 
 
-You can download this archive [from here](https://s3-eu-west-1.amazonaws.com/bari-release/bari-latest.zip)
+The [latest version is 0.6](https://github.com/vigoo/bari/releases/tag/0.6).
+
