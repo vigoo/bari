@@ -18,12 +18,12 @@ Function Initialize
 
 Function Clean($name)
 {
-    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "clean" -RedirectStandardOutput "..\logs\$name.clean.log" -Wait -NoNewWindow    
+    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v clean" -RedirectStandardOutput "..\logs\$name.clean.log" -Wait -NoNewWindow    
 }
 
 Function Build($name)
 {
-    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
+    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
 }
 
 Function CheckExe($name, $path, $exitcode, $output)
@@ -62,3 +62,4 @@ Initialize
 SimpleExeBuild "single-cs-exe" "target\HelloWorld\HelloWorld.exe" 11 "Test executable running"
 SimpleExeBuild "single-fs-exe" "target\Module\Exe1.exe" 12 "Test F# executable running"
 SimpleExeBuild "single-cpp-exe" "target\Module1\hello.exe" 13 "Test C++ executable running"
+SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"

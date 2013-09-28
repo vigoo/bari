@@ -4,6 +4,7 @@ using Bari.Core.Build.Dependencies.Protocol;
 
 namespace Bari.Plugins.FSRepository.Build.Dependencies.Protocol
 {
+    [Serializable]
     public class FSRepositoryFingerprintProtocol: IDependencyFingerprintProtocol
     {
         /// <summary>

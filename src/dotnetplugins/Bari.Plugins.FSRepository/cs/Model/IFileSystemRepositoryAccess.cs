@@ -26,6 +26,7 @@ namespace Bari.Plugins.FSRepository.Model
         /// </summary>
         /// <param name="path">Path to the file in the FS repository</param>
         /// <param name="targetDir">Target directory</param>
-        void Copy(string path, IFileSystemDirectory targetDir);
+        /// <param name="targetFileName">Target file name</param>
+        void Copy(string path, IFileSystemDirectory targetDir, string targetFileName);
     }
 }

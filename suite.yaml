@@ -132,7 +132,10 @@ modules:
             - gac://System.Core            
             - nuget://log4net
             - nuget://Ninject
+            - nuget://Ninject.Extensions.Factory
             - nuget://Monads
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel            
             - suite://core/Bari.Core            
         - name: Bari.Plugins.Gallio
           references:

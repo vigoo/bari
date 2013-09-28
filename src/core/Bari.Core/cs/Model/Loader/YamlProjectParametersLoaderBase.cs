@@ -43,7 +43,7 @@ namespace Bari.Core.Model.Loader
         /// <returns>Returns the new instance to be filled with loaded data</returns>
         protected abstract TParamType CreateNewParameters(Suite suite);
 
-        public IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public virtual IProjectParameters Load(string name, YamlNode value, YamlParser parser)
         {
             var result = CreateNewParameters(suite);
             var mapping = value as YamlMappingNode;

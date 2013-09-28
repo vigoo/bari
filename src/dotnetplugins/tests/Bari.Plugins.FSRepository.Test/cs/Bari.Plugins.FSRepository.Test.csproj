@@ -115,6 +115,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Dependencies\FSRepositoryReferenceDependenciesTest.cs" />
+    <Compile Include="Model\Loader\YamlRepositoryPatternCollectionLoaderTest.cs" />
     <Compile Include="Model\RepositoryPatternCollectionTest.cs" />
     <Compile Include="Model\RepositoryPatternTest.cs" />
     <Compile Include="Model\UriParserTest.cs" />

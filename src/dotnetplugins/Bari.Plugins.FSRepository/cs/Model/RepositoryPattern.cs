@@ -24,6 +24,14 @@ namespace Bari.Plugins.FSRepository.Model
         private readonly Regex envVarsRegex = new Regex(@"\$([a-zA-Z0-9]+)", RegexOptions.Singleline);
 
         /// <summary>
+        /// Gets the repository pattern
+        /// </summary>
+        public string Pattern
+        {
+            get { return pattern; }
+        }
+
+        /// <summary>
         /// Defines a pattern
         /// </summary>
         /// <param name="pattern">The pattern as read from the suite definition</param>

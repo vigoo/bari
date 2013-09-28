@@ -1,4 +1,11 @@
-﻿using Ninject.Modules;
+﻿using Bari.Core.Build;
+using Bari.Core.Model.Loader;
+using Bari.Plugins.FSRepository.Build;
+using Bari.Plugins.FSRepository.Build.Dependencies;
+using Bari.Plugins.FSRepository.Model;
+using Bari.Plugins.FSRepository.Model.Loader;
+using Ninject.Extensions.Factory;
+using Ninject.Modules;
 
 namespace Bari.Plugins.FSRepository
 {
@@ -16,8 +23,10 @@ namespace Bari.Plugins.FSRepository
         {
             log.Info("FSRepository plugin loaded");
 
-//            Bind<IReferenceBuilder>().To<NugetReferenceBuilder>().Named("nuget");
-//            Bind<INuGet>().To<NuGet>();
+            Bind<IFileSystemRepositoryAccess>().To<LocalFileSystemRepositoryAccess>();
+            Bind<IReferenceBuilder>().To<FSRepositoryReferenceBuilder>().Named("fsrepo");
+            Bind<IYamlProjectParametersLoader>().To<YamlRepositoryPatternCollectionLoader>();
+            Bind<IFSRepositoryFingerprintFactory>().ToFactory();
         }
     }
 }

@@ -16,6 +16,14 @@ namespace Bari.Plugins.FSRepository.Model
 
         public static readonly RepositoryPatternCollection Empty = new RepositoryPatternCollection();
 
+        /// <summary>
+        /// Gets the list of registered patterns, in resolve order
+        /// </summary>
+        public IEnumerable<RepositoryPattern> Patterns
+        {
+            get { return patterns; }
+        }
+
         private RepositoryPatternCollection()
         {
             // Only used for the Empty collection

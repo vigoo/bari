@@ -12,6 +12,8 @@ namespace Bari.Core.Test.Helper
         private readonly string name;
         private readonly IList<TestFileSystemDirectory> childDirectories = new List<TestFileSystemDirectory>();
         private IList<string> files = new List<string>();
+        private readonly IDictionary<string, long> fileSizes = new Dictionary<string, long>();
+        private readonly IDictionary<string, DateTime> fileDates = new Dictionary<string, DateTime>();
         private TestFileSystemDirectory parent;
         private bool isDeleted;
 
@@ -23,6 +25,16 @@ namespace Bari.Core.Test.Helper
         public string Name
         {
             get { return name; }
+        }
+
+        public void SetFileSize(string name, long newSize)
+        {
+            fileSizes[name] = newSize;
+        }
+
+        public void SetDate(string name, DateTime newDate)
+        {
+            fileDates[name] = newDate;
         }
 
         /// <summary>
@@ -149,7 +161,11 @@ namespace Bari.Core.Test.Helper
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
         public DateTime GetLastModifiedDate(string relativePath)
         {
-            throw new NotImplementedException();
+            DateTime val;
+            if (fileDates.TryGetValue(relativePath, out val))
+                return val;
+            else
+                return new DateTime(2000, 1, 1);
         }
 
         /// <summary>
@@ -160,7 +176,11 @@ namespace Bari.Core.Test.Helper
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
         public long GetFileSize(string relativePath)
         {
-            throw new NotImplementedException();
+            long val;
+            if (fileSizes.TryGetValue(relativePath, out val))
+                return val;
+            else
+                return 11;
         }
 
         /// <summary>

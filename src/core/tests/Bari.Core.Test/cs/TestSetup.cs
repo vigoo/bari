@@ -13,7 +13,7 @@ namespace Bari.Core.Test
             EnsureFactoryExtensionLoaded(Kernel.Root);
         }
 
-        internal static void EnsureFactoryExtensionLoaded(IKernel kernel)
+        public static void EnsureFactoryExtensionLoaded(IKernel kernel)
         {
             if (!kernel.HasModule(typeof (Ninject.Extensions.Factory.FuncModule).FullName))
                 kernel.Load(new[] {typeof (Ninject.Extensions.Factory.FuncModule).Assembly});

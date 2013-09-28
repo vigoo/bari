@@ -24,6 +24,7 @@ src/bari.sln.DotSettings.user
 systest/single-fs-exe/cache
 systest/single-cs-exe/cache
 systest/single-cpp-exe/cache
+systest/fsrepo-test/cache
 
 # Systest generated files
 hello.vcxproj

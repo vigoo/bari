@@ -46,7 +46,10 @@ namespace Bari.Plugins.FSRepository.Build
         /// </summary>
         public string Uid
         {
-            get { return reference.Uri.ToString().Replace('/', '.'); }
+            get
+            {
+                return String.Format("{0}.{1}", reference.Uri.Host, reference.Uri.PathAndQuery.Replace('/', '.'));
+            }
         }
 
         /// <summary>
@@ -71,11 +74,12 @@ namespace Bari.Plugins.FSRepository.Build
             var depsRoot = targetRoot.CreateDirectory("deps");
             var depDir = depsRoot.CreateDirectory(resolutionContext.DependencyName);
 
-            repository.Copy(resolvedPath, depDir);
+            string fileName = resolutionContext.FileName + "." + resolutionContext.Extension;
+            repository.Copy(resolvedPath, depDir, fileName);
 
             return new HashSet<TargetRelativePath>(new[]
                 {
-                    new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(depDir), Path.GetFileName(resolvedPath)))
+                    new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(depDir), fileName))
                 });
         }
 
@@ -150,6 +154,18 @@ namespace Bari.Plugins.FSRepository.Build
         public static bool operator !=(FSRepositoryReferenceBuilder left, FSRepositoryReferenceBuilder right)
         {
             return !Equals(left, right);
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("[{0}]", reference.Uri);
         }
     }
 }
