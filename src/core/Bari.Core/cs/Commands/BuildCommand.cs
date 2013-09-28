@@ -125,14 +125,11 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             var context = buildContextFactory.CreateBuildContext();
 
-            IBuilder rootBuilder = null;
             var projects = target.Projects.ToList();
 
-            foreach (var projectBuilder in projectBuilders)
-            {
-                rootBuilder = projectBuilder.AddToContext(context, projects);
-                // TODO: we have to make one builder above all the returned project builders and use it as root
-            }
+            IBuilder rootBuilder = projectBuilders.Select(pb => pb.AddToContext(context, projects))
+                                      .Where(b => b != null).ToArray().Merge();
+            rootBuilder.AddToContext(context);
 
             if (dumpMode)
             {

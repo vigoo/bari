@@ -36,7 +36,6 @@ namespace Bari.Plugins.VsCore.Build
             slnBuilder.AddToContext(context);
 
             var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder, new TargetRelativePath(slnBuilder.Uid + ".sln"));
-            msbuild.AddToContext(context);
 
             return msbuild;
         }

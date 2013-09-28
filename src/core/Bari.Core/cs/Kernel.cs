@@ -97,6 +97,8 @@ namespace Bari.Core
             kernel.Bind<ISourceSetDependencyFactory>().ToFactory();
             kernel.Bind<ISourceSetFingerprintFactory>().ToFactory();
 
+            kernel.Bind<IProjectBuilderFactory>().To<ContentProjectBuilderFactory>();
+
             // Default command target parser
             kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
         }

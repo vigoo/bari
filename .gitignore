@@ -26,6 +26,7 @@ systest/single-cs-exe/cache
 systest/single-cpp-exe/cache
 systest/fsrepo-test/cache
 systest/alias-test/cache
+systest/content-test/cache
 
 # Systest generated files
 hello.vcxproj
