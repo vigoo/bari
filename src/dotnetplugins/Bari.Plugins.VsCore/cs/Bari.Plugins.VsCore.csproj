@@ -48,15 +48,15 @@
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
-    <ProjectGuid>{220e9802-a2fd-442b-ba05-6294266a8656}</ProjectGuid>
+    <ProjectGuid>{5538f57d-3780-47fc-a9d3-ddfdf41f8f71}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <DebugType>full</DebugType>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DebugType>none</DebugType>
+    <DefineConstants />
     <DelaySign>false</DelaySign>
     <HighEntropyVA>false</HighEntropyVA>
     <LangVersion>default</LangVersion>
     <NoWin32Manifest>false</NoWin32Manifest>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <PlatformTarget>anycpu</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
@@ -70,7 +70,7 @@
       Include="system.xml" />
     <Reference
       Include="log4net">
-      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.1\lib\net40-full\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference
@@ -78,7 +78,7 @@
       <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <!--Project reference 220e9802-a2fd-442b-ba05-6294266a8656-->
+    <!--Project reference 5538f57d-3780-47fc-a9d3-ddfdf41f8f71-->
     <Reference
       Include="Bari.Core">
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
@@ -149,6 +149,7 @@
     <Compile
       Include="VisualStudio\SolutionName\ReadableSlnNameGenerator.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile
       Include="..\version.cs" />
