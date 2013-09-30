@@ -1,0 +1,14 @@
+---
+suite:      bari systemtest runtime-ref-test
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          references:
+            - { uri: 'suite://OtherModule/RuntimeDep', type: Runtime }
+
+    - name: OtherModule
+      projects:
+         - name: RuntimeDep

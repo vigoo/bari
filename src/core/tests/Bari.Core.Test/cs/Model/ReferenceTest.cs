@@ -11,15 +11,15 @@ namespace Bari.Core.Test.Model
         [Test]
         public void UriCanBeReadBack()
         {
-            var reference = new Reference(new Uri("test://random.uri"));
+            var reference = new Reference(new Uri("test://random.uri"), ReferenceType.Build);
             reference.Uri.ToString().Should().Be("test://random.uri/");
         }
 
         [Test]
         public void EqualityTest()
         {
-            var ref1 = new Reference(new Uri("test://random.uri"));
-            var ref2 = new Reference(new Uri("test://random.uri"));
+            var ref1 = new Reference(new Uri("test://random.uri"), ReferenceType.Build);
+            var ref2 = new Reference(new Uri("test://random.uri"), ReferenceType.Build);
 
             ref1.Equals(ref2).Should().BeTrue();
             (ref1 == ref2).Should().BeTrue();
@@ -30,8 +30,8 @@ namespace Bari.Core.Test.Model
         [Test]
         public void InequalityTest()
         {
-            var ref1 = new Reference(new Uri("test://random.uri"));
-            var ref2 = new Reference(new Uri("test://other.uri"));
+            var ref1 = new Reference(new Uri("test://random.uri"), ReferenceType.Build);
+            var ref2 = new Reference(new Uri("test://other.uri"), ReferenceType.Build);
 
             ref1.Equals(ref2).Should().BeFalse();
             (ref1 == ref2).Should().BeFalse();

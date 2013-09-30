@@ -69,7 +69,7 @@ aliases:
             ref1.Should().NotBeNull();
 
             ref1.References.Should().HaveCount(1);
-            ref1.References.Should().Contain(new Reference(new Uri("ref://test1")));
+            ref1.References.Should().Contain(new Reference(new Uri("ref://test1"), ReferenceType.Build));
         }
 
         [Test]
@@ -90,8 +90,8 @@ aliases:
             ref1.Should().NotBeNull();
 
             ref1.References.Should().HaveCount(2);
-            ref1.References.Should().Contain(new Reference(new Uri("ref://test1")));
-            ref1.References.Should().Contain(new Reference(new Uri("ref://test2")));
+            ref1.References.Should().Contain(new Reference(new Uri("ref://test1"), ReferenceType.Build));
+            ref1.References.Should().Contain(new Reference(new Uri("ref://test2"), ReferenceType.Build));
         }
 
         [Test]
@@ -117,16 +117,16 @@ aliases:
             ref1.Should().NotBeNull();
 
             ref1.References.Should().HaveCount(2);
-            ref1.References.Should().Contain(new Reference(new Uri("ref://test1")));
-            ref1.References.Should().Contain(new Reference(new Uri("ref://test2")));
+            ref1.References.Should().Contain(new Reference(new Uri("ref://test1"), ReferenceType.Build));
+            ref1.References.Should().Contain(new Reference(new Uri("ref://test2"), ReferenceType.Build));
 
             var ref2 = aliases.Get("ref2");
             ref2.Should().NotBeNull();
 
             ref2.References.Should().HaveCount(3);
-            ref2.References.Should().Contain(new Reference(new Uri("ref://test3")));
-            ref2.References.Should().Contain(new Reference(new Uri("ref://test4")));
-            ref2.References.Should().Contain(new Reference(new Uri("ref://test5")));
+            ref2.References.Should().Contain(new Reference(new Uri("ref://test3"), ReferenceType.Build));
+            ref2.References.Should().Contain(new Reference(new Uri("ref://test4"), ReferenceType.Build));
+            ref2.References.Should().Contain(new Reference(new Uri("ref://test5"), ReferenceType.Build));
         }
 
         private ReferenceAliases LoadAliases(string yaml)

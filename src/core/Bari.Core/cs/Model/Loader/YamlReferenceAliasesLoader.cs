@@ -9,6 +9,8 @@ namespace Bari.Core.Model.Loader
     /// </summary>
     public class YamlReferenceAliasesLoader : YamlProjectParametersLoaderBase<ReferenceAliases>
     {
+        private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
+
         public YamlReferenceAliasesLoader(Suite suite)
             : base(suite)
         {
@@ -65,17 +67,18 @@ namespace Bari.Core.Model.Loader
             {
                 foreach (var referenceNode in seq.Children)
                 {
-                    var scalar = referenceNode as YamlScalarNode;
-                    if (scalar != null)
+                    var reference = referenceLoader.LoadReference(referenceNode);
+                    if (reference != null)
                     {
-                        var uri = scalar.Value;
-                        references.Add(new Reference(new Uri(uri)));
+                        references.Add(reference);
                     }
                 }
             }
             else
             {
-                references.Add(new Reference(new Uri(ParseString(value))));
+                var reference = referenceLoader.LoadReference(value);
+                if (reference != null)
+                    references.Add(reference);
             }
 
             target.Add(name, references);

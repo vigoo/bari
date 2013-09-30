@@ -240,8 +240,8 @@ modules:
         - name: Project
           references:
             - test://ref1
-            - test://ref2
-            - test://ref3
+            - { uri: 'test://ref2', type: Runtime }
+            - { uri: 'test://ref3', type: Build }
 ";
 
             var loader = kernel.Get<InMemoryYamlModelLoader>();
@@ -259,9 +259,9 @@ modules:
             prj.Should().NotBeNull();
             prj.References.Should().NotBeEmpty();
             prj.References.Should().HaveCount(3);
-            prj.References.Should().OnlyContain(r => r.Uri == new Uri("test://ref1") ||
-                                                     r.Uri == new Uri("test://ref2") ||
-                                                     r.Uri == new Uri("test://ref3"));
+            prj.References.Should().OnlyContain(r => r == new Reference(new Uri("test://ref1"), ReferenceType.Build) ||
+                                                     r == new Reference(new Uri("test://ref2"), ReferenceType.Runtime) ||
+                                                     r == new Reference(new Uri("test://ref3"), ReferenceType.Build));
         }
 
         [Test]

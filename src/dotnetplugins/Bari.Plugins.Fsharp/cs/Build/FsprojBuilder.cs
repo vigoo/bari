@@ -142,7 +142,7 @@ namespace Bari.Plugins.Fsharp.Build
             using (var fsversion = project.RootDirectory.CreateTextFile(fsversionPath))
             {
                 var references = new HashSet<TargetRelativePath>();
-                foreach (var refBuilder in context.GetDependencies(this))
+                foreach (var refBuilder in context.GetDependencies(this).OfType<IReferenceBuilder>().Where(r => r.Reference.Type == ReferenceType.Build))
                 {
                     var builderResults = context.GetResults(refBuilder);
                     references.UnionWith(builderResults);

@@ -85,7 +85,9 @@ namespace Bari.Core.Build
                 subtasks = new HashSet<IBuilder>();
                 foreach (var projectBuilder in projectBuilders)
                 {
-                    subtasks.Add(projectBuilder.AddToContext(context, new[] { referencedProject }));
+                    var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
+                    if (builder != null)
+                        subtasks.Add(builder);
                 }
 
                 context.AddBuilder(this, subtasks);

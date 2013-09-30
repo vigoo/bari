@@ -77,6 +77,7 @@ namespace Bari.Core.Build
         {
             Contract.Requires(builder != null);
             Contract.Requires(prerequisites != null);
+            Contract.Requires(Contract.ForAll(prerequisites, r => r != null));
         }
 
         /// <summary>

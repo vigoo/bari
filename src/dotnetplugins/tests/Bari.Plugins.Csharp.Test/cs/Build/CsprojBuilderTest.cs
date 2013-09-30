@@ -107,13 +107,13 @@ namespace Bari.Plugins.Csharp.Test.Build
 
             var context = new Mock<IBuildContext>();
             
-            var builder = kernel.Get<CsprojBuilder>();            
-            project.AddReference(new Reference(new Uri("test://ref1")));
+            var builder = kernel.Get<CsprojBuilder>();
+            project.AddReference(new Reference(new Uri("test://ref1"), ReferenceType.Build));
             builder.AddToContext(context.Object);
 
             var fp0 = builder.Dependencies.CreateFingerprint();
 
-            project.AddReference(new Reference(new Uri("test://ref2")));
+            project.AddReference(new Reference(new Uri("test://ref2"), ReferenceType.Build));
             builder.AddToContext(context.Object);
 
             var fp1 = builder.Dependencies.CreateFingerprint();

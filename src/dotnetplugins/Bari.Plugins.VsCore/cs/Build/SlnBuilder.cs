@@ -143,7 +143,8 @@ namespace Bari.Plugins.VsCore.Build
                 var moduleReferenceBuilder = builderNode as ModuleReferenceBuilder;
                 if (moduleReferenceBuilder != null)
                 {
-                    if (projects.Contains(moduleReferenceBuilder.ReferencedProject))
+                    if (moduleReferenceBuilder.Reference.Type == ReferenceType.Build &&
+                        projects.Contains(moduleReferenceBuilder.ReferencedProject))
                     {
                         log.DebugFormat("Transforming module reference builder {0}", moduleReferenceBuilder);
 
@@ -154,7 +155,8 @@ namespace Bari.Plugins.VsCore.Build
                 var suiteReferenceBuilder = builderNode as SuiteReferenceBuilder;
                 if (suiteReferenceBuilder != null)
                 {
-                    if (projects.Contains(suiteReferenceBuilder.ReferencedProject))
+                    if (suiteReferenceBuilder.Reference.Type == ReferenceType.Build &&
+                        projects.Contains(suiteReferenceBuilder.ReferencedProject))
                     {
                         log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
 

@@ -14,6 +14,7 @@ namespace Bari.Core.Model
     public class Reference : IEquatable<Reference>
     {
         private readonly Uri uri;
+        private readonly ReferenceType type;
 
         /// <summary>
         /// Gets the reference URI
@@ -24,14 +25,24 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the reference type
+        /// </summary>
+        public ReferenceType Type
+        {
+            get { return type; }
+        }
+
+        /// <summary>
         /// Constructs the reference
         /// </summary>
         /// <param name="uri">The reference URI</param>
-        public Reference(Uri uri)
+        /// <param name="type">Reference type</param>
+        public Reference(Uri uri, ReferenceType type)
         {
             Contract.Requires(uri != null);
 
             this.uri = uri;
+            this.type = type;
         }
 
         /// <summary>
@@ -45,7 +56,7 @@ namespace Bari.Core.Model
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return uri.Equals(other.uri);
+            return uri.Equals(other.uri) && type == other.type;
         }
 
         /// <summary>
@@ -59,7 +70,7 @@ namespace Bari.Core.Model
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Reference) obj);
         }
 
@@ -72,7 +83,7 @@ namespace Bari.Core.Model
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return uri.GetHashCode();
+            return uri.GetHashCode() ^ type.GetHashCode();
         }
 
         /// <summary>
@@ -100,7 +111,7 @@ namespace Bari.Core.Model
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return uri.ToString();
+            return string.Format("{0} ({1})", uri, type);
         }
     }
 }

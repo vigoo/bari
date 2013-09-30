@@ -138,7 +138,7 @@ Example: `bari info`
 
                 foreach (var reference in project.References)
                 {
-                    output.Message("      `{0}`", reference.Uri);
+                    output.Message("      `{0}` ({1})", reference.Uri, reference.Type);
                 }
             }
 

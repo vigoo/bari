@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using YamlDotNet.RepresentationModel;
@@ -16,6 +15,7 @@ namespace Bari.Core.Model.Loader
         private readonly ISuiteFactory suiteFactory;
         private readonly IEnumerable<IYamlProjectParametersLoader> parametersLoaders;
         private readonly YamlParser parser;
+        private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
 
         /// <summary>
         /// Initializes the yaml loader
@@ -214,14 +214,13 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(project != null);
             Contract.Requires(referenceNodes != null);
-
+            
             foreach (var referenceNode in referenceNodes)
             {
-                var scalar = referenceNode as YamlScalarNode;
-                if (scalar != null)
+                var reference = referenceLoader.LoadReference(referenceNode);
+                if (reference != null)
                 {
-                    var uri = scalar.Value;
-                    project.AddReference(new Reference(new Uri(uri)));
+                    project.AddReference(reference);
                 }
             }
         }
