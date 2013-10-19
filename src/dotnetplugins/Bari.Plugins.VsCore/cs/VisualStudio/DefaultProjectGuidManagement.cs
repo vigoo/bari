@@ -4,9 +4,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Bari.Plugins.VsCore.VisualStudio;
 
-namespace Bari.Plugins.Csharp.VisualStudio
+namespace Bari.Plugins.VsCore.VisualStudio
 {
     /// <summary>
     /// Default implementation for the <see cref="IProjectGuidManagement"/> interface

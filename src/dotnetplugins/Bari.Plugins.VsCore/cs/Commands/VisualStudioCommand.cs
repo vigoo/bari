@@ -9,10 +9,9 @@ using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.VsCore.Build;
 
-namespace Bari.Plugins.Csharp.Commands
+namespace Bari.Plugins.VsCore.Commands
 {
     /// <summary>
     /// Implements the 'vs' command, which generates visual studio solution and project

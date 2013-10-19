@@ -5,7 +5,7 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
-namespace Bari.Plugins.Csharp.Build
+namespace Bari.Plugins.VsCore.Build
 {
     /// <summary>
     /// A <see cref="IReferenceBuilder"/> implementation referencing assemblies from the Global Assembly Cache (GAC)
