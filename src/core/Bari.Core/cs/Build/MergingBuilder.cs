@@ -20,7 +20,7 @@ namespace Bari.Core.Build
         /// </summary>
         public IDependencies Dependencies
         {
-            get { return new MultipleDependencies(sourceBuilders.Select(b => b.Dependencies)); }
+            get { return MultipleDependenciesHelper.CreateMultipleDependencies(sourceBuilders); }
         }
 
         /// <summary>

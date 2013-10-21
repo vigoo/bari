@@ -49,16 +49,7 @@ namespace Bari.Core.Build
         /// </summary>
         public IDependencies Dependencies
         {
-            get
-            {
-                if (subtasks.Count == 0)
-                    return new NoDependencies();
-                else if (subtasks.Count == 1)
-                    return new SubtaskDependency(subtasks.First());
-                else
-                    return new MultipleDependencies(
-                        subtasks.Select(subtask => new SubtaskDependency(subtask)));
-            }
+            get { return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks); }
         }
 
         /// <summary>

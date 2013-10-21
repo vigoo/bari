@@ -40,7 +40,8 @@ namespace Bari.Core.Build
             {
                 if (alias != null)
                 {
-                    return new MultipleDependencies(alias.References.Select(rf => new ReferenceDependency(rf)));
+                    return MultipleDependenciesHelper.CreateMultipleDependencies(
+                            new HashSet<IDependencies>(alias.References.Select(rf => new ReferenceDependency(rf))));
                 }
                 else
                 {

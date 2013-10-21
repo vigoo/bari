@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  ToolsVersion="4.0"
+  DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
@@ -36,7 +38,8 @@
     <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
     <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+  <PropertyGroup
+    Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
     <OutputPath>..\..\..\..\target\dotnetplugins</OutputPath>
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
   </PropertyGroup>
@@ -45,7 +48,7 @@
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
-    <ProjectGuid>{5538F57D-3780-47FC-A9D3-DDFDF41F8F71}</ProjectGuid>
+    <ProjectGuid>{5538f57d-3780-47fc-a9d3-ddfdf41f8f71}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG</DefineConstants>
@@ -61,61 +64,102 @@
     <RootNamespace>Bari.Plugins.VsCore</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="system" />
-    <Reference Include="system.xml" />
-    <Reference Include="log4net">
+    <Reference
+      Include="system" />
+    <Reference
+      Include="system.xml" />
+    <Reference
+      Include="log4net">
       <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.1\lib\net40-full\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Ninject">
+    <Reference
+      Include="Ninject">
       <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <!--Project reference 5538f57d-3780-47fc-a9d3-ddfdf41f8f71-->
-    <Reference Include="Bari.Core">
+    <Reference
+      Include="Bari.Core">
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BariModule.cs" />
-    <Compile Include="Build\GacReferenceBuilder.cs" />
-    <Compile Include="Build\IInSolutionReferenceBuilderFactory.cs" />
-    <Compile Include="Build\IMSBuildRunnerFactory.cs" />
-    <Compile Include="Build\InSolutionReferenceBuilder.cs" />
-    <Compile Include="Build\ISlnBuilderFactory.cs" />
-    <Compile Include="Build\MSBuildRunner.cs" />
-    <Compile Include="Build\SlnBuilder.cs" />
-    <Compile Include="Build\VsProjectBuilderFactory.cs" />
-    <Compile Include="Commands\VisualStudioCommand.cs" />
-    <Compile Include="Exceptions\MSBuildFailedException.cs" />
-    <Compile Include="Model\CLRPlatform.cs" />
-    <Compile Include="Model\DebugLevel.cs" />
-    <Compile Include="Model\WarningLevel.cs" />
-    <Compile Include="Tools\IMSBuild.cs" />
-    <Compile Include="Tools\MSBuild.cs" />
-    <Compile Include="VisualStudio\DefaultProjectGuidManagement.cs" />
-    <Compile Include="VisualStudio\DefaultProjectPlatformManagement.cs" />
-    <Compile Include="VisualStudio\IMSBuildProjectGeneratorContext.cs" />
-    <Compile Include="VisualStudio\IProjectGuidManagement.cs" />
-    <Compile Include="VisualStudio\IProjectPlatformManagement.cs" />
-    <Compile Include="VisualStudio\ISlnProject.cs" />
-    <Compile Include="VisualStudio\ProjectSections\IMSBuildProjectSection.cs" />
-    <Compile Include="VisualStudio\ProjectSections\MSBuildProjectSectionBase.cs" />
-    <Compile Include="VisualStudio\ProjectSections\ReferencesSection.cs" />
-    <Compile Include="VisualStudio\ProjectSections\SourceItemsSectionBase.cs" />
-    <Compile Include="VisualStudio\SlnGenerator.cs" />
-    <Compile Include="VisualStudio\SlnProjectBase.cs" />
-    <Compile Include="VisualStudio\SolutionName\DefaultSuiteContentsAnalyzer.cs" />
-    <Compile Include="VisualStudio\SolutionName\HashBasedSlnNameGenerator.cs" />
-    <Compile Include="VisualStudio\SolutionName\ISlnNameGenerator.cs" />
-    <Compile Include="VisualStudio\SolutionName\ISuiteContentsAnalyzer.cs" />
-    <Compile Include="VisualStudio\SolutionName\ModuleMatch.cs" />
-    <Compile Include="VisualStudio\SolutionName\ReadableSlnNameGenerator.cs" />
+    <Compile
+      Include="BariModule.cs" />
+    <Compile
+      Include="Build\GacReferenceBuilder.cs" />
+    <Compile
+      Include="Build\IInSolutionReferenceBuilderFactory.cs" />
+    <Compile
+      Include="Build\IMSBuildRunnerFactory.cs" />
+    <Compile
+      Include="Build\InSolutionReferenceBuilder.cs" />
+    <Compile
+      Include="Build\ISlnBuilderFactory.cs" />
+    <Compile
+      Include="Build\MSBuildRunner.cs" />
+    <Compile
+      Include="Build\SlnBuilder.cs" />
+    <Compile
+      Include="Build\VsProjectBuilderFactory.cs" />
+    <Compile
+      Include="Commands\VisualStudioCommand.cs" />
+    <Compile
+      Include="Exceptions\MSBuildFailedException.cs" />
+    <Compile
+      Include="Model\CLRPlatform.cs" />
+    <Compile
+      Include="Model\DebugLevel.cs" />
+    <Compile
+      Include="Model\WarningLevel.cs" />
+    <Compile
+      Include="Tools\IMSBuild.cs" />
+    <Compile
+      Include="Tools\MSBuild.cs" />
+    <Compile
+      Include="VisualStudio\DefaultProjectGuidManagement.cs" />
+    <Compile
+      Include="VisualStudio\DefaultProjectPlatformManagement.cs" />
+    <Compile
+      Include="VisualStudio\IMSBuildProjectGeneratorContext.cs" />
+    <Compile
+      Include="VisualStudio\IProjectGuidManagement.cs" />
+    <Compile
+      Include="VisualStudio\IProjectPlatformManagement.cs" />
+    <Compile
+      Include="VisualStudio\ISlnProject.cs" />
+    <Compile
+      Include="VisualStudio\ProjectSections\IMSBuildProjectSection.cs" />
+    <Compile
+      Include="VisualStudio\ProjectSections\MSBuildProjectSectionBase.cs" />
+    <Compile
+      Include="VisualStudio\ProjectSections\ReferencesSection.cs" />
+    <Compile
+      Include="VisualStudio\ProjectSections\SourceItemsSectionBase.cs" />
+    <Compile
+      Include="VisualStudio\SlnGenerator.cs" />
+    <Compile
+      Include="VisualStudio\SlnProjectBase.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\DefaultSuiteContentsAnalyzer.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\HashBasedSlnNameGenerator.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\ISlnNameGenerator.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\ISuiteContentsAnalyzer.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\ModuleMatch.cs" />
+    <Compile
+      Include="VisualStudio\SolutionName\ReadableSlnNameGenerator.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="..\version.cs" />
+    <Compile
+      Include="..\version.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import
+    Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

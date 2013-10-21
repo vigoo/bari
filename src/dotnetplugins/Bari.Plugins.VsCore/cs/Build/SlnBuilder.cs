@@ -108,16 +108,7 @@ namespace Bari.Plugins.VsCore.Build
             context.AddBuilder(this, projectBuilders);
             context.AddTransformation(TransformRedundantSolutionBuilds);
 
-            if (projectBuilders.Count == 1)
-            {
-                projectDependencies = new SubtaskDependency(projectBuilders.First());
-            }
-            else
-            {
-                projectDependencies = new MultipleDependencies(
-                    from builder in projectBuilders
-                    select new SubtaskDependency(builder));
-            }
+            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(projectBuilders);            
         }
 
         private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
@@ -133,9 +124,9 @@ namespace Bari.Plugins.VsCore.Build
             {
                 return null;
             }
-        } 
+        }
 
-        private bool TransformRedundantSolutionBuilds(List<IDirectedGraphEdge<IBuilder>> builders)
+        private bool TransformRedundantSolutionBuilds(ISet<IDirectedGraphEdge<IBuilder>> builders)
         {
             var subNodes = builders.BuildNodes(this).DirectedBreadthFirstTraversal((builder, bs) => { bs.Add(builder); return bs; }, new List<IBuilder>());
             foreach (var builderNode in subNodes)
@@ -180,7 +171,7 @@ namespace Bari.Plugins.VsCore.Build
             deps.Add(dependency);
         }
 
-        private void ConvertToInSolutionReference(List<IDirectedGraphEdge<IBuilder>> builders, IReferenceBuilder moduleReferenceBuilder, Project referencedProject)
+        private void ConvertToInSolutionReference(ISet<IDirectedGraphEdge<IBuilder>> builders, IReferenceBuilder moduleReferenceBuilder, Project referencedProject)
         {
             // finding edges X -> RB 
             var edges = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder)).ToList();
@@ -188,16 +179,15 @@ namespace Bari.Plugins.VsCore.Build
             // removing these edges
             foreach (var edge in edges)
                 builders.Remove(edge);
-            var sourceNodes = edges.Select(edge => edge.Source).ToList();
+            var sourceNodes = edges.Where(edge => !Equals(edge.Source, edge.Target)).Select(edge => edge.Source).ToList();
 
             // creating new, in-solution reference builder node (ISB)
             var inSolutionBuilder = inSolutionReferenceBuilderFactory.CreateInSolutionReferenceBuilder(referencedProject);
             inSolutionBuilder.Reference = moduleReferenceBuilder.Reference;
 
             // creating new edges: X -> ISB                        
-            builders.AddRange(
-                sourceNodes.Select(
-                    sourceNode => new SimpleDirectedGraphEdge<IBuilder>(sourceNode, inSolutionBuilder)));
+            foreach (var newEdge in sourceNodes.Select(sourceNode => new SimpleDirectedGraphEdge<IBuilder>(sourceNode, inSolutionBuilder)))
+                builders.Add(newEdge);
 
             // removing every edge containing RB
             var edgesToRemove = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder) || Equals(edge.Source, moduleReferenceBuilder)).ToList();

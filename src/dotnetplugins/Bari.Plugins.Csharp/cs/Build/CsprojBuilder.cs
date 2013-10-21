@@ -82,12 +82,7 @@ namespace Bari.Plugins.Csharp.Build
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
 
-                if (deps.Count == 0)
-                    return new NoDependencies();
-                else if (deps.Count == 1)
-                    return deps.First();
-                else
-                    return new MultipleDependencies(deps);                    
+                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
             }
         }
 
@@ -114,7 +109,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+            referenceBuilders = new HashSet<IBuilder>(project.References.Where(r => r.Type == ReferenceType.Build).Select(CreateReferenceBuilder));
 
             foreach (var refBuilder in referenceBuilders)
                 refBuilder.AddToContext(context);

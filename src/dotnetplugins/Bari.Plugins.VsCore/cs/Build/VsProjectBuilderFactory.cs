@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
@@ -12,16 +14,21 @@ namespace Bari.Plugins.VsCore.Build
     {
         private readonly ISlnBuilderFactory slnBuilderFactory;
         private readonly IMSBuildRunnerFactory msBuildRunnerFactory;
+        private readonly IReferenceBuilderFactory referenceBuilderFactory;
+        private readonly IFileSystemDirectory targetRoot;
 
         /// <summary>
         /// Constructs the project builder factory
         /// </summary>
         /// <param name="slnBuilderFactory">Interface for creating new SLN builders</param>
         /// <param name="msBuildRunnerFactory">Interface to create new MSBuild runners</param>
-        public VsProjectBuilderFactory(ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory)
+        /// <param name="referenceBuilderFactory">Interface to create new reference builders</param>
+        public VsProjectBuilderFactory(ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory, IReferenceBuilderFactory referenceBuilderFactory, [TargetRoot] IFileSystemDirectory targetRoot)
         {
             this.slnBuilderFactory = slnBuilderFactory;
             this.msBuildRunnerFactory = msBuildRunnerFactory;
+            this.referenceBuilderFactory = referenceBuilderFactory;
+            this.targetRoot = targetRoot;
         }
 
         /// <summary>
@@ -32,12 +39,57 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="projects">Projects to be built</param>
         public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
         {
-            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects);
+            var prjs = projects.ToArray();
+
+            // Generating the solution file
+            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(prjs);
             slnBuilder.AddToContext(context);
 
+            // Building the solution
             var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder, new TargetRelativePath(slnBuilder.Uid + ".sln"));
+            msbuild.AddToContext(context);
 
-            return msbuild;
+            // Copying runtime dependencies
+            var runtimeDeps = new List<IBuilder>();
+
+            foreach (var project in prjs)
+            {
+                foreach (var reference in project.References.Where(r => r.Type == ReferenceType.Runtime))
+                {
+                    var refBuilder = CreateReferenceBuilder(project, reference);
+                    refBuilder.AddToContext(context);
+
+                    var refDeploy = CreateRuntimeReferenceDeployment(project, refBuilder, msbuild);
+                    refDeploy.AddToContext(context);
+
+                    runtimeDeps.Add(refDeploy);
+                }
+            }
+
+            if (runtimeDeps.Count > 0)
+            {
+                return new MergingBuilder(runtimeDeps);
+            }
+            else
+            {
+                return msbuild;
+            }
+        }
+
+        private IBuilder CreateRuntimeReferenceDeployment(Project project, IReferenceBuilder refBuilder, IBuilder prerequisite)
+        {
+            return new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true), new[] { prerequisite });
+        }
+
+        private IReferenceBuilder CreateReferenceBuilder(Project project, Reference reference)
+        {
+            var builder = referenceBuilderFactory.CreateReferenceBuilder(reference, project);
+            if (builder != null)
+            {
+                return builder;
+            }
+            else
+                throw new InvalidReferenceTypeException(reference.Uri.Scheme);
         }
     }
 }

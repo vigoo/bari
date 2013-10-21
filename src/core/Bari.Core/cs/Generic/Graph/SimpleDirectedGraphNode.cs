@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace Bari.Core.Generic.Graph
     /// Simple implementation of a directed graph node
     /// </summary>
     /// <typeparam name="T">The node value type.</typeparam>
-    public class SimpleDirectedGraphNode<T> : IDirectedGraphNode<T>
+    public class SimpleDirectedGraphNode<T> : IDirectedGraphNode<T>, IEquatable<SimpleDirectedGraphNode<T>>
     {
         private readonly IList<IDirectedGraphNode<T>> targets = new List<IDirectedGraphNode<T>>();
         private readonly IList<IDirectedGraphNode<T>> sources = new List<IDirectedGraphNode<T>>();
@@ -97,6 +98,36 @@ namespace Bari.Core.Generic.Graph
         public void AddTarget(IDirectedGraphNode<T> node)
         {
             targets.Add(node);
+        }
+
+        public bool Equals(SimpleDirectedGraphNode<T> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return EqualityComparer<T>.Default.Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((SimpleDirectedGraphNode<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return EqualityComparer<T>.Default.GetHashCode(Data);
+        }
+
+        public static bool operator ==(SimpleDirectedGraphNode<T> left, SimpleDirectedGraphNode<T> right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(SimpleDirectedGraphNode<T> left, SimpleDirectedGraphNode<T> right)
+        {
+            return !Equals(left, right);
         }
     }
 }

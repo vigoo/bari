@@ -19,11 +19,11 @@ namespace Bari.Core.Build
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(BuildContext));
 
-        private readonly List<IDirectedGraphEdge<IBuilder>> builders = new List<IDirectedGraphEdge<IBuilder>>();
+        private readonly ISet<IDirectedGraphEdge<IBuilder>> builders = new HashSet<IDirectedGraphEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
             new Dictionary<IBuilder, ISet<TargetRelativePath>>();
-        private readonly ISet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>> graphTransformations =
-            new HashSet<Func<List<IDirectedGraphEdge<IBuilder>>, bool>>();
+        private readonly ISet<Func<ISet<IDirectedGraphEdge<IBuilder>>, bool>> graphTransformations =
+            new HashSet<Func<ISet<IDirectedGraphEdge<IBuilder>>, bool>>();
 
         private readonly ICachedBuilderFactory cachedBuilderFactory;
 
@@ -48,14 +48,16 @@ namespace Bari.Core.Build
             builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, builder));
 
             foreach (var prerequisite in prerequisites)
+            {
                 builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, prerequisite));
+            }
         }
 
         /// <summary>
         /// Adds a new graph transformation which will be executed before the builders
         /// </summary>
         /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
-        public void AddTransformation(Func<List<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        public void AddTransformation(Func<ISet<IDirectedGraphEdge<IBuilder>>, bool> transformation)
         {
             graphTransformations.Add(transformation);
         }
@@ -112,9 +114,9 @@ namespace Bari.Core.Build
                     return set;
                 }, new HashSet<IBuilder>());
 
-            builders.RemoveAll(
-                edge => !toKeep.Contains(edge.Source) ||
-                        !toKeep.Contains(edge.Target));
+            var toRemove = builders.Where(edge => !toKeep.Contains(edge.Source) || !toKeep.Contains(edge.Target)).ToList();
+            foreach (var edge in toRemove)
+                builders.Remove(edge);
         }
 
         private bool RunTransformations()
@@ -146,7 +148,7 @@ namespace Bari.Core.Build
         public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
         {
             return from edge in builders
-                   where edge.Source == builder && edge.Target != builder
+                   where Equals(edge.Source, builder) && !Equals(edge.Target, builder)
                    select edge.Target;
         }
 

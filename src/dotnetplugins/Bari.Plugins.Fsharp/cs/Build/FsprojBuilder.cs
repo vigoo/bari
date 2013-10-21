@@ -76,12 +76,7 @@ namespace Bari.Plugins.Fsharp.Build
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
 
-                if (deps.Count == 0)
-                    return new NoDependencies();
-                else if (deps.Count == 1)
-                    return deps.First();
-                else
-                    return new MultipleDependencies(deps);                    
+                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
             }
         }
 
