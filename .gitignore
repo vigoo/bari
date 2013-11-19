@@ -41,6 +41,7 @@ RuntimeDep.csproj
 comserver.vcxproj
 comserver.tlb
 comserver.idl
+comserver.h
 comserver_i.c
 comserver_p.c
 dlldata.c
