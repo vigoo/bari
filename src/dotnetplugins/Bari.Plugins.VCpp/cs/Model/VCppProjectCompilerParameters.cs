@@ -405,7 +405,7 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("OmitFramePointers", XmlConvert.ToString(OmitFramePointers));
             writer.WriteElementString("OpenMPSupport", XmlConvert.ToString(OpenMPSupport));
             writer.WriteElementString("Optimization", Optimization.ToString());
-            WriteStringArray(writer, "Defines", Defines);
+            WriteStringArray(writer, "PreprocessorDefinitions", Defines);
             if (ProcessorNumber.HasValue)
                 writer.WriteElementString("ProcessorNumber", ProcessorNumber.Value.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("RuntimeLibrary", RuntimeLibrary.ToString());

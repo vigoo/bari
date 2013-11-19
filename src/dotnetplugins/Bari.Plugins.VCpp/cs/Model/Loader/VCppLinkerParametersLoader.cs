@@ -100,6 +100,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     { "treat-linker-warning-as-errors", () => target.TreatLinkerWarningAsErrors = ParseBool(value) },
                     { "turn-off-assembly-generation", () => target.TurnOffAssemblyGeneration = ParseBool(value) },
                     { "type-library-resource-id", () => target.TypeLibraryResourceID = ParseInt32(value) },
+                    { "type-library-file", () => target.TypeLibraryFile = ParseString(value) },
                     { "uac-execution-level", () => target.UACExecutionLevel = ParseEnum<UACExecutionLevel>(value, "UAC execution level")},
                     { "uac-ui-access", () => target.UACUIAccess = ParseBool(value) }
                 };

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -58,18 +59,91 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
             writer.WriteStartElement("ItemDefinitionGroup");
             writer.WriteAttributeString("Condition", string.Format(" '$(Configuration)|$(Platform)' == 'Bari|{0}' ", platform));
+            WriteMIDLParameters(writer, project);
             WriteCompilerParameters(writer, project);
             WriteLinkerParameters(writer, project);
+            WriteManifestParameters(writer, project);
             writer.WriteEndElement();
+        }
+
+        private void WriteManifestParameters(XmlWriter writer, Project project)
+        {
+            var manifestParameters = GetManifestParameters(project);
+
+            if (manifestParameters.GenerateManifest)
+            {
+                writer.WriteStartElement("Manifest");
+                manifestParameters.ToVcxprojProperties(writer);
+                writer.WriteEndElement();
+            }
+        }
+
+        private VCppProjectManifestParameters GetManifestParameters(Project project)
+        {
+            VCppProjectManifestParameters manifestParameters = project.HasParameters("manifest")
+                ? project.GetParameters<VCppProjectManifestParameters>("manifest")
+                : new VCppProjectManifestParameters(Suite);
+
+            manifestParameters.FillProjectSpecificMissingInfo(project);
+            return manifestParameters;
         }
 
         private void WriteHighLevelConfigurationSpecificPart(XmlWriter writer, Project project)
         {
-            writer.WriteElementString("ConfigurationType", "Application"); // TODO
+            writer.WriteElementString("ConfigurationType", GetConfigurationType(project)); 
             writer.WriteElementString("UseDebugLibraries", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.DebugGoal.Name)));
             writer.WriteElementString("PlatformToolset", "v110");
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
             writer.WriteElementString("CharacterSet", "Unicode");
+
+            string useOfAtl = GetUseOfAtl(project);
+            if (!String.IsNullOrEmpty(useOfAtl))
+                writer.WriteElementString("UseOfAtl", useOfAtl);
+        }
+
+        private string GetUseOfAtl(Project project)
+        {
+            VCppProjectATLParameters atlParameters = project.HasParameters("atl")
+                ? project.GetParameters<VCppProjectATLParameters>("atl")
+                : new VCppProjectATLParameters();
+
+            switch (atlParameters.UseOfATL)
+            {
+                case UseOfATL.None:
+                    return String.Empty;
+                case UseOfATL.Static:
+                    return "Static";
+                case UseOfATL.Dynamic:
+                    return "Dynamic";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private string GetConfigurationType(Project project)
+        {
+            switch (project.Type)
+            {
+                case ProjectType.Executable:
+                    return "Application";
+                case ProjectType.Library:
+                    return "DynamicLibrary";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void WriteMIDLParameters(XmlWriter writer, Project project)
+        {
+            VCppProjectMIDLParameters midlParameters = project.HasParameters("midl")
+                                                                   ? project.GetParameters<VCppProjectMIDLParameters>("midl")
+                                                                   : new VCppProjectMIDLParameters(Suite);
+
+            midlParameters.FillProjectSpecificMissingInfo(project, targetDir as LocalFileSystemDirectory);
+
+            writer.WriteStartElement("Midl");
+            midlParameters.ToVcxprojProperties(writer);
+            writer.WriteEndElement();
         }
 
         private void WriteCompilerParameters(XmlWriter writer, Project project)
@@ -105,6 +179,10 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                                       ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name), "cpp") + '\\');
             writer.WriteElementString("IntDir",
                                       ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name), "cpp") + '\\');
+
+            var manifestParameters = GetManifestParameters(project);
+            writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.EmbedManifest));
+            writer.WriteElementString("GenerateManifest", XmlConvert.ToString(manifestParameters.GenerateManifest));
         }
     }
 }

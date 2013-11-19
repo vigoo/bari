@@ -30,6 +30,7 @@ systest/content-test/cache
 systest/module-ref-test/cache
 systest/suite-ref-test/cache
 systest/runtime-ref-test/cache
+systest/regfree-com-server/cache
 
 # Systest generated files
 hello.vcxproj
@@ -37,6 +38,13 @@ HelloWorld.csproj
 Exe1.fsproj
 Dep.csproj
 RuntimeDep.csproj
+comserver.vcxproj
+comserver.tlb
+comserver.idl
+comserver_i.c
+comserver_p.c
+dlldata.c
+comclient.csproj
 
 # Systest results
 systest/logs

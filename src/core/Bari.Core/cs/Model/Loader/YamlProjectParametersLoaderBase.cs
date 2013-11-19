@@ -16,6 +16,11 @@ namespace Bari.Core.Model.Loader
     {
         private readonly Suite suite;
 
+        protected Suite Suite
+        {
+            get { return suite; }
+        }
+
         protected YamlProjectParametersLoaderBase(Suite suite)
         {
             this.suite = suite;

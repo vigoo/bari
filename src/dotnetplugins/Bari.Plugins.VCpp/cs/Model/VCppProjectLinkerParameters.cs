@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Xml;
@@ -74,6 +75,7 @@ namespace Bari.Plugins.VCpp.Model
         public bool TreatLinkerWarningAsErrors { get; set; }
         public bool TurnOffAssemblyGeneration { get; set; }
         public int? TypeLibraryResourceID { get; set; }
+        public string TypeLibraryFile { get; set; }
         public UACExecutionLevel UACExecutionLevel { get; set; }
         public bool UACUIAccess { get; set; }
 
@@ -244,6 +246,10 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("TurnOffAssemblyGeneration", XmlConvert.ToString(TurnOffAssemblyGeneration));
             if (TypeLibraryResourceID.HasValue)
                 writer.WriteElementString("TypeLibraryResourceID", XmlConvert.ToString(TypeLibraryResourceID.Value));
+
+            if (!String.IsNullOrWhiteSpace(TypeLibraryFile))
+                writer.WriteElementString("TypeLibraryFile", TypeLibraryFile);
+
             writer.WriteElementString("UACExecutionLevel", UACExecutionLevel.ToString());
             writer.WriteElementString("UACUIAccess", XmlConvert.ToString(UACUIAccess));
         }
