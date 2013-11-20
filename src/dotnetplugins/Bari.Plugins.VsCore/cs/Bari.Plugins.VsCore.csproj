@@ -48,7 +48,7 @@
     <IntermediateOutputPath>..\..\..\..\target\tmp\dotnetplugins</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>Bari.Plugins.VsCore</AssemblyName>
-    <ProjectGuid>{5538f57d-3780-47fc-a9d3-ddfdf41f8f71}</ProjectGuid>
+    <ProjectGuid>{821fb47b-512d-4892-a1b5-fe59bc18bc7b}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG</DefineConstants>
@@ -70,7 +70,7 @@
       Include="system.xml" />
     <Reference
       Include="log4net">
-      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.1\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference
@@ -78,7 +78,7 @@
       <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <!--Project reference 5538f57d-3780-47fc-a9d3-ddfdf41f8f71-->
+    <!--Project reference 821fb47b-512d-4892-a1b5-fe59bc18bc7b-->
     <Reference
       Include="Bari.Core">
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>

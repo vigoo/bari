@@ -1,6 +1,9 @@
 ---
 suite:      bari systemtest single-cpp-exe
 
+fs-repositories:
+    - fsrepo\%NAME\%FILENAME.%EXT
+
 modules:
     - name: server
       projects:
@@ -51,5 +54,9 @@ modules:
           type: executable
           csharp:
             platform: x86
+          references:
+              - fsrepo://wrapper/RegFreeComServerWrapper.dll 
+              - { uri: 'suite://server/comserver', type: Runtime }
+
 
 

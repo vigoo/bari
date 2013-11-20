@@ -72,7 +72,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// </summary>
         /// <param name="project">The project to get its source sets</param>
         /// <returns>Returns an enumeration of source sets, all belonging to the given project</returns>
-        protected abstract IEnumerable<SourceSet> GetSourceSets(Project project);
+        protected abstract IEnumerable<ISourceSet> GetSourceSets(Project project);
 
         /// <summary>
         /// Gets a set of filename postfixes to be ignored when generating the source references

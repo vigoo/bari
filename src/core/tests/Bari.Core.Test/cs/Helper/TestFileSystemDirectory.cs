@@ -14,6 +14,7 @@ namespace Bari.Core.Test.Helper
         private IList<string> files = new List<string>();
         private readonly IDictionary<string, long> fileSizes = new Dictionary<string, long>();
         private readonly IDictionary<string, DateTime> fileDates = new Dictionary<string, DateTime>();
+        private readonly IDictionary<string, string> textContents = new Dictionary<string, string>();
         private TestFileSystemDirectory parent;
         private bool isDeleted;
 
@@ -35,6 +36,11 @@ namespace Bari.Core.Test.Helper
         public void SetDate(string name, DateTime newDate)
         {
             fileDates[name] = newDate;
+        }
+
+        public void SetFileContents(string name, string contents)
+        {
+            textContents[name] = contents;
         }
 
         /// <summary>
@@ -150,7 +156,10 @@ namespace Bari.Core.Test.Helper
         /// <exception cref="ArgumentException">If the file does not exist.</exception>
         public TextReader ReadTextFile(string relativePath)
         {
-            throw new NotImplementedException();
+            if (textContents.ContainsKey(relativePath))
+                return new StringReader(textContents[relativePath]);
+            else
+                throw new ArgumentException();
         }
 
         /// <summary>

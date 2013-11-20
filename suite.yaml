@@ -187,6 +187,27 @@ modules:
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.Csharp                        
             - module://Bari.Plugins.VsCore
+        - name: Bari.Plugins.VCpp.Test
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://FluentAssertions
+            - nuget://Moq
+            - nuget://Ninject
+            - nuget://Castle.Core/3.0.0.4001
+            - nuget://Ninject.Extensions.Factory
+            - nuget://NUnit
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - suite://core/Bari.Core
+            - suite://core/Bari.Core.Test
+            - module://Bari.Plugins.VCpp                        
+            - module://Bari.Plugins.VsCore            
         - name: Bari.Plugins.FSRepository.Test
           references:
             - gac://Microsoft.CSharp

@@ -91,13 +91,18 @@ namespace Bari.Core.Generic
         /// to <c>root</c>)</returns>
         public static string GetRelativePathFrom(this IFileSystemDirectory root, IFileSystemDirectory innerRoot, string outerRelativePath)
         {
-            string innerFromOuter = root.GetRelativePath(innerRoot);
-            if (outerRelativePath.StartsWith(innerFromOuter + '\\', StringComparison.InvariantCultureIgnoreCase))
-                return outerRelativePath.Substring(innerFromOuter.Length).TrimStart('\\');
+            if (root == innerRoot)
+                return outerRelativePath;
             else
             {
-                string prefix = String.Join("\\", innerFromOuter.Split('\\').Select(_ => ".."));
-                return Path.Combine(prefix, outerRelativePath);
+                string innerFromOuter = root.GetRelativePath(innerRoot);
+                if (outerRelativePath.StartsWith(innerFromOuter + '\\', StringComparison.InvariantCultureIgnoreCase))
+                    return outerRelativePath.Substring(innerFromOuter.Length).TrimStart('\\');
+                else
+                {
+                    string prefix = String.Join("\\", innerFromOuter.Split('\\').Select(_ => ".."));
+                    return Path.Combine(prefix, outerRelativePath);
+                }
             }
         }
     }

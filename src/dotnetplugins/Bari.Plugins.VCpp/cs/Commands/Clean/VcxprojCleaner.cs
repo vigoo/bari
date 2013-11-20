@@ -2,6 +2,7 @@
 using System.Linq;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Model;
 
 namespace Bari.Plugins.VCpp.Commands.Clean
 {
@@ -12,6 +13,8 @@ namespace Bari.Plugins.VCpp.Commands.Clean
     /// </summary>
     public class VcxprojCleaner : ICleanExtension
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (VcxprojCleaner));
+
         private readonly Suite suite;
 
         /// <summary>
@@ -28,23 +31,35 @@ namespace Bari.Plugins.VCpp.Commands.Clean
         /// </summary>
         public void Clean()
         {
-            foreach (var projectRoot in from module in suite.Modules
+            foreach (var project in from module in suite.Modules
                                         from project in module.Projects.Concat(module.TestProjects)
-                                        select project.RootDirectory)
+                                        select project)
             {
+                var projectRoot = project.RootDirectory;
                 var fsRoot = projectRoot.GetChildDirectory("cpp");
                 if (fsRoot != null)
                 {
                     foreach (var fsproj in fsRoot.Files.Where(
                         name => name.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase)))
                     {
+                        log.Debug("Deleting vxproj file");
                         fsRoot.DeleteFile(fsproj);
                     }
 
                     foreach (var fsproj in fsRoot.Files.Where(
                                 name => name.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)))
                     {
+                        log.Debug("Deleting vcxproj.user file");
                         fsRoot.DeleteFile(fsproj);
+                    }
+
+                    var filteredFiles = project.GetSourceSet("cpp").Files.Except(
+                        project.GetSourceSet("cpp").FilterCppSourceSet(fsRoot, suite.SuiteRoot).Files);
+
+                    foreach (var filteredFile in filteredFiles)
+                    {
+                        log.DebugFormat("Deleting generated file {0}", filteredFile);
+                        suite.SuiteRoot.DeleteFile(filteredFile);
                     }
                 }
             }

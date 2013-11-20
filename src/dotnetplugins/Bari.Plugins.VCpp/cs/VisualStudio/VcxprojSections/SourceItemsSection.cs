@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 {
     public class SourceItemsSection : SourceItemsSectionBase
     {
+        private readonly IFileSystemDirectory suiteRoot;
+
         public SourceItemsSection(Suite suite)
             : base(suite)
         {
+            suiteRoot = suite.SuiteRoot;
         }
 
         /// <summary>
@@ -33,9 +38,9 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         /// </summary>
         /// <param name="project">The project to get its source sets</param>
         /// <returns>Returns an enumeration of source sets, all belonging to the given project</returns>
-        protected override IEnumerable<SourceSet> GetSourceSets(Project project)
+        protected override IEnumerable<ISourceSet> GetSourceSets(Project project)
         {
-            return new[] { project.GetSourceSet("cpp") };
+            return new[] { project.GetSourceSet("cpp").FilterCppSourceSet(project.RootDirectory.GetChildDirectory("cpp"), suiteRoot) };
         }
 
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>

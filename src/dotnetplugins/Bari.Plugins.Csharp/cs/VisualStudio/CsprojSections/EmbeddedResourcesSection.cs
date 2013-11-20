@@ -23,7 +23,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// </summary>
         /// <param name="project">The project to get its source sets</param>
         /// <returns>Returns an enumeration of source sets, all belonging to the given project</returns>
-        protected override IEnumerable<SourceSet> GetSourceSets(Project project)
+        protected override IEnumerable<ISourceSet> GetSourceSets(Project project)
         {
             return new[] {project.GetSourceSet("resources")};
         }

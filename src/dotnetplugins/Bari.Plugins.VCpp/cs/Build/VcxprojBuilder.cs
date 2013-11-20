@@ -7,6 +7,7 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VCpp.VisualStudio;
 
 namespace Bari.Plugins.VCpp.Build
@@ -65,9 +66,14 @@ namespace Bari.Plugins.VCpp.Build
                 var deps = new List<IDependencies>();
 
                 if (project.HasNonEmptySourceSet("cpp"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cpp"),
-                        fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
-                              fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
+                {
+                    var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
+                        project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
+
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(filteredSourceSet,
+                                                                                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
+                                                                                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
+                }
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 

@@ -17,7 +17,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
         }
 
-        protected override IEnumerable<SourceSet> GetSourceSets(Project project)
+        protected override IEnumerable<ISourceSet> GetSourceSets(Project project)
         {
             return new[] {project.GetSourceSet("cs")};
         }

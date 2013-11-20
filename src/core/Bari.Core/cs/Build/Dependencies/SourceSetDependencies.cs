@@ -9,7 +9,7 @@ namespace Bari.Core.Build.Dependencies
     public class SourceSetDependencies: IDependencies
     {
         private readonly ISourceSetFingerprintFactory fingerprintFactory;
-        private readonly SourceSet sourceSet;
+        private readonly ISourceSet sourceSet;
         private readonly Func<string, bool> exclusions;
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="fingerprintFactory">The interface to create new fingerprint instances</param>
         /// <param name="sourceSet">The source set on which we are depending on</param>
         /// <param name="exclusions">Exclusion function, if returns true for a file name, it won't be taken into account as a dependency</param>
-        public SourceSetDependencies(ISourceSetFingerprintFactory fingerprintFactory, SourceSet sourceSet, Func<string, bool> exclusions = null)
+        public SourceSetDependencies(ISourceSetFingerprintFactory fingerprintFactory, ISourceSet sourceSet, Func<string, bool> exclusions = null)
         {
             this.fingerprintFactory = fingerprintFactory;
             this.sourceSet = sourceSet;

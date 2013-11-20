@@ -3,7 +3,7 @@
   <assemblyIdentity version="1.0.0.0" name="ComClient"/>
  <dependency>
     <dependentAssembly>
-      <assemblyIdentity type="win32" name="RegFreeComServer" version="1.0.0.0"/>
+      <assemblyIdentity type="win32" name="comserver" version="1.0.0.0"/>
     </dependentAssembly>
   </dependency>
 </asmv1:assembly>

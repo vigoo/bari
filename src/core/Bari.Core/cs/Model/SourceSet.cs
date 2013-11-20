@@ -9,7 +9,7 @@ namespace Bari.Core.Model
     /// <summary>
     /// A set of source files, belonging to the same set
     /// </summary>
-    public class SourceSet
+    public class SourceSet : ISourceSet
     {
         private readonly string type;
         private readonly ISet<SuiteRelativePath> files = new SortedSet<SuiteRelativePath>();
