@@ -226,9 +226,19 @@ modules:
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.FSRepository                        
-
+    - name: scripting
+      projects:
+        - name: Bari.Plugins.PythonScripts
+          references:
+            - gac://System
+            - gac://System.Xml
+            - nuget://IronPython
+            - nuget://log4net
+            - nuget://Ninject
+            - suite://core/Bari.Core 
 products:
     - name: full
       modules:
           - core
           - dotnetplugins
+          - scripting

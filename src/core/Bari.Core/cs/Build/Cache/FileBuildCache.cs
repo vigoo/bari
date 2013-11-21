@@ -240,7 +240,7 @@ namespace Bari.Core.Build.Cache
         /// <returns>Returns a valid directory name</returns>
         private static string GetCacheDirectoryName(BuildKey builder)
         {
-            return builder.ToString();
+            return builder.ToString().Replace("/", "___");
         }
     }
 }

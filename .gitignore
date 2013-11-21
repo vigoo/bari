@@ -31,6 +31,7 @@ systest/module-ref-test/cache
 systest/suite-ref-test/cache
 systest/runtime-ref-test/cache
 systest/regfree-com-server/cache
+systest/script-test/cache
 
 # Systest generated files
 hello.vcxproj
@@ -62,9 +63,11 @@ Bari.Plugins.FSRepository.csproj
 Bari.Plugins.FSRepository.Test.csproj
 Bari.Plugins.VsCore.csproj
 Bari.Plugins.VCpp.csproj
+Bari.Plugins.VCpp.Test.csproj
 Bari.Plugins.CodeContracts.csproj
 Bari.Plugins.Gallio.csproj
 Bari.Plugins.Nuget.csproj
 Bari.Plugins.Csharp.Test.csproj
+Bari.Plugins.PythonScripts.csproj
 bari.Test.csproj
 

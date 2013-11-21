@@ -109,3 +109,4 @@ SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acq
 ContentTest
 SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 $null
 SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
+SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world"

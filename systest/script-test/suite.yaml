@@ -1,0 +1,9 @@
+---
+suite:      bari systemtest script-test
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          
