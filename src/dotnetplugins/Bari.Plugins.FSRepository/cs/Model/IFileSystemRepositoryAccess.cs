@@ -1,4 +1,5 @@
-﻿using Bari.Core.Generic;
+﻿using System.Collections.Generic;
+using Bari.Core.Generic;
 
 namespace Bari.Plugins.FSRepository.Model
 {
@@ -28,5 +29,12 @@ namespace Bari.Plugins.FSRepository.Model
         /// <param name="targetDir">Target directory</param>
         /// <param name="targetFileName">Target file name</param>
         void Copy(string path, IFileSystemDirectory targetDir, string targetFileName);
+
+        /// <summary>
+        /// Lists all the files in the given directory inside the FS repository
+        /// </summary>
+        /// <param name="path">Directory path</param>
+        /// <returns>Returns the files in the given directory, all prefixed with the directory path</returns>
+        IEnumerable<string> ListFiles(string path);
     }
 }

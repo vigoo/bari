@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Bari.Core.Generic;
 
 namespace Bari.Plugins.FSRepository.Model
@@ -19,10 +21,15 @@ namespace Bari.Plugins.FSRepository.Model
         /// <returns>Returns <c>true</c> if the file exists.</returns>
         public bool Exists(string path)
         {
-            if (Path.IsPathRooted(path))
-                return File.Exists(path);
+            if (Path.GetFileName(path) == "*.*")
+                return Exists(Path.GetDirectoryName(path));
             else
-                return suiteRoot.Exists(path);
+            {
+                if (Path.IsPathRooted(path))
+                    return File.Exists(path);
+                else
+                    return suiteRoot.Exists(path);
+            }
         }
 
         /// <summary>
@@ -53,6 +60,16 @@ namespace Bari.Plugins.FSRepository.Model
             {
                 StreamOperations.Copy(source, target);
             }
+        }
+
+        /// <summary>
+        /// Lists all the files in the given directory inside the FS repository
+        /// </summary>
+        /// <param name="path">Directory path</param>
+        /// <returns>Returns the files in the given directory, all prefixed with the directory path</returns>
+        public IEnumerable<string> ListFiles(string path)
+        {
+            return GetDirectory(path+"\\").Files.Select(fname => Path.Combine(path, fname));
         }
     }
 }

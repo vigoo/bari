@@ -216,7 +216,8 @@ namespace Bari.Core.Generic
         /// <returns>Returns <c>true</c> if the file exists.</returns>
         public bool Exists(string relativePath)
         {
-            return File.Exists(Path.Combine(path, relativePath));
+            return File.Exists(Path.Combine(path, relativePath)) ||
+                   Directory.Exists(Path.Combine(path, relativePath));
         }
     }
 }

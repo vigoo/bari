@@ -1,4 +1,7 @@
-﻿using Bari.Core.Build;
+﻿using System.IO;
+using System.Linq;
+using Bari.Core.Build;
+using Bari.Core.Build.Dependencies;
 using Bari.Plugins.FSRepository.Model;
 
 namespace Bari.Plugins.FSRepository.Build.Dependencies
@@ -32,7 +35,16 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
         public IDependencyFingerprint CreateFingerprint()
         {
-            return fingerprintFactory.CreateFSRepositoryFingerprint(repository, path);
+            if (Path.GetFileName(path) == "*.*")
+            {
+                var files = repository.ListFiles(Path.GetDirectoryName(path));
+                return new CombinedFingerprint(                    
+                    files.Select(file => new FSRepositoryReferenceDependencies(fingerprintFactory, repository, file)));
+            }
+            else
+            {
+                return fingerprintFactory.CreateFSRepositoryFingerprint(repository, path);
+            }
         }
     }
 }

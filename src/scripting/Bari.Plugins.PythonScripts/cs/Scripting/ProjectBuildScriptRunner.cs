@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using IronPython.Compiler;
@@ -14,10 +15,14 @@ namespace Bari.Plugins.PythonScripts.Scripting
     public class ProjectBuildScriptRunner : IProjectBuildScriptRunner
     {
         private readonly IFileSystemDirectory targetRoot;
+        private readonly IReferenceBuilderFactory referenceBuilderFactory;
+        private readonly IBuildContextFactory buildContextFactory;
 
-        public ProjectBuildScriptRunner([TargetRoot] IFileSystemDirectory targetRoot)
+        public ProjectBuildScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory)
         {
             this.targetRoot = targetRoot;
+            this.referenceBuilderFactory = referenceBuilderFactory;
+            this.buildContextFactory = buildContextFactory;
         }
 
         /// <summary>
@@ -28,7 +33,15 @@ namespace Bari.Plugins.PythonScripts.Scripting
         /// The script's global scope has the following predefined variables set:
         /// - <c>project</c> refers to the project being built
         /// - <c>sourceSet</c> is the project's source set associated with the build script
+        /// - <c>targetRoot</c> is the root target directory where all the files are generated
         /// - <c>targetDir</c> is where the project's output should be built
+        /// </para>
+        /// <para>
+        /// A special global function <c>get_tool</c> is available which accepts a reference URI. 
+        /// The same protocols are supported as for references in the suite definition. The 
+        /// function's return value is the <c>targetDir</c> relative path of the directory
+        /// where the tool references
+        /// has been deployed.
         /// </para>
         /// </summary>
         /// <param name="project">The input project to build</param>
@@ -38,6 +51,14 @@ namespace Bari.Plugins.PythonScripts.Scripting
         public ISet<TargetRelativePath> Run(Project project, IBuildScript buildScript)
         {
             var engine = Python.CreateEngine();
+
+            // TODO!!!
+            engine.SetSearchPaths(new[]
+                {
+                    @"c:\Program Files (x86)\IronPython 2.7\lib\"
+                });
+            // TODO!!!
+            
             var runtime = engine.Runtime;
             try
             {
@@ -48,16 +69,19 @@ namespace Bari.Plugins.PythonScripts.Scripting
                                   project.GetSourceSet(buildScript.SourceSetName)
                                          .Files.Select(srp => (string) srp)
                                          .ToList());
+                scope.SetVariable("get_tool", (Func<string, string>)(uri => GetTool(uri, project)));
 
                 var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
                 var localTargetDir = targetDir as LocalFileSystemDirectory;
-                if (localTargetDir != null)
+                var localTargetRoot = targetRoot as LocalFileSystemDirectory;
+                if (localTargetDir != null && localTargetRoot != null)
                 {
+                    scope.SetVariable("targetRoot", localTargetRoot.AbsolutePath);
                     scope.SetVariable("targetDir", localTargetDir.AbsolutePath);
 
                     var pco = (PythonCompilerOptions)engine.GetCompilerOptions();
                     pco.Module |= ModuleOptions.Optimized;
-
+                    
                     var script = engine.CreateScriptSourceFromString(buildScript.Source, SourceCodeKind.File);
                     script.Compile(pco);
                     script.Execute(scope);
@@ -82,6 +106,22 @@ namespace Bari.Plugins.PythonScripts.Scripting
         {
             return new TargetRelativePath(
                 Path.Combine(targetRoot.GetRelativePath(innerRoot), path));
+        }
+
+        private string GetTool(string uri, Project project)
+        {
+            var referenceBuilder = referenceBuilderFactory.CreateReferenceBuilder(
+                new Reference(new Uri(uri), ReferenceType.Build), project);
+
+            var buildContext = buildContextFactory.CreateBuildContext();
+            buildContext.AddBuilder(referenceBuilder, new IBuilder[0]);
+            var files = buildContext.Run(referenceBuilder);
+            var firstFile = files.FirstOrDefault();
+
+            if (firstFile != null)
+                return Path.GetDirectoryName(firstFile);
+            else
+                return null;
         }
     }
 }

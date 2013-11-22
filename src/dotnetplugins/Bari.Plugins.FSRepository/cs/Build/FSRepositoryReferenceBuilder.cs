@@ -48,7 +48,8 @@ namespace Bari.Plugins.FSRepository.Build
         {
             get
             {
-                return String.Format("{0}.{1}", reference.Uri.Host, reference.Uri.PathAndQuery.Replace('/', '.'));
+                return String.Format("{0}.{1}", reference.Uri.Host, reference.Uri.PathAndQuery.Replace('/', '.'))
+                    .Replace("*.*", "___allfiles___");
             }
         }
 
@@ -75,6 +76,28 @@ namespace Bari.Plugins.FSRepository.Build
             var depDir = depsRoot.CreateDirectory(resolutionContext.DependencyName);
 
             string fileName = resolutionContext.FileName + "." + resolutionContext.Extension;
+
+            if (fileName == "*.*")
+                return DeployDirectoryContents(depDir);
+            else
+                return DeploySingleFile(depDir, fileName);
+        }
+
+        private ISet<TargetRelativePath> DeployDirectoryContents(IFileSystemDirectory depDir)
+        {
+            var result = new HashSet<TargetRelativePath>();
+            foreach (var file in repository.ListFiles(Path.GetDirectoryName(resolvedPath)))
+            {
+                var fileName = Path.GetFileName(file);
+                repository.Copy(file, depDir, fileName);
+                result.Add(new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(depDir), fileName)));
+            }
+
+            return result;
+        }
+
+        private ISet<TargetRelativePath> DeploySingleFile(IFileSystemDirectory depDir, string fileName)
+        {
             repository.Copy(resolvedPath, depDir, fileName);
 
             return new HashSet<TargetRelativePath>(new[]
