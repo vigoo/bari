@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using Bari.Core.Build;
 using Bari.Core.Build.Cache;
@@ -108,9 +109,9 @@ namespace Bari.Core.Test.Build.Cache
             cache.Store(T, fingerprint.Object,
                         new[]
                             {
-                                new TargetRelativePath("a"),
-                                new TargetRelativePath("b"),
-                                new TargetRelativePath("c")
+                                new TargetRelativePath(String.Empty, "a"),
+                                new TargetRelativePath(String.Empty, "b"),
+                                new TargetRelativePath(String.Empty, "c")
                             }, root);
 
             var target = new Mock<IFileSystemDirectory>();
@@ -128,9 +129,9 @@ namespace Bari.Core.Test.Build.Cache
             paths.Should().HaveCount(3).And.Contain(
                 new[]
                     {
-                        new TargetRelativePath("a"),
-                        new TargetRelativePath("b"),
-                        new TargetRelativePath("c")
+                        new TargetRelativePath(String.Empty, "a"),
+                        new TargetRelativePath(String.Empty, "b"),
+                        new TargetRelativePath(String.Empty, "c")
                     });
 
             target.Verify(t => t.CreateBinaryFile("a"), Times.Once());

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -23,7 +24,7 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
             var secC = new Mock<IMSBuildProjectSection>();
 
             var project = new Project("testproject", new Module("testmodule", new Suite(new TestFileSystemDirectory("test"))));
-            var refs = new[] {new TargetRelativePath("test")};
+            var refs = new[] { new TargetRelativePath(String.Empty, "test") };
 
             using (var output = new StringWriter())
             using (var versionOutput = new StringWriter())

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands.Helper;
@@ -157,15 +156,14 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         private void MergeOutputForProduct(Product product, ISet<TargetRelativePath> outputs)
         {            
             log.InfoFormat("Merging {0} files to product output directory {1}...",
-                outputs.Count,
-                new TargetRelativePath(product.Name));
+                outputs.Count, new TargetRelativePath(product.Name, String.Empty));
 
             var productOutput = targetRoot.GetChildDirectory(product.Name, createIfMissing: true);
 
             foreach (var sourcePath in outputs)
             {
                 using (var source = targetRoot.ReadBinaryFile(sourcePath))
-                using (var target = productOutput.CreateBinaryFile(Path.GetFileName(sourcePath)))
+                using (var target = productOutput.CreateBinaryFileWithDirectories(sourcePath.RelativePath))
                     StreamOperations.Copy(source, target);
             }
         }

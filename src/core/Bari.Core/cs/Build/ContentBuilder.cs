@@ -66,7 +66,6 @@ namespace Bari.Core.Build
         {
             var contents = project.GetSourceSet("content");
             var contentsDir = project.RootDirectory.GetChildDirectory("content");
-            var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
 
             var result = new HashSet<TargetRelativePath>();
             foreach (var sourcePath in contents.Files)
@@ -75,14 +74,27 @@ namespace Bari.Core.Build
 
                 var relativePath = suiteRoot.GetRelativePathFrom(contentsDir, sourcePath);
 
-                using (var source = contentsDir.ReadBinaryFile(relativePath))
-                using (var target = targetDir.CreateBinaryFile(relativePath))
-                    StreamOperations.Copy(source, target);
+                Copy(sourcePath, relativePath);
 
-                result.Add(new TargetRelativePath(Path.Combine(project.Module.Name, relativePath)));
+                result.Add(new TargetRelativePath(project.Module.Name, relativePath));
             }
 
             return result;
+        }
+
+        private void Copy(SuiteRelativePath sourcePath, string relativePath)
+        {
+            var relativeDir = Path.GetDirectoryName(relativePath);
+            var fileName = Path.GetFileName(relativePath);
+            var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true); 
+
+            IFileSystemDirectory realTargetDir = String.IsNullOrWhiteSpace(relativeDir)
+                ? targetDir
+                : targetDir.GetChildDirectory(relativeDir, createIfMissing: true);
+
+            using (var source = suiteRoot.ReadBinaryFile(sourcePath))
+            using (var target = realTargetDir.CreateBinaryFile(fileName))
+                StreamOperations.Copy(source, target);
         }
 
         public override string ToString()

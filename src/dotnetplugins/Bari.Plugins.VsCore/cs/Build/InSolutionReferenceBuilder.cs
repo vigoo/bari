@@ -55,7 +55,7 @@ namespace Bari.Plugins.VsCore.Build
             return new HashSet<TargetRelativePath>(
                 new[]
                     {
-                        new TargetRelativePath("SLN!"+Uid), 
+                        new TargetRelativePath(String.Empty, "SLN!"+Uid), 
                     });
         }
 

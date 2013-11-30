@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Exceptions;
@@ -46,7 +47,7 @@ namespace Bari.Plugins.VsCore.Build
             slnBuilder.AddToContext(context);
 
             // Building the solution
-            var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder, new TargetRelativePath(slnBuilder.Uid + ".sln"));
+            var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder, new TargetRelativePath(String.Empty, slnBuilder.Uid + ".sln"));
             msbuild.AddToContext(context);
 
             // Copying runtime dependencies
@@ -68,7 +69,7 @@ namespace Bari.Plugins.VsCore.Build
 
             if (runtimeDeps.Count > 0)
             {
-                return new MergingBuilder(runtimeDeps);
+                return new MergingBuilder(runtimeDeps.Concat(new [] {  msbuild }));
             }
             else
             {

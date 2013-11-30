@@ -90,7 +90,7 @@ namespace Bari.Plugins.FSRepository.Build
             {
                 var fileName = Path.GetFileName(file);
                 repository.Copy(file, depDir, fileName);
-                result.Add(new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(depDir), fileName)));
+                result.Add(new TargetRelativePath(targetRoot.GetRelativePath(depDir), fileName));
             }
 
             return result;
@@ -102,7 +102,7 @@ namespace Bari.Plugins.FSRepository.Build
 
             return new HashSet<TargetRelativePath>(new[]
                 {
-                    new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(depDir), fileName))
+                    new TargetRelativePath(targetRoot.GetRelativePath(depDir), fileName)
                 });
         }
 

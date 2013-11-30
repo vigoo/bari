@@ -216,7 +216,7 @@ namespace Bari.Plugins.VsCore.Build
                 generator.Generate();
             }
 
-            return new HashSet<TargetRelativePath> { new TargetRelativePath(slnPath) };
+            return new HashSet<TargetRelativePath> { new TargetRelativePath(String.Empty, slnPath) };
         }
 
         private IEnumerable<Project> GetInSolutionReferences(Project project)

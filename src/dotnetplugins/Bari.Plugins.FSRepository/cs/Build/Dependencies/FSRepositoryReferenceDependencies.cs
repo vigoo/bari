@@ -37,9 +37,11 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
         {
             if (Path.GetFileName(path) == "*.*")
             {
-                var files = repository.ListFiles(Path.GetDirectoryName(path));
-                return new CombinedFingerprint(                    
-                    files.Select(file => new FSRepositoryReferenceDependencies(fingerprintFactory, repository, file)));
+                var files = repository.ListFiles(Path.GetDirectoryName(path)).ToList();
+                if (files.Count == 1)
+                    return fingerprintFactory.CreateFSRepositoryFingerprint(repository, files[0]);
+                else
+                    return new CombinedFingerprint(files.Select(file => new FSRepositoryReferenceDependencies(fingerprintFactory, repository, file)));
             }
             else
             {

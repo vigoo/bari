@@ -82,12 +82,12 @@ namespace Bari.Plugins.Nuget.Build
             var depsRoot = targetRoot.CreateDirectory("deps");
             var depDir = depsRoot.CreateDirectory(pkgName);
 
-            var dlls = nuget.InstallPackage(pkgName, pkgVersion, depDir, "");
+            var files = nuget.InstallPackage(pkgName, pkgVersion, depDir, "", dllsOnly: reference.Type == ReferenceType.Build);
+            var relativeRoot = Path.Combine(targetRoot.GetRelativePath(depDir), files.Item1);
             return new HashSet<TargetRelativePath>(
-                from path in dlls
-                select new TargetRelativePath(
-                    Path.Combine(targetRoot.GetRelativePath(depDir),
-                                 ((string) path).TrimStart('\\'))));
+                from path in files.Item2
+                let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
+                select new TargetRelativePath(relativeRoot, relativePath));
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Bari.Core.Build.Dependencies.Protocol;
@@ -151,17 +152,25 @@ namespace Bari.Core.Build.Cache
                             string line;
                             while ((line = reader.ReadLine()) != null)
                             {
-                                var cacheFileName = idx.ToString(CultureInfo.InvariantCulture);
-
-                                // It is possible that only a file name (a virtual file) was cached without any contents:
-                                if (cacheDir.Exists(cacheFileName))
+                                var parts = line.Split(';');
+                                if (parts.Length == 2)
                                 {
-                                    using (var source = cacheDir.ReadBinaryFile(cacheFileName))
-                                    using (var target = targetRoot.CreateBinaryFileWithDirectories(line))
-                                        StreamOperations.Copy(source, target);
-                                }
+                                    var relativeRoot = parts[0];
+                                    var relativePath = parts[1];
+                                    var fullPath = Path.Combine(relativeRoot, relativePath);
 
-                                result.Add(new TargetRelativePath(line));
+                                    var cacheFileName = idx.ToString(CultureInfo.InvariantCulture);
+
+                                    // It is possible that only a file name (a virtual file) was cached without any contents:
+                                    if (cacheDir.Exists(cacheFileName))
+                                    {
+                                        using (var source = cacheDir.ReadBinaryFile(cacheFileName))
+                                        using (var target = targetRoot.CreateBinaryFileWithDirectories(fullPath))
+                                            StreamOperations.Copy(source, target);
+                                    }
+
+                                    result.Add(new TargetRelativePath(relativeRoot, relativePath));
+                                }
                                 idx++;
                             }
 
@@ -216,7 +225,7 @@ namespace Bari.Core.Build.Cache
                         }
                     }
 
-                    names.WriteLine(outputPath);
+                    names.WriteLine("{0};{1}", outputPath.RelativeRoot, outputPath.RelativePath);
                     idx++;
                 }
             }

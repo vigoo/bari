@@ -62,7 +62,7 @@ namespace Bari.Plugins.VsCore.Build
             // This reference builder would not be useful for other builders anyway:
             return new HashSet<TargetRelativePath>(new[]
                 {
-                    new TargetRelativePath("GAC!" + reference.Uri.Host)
+                    new TargetRelativePath(String.Empty, "GAC!" + reference.Uri.Host)
                 });
         }
 

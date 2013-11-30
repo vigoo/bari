@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Bari.Core.Build;
 using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
@@ -18,9 +19,9 @@ namespace Bari.Core.Test.Build.Cache
             // Setting up the test
             var resultSet = new HashSet<TargetRelativePath>
                 {
-                    new TargetRelativePath(@"a\b\c"), 
-                    new TargetRelativePath(@"c\d"), 
-                    new TargetRelativePath(@"e")
+                    new TargetRelativePath(String.Empty, @"a\b\c"), 
+                    new TargetRelativePath(String.Empty, @"c\d"), 
+                    new TargetRelativePath(String.Empty, @"e")
                 };
 
             var realBuilder = new Mock<IBuilder>();

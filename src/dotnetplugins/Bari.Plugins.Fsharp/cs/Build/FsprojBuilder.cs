@@ -149,10 +149,10 @@ namespace Bari.Plugins.Fsharp.Build
             return new HashSet<TargetRelativePath>(
                 new[]
                     {
-                        new TargetRelativePath(
+                        new TargetRelativePath(String.Empty,
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "fs", fsprojPath))),
-                        new TargetRelativePath(
+                        new TargetRelativePath(String.Empty,
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), fsversionPath)))
                     });

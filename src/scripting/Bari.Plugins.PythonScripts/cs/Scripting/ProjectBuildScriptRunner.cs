@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -14,6 +15,8 @@ namespace Bari.Plugins.PythonScripts.Scripting
 {
     public class ProjectBuildScriptRunner : IProjectBuildScriptRunner
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ProjectBuildScriptRunner));
+
         private readonly IFileSystemDirectory targetRoot;
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly IBuildContextFactory buildContextFactory;
@@ -52,12 +55,10 @@ namespace Bari.Plugins.PythonScripts.Scripting
         {
             var engine = Python.CreateEngine();
 
-            // TODO!!!
-            engine.SetSearchPaths(new[]
-                {
-                    @"c:\Program Files (x86)\IronPython 2.7\lib\"
-                });
-            // TODO!!!
+            var libRoot = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Lib");            
+            log.DebugFormat("Python lib root is {0}", libRoot);
+
+            engine.SetSearchPaths(new[] { libRoot });
             
             var runtime = engine.Runtime;
             try
@@ -104,8 +105,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
 
         private TargetRelativePath GetTargetRelativePath(IFileSystemDirectory innerRoot, string path)
         {
-            return new TargetRelativePath(
-                Path.Combine(targetRoot.GetRelativePath(innerRoot), path));
+            return new TargetRelativePath(targetRoot.GetRelativePath(innerRoot), path);
         }
 
         private string GetTool(string uri, Project project)

@@ -153,10 +153,24 @@ namespace Bari.Plugins.VCpp.Build
             return new HashSet<TargetRelativePath>(
                 new[]
                     {
-                        new TargetRelativePath(
+                        new TargetRelativePath(String.Empty,
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "cpp", vcxprojPath))),
                     });
+        }
+
+        /// <summary>
+        /// Gets the target relative path to the outmost directory in which the <see cref="Run"/> method generates
+        /// any files.
+        /// </summary>
+        public TargetRelativePath TargetRoot
+        {
+            get
+            {
+                return new TargetRelativePath(String.Empty,
+                    suite.SuiteRoot.GetRelativePathFrom(targetDir,
+                        Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory))));
+            }
         }
 
         /// <summary>

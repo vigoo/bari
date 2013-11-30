@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
@@ -64,22 +63,25 @@ namespace Bari.Core.Build
             var files = context.GetResults(sourceBuilder);
 
             var result = new HashSet<TargetRelativePath>();
+
             foreach (var sourcePath in files)
             {
                 log.DebugFormat("Copying result {0}...", sourcePath);
 
-                var fileName = Path.GetFileName(sourcePath);
-                if (fileName != null)
-                {
-                    using (var source = targetRoot.ReadBinaryFile(sourcePath))
-                    using (var target = targetDirectory.CreateBinaryFile(fileName))
-                        StreamOperations.Copy(source, target);
+                var relativePath = sourcePath.RelativePath;
+                Copy(sourcePath, relativePath);
 
-                    result.Add(new TargetRelativePath(Path.Combine(targetRoot.GetRelativePath(targetDirectory), fileName)));
-                }
+                result.Add(new TargetRelativePath(targetRoot.GetRelativePath(targetDirectory), relativePath));
             }
 
             return result;
+        }
+
+        private void Copy(TargetRelativePath sourcePath, string relativePath)
+        {
+            using (var source = targetRoot.ReadBinaryFile(sourcePath))
+            using (var target = targetDirectory.CreateBinaryFileWithDirectories(relativePath))
+                StreamOperations.Copy(source, target);
         }
 
         public override string ToString()
