@@ -2,7 +2,7 @@
 
 import os
 
-genExe = targetRoot+"\\"+get_tool("fsrepo://MessageGenerator/*.*")+"\\MessageGenerator.exe"
+genExe = get_tool("fsrepo://MessageGenerator/*.*", "MessageGenerator.exe")
 
 for file in sourceSet:
 	print "Script is processing " + file
@@ -12,7 +12,5 @@ for file in sourceSet:
 		cmd = genExe + ' "' + targetDir+'\\message.txt" "' + msg + '"'
 		print cmd
 		os.system(cmd)
-#		with open(targetDir+"/message.txt", "w") as out:
-#			out.write(msg)
 
 results = ["message.txt"]

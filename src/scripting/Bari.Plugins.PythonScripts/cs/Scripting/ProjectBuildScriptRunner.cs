@@ -40,10 +40,10 @@ namespace Bari.Plugins.PythonScripts.Scripting
         /// - <c>targetDir</c> is where the project's output should be built
         /// </para>
         /// <para>
-        /// A special global function <c>get_tool</c> is available which accepts a reference URI. 
+        /// A special global function <c>get_tool</c> is available which accepts a reference URI and
+        /// a file name. 
         /// The same protocols are supported as for references in the suite definition. The 
-        /// function's return value is the <c>targetDir</c> relative path of the directory
-        /// where the tool references
+        /// function's return value is the absolute path of the given file, where the tool
         /// has been deployed.
         /// </para>
         /// </summary>
@@ -70,7 +70,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
                                   project.GetSourceSet(buildScript.SourceSetName)
                                          .Files.Select(srp => (string) srp)
                                          .ToList());
-                scope.SetVariable("get_tool", (Func<string, string>)(uri => GetTool(uri, project)));
+                scope.SetVariable("get_tool", (Func<string, string, string>)((uri, fname) => GetTool(uri, fname, project)));
 
                 var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
                 var localTargetDir = targetDir as LocalFileSystemDirectory;
@@ -108,7 +108,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             return new TargetRelativePath(targetRoot.GetRelativePath(innerRoot), path);
         }
 
-        private string GetTool(string uri, Project project)
+        private string GetTool(string uri, string fileName, Project project)
         {
             var referenceBuilder = referenceBuilderFactory.CreateReferenceBuilder(
                 new Reference(new Uri(uri), ReferenceType.Build), project);
@@ -116,10 +116,11 @@ namespace Bari.Plugins.PythonScripts.Scripting
             var buildContext = buildContextFactory.CreateBuildContext();
             buildContext.AddBuilder(referenceBuilder, new IBuilder[0]);
             var files = buildContext.Run(referenceBuilder);
-            var firstFile = files.FirstOrDefault();
+            var file = files.FirstOrDefault(f => Path.GetFileName(f).Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
+            var localTargetRoot = (LocalFileSystemDirectory)targetRoot;
 
-            if (firstFile != null)
-                return Path.GetDirectoryName(firstFile);
+            if (file != null)
+                return Path.Combine(localTargetRoot.AbsolutePath, file);
             else
                 return null;
         }
