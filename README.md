@@ -25,5 +25,5 @@ The project is already usable for smaller projects, but there is no documentatio
 
 Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. 
 
-The [latest version is 0.6](https://github.com/vigoo/bari/releases/tag/0.6).
+The [latest version is 0.7](https://github.com/vigoo/bari/releases/tag/0.7).
 
