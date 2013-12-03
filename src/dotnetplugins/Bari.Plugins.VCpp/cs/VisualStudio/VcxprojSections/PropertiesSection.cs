@@ -26,6 +26,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
             var platform = platformManagement.GetDefaultPlatform(project);
+            var cliMode = GetCLIMode(project);
 
             writer.WriteStartElement("ItemGroup");
             writer.WriteAttributeString("Label", "ProjectConfigurations");
@@ -39,7 +40,18 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             writer.WriteStartElement("PropertyGroup");
             writer.WriteAttributeString("Label", "Globals");
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
-            writer.WriteElementString("Keyword", "Win32Proj");
+
+            if (cliMode == CppCliMode.Disabled)
+            {
+                writer.WriteElementString("Keyword", "Win32Proj");
+            }
+            else
+            {
+                writer.WriteElementString("TargetFrameworkVersion", "v4.0");
+                writer.WriteElementString("Keyword", "ManagedCProj");
+                writer.WriteElementString("RootNamespace", project.Name);
+            }
+
             writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
@@ -90,9 +102,16 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private void WriteHighLevelConfigurationSpecificPart(XmlWriter writer, Project project)
         {
-            writer.WriteElementString("ConfigurationType", GetConfigurationType(project)); 
+            writer.WriteElementString("ConfigurationType", GetConfigurationType(project));
             writer.WriteElementString("UseDebugLibraries", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.DebugGoal.Name)));
             writer.WriteElementString("PlatformToolset", "v110");
+
+            var cliMode = GetCLIMode(project);
+            if (cliMode != CppCliMode.Disabled)
+            {
+                writer.WriteElementString("CLRSupport", cliMode.ToString().Replace("Enabled", "true"));
+            }
+
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
             writer.WriteElementString("CharacterSet", "Unicode");
 
@@ -118,6 +137,15 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private CppCliMode GetCLIMode(Project project)
+        {
+            VCppProjectCLIParameters cliParameters = project.HasParameters("cli")
+                ? project.GetParameters<VCppProjectCLIParameters>("cli")
+                : new VCppProjectCLIParameters();
+
+            return cliParameters.Mode;
         }
 
         private string GetConfigurationType(Project project)
@@ -149,11 +177,10 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         private void WriteCompilerParameters(XmlWriter writer, Project project)
         {
             VCppProjectCompilerParameters compilerParameters = project.HasParameters("cpp-compiler")
-                                                                   ? project.GetParameters<VCppProjectCompilerParameters>(
-                                                                       "cpp-compiler")
+                                                                   ? project.GetParameters<VCppProjectCompilerParameters>("cpp-compiler")
                                                                    : new VCppProjectCompilerParameters(Suite);
 
-            compilerParameters.FillProjectSpecificMissingInfo(project, targetDir as LocalFileSystemDirectory);
+            compilerParameters.FillProjectSpecificMissingInfo(project, GetCLIMode(project), targetDir as LocalFileSystemDirectory);
 
             writer.WriteStartElement("ClCompile");
             compilerParameters.ToVcxprojProperties(writer);

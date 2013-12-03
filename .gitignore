@@ -32,6 +32,7 @@ systest/suite-ref-test/cache
 systest/runtime-ref-test/cache
 systest/regfree-com-server/cache
 systest/script-test/cache
+systest/mixed-cpp-cli/cache
 
 # Systest generated files
 hello.vcxproj

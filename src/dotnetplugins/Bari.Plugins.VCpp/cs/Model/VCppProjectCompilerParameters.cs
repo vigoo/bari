@@ -346,13 +346,40 @@ namespace Bari.Plugins.VCpp.Model
             WholeProgramOptimization = suite.ActiveGoal.Has(Suite.ReleaseGoal.Name);
         }
 
-        public void FillProjectSpecificMissingInfo(Project project, LocalFileSystemDirectory targetDir)
+        public void FillProjectSpecificMissingInfo(Project project, CppCliMode cliMode, LocalFileSystemDirectory targetDir)
         {
             if (targetDir != null)
             {
                 PDBFileName = string.Format("{0}\\{1}.{2}.pdb",
                                             targetDir.AbsolutePath,
                                             project.Module.Name, project.Name);
+            }
+
+            if (cliMode != CppCliMode.Disabled)
+            {
+                // Fixing some settings to support C++/CLI mode
+                switch (cliMode)
+                {
+                    case CppCliMode.Enabled:
+                        CompileAsManaged = ManagedCppType.Managed;
+                        break;
+                    case CppCliMode.Pure:
+                        CompileAsManaged = ManagedCppType.Pure;
+                        break;
+                    case CppCliMode.Safe:
+                        CompileAsManaged = ManagedCppType.Safe;
+                        break;
+                    case CppCliMode.OldSyntax:
+                        CompileAsManaged = ManagedCppType.OldSyntax;
+                        break;
+                }
+
+                if (DebugInformationFormat == DebugInformationFormat.EditAndContinue)
+                    DebugInformationFormat = DebugInformationFormat.ProgramDatabase;
+
+                MinimalRebuild = false;
+                SmallerTypeCheck = false;
+                FloatingPointExceptions = false;
             }
         }
 

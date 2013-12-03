@@ -1,0 +1,14 @@
+---
+suite:      bari systemtest mixed-cpp-cli
+
+modules:
+    - name: Module1
+      projects:
+        - name: hello
+          type: executable
+          references:
+            - gac://System
+          cli: Enabled
+          cpp-linker:
+            subsystem: Console
+

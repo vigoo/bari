@@ -39,9 +39,11 @@ namespace Bari.Plugins.VCpp
             Bind<IYamlProjectParametersLoader>().To<VCppATLParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppMIDLParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppManifestParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<VCppCLIParametersLoader>();
 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<VcxprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<VcxprojGenerator>();
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<VcxprojGenerator>().WithConstructorArgument("sourceSetName", "cpp"); ; ;
 
             var oldPlatformManagement = Kernel.Get<IProjectPlatformManagement>();
             Rebind<IProjectPlatformManagement>().ToConstant(new CppProjectPlatformManagement(oldPlatformManagement)).InSingletonScope();
