@@ -380,6 +380,11 @@ namespace Bari.Plugins.VCpp.Model
                 MinimalRebuild = false;
                 SmallerTypeCheck = false;
                 FloatingPointExceptions = false;
+
+                if (project.Type == ProjectType.StaticLibrary)
+                {
+                    Defines = Defines.Concat(new[] {"_LIB"}).ToArray();
+                }
             }
         }
 

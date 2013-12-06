@@ -44,6 +44,7 @@ namespace Bari.Plugins.VCpp
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<VcxprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<VcxprojGenerator>();
             Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<VcxprojGenerator>().WithConstructorArgument("sourceSetName", "cpp"); ; ;
+            Bind<IMSBuildProjectSection>().To<StaticLibraryReferencesSection>().WhenInjectedInto<VcxprojGenerator>();
 
             var oldPlatformManagement = Kernel.Get<IProjectPlatformManagement>();
             Rebind<IProjectPlatformManagement>().ToConstant(new CppProjectPlatformManagement(oldPlatformManagement)).InSingletonScope();

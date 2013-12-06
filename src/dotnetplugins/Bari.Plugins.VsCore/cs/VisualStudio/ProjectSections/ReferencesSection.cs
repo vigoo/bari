@@ -50,14 +50,18 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
 
                     var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
 
-                    writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(project));
-                    writer.WriteStartElement("Reference");
-                    writer.WriteAttributeString("Include", projectName);                        
-                    writer.WriteElementString("HintPath", 
-                        ToProjectRelativePath(project,
-                        Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name, referredProject.Name + ".dll"), sourceSetName));
-                    writer.WriteElementString("SpecificVersion", "False");
-                    writer.WriteEndElement();
+                    if (referredProject.Type == ProjectType.Library)
+                    {
+                        writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(project));
+                        writer.WriteStartElement("Reference");
+                        writer.WriteAttributeString("Include", projectName);
+                        writer.WriteElementString("HintPath",
+                            ToProjectRelativePath(project,
+                                Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name,
+                                    referredProject.Name + ".dll"), sourceSetName));
+                        writer.WriteElementString("SpecificVersion", "False");
+                        writer.WriteEndElement();
+                    }
                 }
                 else
                 {

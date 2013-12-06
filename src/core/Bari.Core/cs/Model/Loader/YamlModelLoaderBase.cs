@@ -235,6 +235,11 @@ namespace Bari.Core.Model.Loader
                 case "executable":
                     project.Type = ProjectType.Executable;
                     break;
+                case "static-library":
+                case "staticlibrary":
+                case "static":
+                    project.Type = ProjectType.StaticLibrary;
+                    break;
                 default:
                     project.Type = ProjectType.Library;
                     break;

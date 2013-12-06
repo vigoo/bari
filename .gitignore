@@ -33,6 +33,7 @@ systest/runtime-ref-test/cache
 systest/regfree-com-server/cache
 systest/script-test/cache
 systest/mixed-cpp-cli/cache
+systest/static-lib-test/cache
 
 # Systest generated files
 hello.vcxproj
@@ -48,6 +49,7 @@ comserver_i.c
 comserver_p.c
 dlldata.c
 comclient.csproj
+staticlib.vcxproj
 
 # Systest results
 systest/logs

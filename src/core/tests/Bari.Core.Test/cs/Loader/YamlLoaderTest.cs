@@ -144,7 +144,8 @@ modules:
     - name: Module2
     - name: Module3
       projects:
-        - Project31
+        - name: Project31
+          type: static-library
         - name: Project32
           version: 3.0
           type: executable
@@ -168,7 +169,7 @@ modules:
             suite.GetModule("Module3").Projects.Should().Contain(p => p.Name == "Project32");
 
             suite.GetModule("Module1").GetProject("Project11").Type.Should().Be(ProjectType.Library);
-            suite.GetModule("Module3").GetProject("Project31").Type.Should().Be(ProjectType.Library);
+            suite.GetModule("Module3").GetProject("Project31").Type.Should().Be(ProjectType.StaticLibrary);
             suite.GetModule("Module3").GetProject("Project32").Type.Should().Be(ProjectType.Executable);
 
             suite.GetModule("Module1").GetProject("Project11").Version.Should().BeNull();

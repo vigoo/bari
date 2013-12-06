@@ -157,6 +157,8 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                     return "Application";
                 case ProjectType.Library:
                     return "DynamicLibrary";
+                case ProjectType.StaticLibrary:
+                    return "StaticLibrary";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

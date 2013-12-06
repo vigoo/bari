@@ -13,6 +13,11 @@
         /// <summary>
         /// Project is built to a DLL
         /// </summary>
-        Library
+        Library,
+
+        /// <summary>
+        /// Project is a static library
+        /// </summary>
+        StaticLibrary
     }
 }
