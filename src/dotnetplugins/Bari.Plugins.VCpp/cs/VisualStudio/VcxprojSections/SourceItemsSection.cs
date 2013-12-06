@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VCpp.Model;
+using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
@@ -10,10 +12,12 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
     public class SourceItemsSection : SourceItemsSectionBase
     {
         private readonly IFileSystemDirectory suiteRoot;
+        private readonly IProjectPlatformManagement platformManagement;
 
-        public SourceItemsSection(Suite suite)
+        public SourceItemsSection(Suite suite, IProjectPlatformManagement platformManagement)
             : base(suite)
         {
+            this.platformManagement = platformManagement;
             suiteRoot = suite.SuiteRoot;
         }
 
@@ -61,8 +65,29 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         /// Source set name where the project file is placed
         /// </summary>
         protected override string ProjectSourceSetName
-        {
+        {        
             get { return "cpp"; }
+        }
+
+        /// <summary>
+        /// Provides the ability to add extra content to a given project source file
+        /// </summary>
+        /// <param name="writer">The project file writer</param>
+        /// <param name="project">Project model</param>
+        /// <param name="projectRelativePath">Project relative path of the source item</param>
+        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        {
+            base.WriteAdditionalOptions(writer, project, projectRelativePath);
+
+            if (projectRelativePath == "stdafx.cpp")
+            {
+                var platform = platformManagement.GetDefaultPlatform(project);
+
+                writer.WriteStartElement("PrecompiledHeader");
+                writer.WriteAttributeString("Condition", string.Format("'$(Configuration)|$(Platform)' == 'Bari|{0}' ", platform));
+                writer.WriteString("Create");
+                writer.WriteEndElement();
+            }
         }
     }
 }

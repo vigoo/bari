@@ -46,11 +46,23 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                         if (ProjectSourceSetName != sourceSet.Type)
                             writer.WriteElementString("LogicalName", logicalPath.Replace('\\', '.'));
 
+                        WriteAdditionalOptions(writer, project, relativePath);
+
                         writer.WriteEndElement();
                     }
                 }
             }
             writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Provides the ability to add extra content to a given project source file
+        /// </summary>
+        /// <param name="writer">The project file writer</param>
+        /// <param name="project">Project model</param>
+        /// <param name="projectRelativePath">Project relative path of the source item</param>
+        protected virtual void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        {
         }
 
         /// <summary>

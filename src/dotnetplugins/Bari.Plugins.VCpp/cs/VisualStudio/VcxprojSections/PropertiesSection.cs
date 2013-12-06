@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -184,6 +185,10 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
             writer.WriteStartElement("ClCompile");
             compilerParameters.ToVcxprojProperties(writer);
+
+            if (project.GetSourceSet("cpp").Files.Any(file => Path.GetFileName(file) == "stdafx.cpp"))
+                writer.WriteElementString("PrecompiledHeader", "Use");
+
             writer.WriteEndElement();
         }
 
