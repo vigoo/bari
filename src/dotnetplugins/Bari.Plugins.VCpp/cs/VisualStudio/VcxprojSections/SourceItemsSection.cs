@@ -33,6 +33,8 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             var ext = Path.GetExtension(file).ToLowerInvariant();
             if (ext == ".h" || ext == ".hpp" || ext == ".h++")
                 return "CLInclude";
+            else if (ext == ".rc")
+                return "ResourceCompile";
             else
                 return "CLCompile";
         }

@@ -34,6 +34,7 @@ systest/regfree-com-server/cache
 systest/script-test/cache
 systest/mixed-cpp-cli/cache
 systest/static-lib-test/cache
+systest/cpp-rc-support/cache
 
 # Systest generated files
 hello.vcxproj
