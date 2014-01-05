@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
@@ -42,6 +44,42 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         protected override string ProjectSourceSetName
         {
             get { return "cs"; }
+        }
+
+        /// <summary>
+        /// Gets the element name for a given compilation item.
+        /// 
+        /// <para>The default implementation always returns <c>Compile</c></para>
+        /// </summary>
+        /// <param name="file">File name from the source set</param>
+        /// <returns>Returns a valid XML element name</returns>
+        protected override string GetElementNameFor(string file)
+        {
+            var ext = Path.GetExtension(file).ToLowerInvariant();
+            if (ext == ".xaml")
+                return "Page";
+            else
+                return base.GetElementNameFor(file);
+        }
+
+        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        {
+            // Extra options for XAML pages
+            var ext = Path.GetExtension(projectRelativePath).ToLowerInvariant();
+            if (ext == ".xaml")
+            {
+                writer.WriteElementString("SubType", "Designer");
+                writer.WriteElementString("Generator", "MSBuild:Compile");
+            }
+
+            // Extra options for XAML page code-behind files
+            if (projectRelativePath.ToLowerInvariant().EndsWith(".xaml.cs"))
+            {
+                writer.WriteElementString("DependentUpon",
+                    projectRelativePath.Substring(0, projectRelativePath.Length - 3));
+            }
+
+            base.WriteAdditionalOptions(writer, project, projectRelativePath);
         }
     }
 }
