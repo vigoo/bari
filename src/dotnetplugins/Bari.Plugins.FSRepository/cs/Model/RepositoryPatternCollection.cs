@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.FSRepository.Model
@@ -11,6 +10,8 @@ namespace Bari.Plugins.FSRepository.Model
     /// </summary>
     public class RepositoryPatternCollection: IProjectParameters
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (RepositoryPatternCollection));
+
         private readonly IList<RepositoryPattern> patterns = new List<RepositoryPattern>();
         private readonly IFileSystemRepositoryAccess fsAccess;
 
@@ -53,8 +54,21 @@ namespace Bari.Plugins.FSRepository.Model
         {
             Contract.Requires(context != null);
 
-            return patterns.Select(pattern => pattern.Resolve(context))
-                           .FirstOrDefault(res => res != null && fsAccess.Exists(res));
+            foreach (RepositoryPattern pattern in patterns)
+            {
+                string res = pattern.Resolve(context);
+
+                if (res != null)
+                {
+                    log.DebugFormat("Trying resolved FS repository path: {0}", res);
+
+                    if (fsAccess.Exists(res))
+                        return res;
+                    else
+                        log.DebugFormat("FS repository path `{0}` is invalid", res);
+                }
+            }
+            return null;
         }
     }
 }

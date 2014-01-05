@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Bari.Core.Build;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.FSRepository.Build.Dependencies;
@@ -126,6 +127,9 @@ namespace Bari.Plugins.FSRepository.Build
             var repositories = suite.GetFSRepositories();
             resolutionContext = new UriBasedPatternResolutionContext(uri);
             resolvedPath = repositories.Resolve(resolutionContext);
+
+            if (resolvedPath == null)
+                throw new InvalidReferenceException("Could not resolve FS repository dependency: " + uri);
         }
 
         /// <summary>
