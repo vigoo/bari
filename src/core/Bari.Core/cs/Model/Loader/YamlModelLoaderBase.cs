@@ -30,7 +30,7 @@ namespace Bari.Core.Model.Loader
 
             this.suiteFactory = suiteFactory;
             this.parametersLoaders = parametersLoaders;
-            
+
             parser = new YamlParser();
         }
 
@@ -202,10 +202,60 @@ namespace Bari.Core.Model.Loader
                     {
                         SetProjectReferences(project, ((YamlSequenceNode)pair.Value).Children);
                     }
+                    else if (new YamlScalarNode("postprocessors").Equals(pair.Key) &&
+                             pair.Value is YamlMappingNode)
+                    {
+                        // skipping
+                    }
                     else
                     {
                         TryAddParameters(project, pair.Key, pair.Value);
                     }
+                }
+            }
+
+            // Adding post processors
+            SetProjectPostProcessors(project, projectNode);
+        }
+
+        private void SetProjectPostProcessors(Project project, YamlNode postProcessorDefinitions)
+        {
+            Contract.Requires(project != null);
+            Contract.Requires(postProcessorDefinitions != null);
+
+            foreach (var pair in parser.EnumerateNamedNodesOf(postProcessorDefinitions, "postprocessors"))
+            {
+                var name = pair.Key;
+                var value = pair.Value;
+
+                PostProcessorId ppid;
+                if (value == null)
+                {
+                    ppid = name;
+                }
+                else if (value is YamlMappingNode)
+                {
+                    ppid = parser.GetScalarValue(value, "type", "Post processor type is not specified");
+                }
+                else
+                {
+                    ppid = null;
+                }
+
+                if (ppid != null)
+                {
+                    var loader = parametersLoaders.FirstOrDefault(l => l.Supports(ppid.AsString));
+                    
+                    IProjectParameters param = null;
+                    if (loader != null)
+                    {
+                        param = loader.Load(ppid.AsString, value, parser);                        
+                    }
+
+                    project.AddPostProcessor(new PostProcessDefinition(name, ppid)
+                    {
+                        Parameters = param
+                    });
                 }
             }
         }
@@ -214,7 +264,7 @@ namespace Bari.Core.Model.Loader
         {
             Contract.Requires(project != null);
             Contract.Requires(referenceNodes != null);
-            
+
             foreach (var referenceNode in referenceNodes)
             {
                 var reference = referenceLoader.LoadReference(referenceNode);

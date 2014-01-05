@@ -17,6 +17,7 @@ namespace Bari.Core.Model
         private readonly IDictionary<string, SourceSet> sourceSets = new Dictionary<string, SourceSet>();
         private readonly ISet<Reference> references = new HashSet<Reference>();
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
+        private readonly IDictionary<string, PostProcessDefinition> postProcessDefinitions = new Dictionary<string, PostProcessDefinition>();
         private ProjectType type = ProjectType.Library;
         private string version;
 
@@ -95,6 +96,14 @@ namespace Bari.Core.Model
 
                 return references;
             }
+        }
+
+        /// <summary>
+        /// Gets the postprocessors associated with this project
+        /// </summary>
+        public IEnumerable<PostProcessDefinition> PostProcessors
+        {
+            get { return postProcessDefinitions.Values; }
         }
 
         /// <summary>
@@ -202,6 +211,25 @@ namespace Bari.Core.Model
         public void AddParameters(string paramsName, IProjectParameters projectParameters)
         {
             parameters.Add(paramsName, projectParameters);
+        }
+
+        /// <summary>
+        /// Adds a new postprocessor to this project
+        /// </summary>
+        /// <param name="postProcessDefinition">Post processor type and parameters</param>
+        public void AddPostProcessor(PostProcessDefinition postProcessDefinition)
+        {
+            postProcessDefinitions.Add(postProcessDefinition.Name, postProcessDefinition);
+        }
+
+        /// <summary>
+        /// Gets a registered post processor by its name
+        /// </summary>
+        /// <param name="key">Name of the post processor</param>
+        /// <returns>Returns the post processor definition</returns>
+        public PostProcessDefinition GetPostProcessor(string key)
+        {
+            return postProcessDefinitions[key];
         }
     }
 }
