@@ -84,7 +84,8 @@ namespace Bari.Plugins.Nuget.Tools
             var lib40 = libRoot.GetDirectories("net40").FirstOrDefault();
             var lib40client = libRoot.GetDirectories("net40-client").FirstOrDefault();
             var lib35 = libRoot.GetDirectories("net35").FirstOrDefault();
-            var lib20 = libRoot.GetDirectories("net20").FirstOrDefault();
+            var lib20 = libRoot.GetDirectories("net20").FirstOrDefault() ??
+                        libRoot.GetDirectories("20").FirstOrDefault();
 
             if (lib40full != null)
                 result.AddRange(GetDllsIn(localRoot, lib40full));
