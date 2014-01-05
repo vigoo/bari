@@ -5,12 +5,26 @@ namespace Bari.Core.Model.Loader
 {
     public class ReferenceLoader
     {
-        public Reference LoadReference(YamlNode node)
+        public Reference[] LoadReference(YamlNode node)
         {
             var scalar = node as YamlScalarNode;
             if (scalar != null)
             {
-                return new Reference(new Uri(scalar.Value), ReferenceType.Build);
+                var refUri = new Uri(scalar.Value);
+
+                if (refUri.Scheme == "alias")
+                {
+                    // Reference aliases are a core functionality and have special support here:                
+                    return new[]
+                    {
+                        new Reference(refUri, ReferenceType.Build),
+                        new Reference(refUri, ReferenceType.Runtime)
+                    };
+                }
+                else
+                {
+                    return new[] {new Reference(refUri, ReferenceType.Build)};
+                }
             }
 
             var mapping = node as YamlMappingNode;
@@ -22,12 +36,12 @@ namespace Bari.Core.Model.Loader
                 if (mapping.Children.ContainsKey(new YamlScalarNode("type")))
                 {
                     Enum.TryParse(((YamlScalarNode) mapping.Children[new YamlScalarNode("type")]).Value, out type);
-                }
+                }                
 
-                return new Reference(new Uri(uri), type);
+                return new[] {new Reference(new Uri(uri), type)};
             }
 
-            return null;
+            return new Reference[0];
         }
     }
 }

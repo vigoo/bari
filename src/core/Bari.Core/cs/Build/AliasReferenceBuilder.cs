@@ -55,7 +55,7 @@ namespace Bari.Core.Build
         /// </summary>
         public string Uid
         {
-            get { return "alias." + reference.Uri.Host; }
+            get { return string.Format("alias.{0}__{1}", reference.Uri.Host, reference.Type); }
         }
 
         /// <summary>
@@ -72,10 +72,13 @@ namespace Bari.Core.Build
 
                 foreach (var childRef in alias.References)
                 {
-                    var builder = referenceBuilderFactory.CreateReferenceBuilder(childRef, project);
-                    builder.AddToContext(context);
+                    if (childRef.Type == reference.Type)
+                    {
+                        var builder = referenceBuilderFactory.CreateReferenceBuilder(childRef, project);
+                        builder.AddToContext(context);
 
-                    builders.Add(builder);
+                        builders.Add(builder);
+                    }
                 }
 
                 context.AddBuilder(this, builders);

@@ -67,17 +67,13 @@ namespace Bari.Core.Model.Loader
             {
                 foreach (var referenceNode in seq.Children)
                 {
-                    var reference = referenceLoader.LoadReference(referenceNode);
-                    if (reference != null)
-                    {
+                    foreach (var reference in referenceLoader.LoadReference(referenceNode))
                         references.Add(reference);
-                    }
                 }
             }
             else
             {
-                var reference = referenceLoader.LoadReference(value);
-                if (reference != null)
+                foreach (var reference in referenceLoader.LoadReference(value))
                     references.Add(reference);
             }
 

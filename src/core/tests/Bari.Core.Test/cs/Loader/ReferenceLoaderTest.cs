@@ -18,8 +18,9 @@ namespace Bari.Core.Test.Loader
             var r = loader.LoadReference(new YamlScalarNode("ref://test/x.dll"));
 
             r.Should().NotBeNull();
-            r.Uri.Should().Be(new Uri("ref://test/x.dll"));
-            r.Type.Should().Be(ReferenceType.Build);
+            r.Should().HaveCount(1);
+            r[0].Uri.Should().Be(new Uri("ref://test/x.dll"));
+            r[0].Type.Should().Be(ReferenceType.Build);
         }
 
         [Test]
@@ -34,8 +35,9 @@ namespace Bari.Core.Test.Loader
                         }));
 
             r.Should().NotBeNull();
-            r.Uri.Should().Be(new Uri("ref://test/x.dll"));
-            r.Type.Should().Be(ReferenceType.Build);
+            r.Should().HaveCount(1);
+            r[0].Uri.Should().Be(new Uri("ref://test/x.dll"));
+            r[0].Type.Should().Be(ReferenceType.Build);
         }
 
         [Test]
@@ -51,8 +53,9 @@ namespace Bari.Core.Test.Loader
                         }));
 
             r.Should().NotBeNull();
-            r.Uri.Should().Be(new Uri("ref://test/x.dll"));
-            r.Type.Should().Be(ReferenceType.Build);
+            r.Should().HaveCount(1);
+            r[0].Uri.Should().Be(new Uri("ref://test/x.dll"));
+            r[0].Type.Should().Be(ReferenceType.Build);
         }
 
         [Test]
@@ -68,8 +71,23 @@ namespace Bari.Core.Test.Loader
                         }));
 
             r.Should().NotBeNull();
-            r.Uri.Should().Be(new Uri("ref://test/x.dll"));
-            r.Type.Should().Be(ReferenceType.Runtime);
+            r.Should().HaveCount(1);
+            r[0].Uri.Should().Be(new Uri("ref://test/x.dll"));
+            r[0].Type.Should().Be(ReferenceType.Runtime);
+        }
+
+        [Test]
+        public void AliasIsSpecialCase()
+        {
+            var loader = new ReferenceLoader();
+            var r = loader.LoadReference(new YamlScalarNode("alias://test"));
+
+            r.Should().NotBeNull();
+            r.Should().HaveCount(2);
+            r[0].Uri.Should().Be(new Uri("alias://test"));
+            r[0].Type.Should().Be(ReferenceType.Build);
+            r[1].Uri.Should().Be(new Uri("alias://test"));
+            r[1].Type.Should().Be(ReferenceType.Runtime);
         }
     }
 }

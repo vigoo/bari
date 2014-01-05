@@ -267,11 +267,8 @@ namespace Bari.Core.Model.Loader
 
             foreach (var referenceNode in referenceNodes)
             {
-                var reference = referenceLoader.LoadReference(referenceNode);
-                if (reference != null)
-                {
+                foreach (var reference in referenceLoader.LoadReference(referenceNode))
                     project.AddReference(reference);
-                }
             }
         }
 
