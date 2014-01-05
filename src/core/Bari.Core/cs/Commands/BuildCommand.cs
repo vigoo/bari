@@ -6,6 +6,7 @@ using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Commands
 {
@@ -21,6 +22,7 @@ namespace Bari.Core.Commands
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly ICommandTargetParser targetParser;
+        private readonly IUserOutput output;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -69,12 +71,13 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// <param name="projectBuilders">The set of registered project builder factories</param>
         /// <param name="targetRoot">Build target root directory </param>
         /// <param name="targetParser">Command target parser implementation to be used</param>
-        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser)
+        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser, IUserOutput output)
         {
             this.buildContextFactory = buildContextFactory;
             this.projectBuilders = projectBuilders;
             this.targetRoot = targetRoot;
             this.targetParser = targetParser;
+            this.output = output;
         }
 
         /// <summary>
@@ -149,8 +152,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                     MergeOutputForProduct(productTarget.Product, outputs);
                 }
             }
-
-            log.InfoFormat("Build completed.");
+            
+            output.Message("Build completed.");
         }
 
         private void MergeOutputForProduct(Product product, ISet<TargetRelativePath> outputs)
