@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Fsharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
@@ -40,6 +43,41 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         protected override string ProjectSourceSetName
         {
             get { return "fs"; }
+        }
+
+        /// <summary>
+        /// Orders the given set of source files if necessary
+        /// </summary>
+        /// <param name="project">Project being processed</param>
+        /// <param name="files">Input sequence</param>
+        /// <returns>Output sequence</returns>
+        protected override IEnumerable<SuiteRelativePath> OrderSourceFiles(Project project, IEnumerable<SuiteRelativePath> files)
+        {
+            if (project.HasParameters("order"))
+            {
+                var order = project.GetParameters<FsharpFileOrder>("order");
+                var remaining = new HashSet<SuiteRelativePath>(files);
+
+                foreach (string file in order.OrderedFiles)
+                {
+                    var path = new SuiteRelativePath(
+                        Path.Combine(Suite.SuiteRoot.GetRelativePath(project.RootDirectory), "fs", file));
+
+                    if (remaining.Contains(path))
+                    {
+                        remaining.Remove(path);
+                        yield return path;
+                    }
+                }
+
+                foreach (var path in remaining)
+                    yield return path;
+            }
+            else
+            {
+                foreach (var file in base.OrderSourceFiles(project, files))
+                    yield return file;
+            }
         }
     }
 }

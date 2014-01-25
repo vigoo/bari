@@ -32,6 +32,7 @@ namespace Bari.Plugins.Fsharp
             Bind<ICleanExtension>().To<FsprojCleaner>();
 
             Bind<IYamlProjectParametersLoader>().To<FsharpParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<FsharpFileOrderLoader>();
 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<FsprojGenerator>();
             Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<FsprojGenerator>().WithConstructorArgument("sourceSetName", "fs"); ;
