@@ -251,7 +251,7 @@ namespace Bari.Plugins.VsCore.Build
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return projects.SequenceEqual(other.projects);
+            return new HashSet<Project>(projects).SetEquals(new HashSet<Project>(other.projects));
         }
 
         /// <summary>
@@ -278,7 +278,11 @@ namespace Bari.Plugins.VsCore.Build
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return (projects != null ? projects.GetHashCode() : 0);
+            var result = 11;
+            if (projects != null)
+                result = projects.Aggregate(result, (current, project) => current ^ project.GetHashCode());
+
+            return result;
         }
 
         /// <summary>

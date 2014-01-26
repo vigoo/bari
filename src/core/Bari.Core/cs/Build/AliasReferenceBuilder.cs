@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Build.Dependencies;
@@ -11,7 +12,7 @@ namespace Bari.Core.Build
     /// A reference builder implementation which is a placeholder for a set of real references
     /// given by a name.
     /// </summary>
-    public class AliasReferenceBuilder: IReferenceBuilder
+    public class AliasReferenceBuilder: IReferenceBuilder, IEquatable<AliasReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly Project project;
@@ -132,6 +133,36 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return string.Format("[{0}]", reference.Uri);
+        }
+
+        public bool Equals(AliasReferenceBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(reference, other.reference);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((AliasReferenceBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (reference != null ? reference.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(AliasReferenceBuilder left, AliasReferenceBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(AliasReferenceBuilder left, AliasReferenceBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
@@ -17,7 +18,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the given module.
     /// </para>
     /// </summary>
-    public class SuiteReferenceBuilder : IReferenceBuilder
+    public class SuiteReferenceBuilder : IReferenceBuilder, IEquatable<SuiteReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -138,6 +139,36 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return string.Format("[{0}]", reference.Uri);
+        }
+
+        public bool Equals(SuiteReferenceBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(reference, other.reference);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((SuiteReferenceBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (reference != null ? reference.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(SuiteReferenceBuilder left, SuiteReferenceBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(SuiteReferenceBuilder left, SuiteReferenceBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }

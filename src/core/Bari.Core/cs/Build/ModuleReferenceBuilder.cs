@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -17,7 +17,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the same module where the reference has been used.
     /// </para>
     /// </summary>
-    public class ModuleReferenceBuilder: IReferenceBuilder
+    public class ModuleReferenceBuilder: IReferenceBuilder, IEquatable<ModuleReferenceBuilder>
     {
         private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -126,6 +126,39 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return string.Format("[{0}]", reference.Uri);
+        }
+
+        public bool Equals(ModuleReferenceBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(module, other.module) && Equals(reference, other.reference);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ModuleReferenceBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((module != null ? module.GetHashCode() : 0)*397) ^ (reference != null ? reference.GetHashCode() : 0);
+            }
+        }
+
+        public static bool operator ==(ModuleReferenceBuilder left, ModuleReferenceBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ModuleReferenceBuilder left, ModuleReferenceBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }

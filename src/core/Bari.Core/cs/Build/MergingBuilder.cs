@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
-    public class MergingBuilder: IBuilder
+    public class MergingBuilder: IBuilder, IEquatable<MergingBuilder>
     {
         private readonly ISet<IBuilder> sourceBuilders;
 
@@ -69,6 +70,36 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return "[Merge]";
+        }
+
+        public bool Equals(MergingBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return sourceBuilders.SetEquals(other.sourceBuilders);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MergingBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (sourceBuilders != null ? sourceBuilders.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(MergingBuilder left, MergingBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(MergingBuilder left, MergingBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }

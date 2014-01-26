@@ -6,7 +6,7 @@ using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
-    public class CopyResultBuilder : IBuilder
+    public class CopyResultBuilder : IBuilder, IEquatable<CopyResultBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ContentBuilder));
 
@@ -87,6 +87,36 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return String.Format("[result of {0}]", sourceBuilder);
+        }
+
+        public bool Equals(CopyResultBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return sourceBuilder.Equals(other.sourceBuilder);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((CopyResultBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return sourceBuilder.GetHashCode();
+        }
+
+        public static bool operator ==(CopyResultBuilder left, CopyResultBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(CopyResultBuilder left, CopyResultBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }
