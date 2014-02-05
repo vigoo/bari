@@ -58,12 +58,16 @@ namespace Bari.Plugins.VsCore.Build
                 foreach (var reference in project.References.Where(r => r.Type == ReferenceType.Runtime))
                 {
                     var refBuilder = CreateReferenceBuilder(project, reference);
-                    refBuilder.AddToContext(context);
 
-                    var refDeploy = CreateRuntimeReferenceDeployment(project, refBuilder, msbuild);
-                    refDeploy.AddToContext(context);
+                    if (refBuilder.IsEffective)
+                    {
+                        refBuilder.AddToContext(context);
 
-                    runtimeDeps.Add(refDeploy);
+                        var refDeploy = CreateRuntimeReferenceDeployment(project, refBuilder, msbuild);
+                        refDeploy.AddToContext(context);
+
+                        runtimeDeps.Add(refDeploy);
+                    }
                 }
             }
 

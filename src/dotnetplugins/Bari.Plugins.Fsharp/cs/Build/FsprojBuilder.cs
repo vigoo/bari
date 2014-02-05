@@ -103,12 +103,19 @@ namespace Bari.Plugins.Fsharp.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+            if (!context.Contains(this))
+            {
+                referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
 
-            foreach (var refBuilder in referenceBuilders)
-                refBuilder.AddToContext(context);
+                foreach (var refBuilder in referenceBuilders)
+                    refBuilder.AddToContext(context);
 
-            context.AddBuilder(this, referenceBuilders);
+                context.AddBuilder(this, referenceBuilders);
+            }
+            else
+            {
+                referenceBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+            }
         }
 
 

@@ -17,5 +17,10 @@ namespace Bari.Core.Build
         /// Gets or sets the reference to be resolved
         /// </summary>
         Reference Reference { get; set; }
+
+        /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        bool IsEffective { get; }
     }
 }

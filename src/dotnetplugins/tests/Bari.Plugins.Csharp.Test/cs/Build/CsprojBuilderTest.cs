@@ -97,6 +97,14 @@ namespace Bari.Plugins.Csharp.Test.Build
                 get { return reference; }
                 set { reference = value; }
             }
+
+            /// <summary>
+            /// If <c>false</c>, the reference builder can be ignored as an optimization
+            /// </summary>
+            public bool IsEffective
+            {
+                get { return true; }
+            }
         }
 
         [Test]

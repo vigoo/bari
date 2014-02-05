@@ -71,22 +71,28 @@ namespace Bari.Core.Build
             string projectName = reference.Uri.Host;
             referencedProject = module.GetProjectOrTestProject(projectName);
 
-            if (referencedProject != null)
+            if (!context.Contains(this))
             {                
-                subtasks = new HashSet<IBuilder>();
-                foreach (var projectBuilder in projectBuilders)
+                if (referencedProject != null)
                 {
-                    var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
-                    if (builder != null)
-                        subtasks.Add(builder);
-                }
+                    subtasks = new HashSet<IBuilder>();
+                    foreach (var projectBuilder in projectBuilders)
+                    {
+                        var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
+                        if (builder != null)
+                            subtasks.Add(builder);
+                    }
 
-                context.AddBuilder(this, subtasks);
+                    context.AddBuilder(this, subtasks);
+                }
+                else
+                {
+                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name, projectName));
+                }
             }
             else
             {
-                throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name,
-                                                                  projectName));
+                subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
             }
         }
 
@@ -114,6 +120,14 @@ namespace Bari.Core.Build
         {
             get { return reference; }
             set { reference = value; }
+        }
+
+        /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return true; }
         }
 
         /// <summary>

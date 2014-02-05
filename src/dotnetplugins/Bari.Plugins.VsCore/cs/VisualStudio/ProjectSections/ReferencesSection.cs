@@ -52,7 +52,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
 
                     if (referredProject.Type == ProjectType.Library)
                     {
-                        writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(project));
+                        writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(referredProject));
                         writer.WriteStartElement("Reference");
                         writer.WriteAttributeString("Include", projectName);
                         writer.WriteElementString("HintPath",

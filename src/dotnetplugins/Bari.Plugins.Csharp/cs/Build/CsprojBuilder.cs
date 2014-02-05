@@ -111,16 +111,24 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            log.DebugFormat("Creating reference builders for {0}", project.Name);
+            if (!context.Contains(this))
+            {
+                log.DebugFormat("Creating reference builders for {0}", project.Name);
 
-            referenceBuilders = new HashSet<IBuilder>(project.References.Where(r => r.Type == ReferenceType.Build).Select(CreateReferenceBuilder));            
+                referenceBuilders = new HashSet<IBuilder>(
+                    project.References.Where(r => r.Type == ReferenceType.Build).Select(CreateReferenceBuilder));
 
-            foreach (var refBuilder in referenceBuilders)
-                refBuilder.AddToContext(context);
+                foreach (var refBuilder in referenceBuilders)
+                    refBuilder.AddToContext(context);
 
-            context.AddBuilder(this, referenceBuilders);
+                context.AddBuilder(this, referenceBuilders);
 
-            log.DebugFormat("{0} added to build context", project.Name);
+                log.DebugFormat("{0} added to build context", project.Name);
+            }
+            else
+            {
+                referenceBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+            }
         }
 
 

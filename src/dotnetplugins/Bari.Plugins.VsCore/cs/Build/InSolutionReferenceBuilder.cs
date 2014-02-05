@@ -69,6 +69,14 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>

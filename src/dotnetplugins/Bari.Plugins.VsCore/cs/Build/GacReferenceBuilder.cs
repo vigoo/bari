@@ -46,7 +46,8 @@ namespace Bari.Plugins.VsCore.Build
         /// </summary>
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
-        {            
+        {           
+            context.AddBuilder(this, new IBuilder[0]);
         }
 
         /// <summary>
@@ -73,6 +74,14 @@ namespace Bari.Plugins.VsCore.Build
         {
             get { return reference; }
             set { reference = value; }
+        }
+
+        /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return true; }
         }
 
         /// <summary>

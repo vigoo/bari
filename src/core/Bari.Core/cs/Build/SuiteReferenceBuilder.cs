@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -69,37 +68,42 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            var moduleName = reference.Uri.Host;
-            var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+                var moduleName = reference.Uri.Host;
+                    var projectName = reference.Uri.AbsolutePath.TrimStart('/');
 
             if (suite.HasModule(moduleName))
             {
                 var module = suite.GetModule(moduleName);
                 referencedProject = module.GetProjectOrTestProject(projectName);
 
-                if (referencedProject != null)
+                if (!context.Contains(this))
                 {
-                    subtasks = new HashSet<IBuilder>();
-                    foreach (var projectBuilder in projectBuilders)
+                    if (referencedProject != null)
                     {
-                        var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
-                        if (builder != null)
-                            subtasks.Add(builder);
-                    }
+                        subtasks = new HashSet<IBuilder>();
+                        foreach (var projectBuilder in projectBuilders)
+                        {
+                            var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
+                            if (builder != null)
+                                subtasks.Add(builder);
+                        }
 
-                    context.AddBuilder(this, subtasks);
+                        context.AddBuilder(this, subtasks);
+                    }
+                    else
+                    {
+                        throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}",
+                            moduleName, projectName));
+                    }
                 }
                 else
                 {
-                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}",
-                                                                      moduleName,
-                                                                      projectName));
+                    subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
                 }
             }
             else
             {
-                throw new InvalidReferenceException(string.Format("Suite has no module called {0}",
-                                                                      moduleName));
+                throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
             }
         }
 
@@ -130,6 +134,14 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>
@@ -153,7 +165,7 @@ namespace Bari.Core.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((SuiteReferenceBuilder) obj);
+            return Equals((SuiteReferenceBuilder)obj);
         }
 
         public override int GetHashCode()

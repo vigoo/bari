@@ -169,5 +169,15 @@ namespace Bari.Core.Build
                 writer.WriteGraph(builders);
             }
         }
+
+        /// <summary>
+        /// Checks whether the given builder was already added to the context
+        /// </summary>
+        /// <param name="builder">Builder to look for</param>
+        /// <returns>Returns <c>true</c> if the builder is added to the context</returns>
+        public bool Contains(IBuilder builder)
+        {
+            return builders.Any(edge => Equals(edge.Source, builder) || Equals(edge.Target, builder));
+        }
     }
 }

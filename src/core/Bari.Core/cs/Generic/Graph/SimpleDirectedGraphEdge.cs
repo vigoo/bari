@@ -63,5 +63,10 @@ namespace Bari.Core.Generic.Graph
         {
             return !Equals(left, right);
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0} --> {1}", Source, Target);
+        }
     }
 }

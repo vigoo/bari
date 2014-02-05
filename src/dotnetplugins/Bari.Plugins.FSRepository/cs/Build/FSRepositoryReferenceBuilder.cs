@@ -62,6 +62,7 @@ namespace Bari.Plugins.FSRepository.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
+            context.AddBuilder(this, new IBuilder[0]);
         }
 
         /// <summary>
@@ -119,6 +120,14 @@ namespace Bari.Plugins.FSRepository.Build
                 if (reference != null)
                     ResolveReference();
             }
+        }
+
+        /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return true; }
         }
 
         private void ResolveReference()

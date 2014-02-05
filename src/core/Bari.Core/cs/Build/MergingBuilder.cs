@@ -46,10 +46,13 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            foreach (var builder in sourceBuilders)
-                builder.AddToContext(context);
+            if (!context.Contains(this))
+            {
+                foreach (var builder in sourceBuilders)
+                    builder.AddToContext(context);
 
-            context.AddBuilder(this, sourceBuilders);
+                context.AddBuilder(this, sourceBuilders);
+            }
         }
 
         /// <summary>

@@ -5,7 +5,6 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
-using Bari.Core.Generic.Graph;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.SolutionName;
@@ -17,8 +16,6 @@ namespace Bari.Plugins.VsCore.Build
     /// </summary>
     public class SlnBuilder : IBuilder, IEquatable<SlnBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SlnBuilder));
-
         private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IProjectPlatformManagement projectPlatformManagement;
@@ -26,7 +23,6 @@ namespace Bari.Plugins.VsCore.Build
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IList<Project> projects;
         private readonly ISlnNameGenerator slnNameGenerator;
-        private readonly IDictionary<Project, ISet<Project>> inSolutionReferences;
         private readonly IEnumerable<ISlnProject> supportedSlnProjects;
         private ISet<IBuilder> projectBuilders;
         private IDependencies projectDependencies;
@@ -61,8 +57,6 @@ namespace Bari.Plugins.VsCore.Build
             this.slnNameGenerator = slnNameGenerator;
             this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
             this.projectPlatformManagement = projectPlatformManagement;
-
-            inSolutionReferences = new Dictionary<Project, ISet<Project>>();
         }
 
         /// <summary>
@@ -97,18 +91,26 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            projectBuilders = new HashSet<IBuilder>(
-                from project in projects
-                select CreateProjectBuilder(context, project)
+            if (!context.Contains(this))
+            {
+                var solutionBuildContext = new SolutionBuildContext(inSolutionReferenceBuilderFactory, context, this);
+
+                projectBuilders = new HashSet<IBuilder>(
+                    from project in projects
+                    select CreateProjectBuilder(solutionBuildContext, project)
                     into builder
                     where builder != null
                     select builder
-                );
+                    );
 
-            context.AddBuilder(this, projectBuilders);
-            context.AddTransformation(TransformRedundantSolutionBuilds);
+                solutionBuildContext.AddBuilder(this, projectBuilders);
+            }
+            else
+            {
+                projectBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+            }
 
-            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(projectBuilders);            
+            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(projectBuilders);
         }
 
         private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
@@ -123,81 +125,6 @@ namespace Bari.Plugins.VsCore.Build
             else
             {
                 return null;
-            }
-        }
-
-        private bool TransformRedundantSolutionBuilds(ISet<IDirectedGraphEdge<IBuilder>> builders)
-        {
-            var subNodes = builders.BuildNodes(this).DirectedBreadthFirstTraversal((builder, bs) => { bs.Add(builder); return bs; }, new List<IBuilder>());
-            foreach (var builderNode in subNodes)
-            {
-                var moduleReferenceBuilder = builderNode as ModuleReferenceBuilder;
-                if (moduleReferenceBuilder != null)
-                {
-                    if (moduleReferenceBuilder.Reference.Type == ReferenceType.Build &&
-                        projects.Contains(moduleReferenceBuilder.ReferencedProject))
-                    {
-                        log.DebugFormat("Transforming module reference builder {0}", moduleReferenceBuilder);
-
-                        ConvertToInSolutionReference(builders, moduleReferenceBuilder, moduleReferenceBuilder.ReferencedProject);
-                    }
-                }
-
-                var suiteReferenceBuilder = builderNode as SuiteReferenceBuilder;
-                if (suiteReferenceBuilder != null)
-                {
-                    if (suiteReferenceBuilder.Reference.Type == ReferenceType.Build &&
-                        projects.Contains(suiteReferenceBuilder.ReferencedProject))
-                    {
-                        log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
-
-                        ConvertToInSolutionReference(builders, suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);                        
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private void RegisterInSolutionProjectReference(Project project, Project dependency)
-        {
-            ISet<Project> deps;
-            if (!inSolutionReferences.TryGetValue(project, out deps))
-            {
-                deps = new HashSet<Project>();
-                inSolutionReferences.Add(project, deps);
-            }
-
-            deps.Add(dependency);
-        }
-
-        private void ConvertToInSolutionReference(ISet<IDirectedGraphEdge<IBuilder>> builders, IReferenceBuilder moduleReferenceBuilder, Project referencedProject)
-        {
-            // finding edges X -> RB 
-            var edges = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder)).ToList();
-
-            // removing these edges
-            foreach (var edge in edges)
-                builders.Remove(edge);
-            var sourceNodes = edges.Where(edge => !Equals(edge.Source, edge.Target)).Select(edge => edge.Source).ToList();
-
-            // creating new, in-solution reference builder node (ISB)
-            var inSolutionBuilder = inSolutionReferenceBuilderFactory.CreateInSolutionReferenceBuilder(referencedProject);
-            inSolutionBuilder.Reference = moduleReferenceBuilder.Reference;
-
-            // creating new edges: X -> ISB                        
-            foreach (var newEdge in sourceNodes.Select(sourceNode => new SimpleDirectedGraphEdge<IBuilder>(sourceNode, inSolutionBuilder)))
-                builders.Add(newEdge);
-
-            // removing every edge containing RB
-            var edgesToRemove = builders.Where(edge => Equals(edge.Target, moduleReferenceBuilder) || Equals(edge.Source, moduleReferenceBuilder)).ToList();
-            foreach (var edge in edgesToRemove)
-                builders.Remove(edge);
-
-            // registering these project references for later use (in sln generator)
-            foreach (var sourceNode in sourceNodes.OfType<IProjectBuilder>())
-            {
-                RegisterInSolutionProjectReference(sourceNode.Project, referencedProject);
             }
         }
 
@@ -221,11 +148,29 @@ namespace Bari.Plugins.VsCore.Build
 
         private IEnumerable<Project> GetInSolutionReferences(Project project)
         {
-            ISet<Project> result;
-            if (inSolutionReferences.TryGetValue(project, out result))
-                return result;
-            else
-                return new Project[0];
+            foreach (var reference in project.References)
+            {
+                if (reference.Type == ReferenceType.Build)
+                {
+                    if (reference.Uri.Scheme == "module")
+                    {
+                        var projectName = reference.Uri.Host;
+                        foreach (var dependency in projects.Where(other => 
+                            other.Module == project.Module && String.Equals(other.Name, projectName, StringComparison.InvariantCultureIgnoreCase)))
+                            yield return dependency;
+                    }
+                    else if (reference.Uri.Scheme == "suite")
+                    {
+                        var moduleName = reference.Uri.Host;
+                        var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+
+                        foreach (var dependency in projects.Where(other => 
+                            String.Equals(other.Module.Name, moduleName, StringComparison.InvariantCultureIgnoreCase) && 
+                            String.Equals(other.Name, projectName, StringComparison.InvariantCultureIgnoreCase)))
+                            yield return dependency;
+                    }
+                }
+            }
         }
 
         /// <summary>

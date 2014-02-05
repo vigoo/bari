@@ -1,4 +1,6 @@
 
+using System;
+
 namespace Bari.Core.Generic.Graph
 {
     /// <summary>
@@ -27,6 +29,11 @@ namespace Bari.Core.Generic.Graph
         {
             Data1 = data1;
             Data2 = data2;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0} --- {1}", Data1, Data2);
         }
     }
 }

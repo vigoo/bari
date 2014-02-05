@@ -58,6 +58,13 @@ namespace Bari.Core.Build
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
         void Dump(Stream builderGraphStream, IBuilder rootBuilder);
+
+        /// <summary>
+        /// Checks whether the given builder was already added to the context
+        /// </summary>
+        /// <param name="builder">Builder to look for</param>
+        /// <returns>Returns <c>true</c> if the builder is added to the context</returns>
+        bool Contains(IBuilder builder);
     }
 
     /// <summary>
@@ -136,6 +143,17 @@ namespace Bari.Core.Build
         public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
         {
             Contract.Requires(builderGraphStream != null);
+        }
+
+        /// <summary>
+        /// Checks whether the given builder was already added to the context
+        /// </summary>
+        /// <param name="builder">Builder to look for</param>
+        /// <returns>Returns <c>true</c> if the builder is added to the context</returns>
+        public bool Contains(IBuilder builder)
+        {
+            Contract.Requires(builder != null);
+            return false; // dummy
         }
     }
 }

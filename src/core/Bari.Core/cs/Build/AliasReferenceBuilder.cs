@@ -67,10 +67,10 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            if (alias != null)
-            {
-                builders.Clear();
+            builders.Clear();
 
+            if (alias != null && !context.Contains(this))
+            {                
                 foreach (var childRef in alias.References)
                 {
                     if (childRef.Type == reference.Type)
@@ -83,6 +83,11 @@ namespace Bari.Core.Build
                 }
 
                 context.AddBuilder(this, builders);
+            }
+            else
+            {
+                foreach (var dep in context.GetDependencies(this))
+                    builders.Add(dep);
             }
         }
 
@@ -121,6 +126,14 @@ namespace Bari.Core.Build
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// If <c>false</c>, the reference builder can be ignored as an optimization
+        /// </summary>
+        public bool IsEffective
+        {
+            get { return builders.Count > 0; }
         }
 
         /// <summary>
