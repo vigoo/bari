@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Generic;
@@ -230,6 +231,11 @@ namespace Bari.Core.Model
         public PostProcessDefinition GetPostProcessor(string key)
         {
             return postProcessDefinitions[key];
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Project {0}.{1}", Module.Name, name);
         }
     }
 }

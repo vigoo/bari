@@ -243,5 +243,10 @@ namespace Bari.Core.Model
         {
             parameters.Add(paramsName, projectParameters);
         }
+
+        public override string ToString()
+        {
+            return String.Format("Module {0}", name);
+        }
     }
 }
