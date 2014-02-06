@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
+using MD5 = System.Security.Cryptography.MD5;
 
 namespace Bari.Core.Build.Cache
 {
@@ -15,6 +16,8 @@ namespace Bari.Core.Build.Cache
     /// </summary>
     public class FileBuildCache : IBuildCache
     {
+        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (FileBuildCache));
+
         private const string DepsFileName = ".deps";
         private const string NamesFileName = ".names";
 
@@ -164,9 +167,7 @@ namespace Bari.Core.Build.Cache
                                     // It is possible that only a file name (a virtual file) was cached without any contents:
                                     if (cacheDir.Exists(cacheFileName))
                                     {
-                                        using (var source = cacheDir.ReadBinaryFile(cacheFileName))
-                                        using (var target = targetRoot.CreateBinaryFileWithDirectories(fullPath))
-                                            StreamOperations.Copy(source, target);
+                                        CopyIfDifferent(cacheDir, cacheFileName, targetRoot, fullPath);
                                     }
 
                                     result.Add(new TargetRelativePath(relativeRoot, relativePath));
@@ -184,6 +185,52 @@ namespace Bari.Core.Build.Cache
             finally
             {
                 lck.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Copies a source file to a target location, but only if it does not exist yet, with the same MD5 checksum
+        /// as the source
+        /// </summary>
+        /// <param name="sourceDirectory">Source root directory</param>
+        /// <param name="sourceFileName">Source file's relative path</param>
+        /// <param name="targetRoot">Target root directory</param>
+        /// <param name="targetRelativePath">Target file's relative path</param>
+        private void CopyIfDifferent(IFileSystemDirectory sourceDirectory, string sourceFileName, IFileSystemDirectory targetRoot, string targetRelativePath)
+        {
+            bool copy = true;
+            long sourceSize = sourceDirectory.GetFileSize(sourceFileName);
+            if (targetRoot.Exists(targetRelativePath))
+            {
+                long targetSize = targetRoot.GetFileSize(targetRelativePath);
+                if (sourceSize == targetSize)
+                {
+                    byte[] sourceChecksum = ComputeChecksum(sourceDirectory, sourceFileName);
+                    byte[] targetChecksum = ComputeChecksum(targetRoot, targetRelativePath);
+
+                    copy = !sourceChecksum.SequenceEqual(targetChecksum);
+                }
+            }
+
+            if (copy)
+            {
+                using (var source = sourceDirectory.ReadBinaryFile(sourceFileName))
+                using (var target = targetRoot.CreateBinaryFileWithDirectories(targetRelativePath))
+                    StreamOperations.Copy(source, target);
+            }
+            else
+            {
+                log.DebugFormat("File {0} is the same as the cached one", targetRelativePath);
+            }
+        }
+
+        private byte[] ComputeChecksum(IFileSystemDirectory root, string path)
+        {
+            using (var stream = root.ReadBinaryFile(path))
+            using (var bufferedStream = new BufferedStream(stream, 1048576))
+            using (var md5 = MD5.Create())
+            {
+                return md5.ComputeHash(bufferedStream);
             }
         }
 
