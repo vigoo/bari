@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -39,9 +41,9 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         {
             writer.WriteStartElement("ItemGroup");
 
-            foreach (var refPath in context.References)
+            foreach (var refPath in context.References.Where(IsValidReference))
             {
-                if (((string)refPath).StartsWith("SLN!"))
+                if (IsSolutionReference(refPath))
                 {
                     var moduleAndprojectName = ((string) refPath).Substring(4);
                     var parts = moduleAndprojectName.Split('#');
@@ -50,7 +52,8 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
 
                     var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
 
-                    if (referredProject.Type == ProjectType.Library)
+                    if (referredProject.Type == ProjectType.Library ||
+                        referredProject.Type == ProjectType.Executable)
                     {
                         writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(referredProject));
                         writer.WriteStartElement("Reference");
@@ -66,7 +69,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                 else
                 {
                     writer.WriteStartElement("Reference");
-                    if (((string) refPath).StartsWith("GAC!"))
+                    if (IsGACReference(refPath))
                     {
                         var assemblyName = ((string) refPath).Substring(4);
                         writer.WriteAttributeString("Include", assemblyName);
@@ -86,5 +89,38 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
             writer.WriteEndElement();
         }
 
+        private static bool IsSolutionReference(TargetRelativePath refPath)
+        {
+            return ((string)refPath).StartsWith("SLN!");
+        }
+
+        private static bool IsGACReference(TargetRelativePath refPath)
+        {
+            return ((string) refPath).StartsWith("GAC!");
+        }
+
+        private static readonly ISet<string> allowedExtensions = new HashSet<string>
+        {
+            ".dll", 
+            ".exe"
+        };
+
+        private bool IsValidReference(TargetRelativePath reference)
+        {
+            if (IsGACReference(reference) || IsSolutionReference(reference))
+                return true;
+            else
+            {
+                var extension = Path.GetExtension(reference);
+                if (extension != null)
+                {
+                    return allowedExtensions.Contains(extension.ToLowerInvariant());
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }
