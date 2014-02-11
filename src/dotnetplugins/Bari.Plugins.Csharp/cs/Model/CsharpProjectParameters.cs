@@ -51,7 +51,14 @@ namespace Bari.Plugins.Csharp.Model
             NoStdLib = false;
             SuppressedWarnings = null;
             NoWin32Manifest = false;
-            Platform = CLRPlatform.AnyCPU;
+            
+            if (suite.ActiveGoal.Has("x86"))
+                Platform = CLRPlatform.x86;
+            else if (suite.ActiveGoal.Has("x64"))
+                Platform = CLRPlatform.x64;
+            else
+                Platform = CLRPlatform.AnyCPU;
+
             PreferredUILang = null;
             SubsystemVersion = null;
             Unsafe = false;

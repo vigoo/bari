@@ -26,6 +26,11 @@ Function Build($name)
     Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
 }
 
+Function BuildWithGoal($namem, $goal)
+{
+    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v --target $goal build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
+}
+
 Function InternalCheckExe($name, $path, $exitcode, $output)
 {
     $code = (Start-Process -FilePath $path -RedirectStandardOutput "..\tmp\$name.out" -Wait -NoNewWindow -PassThru).ExitCode
@@ -67,6 +72,18 @@ Function SimpleExeBuild($name, $path, $exitcode, $output)
     Pop-Location    
 }
 
+Function ExeBuildWithGoal($name, $goal, $path, $exitcode, $output)
+{
+    Push-Location -Path $name
+    Clean $name
+    BuildWithGoal $name $goal
+    $res = (InternalCheckExe $name $path $exitcode $output)
+    Pop-Location    
+
+    return $res
+}
+
+
 Function ContentTest
 {
     Write-Host "..content-test.." -NoNewline
@@ -96,6 +113,21 @@ Function ContentTest
     }
 }
 
+Function X86X64Test
+{
+    Write-Host "..x86-x64-test.." -NoNewline
+    $res1 = (ExeBuildWithGoal "x86-x64-test" "debug-x86" "target\HelloWorld\HelloWorld.exe" 32 "32 bit")
+    $res2 = (ExeBuildWithGoal "x86-x64-test" "debug-x64" "target\HelloWorld\HelloWorld.exe" 64 "64 bit")
+
+    if ($res1 -eq $true) 
+    {
+        if ($res2 -eq $true)
+        {
+            Write-Host "OK"
+        }
+    }
+}
+
 Write-Host "Executing system tests for bari..."
 Initialize
 
@@ -113,3 +145,4 @@ SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!
 SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
 SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
+X86X64Test

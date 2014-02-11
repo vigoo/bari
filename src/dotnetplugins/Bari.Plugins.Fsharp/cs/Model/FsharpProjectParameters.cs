@@ -35,7 +35,14 @@ namespace Bari.Plugins.Fsharp.Model
             HighEntropyVirtualAddressSpace = false;
             KeyFile = null;
             SuppressedWarnings = null;
-            Platform = CLRPlatform.AnyCPU;
+
+            if (suite.ActiveGoal.Has("x86"))
+                Platform = CLRPlatform.x86;
+            else if (suite.ActiveGoal.Has("x64"))
+                Platform = CLRPlatform.x64;
+            else
+                Platform = CLRPlatform.AnyCPU;
+
             WarningLevel = WarningLevel.All;
             AllWarningsAsError = false;
             SpecificWarningsAsError = null;

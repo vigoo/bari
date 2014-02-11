@@ -48,7 +48,8 @@ namespace Bari.Console
             Kernel.RegisterCoreBindings();
 
             // Binding default cache
-            var cacheDir = suiteRoot.GetChildDirectory("cache", createIfMissing: true);            
+            var cacheDir = suiteRoot.GetChildDirectory("cache", createIfMissing: true)
+                                    .GetChildDirectory(consoleParams.Goal, createIfMissing: true);
             root.Bind<IFileSystemDirectory>()
                 .ToConstant(cacheDir)
                 .WhenTargetHas<CacheRootAttribute>();
