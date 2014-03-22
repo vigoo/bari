@@ -81,8 +81,9 @@ namespace Bari.Plugins.VsCore.Build
             foreach (var module in modules)
             {
                 var moduleTargetDir = targetRoot.GetChildDirectory(module.Name);
-                foreach (var fileName in moduleTargetDir.Files)
-                    outputs.Add(new TargetRelativePath(module.Name, fileName));
+                if (moduleTargetDir != null)
+                    foreach (var fileName in moduleTargetDir.Files)
+                        outputs.Add(new TargetRelativePath(module.Name, fileName));
             }
 
             return outputs;

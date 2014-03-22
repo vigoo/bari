@@ -27,7 +27,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
                 ".csproj",
-                ".csproj.user"
+                ".csproj.user",
+                ".resx"
             };
 
         /// <summary>
