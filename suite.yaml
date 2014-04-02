@@ -16,8 +16,8 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq   
             - nuget://Castle.Core/3.0.0.4001
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://Monads
             - nuget://log4net
             - nuget://YamlDotNet.Core
@@ -28,7 +28,7 @@ modules:
           references:
             - gac://System
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - module://Bari.Core
           csharp:
             root-namespace: Bari.Console
@@ -45,9 +45,9 @@ modules:
             - nuget://FluentAssertions
             - nuget://Moq
             - nuget://Castle.Core/3.0.0.4001
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.ChildKernel
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10
+            - nuget://Ninject/3.0.1.10.Extensions.ChildKernel
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
@@ -58,7 +58,7 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - nuget://FluentAssertions
             - nuget://Moq
             - nuget://NUnit
@@ -73,7 +73,7 @@ modules:
             - gac://System
             - gac://System.Xml
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp
           references:
@@ -85,8 +85,8 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject            
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10            
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - module://Bari.Plugins.VsCore
@@ -96,8 +96,8 @@ modules:
             - gac://System
             - gac://System.Xml
             - nuget://log4net
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
@@ -107,8 +107,8 @@ modules:
             - gac://System
             - gac://System.Xml
             - nuget://log4net
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
@@ -123,7 +123,7 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - suite://core/Bari.Core
         - name: Bari.Plugins.FSRepository
           references:
@@ -131,8 +131,8 @@ modules:
             - gac://System
             - gac://System.Core            
             - nuget://log4net
-            - nuget://Ninject
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject/3.0.1.10
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://Monads
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel            
@@ -147,7 +147,7 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - suite://core/Bari.Core            
         - name: Bari.Plugins.CodeContracts
           references:
@@ -159,7 +159,7 @@ modules:
             - gac://System.Xml
             - gac://System.Xml.Linq
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
@@ -177,9 +177,9 @@ modules:
             - gac://System.Xml.Linq
             - nuget://FluentAssertions
             - nuget://Moq
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
@@ -198,9 +198,9 @@ modules:
             - gac://System.Xml.Linq
             - nuget://FluentAssertions
             - nuget://Moq
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
@@ -217,9 +217,9 @@ modules:
             - gac://System.Xml.Linq            
             - nuget://FluentAssertions
             - nuget://Moq
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
-            - nuget://Ninject.Extensions.Factory
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://NUnit
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
@@ -235,7 +235,7 @@ modules:
             - nuget://IronPython
             - { uri: 'nuget://IronPython.StdLib', type: Runtime }
             - nuget://log4net
-            - nuget://Ninject
+            - nuget://Ninject/3.0.1.10
             - suite://core/Bari.Core 
 products:
     - name: full
