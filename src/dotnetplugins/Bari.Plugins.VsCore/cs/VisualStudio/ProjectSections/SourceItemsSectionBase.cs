@@ -46,7 +46,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                 // VisualStudio does not work as expected:
                 if (!IgnoredExtensions.Any(ext => relativePath.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    writer.WriteStartElement(GetElementNameFor(file));
+                    writer.WriteStartElement(GetElementNameFor(project, file));
                     writer.WriteAttributeString("Include", relativePath);
 
                     if (ProjectSourceSetName != sourceSetType)
@@ -95,7 +95,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// </summary>
         /// <param name="file">File name from the source set</param>
         /// <returns>Returns a valid XML element name</returns>
-        protected virtual string GetElementNameFor(string file)
+        protected virtual string GetElementNameFor(Project project, string file)
         {
             Contract.Requires(file != null);
 

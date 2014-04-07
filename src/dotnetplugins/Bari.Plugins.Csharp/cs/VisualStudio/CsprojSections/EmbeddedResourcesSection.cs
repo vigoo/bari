@@ -35,7 +35,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// </summary>
         /// <param name="file">File name from the source set</param>
         /// <returns>Returns a valid XML element name</returns>
-        protected override string GetElementNameFor(string file)
+        protected override string GetElementNameFor(Project project, string file)
         {
             return "EmbeddedResource";
         }

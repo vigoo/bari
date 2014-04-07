@@ -28,7 +28,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         /// </summary>
         /// <param name="file">File name from the source set</param>
         /// <returns>Returns a valid XML element name</returns>
-        protected override string GetElementNameFor(string file)
+        protected override string GetElementNameFor(Project project, string file)
         {
             var ext = Path.GetExtension(file).ToLowerInvariant();
             if (ext == ".h" || ext == ".hpp" || ext == ".h++")

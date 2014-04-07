@@ -56,6 +56,7 @@ namespace Bari.Plugins.Csharp
             Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<CsprojGenerator>(); 
             
             Bind<IYamlProjectParametersLoader>().To<CsharpParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<WPFParametersLoader>();
 
             Bind<ISuiteContentsAnalyzer>().To<DefaultSuiteContentsAnalyzer>();
             Bind<ISlnNameGenerator>().To<HashBasedSlnNameGenerator>().WhenInjectedInto<ReadableSlnNameGenerator>();

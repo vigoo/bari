@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
@@ -28,7 +30,9 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             {
                 ".csproj",
                 ".csproj.user",
-                ".resx"
+                ".resx",
+                ".suo",
+                ".DotSettings"
             };
 
         /// <summary>
@@ -54,13 +58,31 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// </summary>
         /// <param name="file">File name from the source set</param>
         /// <returns>Returns a valid XML element name</returns>
-        protected override string GetElementNameFor(string file)
+        protected override string GetElementNameFor(Project project, string file)
         {
             var ext = Path.GetExtension(file).ToLowerInvariant();
             if (ext == ".xaml")
-                return "Page";
+            {
+                if (IsWPFApplicationDefinition(project, file))
+                    return "ApplicationDefinition";
+                else
+                    return "Page";
+            }
             else
-                return base.GetElementNameFor(file);
+                return base.GetElementNameFor(project, file);
+        }
+
+        private bool IsWPFApplicationDefinition(Project project, string file)
+        {
+            var relativePath = ToProjectRelativePath(project, file, ProjectSourceSetName);
+
+            if (project.HasParameters("wpf"))
+            {
+                var wpfParameters = project.GetParameters<WPFParameters>("wpf");
+                return relativePath.Equals(wpfParameters.ApplicationDefinition, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            return false;
         }
 
         protected override void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)

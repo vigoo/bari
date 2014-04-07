@@ -7,6 +7,7 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Build.Dependencies;
 using Bari.Plugins.Csharp.VisualStudio;
 
 namespace Bari.Plugins.Csharp.Build
@@ -79,7 +80,9 @@ namespace Bari.Plugins.Csharp.Build
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
-                // TODO: depend on C# properties
+                // TODO: depend on C# properties                           
+                if (project.HasParameters("wpf"))
+                    deps.Add(new WPFParametersDependencies(project));
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
