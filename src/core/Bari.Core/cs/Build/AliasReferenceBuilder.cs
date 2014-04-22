@@ -133,7 +133,13 @@ namespace Bari.Core.Build
         /// </summary>
         public bool IsEffective
         {
-            get { return builders.Count > 0; }
+            get
+            {
+                if (alias != null)
+                    return alias.References.Any(r => r.Type == reference.Type);
+                else
+                    return false;
+            }
         }
 
         /// <summary>
