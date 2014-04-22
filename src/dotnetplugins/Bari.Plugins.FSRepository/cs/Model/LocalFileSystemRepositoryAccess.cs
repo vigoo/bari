@@ -26,7 +26,7 @@ namespace Bari.Plugins.FSRepository.Model
             else
             {
                 if (Path.IsPathRooted(path))
-                    return File.Exists(path);
+                    return File.Exists(path) || Directory.Exists(path);
                 else
                     return suiteRoot.Exists(path);
             }
