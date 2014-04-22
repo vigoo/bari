@@ -7,7 +7,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
     /// Build script defined by individual files in the suite's <c>scripts</c> directory.
     /// 
     /// <para>
-    /// The script file's name definfes the source set for which it is automatically executed.
+    /// The script file's name defines the source set for which it is automatically executed.
     /// 
     /// <example>
     /// A build script with the suite relative path <c>scripts\icons.py</c> will be executed on
