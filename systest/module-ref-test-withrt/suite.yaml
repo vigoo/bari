@@ -1,0 +1,18 @@
+---
+suite:      bari systemtest module-ref-test-withrt
+
+fs-repositories:
+    - fsrepo\%NAME\%FILENAME.%VERSION.%EXT
+
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          references:
+            - module://Dep
+        - name: Dep
+          references:
+            - { uri: 'fsrepo://testdep/0.5/dep.dll', type: Runtime }
+

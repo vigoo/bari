@@ -17,7 +17,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the same module where the reference has been used.
     /// </para>
     /// </summary>
-    public class ModuleReferenceBuilder: IReferenceBuilder, IEquatable<ModuleReferenceBuilder>
+    public class ModuleReferenceBuilder : IReferenceBuilder, IEquatable<ModuleReferenceBuilder>
     {
         private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -72,18 +72,11 @@ namespace Bari.Core.Build
             referencedProject = module.GetProjectOrTestProject(projectName);
 
             if (!context.Contains(this))
-            {                
+            {
                 if (referencedProject != null)
                 {
                     subtasks = new HashSet<IBuilder>();
-                    foreach (var projectBuilder in projectBuilders)
-                    {
-                        var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
-                        if (builder != null)
-                            subtasks.Add(builder);
-                    }
-
-                    context.AddBuilder(this, subtasks);
+                    context.AddBuilder(this, SubtaskGenerator(context));
                 }
                 else
                 {
@@ -93,6 +86,19 @@ namespace Bari.Core.Build
             else
             {
                 subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
+            }
+        }
+
+        private IEnumerable<IBuilder> SubtaskGenerator(IBuildContext context)
+        {
+            foreach (var projectBuilder in projectBuilders)
+            {
+                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                if (builder != null)
+                {
+                    subtasks.Add(builder);
+                    yield return builder;
+                }
             }
         }
 
@@ -154,14 +160,14 @@ namespace Bari.Core.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ModuleReferenceBuilder) obj);
+            return Equals((ModuleReferenceBuilder)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((module != null ? module.GetHashCode() : 0)*397) ^ (reference != null ? reference.GetHashCode() : 0);
+                return ((module != null ? module.GetHashCode() : 0) * 397) ^ (reference != null ? reference.GetHashCode() : 0);
             }
         }
 

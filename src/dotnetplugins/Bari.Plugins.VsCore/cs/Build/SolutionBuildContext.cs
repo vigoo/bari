@@ -28,7 +28,7 @@ namespace Bari.Plugins.VsCore.Build
         public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
         {
             IBuilder finalBuilder = builder;
-            IEnumerable<IBuilder> finalPrerequisites = prerequisites.Select(ResolveBuilder);
+            IEnumerable<IBuilder> finalPrerequisites = null;
 
             var moduleReferenceBuilder = builder as ModuleReferenceBuilder;
             if (moduleReferenceBuilder != null)
@@ -58,6 +58,9 @@ namespace Bari.Plugins.VsCore.Build
                     }
                 }
             }
+
+            if (finalPrerequisites == null)
+                finalPrerequisites = prerequisites.Select(ResolveBuilder);
 
             baseContext.AddBuilder(finalBuilder, finalPrerequisites);
         }

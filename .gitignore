@@ -28,6 +28,7 @@ systest/fsrepo-test/cache
 systest/alias-test/cache
 systest/content-test/cache
 systest/module-ref-test/cache
+systest/module-ref-test-withrt/cache
 systest/suite-ref-test/cache
 systest/runtime-ref-test/cache
 systest/regfree-com-server/cache

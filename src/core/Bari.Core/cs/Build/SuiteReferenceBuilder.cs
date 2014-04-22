@@ -68,8 +68,8 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-                var moduleName = reference.Uri.Host;
-                    var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+            var moduleName = reference.Uri.Host;
+            var projectName = reference.Uri.AbsolutePath.TrimStart('/');
 
             if (suite.HasModule(moduleName))
             {
@@ -81,14 +81,7 @@ namespace Bari.Core.Build
                     if (referencedProject != null)
                     {
                         subtasks = new HashSet<IBuilder>();
-                        foreach (var projectBuilder in projectBuilders)
-                        {
-                            var builder = projectBuilder.AddToContext(context, new[] {referencedProject});
-                            if (builder != null)
-                                subtasks.Add(builder);
-                        }
-
-                        context.AddBuilder(this, subtasks);
+                        context.AddBuilder(this, SubtaskGenerator(context));
                     }
                     else
                     {
@@ -104,6 +97,19 @@ namespace Bari.Core.Build
             else
             {
                 throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
+            }
+        }
+
+        private IEnumerable<IBuilder> SubtaskGenerator(IBuildContext context)
+        {
+            foreach (var projectBuilder in projectBuilders)
+            {
+                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                if (builder != null)
+                {
+                    subtasks.Add(builder);
+                    yield return builder;
+                }
             }
         }
 
