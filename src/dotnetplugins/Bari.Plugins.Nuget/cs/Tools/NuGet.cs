@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Tools;
+using Bari.Core.UI;
 using Bari.Plugins.Nuget.Generic;
 
 namespace Bari.Plugins.Nuget.Tools
@@ -15,12 +16,15 @@ namespace Bari.Plugins.Nuget.Tools
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (NuGet));
 
+        private readonly IParameters parameters;
+
         /// <summary>
         /// Creates the external tool
         /// </summary>
-        public NuGet()
+        public NuGet(IParameters parameters)
             : base("NuGet", @"C:\Programs\", "NuGet.exe", new Uri("https://nuget.org/nuget.exe"))
         {
+            this.parameters = parameters;
         }
 
         /// <summary>
@@ -35,9 +39,9 @@ namespace Bari.Plugins.Nuget.Tools
         public Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly)
         {
             if (String.IsNullOrWhiteSpace(version))
-                Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"");
+                Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"", "-Verbosity", Verbosity);
             else
-                Run(root, "install", name, "-Version", version, "-o", "\"" + relativeTargetDirectory + "\"");
+                Run(root, "install", name, "-Version", version, "-o", "\"" + relativeTargetDirectory + "\"", "-Verbosity", Verbosity);
 
             var result = new List<string>(); // root relative paths
             string commonRoot = String.Empty; // root relative path
@@ -122,6 +126,11 @@ namespace Bari.Plugins.Nuget.Tools
             return from file in dir.RecursiveGetFiles()
                 let relPath = GetRelativePath(file.FullName, root)
                 select relPath;
+        }
+
+        private string Verbosity
+        {
+            get { return parameters.VerboseOutput ? "detailed" : "quiet"; }
         }
     }
 }

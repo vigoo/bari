@@ -5,6 +5,7 @@ using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 using Bari.Plugins.FSRepository.Build.Dependencies;
 using Bari.Plugins.FSRepository.Model;
 
@@ -18,17 +19,19 @@ namespace Bari.Plugins.FSRepository.Build
         private readonly IFSRepositoryFingerprintFactory fingerprintFactory;
         private readonly IFileSystemRepositoryAccess repository;
         private readonly IFileSystemDirectory targetRoot;
+        private readonly IUserOutput output;
 
         private Reference reference;
         private string resolvedPath;
         private IPatternResolutionContext resolutionContext;
 
-        public FSRepositoryReferenceBuilder(Suite suite, IFSRepositoryFingerprintFactory fingerprintFactory, IFileSystemRepositoryAccess repository, [TargetRoot] IFileSystemDirectory targetRoot)
+        public FSRepositoryReferenceBuilder(Suite suite, IFSRepositoryFingerprintFactory fingerprintFactory, IFileSystemRepositoryAccess repository, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output)
         {
             this.suite = suite;
             this.fingerprintFactory = fingerprintFactory;
             this.repository = repository;
             this.targetRoot = targetRoot;
+            this.output = output;
         }
 
         /// <summary>
@@ -72,6 +75,9 @@ namespace Bari.Plugins.FSRepository.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
+            if (output != null)
+                output.Message(String.Format("Resolving reference {0}", reference.Uri));
+
             log.DebugFormat("Resolving reference {0} using {1}", reference.Uri, resolvedPath);
 
             var depsRoot = targetRoot.CreateDirectory("deps");

@@ -6,6 +6,7 @@ using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 using Bari.Plugins.Nuget.Tools;
 
 namespace Bari.Plugins.Nuget.Build
@@ -27,6 +28,7 @@ namespace Bari.Plugins.Nuget.Build
 
         private readonly INuGet nuget;
         private readonly IFileSystemDirectory targetRoot;
+        private readonly IUserOutput output;
 
         private Reference reference;
 
@@ -35,10 +37,12 @@ namespace Bari.Plugins.Nuget.Build
         /// </summary>
         /// <param name="nuget">Interface to the NuGet package manager</param>
         /// <param name="targetRoot">Target root directory</param>
-        public NugetReferenceBuilder(INuGet nuget, [TargetRoot] IFileSystemDirectory targetRoot)
+        /// <param name="output">User output interface</param>
+        public NugetReferenceBuilder(INuGet nuget, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output)
         {
             this.nuget = nuget;
             this.targetRoot = targetRoot;
+            this.output = output;
         }
 
         /// <summary>
@@ -75,7 +79,8 @@ namespace Bari.Plugins.Nuget.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            log.DebugFormat("Resolving reference {0}", reference.Uri);
+            if (output != null)
+                output.Message(String.Format("Resolving reference {0}", reference.Uri));
 
             string pkgName = reference.Uri.Host;
             string pkgVersion = reference.Uri.AbsolutePath.TrimStart('/');            
