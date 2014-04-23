@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -102,7 +104,7 @@ namespace Bari.Core.Build
         {
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                var builder = projectBuilder.AddToContext(context, module.Projects);
                 if (builder != null)
                 {
                     subtasks.Add(builder);
@@ -125,7 +127,10 @@ namespace Bari.Core.Build
                 result.UnionWith(subResults);
             }
 
-            return result;
+            // result contains the output of the full module - selecting only the referenced project's expected build output
+            string expectedFileName = referencedProject.Name.ToLower();
+            return new HashSet<TargetRelativePath>(result.Where(
+                path => Path.GetFileNameWithoutExtension(path).ToLowerInvariant() == expectedFileName));
         }
 
         /// <summary>
