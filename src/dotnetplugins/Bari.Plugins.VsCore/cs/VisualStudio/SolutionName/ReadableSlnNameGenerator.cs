@@ -91,7 +91,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
 
         private string GetNameForSingleProject(Project project)
         {
-            var result = project.Module + "." + project.Name;
+            var result = (project.Module + "." + project.Name).Replace(' ', '_');
             log.DebugFormat("Returning sln name for a single project: {0}", result);
             return result;
         }
