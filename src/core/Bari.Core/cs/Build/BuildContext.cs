@@ -173,7 +173,7 @@ namespace Bari.Core.Build
         {
             return from edge in builders
                    where Equals(edge.Target, builder) && !Equals(edge.Source, builder)
-                   select edge.Target;
+                   select edge.Source;
         }
 
         /// <summary>
