@@ -172,7 +172,7 @@ namespace Bari.Core.Build
         public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
         {
             return from edge in builders
-                   where Equals(edge.Source, builder) && !Equals(edge.Target, builder)
+                   where Equals(edge.Target, builder) && !Equals(edge.Source, builder)
                    select edge.Target;
         }
 
