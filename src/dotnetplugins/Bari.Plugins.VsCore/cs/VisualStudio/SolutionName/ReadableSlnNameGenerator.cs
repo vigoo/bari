@@ -78,21 +78,18 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
         private string GetNameBasedOnMultipleModules(IEnumerable<Module> modules, bool allHasTests)
         {
             var result = string.Join("_", modules.Select(m => m.Name)) + GetPostfix(allHasTests);
-            log.DebugFormat("Returning sln name based on multiple modules: {0}", result);
             return result;
         }
 
         private string GetNameBasedOnProduct(string productName, bool allHasTests)
         {
             var result = productName + GetPostfix(allHasTests);
-            log.DebugFormat("Returning sln name based on product: {0}", result);
             return result;
         }
 
         private string GetNameForSingleProject(Project project)
         {
             var result = (project.Module + "." + project.Name).Replace(' ', '_');
-            log.DebugFormat("Returning sln name for a single project: {0}", result);
             return result;
         }
 
