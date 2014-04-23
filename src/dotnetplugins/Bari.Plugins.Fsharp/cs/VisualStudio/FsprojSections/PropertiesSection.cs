@@ -65,6 +65,8 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             {
                 case ProjectType.Executable:
                     return "Exe";
+                case ProjectType.WindowsExecutable:
+                    return "WinExe";
                 case ProjectType.Library:
                     return "Library";
                 default:

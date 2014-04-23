@@ -85,6 +85,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             {
                 case ProjectType.Executable:
                     return "Exe";
+                case ProjectType.WindowsExecutable:
+                    return "WinExe";
                 case ProjectType.Library:
                     return "Library";
                 default:

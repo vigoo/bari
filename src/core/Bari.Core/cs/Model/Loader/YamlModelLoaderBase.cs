@@ -282,6 +282,9 @@ namespace Bari.Core.Model.Loader
                 case "executable":
                     project.Type = ProjectType.Executable;
                     break;
+                case "windows-executable":
+                    project.Type = ProjectType.WindowsExecutable;
+                    break;
                 case "static-library":
                 case "staticlibrary":
                 case "static":

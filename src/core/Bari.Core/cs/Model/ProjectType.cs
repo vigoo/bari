@@ -6,6 +6,11 @@
     public enum ProjectType
     {
         /// <summary>
+        /// Project is built to a Windows GUI executable file
+        /// </summary>
+        WindowsExecutable,
+
+        /// <summary>
         /// Project is built to an exectuable file
         /// </summary>
         Executable,
