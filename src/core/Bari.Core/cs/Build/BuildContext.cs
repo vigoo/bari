@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
+using Bari.Core.Generic.Graph;
 using QuickGraph;
 using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
@@ -191,8 +192,11 @@ namespace Bari.Core.Build
             if (rootBuilder != null)
                 RemoveIrrelevantBranches(graph, rootBuilder);
 
-            var graphviz = new GraphvizAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
-            graphviz.Generate(new FileDotEngine(), "graph");            
+            using (var writer = new DotWriter(builderGraphStream))
+            {
+                writer.Rankdir = "RL";
+                writer.WriteGraph(graph.Edges);
+            }
         }
 
         /// <summary>
