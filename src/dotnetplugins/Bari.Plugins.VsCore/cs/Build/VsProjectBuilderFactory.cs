@@ -73,7 +73,9 @@ namespace Bari.Plugins.VsCore.Build
 
             if (runtimeDeps.Count > 0)
             {
-                return new MergingBuilder(runtimeDeps.Concat(new [] {  msbuild }));
+                var merger = new MergingBuilder(runtimeDeps.Concat(new [] {  msbuild }));
+                merger.AddToContext(context);
+                return merger;
             }
             else
             {
