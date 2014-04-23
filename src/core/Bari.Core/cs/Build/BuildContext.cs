@@ -92,10 +92,12 @@ namespace Bari.Core.Build
                 {
                     var sortedBuilders = graph.TopologicalSort().ToList();
 
-                    log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
+                    log.DebugFormat("Build order:\n {0}\n", String.Join("\n ", sortedBuilders));
 
                     foreach (var builder in sortedBuilders)
                     {
+                        log.DebugFormat("===> {0}", builder);
+
                         var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
                         var builderResult = cachedBuilder.Run(this);
 
