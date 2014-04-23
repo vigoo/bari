@@ -85,7 +85,8 @@ namespace Bari.Plugins.Nuget.Tools
         private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot)
         {
             var lib40full = libRoot.GetDirectories("net40-full").FirstOrDefault();
-            var lib40 = libRoot.GetDirectories("net40").FirstOrDefault();
+            var lib40 = libRoot.GetDirectories("net40").FirstOrDefault() ?? 
+                        libRoot.GetDirectories("net4").FirstOrDefault();
             var lib40client = libRoot.GetDirectories("net40-client").FirstOrDefault();
             var lib35 = libRoot.GetDirectories("net35").FirstOrDefault();
             var lib20 = libRoot.GetDirectories("net20").FirstOrDefault() ??
