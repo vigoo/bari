@@ -151,7 +151,7 @@ namespace Bari.Core.Build
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return string.Format("[{0}]", reference.Uri);
+            return string.Format("[{0} ({1})]", reference.Uri, reference.Type);
         }
 
         public bool Equals(AliasReferenceBuilder other)

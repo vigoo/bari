@@ -10,6 +10,10 @@ namespace Bari.Core.Build
     {
         private readonly ISet<IBuilder> sourceBuilders;
 
+        // Debug ID used only in ToString to help debugging
+        private static int lastDebugId = 0;
+        private readonly int debugId = lastDebugId++;
+
         public MergingBuilder(IEnumerable<IBuilder> sourceBuilders)
         {
             this.sourceBuilders = new HashSet<IBuilder>(sourceBuilders);
@@ -72,7 +76,7 @@ namespace Bari.Core.Build
 
         public override string ToString()
         {
-            return "[Merge]";
+            return String.Format("[Merge #{0}]", debugId);
         }
 
         public bool Equals(MergingBuilder other)
