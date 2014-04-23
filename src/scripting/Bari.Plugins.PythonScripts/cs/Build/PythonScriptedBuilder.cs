@@ -12,7 +12,7 @@ namespace Bari.Plugins.PythonScripts.Build
     /// <summary>
     /// Builder that executes a python script on a given project's given source set
     /// </summary>
-    public class PythonScriptedBuilder: IBuilder
+    public class PythonScriptedBuilder: IBuilder, IEquatable<PythonScriptedBuilder>
     {
         private readonly Project project;
         private readonly IBuildScript buildScript;
@@ -75,6 +75,56 @@ namespace Bari.Plugins.PythonScripts.Build
         public override string ToString()
         {
             return String.Format("[{0}.{1}/{2}]", project.Module.Name, project.Name, buildScript.Name);
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(PythonScriptedBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return buildScript.Equals(other.buildScript);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. </param>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PythonScriptedBuilder) obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return buildScript.GetHashCode();
+        }
+
+        public static bool operator ==(PythonScriptedBuilder left, PythonScriptedBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PythonScriptedBuilder left, PythonScriptedBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }
