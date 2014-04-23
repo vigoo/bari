@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
@@ -37,8 +38,23 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <returns>Returns a valid XML element name</returns>
         protected override string GetElementNameFor(Project project, string file)
         {
-            return "EmbeddedResource";
+            var relativePath = ToProjectRelativePath(project, file, "resources");
+
+            if (relativePath.StartsWith("wpf\\"))
+                return "Resource";
+            else
+                return "EmbeddedResource";
         }
+
+        protected override string GetLogicalPath(Project project, SuiteRelativePath file, string sourceSetType)
+        {
+            var path = base.GetLogicalPath(project, file, sourceSetType);
+            if (path.StartsWith("wpf\\"))
+                return path.Substring(4);
+            else
+                return path;
+        }
+
 
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
