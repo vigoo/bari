@@ -17,7 +17,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the given module.
     /// </para>
     /// </summary>
-    public class SuiteReferenceBuilder : IReferenceBuilder, IEquatable<SuiteReferenceBuilder>
+    public class SuiteReferenceBuilder : IReferenceBuilder, IEquatable<SuiteReferenceBuilder>, IEquatable<ModuleReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -30,7 +30,22 @@ namespace Bari.Core.Build
         /// </summary>
         public Project ReferencedProject
         {
-            get { return referencedProject; }
+            get
+            {
+                if (referencedProject != null)
+                {
+                    var moduleName = reference.Uri.Host;
+                    var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+
+                    if (suite.HasModule(moduleName))
+                    {
+                        var module = suite.GetModule(moduleName);
+                        referencedProject = module.GetProjectOrTestProject(projectName);
+                    }                 
+                }
+
+                return referencedProject;
+            }
         }
 
         /// <summary>
@@ -159,6 +174,12 @@ namespace Bari.Core.Build
             return string.Format("[{0}]", reference.Uri);
         }
 
+        public bool Equals(ModuleReferenceBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return other.ReferencedProject == ReferencedProject;
+        }
+
         public bool Equals(SuiteReferenceBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -171,12 +192,35 @@ namespace Bari.Core.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((SuiteReferenceBuilder)obj);
+
+            var modRef = obj as ModuleReferenceBuilder;
+            var suiteRef = obj as SuiteReferenceBuilder;
+
+            if (modRef != null)
+                return Equals(modRef);
+            else if (suiteRef != null)
+                return Equals(suiteRef);
+            else
+                return false;
         }
 
         public override int GetHashCode()
         {
-            return (reference != null ? reference.GetHashCode() : 0);
+            unchecked
+            {
+                if (reference != null)
+                {
+                    var moduleName = reference.Uri.Host.ToLowerInvariant();
+                    var projectName = reference.Uri.AbsolutePath.TrimStart('/').ToLowerInvariant();
+
+                    return ((moduleName != null ? moduleName.GetHashCode() : 0)*397) ^
+                           (projectName != null ? projectName.GetHashCode() : 0);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
         public static bool operator ==(SuiteReferenceBuilder left, SuiteReferenceBuilder right)

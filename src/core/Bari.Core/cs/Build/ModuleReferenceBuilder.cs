@@ -17,7 +17,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the same module where the reference has been used.
     /// </para>
     /// </summary>
-    public class ModuleReferenceBuilder : IReferenceBuilder, IEquatable<ModuleReferenceBuilder>
+    public class ModuleReferenceBuilder : IReferenceBuilder, IEquatable<ModuleReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
         private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -30,7 +30,16 @@ namespace Bari.Core.Build
         /// </summary>
         public Project ReferencedProject
         {
-            get { return referencedProject; }
+            get
+            {
+                if (referencedProject == null)
+                {
+                    string projectName = reference.Uri.Host;
+                    referencedProject = module.GetProjectOrTestProject(projectName);                    
+                }
+
+                return referencedProject;
+            }
         }
 
         /// <summary>
@@ -148,6 +157,12 @@ namespace Bari.Core.Build
             return string.Format("[{0}]", reference.Uri);
         }
 
+        public bool Equals(SuiteReferenceBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return other.ReferencedProject == ReferencedProject;
+        }
+
         public bool Equals(ModuleReferenceBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -159,15 +174,23 @@ namespace Bari.Core.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ModuleReferenceBuilder)obj);
+
+            var modRef = obj as ModuleReferenceBuilder;
+            var suiteRef = obj as SuiteReferenceBuilder;
+
+            if (modRef != null)
+                return Equals(modRef);
+            else if (suiteRef != null)
+                return Equals(suiteRef);
+            else
+                return false;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((module != null ? module.GetHashCode() : 0) * 397) ^ (reference != null ? reference.GetHashCode() : 0);
+                return ((module != null ? module.Name.ToLowerInvariant().GetHashCode() : 0) * 397) ^ (reference != null ? reference.Uri.Host.ToLowerInvariant().GetHashCode() : 0);
             }
         }
 
