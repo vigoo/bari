@@ -20,7 +20,8 @@ namespace Bari.Core.Generic.Graph
         /// current accumulated value.</param>
         /// <param name="initial">The initial accumulated value.</param>
         /// <returns>Returns the final accumulated value.</returns>
-        public static TResult UndirectedBreadthFirstTraversal<TData, TResult>(this IUndirectedGraphNode<TData> root, Func<TData, TResult, TResult> function, TResult initial)
+        public static TResult UndirectedBreadthFirstTraversal<TData, TResult>(this IUndirectedGraphNode<TData> root,
+            Func<TData, TResult, TResult> function, TResult initial)
         {
             var queue = new Queue<IUndirectedGraphNode<TData>>();
             var visited = new HashSet<IUndirectedGraphNode<TData>>();
@@ -61,7 +62,8 @@ namespace Bari.Core.Generic.Graph
         /// current accumulated value.</param>
         /// <param name="initial">The initial accumulated value.</param>
         /// <returns>Returns the final accumulated value.</returns>
-        public static TResult DirectedBreadthFirstTraversal<TData, TResult>(this IDirectedGraphNode<TData> root, Func<TData, TResult, TResult> function, TResult initial)
+        public static TResult DirectedBreadthFirstTraversal<TData, TResult>(this IDirectedGraphNode<TData> root,
+            Func<TData, TResult, TResult> function, TResult initial)
         {
             var queue = new Queue<IDirectedGraphNode<TData>>();
             var visited = new HashSet<IUndirectedGraphNode<TData>>();
@@ -94,7 +96,8 @@ namespace Bari.Core.Generic.Graph
         /// current accumulated value.</param>
         /// <param name="initial">The initial accumulated value.</param>
         /// <returns>Returns the final accumulated value.</returns>
-        public static TResult UndirectedDepthFirstTraversal<TData, TResult>(this IUndirectedGraphNode<TData> root, Func<TData, TResult, TResult> function, TResult initial)
+        public static TResult UndirectedDepthFirstTraversal<TData, TResult>(this IUndirectedGraphNode<TData> root,
+            Func<TData, TResult, TResult> function, TResult initial)
         {
             var stack = new Stack<IUndirectedGraphNode<TData>>();
             var visited = new HashSet<IUndirectedGraphNode<TData>>();
@@ -137,7 +140,8 @@ namespace Bari.Core.Generic.Graph
         /// current accumulated value.</param>
         /// <param name="initial">The initial accumulated value.</param>
         /// <returns>Returns the final accumulated value.</returns>
-        public static TResult DirectedDepthFirstTraversal<TData, TResult>(this IDirectedGraphNode<TData> root, Func<TData, TResult, TResult> function, TResult initial)
+        public static TResult DirectedDepthFirstTraversal<TData, TResult>(this IDirectedGraphNode<TData> root,
+            Func<TData, TResult, TResult> function, TResult initial)
         {
             var stack = new Stack<IDirectedGraphNode<TData>>();
             var visited = new HashSet<IDirectedGraphNode<TData>>();

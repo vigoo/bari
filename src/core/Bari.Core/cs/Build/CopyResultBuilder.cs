@@ -13,14 +13,12 @@ namespace Bari.Core.Build
         private readonly IBuilder sourceBuilder;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IFileSystemDirectory targetDirectory;
-        private readonly IList<IBuilder> prerequisites;
 
-        public CopyResultBuilder(IBuilder sourceBuilder, [TargetRoot] IFileSystemDirectory targetRoot, IFileSystemDirectory targetDirectory, IEnumerable<IBuilder> prerequisites)
+        public CopyResultBuilder(IBuilder sourceBuilder, [TargetRoot] IFileSystemDirectory targetRoot, IFileSystemDirectory targetDirectory)
         {
             this.sourceBuilder = sourceBuilder;
             this.targetRoot = targetRoot;
             this.targetDirectory = targetDirectory;
-            this.prerequisites = prerequisites.ToList();
         }
 
         /// <summary>
@@ -39,7 +37,7 @@ namespace Bari.Core.Build
         /// </summary>
         public string Uid
         {
-            get { return sourceBuilder.Uid; }
+            get { return sourceBuilder.Uid + "__" + targetRoot.GetRelativePath(targetDirectory).Replace('\\', '_'); }
         }
 
         /// <summary>
@@ -50,7 +48,7 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            context.AddBuilder(this, prerequisites.Concat(new[] { sourceBuilder }));
+            context.AddBuilder(this, new[] { sourceBuilder });
         }
 
         /// <summary>
@@ -86,14 +84,15 @@ namespace Bari.Core.Build
 
         public override string ToString()
         {
-            return String.Format("[result of {0}]", sourceBuilder);
+            return String.Format("[result of {0} to {1}]", sourceBuilder, targetRoot.GetRelativePath(targetDirectory));
         }
 
         public bool Equals(CopyResultBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return sourceBuilder.Equals(other.sourceBuilder);
+            return sourceBuilder.Equals(other.sourceBuilder) &&
+                   targetDirectory.Equals(other.targetDirectory);
         }
 
         public override bool Equals(object obj)
@@ -106,7 +105,7 @@ namespace Bari.Core.Build
 
         public override int GetHashCode()
         {
-            return sourceBuilder.GetHashCode();
+            return sourceBuilder.GetHashCode() ^ targetDirectory.GetHashCode();
         }
 
         public static bool operator ==(CopyResultBuilder left, CopyResultBuilder right)

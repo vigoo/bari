@@ -63,7 +63,7 @@ namespace Bari.Plugins.VsCore.Build
                     {
                         refBuilder.AddToContext(context);
 
-                        var refDeploy = CreateRuntimeReferenceDeployment(project, refBuilder, msbuild);
+                        var refDeploy = CreateRuntimeReferenceDeployment(context, project, refBuilder);
                         refDeploy.AddToContext(context);
 
                         runtimeDeps.Add(refDeploy);
@@ -83,9 +83,11 @@ namespace Bari.Plugins.VsCore.Build
             }
         }
 
-        private IBuilder CreateRuntimeReferenceDeployment(Project project, IReferenceBuilder refBuilder, IBuilder prerequisite)
+        private IBuilder CreateRuntimeReferenceDeployment(IBuildContext context, Project project, IReferenceBuilder refBuilder)
         {
-            return new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true), new[] { prerequisite });
+            var copy = new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true));
+            context.AddBuilder(copy, new[] { refBuilder });
+            return copy;
         }
 
         private IReferenceBuilder CreateReferenceBuilder(Project project, Reference reference)

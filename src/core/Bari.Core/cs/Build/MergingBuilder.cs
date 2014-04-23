@@ -6,7 +6,7 @@ using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
-    public class MergingBuilder: IBuilder, IEquatable<MergingBuilder>
+    public class MergingBuilder : IBuilder, IEquatable<MergingBuilder>
     {
         private readonly ISet<IBuilder> sourceBuilders;
 
@@ -50,13 +50,10 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public void AddToContext(IBuildContext context)
         {
-            if (!context.Contains(this))
-            {
-                foreach (var builder in sourceBuilders)
-                    builder.AddToContext(context);
+            foreach (var builder in sourceBuilders)
+                builder.AddToContext(context);
 
-                context.AddBuilder(this, sourceBuilders);
-            }
+            context.AddBuilder(this, sourceBuilders);
         }
 
         /// <summary>
@@ -91,7 +88,7 @@ namespace Bari.Core.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((MergingBuilder) obj);
+            return Equals((MergingBuilder)obj);
         }
 
         public override int GetHashCode()

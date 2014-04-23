@@ -82,18 +82,25 @@ namespace Bari.Core.Build
                 if (rootBuilder != null)
                     RemoveIrrelevantBranches(rootBuilder);
 
-                var nodes = builders.BuildNodes(removeSelfLoops: true);
-                var sortedBuilders = nodes.TopologicalSort().ToList();
-
-                log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
-
-                foreach (var builder in sortedBuilders)
+                if (!HasCycles(rootBuilder))
                 {
-                    var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
-                    var builderResult = cachedBuilder.Run(this);
+                    var nodes = builders.BuildNodes(removeSelfLoops: true);
+                    var sortedBuilders = nodes.TopologicalSort().ToList();
 
-                    partialResults.Add(builder, builderResult);
-                    result.UnionWith(builderResult);
+                    log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
+
+                    foreach (var builder in sortedBuilders)
+                    {
+                        var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
+                        var builderResult = cachedBuilder.Run(this);
+
+                        partialResults.Add(builder, builderResult);
+                        result.UnionWith(builderResult);
+                    }
+                }
+                else
+                {
+                    log.ErrorFormat("Build graph has cycle");
                 }
             }
             else
@@ -102,6 +109,14 @@ namespace Bari.Core.Build
             }
 
             return result;
+        }
+
+        private bool HasCycles(IBuilder rootBuilder)
+        {
+            return false; // TODO
+//            var rootNode = builders.BuildNodes(rootBuilder, true);
+//            return rootNode.HasCycles(
+//                (source, target) => log.ErrorFormat("Cycle at: {0} => {1}", source, target));
         }
 
         private void RemoveIrrelevantBranches(IBuilder rootBuilder)

@@ -10,7 +10,7 @@ namespace Bari.Core.Generic
     /// Default implementation of <see cref="IFileSystemDirectory"/>, using the .NET 
     /// file operations.
     /// </summary>
-    public class LocalFileSystemDirectory: IFileSystemDirectory
+    public class LocalFileSystemDirectory: IFileSystemDirectory, IEquatable<LocalFileSystemDirectory>
     {
         private readonly string path;
 
@@ -218,6 +218,67 @@ namespace Bari.Core.Generic
         {
             return File.Exists(Path.Combine(path, relativePath)) ||
                    Directory.Exists(Path.Combine(path, relativePath));
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(LocalFileSystemDirectory other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(path, other.path);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. </param>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LocalFileSystemDirectory) obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return path.GetHashCode();
+        }
+
+        public static bool operator ==(LocalFileSystemDirectory left, LocalFileSystemDirectory right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(LocalFileSystemDirectory left, LocalFileSystemDirectory right)
+        {
+            return !Equals(left, right);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override string ToString()
+        {
+            return path;
         }
     }
 }

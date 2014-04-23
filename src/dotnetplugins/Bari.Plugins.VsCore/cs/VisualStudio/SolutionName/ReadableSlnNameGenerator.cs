@@ -40,29 +40,39 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
         public string GetName(IEnumerable<Project> projects)
         {
             var prjs = projects.ToList();
-            var matches = analyzer.GetCoveredModules(prjs).ToList();
-            if (matches.Count > 0 && matches.All(m => !m.Partial))
+
+            if (prjs.Count == 1)
             {
-                bool? allTests = AllHasTests(matches);
-
-                if (allTests.HasValue)
-                {
-                    var productName = analyzer.GetProductName(matches.Select(m => m.Module));
-                    if (productName != null)
-                    {   // this covers a product
-                        return GetNameBasedOnProduct(productName, allTests.Value);
-                    }
-                    else if (matches.Count <= MaxModuleCount)
-                    {
-                        return GetNameBasedOnMultipleModules(matches.Select(m => m.Module), allTests.Value);
-                    }
-                    // otherwise: many modules -> fallback
-                }
-                // otherwise: contains modules both with tests included and without included -> fallback
+                // Single project
+                return GetNameForSingleProject(prjs[0]);
             }
-            // otherwise: there are partial matches -> fallback
+            else
+            {
+                var matches = analyzer.GetCoveredModules(prjs).ToList();
+                if (matches.Count > 0 && matches.All(m => !m.Partial))
+                {
+                    bool? allTests = AllHasTests(matches);
 
-            return fallbackGenerator.GetName(prjs);
+                    if (allTests.HasValue)
+                    {
+                        var productName = analyzer.GetProductName(matches.Select(m => m.Module));
+                        if (productName != null)
+                        {
+                            // this covers a product
+                            return GetNameBasedOnProduct(productName, allTests.Value);
+                        }
+                        else if (matches.Count <= MaxModuleCount)
+                        {
+                            return GetNameBasedOnMultipleModules(matches.Select(m => m.Module), allTests.Value);
+                        }
+                        // otherwise: many modules -> fallback
+                    }
+                    // otherwise: contains modules both with tests included and without included -> fallback
+                }
+                // otherwise: there are partial matches -> fallback
+
+                return fallbackGenerator.GetName(prjs);
+            }
         }
 
         private string GetNameBasedOnMultipleModules(IEnumerable<Module> modules, bool allHasTests)
@@ -76,6 +86,13 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
         {
             var result = productName + GetPostfix(allHasTests);
             log.DebugFormat("Returning sln name based on product: {0}", result);
+            return result;
+        }
+
+        private string GetNameForSingleProject(Project project)
+        {
+            var result = project.Module + "." + project.Name;
+            log.DebugFormat("Returning sln name for a single project: {0}", result);
             return result;
         }
 
