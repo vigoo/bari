@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
-using Bari.Core.Generic.Graph;
+using QuickGraph;
+using QuickGraph.Algorithms;
+using QuickGraph.Algorithms.Search;
+using QuickGraph.Graphviz;
 
 namespace Bari.Core.Build
 {
@@ -19,11 +22,11 @@ namespace Bari.Core.Build
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(BuildContext));
 
-        private readonly ISet<IDirectedGraphEdge<IBuilder>> builders = new HashSet<IDirectedGraphEdge<IBuilder>>();
+        private readonly ISet<EquatableEdge<IBuilder>> builders = new HashSet<EquatableEdge<IBuilder>>();
         private readonly IDictionary<IBuilder, ISet<TargetRelativePath>> partialResults =
             new Dictionary<IBuilder, ISet<TargetRelativePath>>();
-        private readonly ISet<Func<ISet<IDirectedGraphEdge<IBuilder>>, bool>> graphTransformations =
-            new HashSet<Func<ISet<IDirectedGraphEdge<IBuilder>>, bool>>();
+        private readonly ISet<Func<ISet<EquatableEdge<IBuilder>>, bool>> graphTransformations =
+            new HashSet<Func<ISet<EquatableEdge<IBuilder>>, bool>>();
 
         private readonly ICachedBuilderFactory cachedBuilderFactory;
 
@@ -45,11 +48,11 @@ namespace Bari.Core.Build
         /// order in which they are executed.</param>
         public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
         {
-            builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, builder));
+            builders.Add(new EquatableEdge<IBuilder>(builder, builder));
 
             foreach (var prerequisite in prerequisites)
             {
-                builders.Add(new SimpleDirectedGraphEdge<IBuilder>(builder, prerequisite));
+                builders.Add(new EquatableEdge<IBuilder>(prerequisite, builder));
             }
         }
 
@@ -57,7 +60,7 @@ namespace Bari.Core.Build
         /// Adds a new graph transformation which will be executed before the builders
         /// </summary>
         /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
-        public void AddTransformation(Func<ISet<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        public void AddTransformation(Func<ISet<EquatableEdge<IBuilder>>, bool> transformation)
         {
             graphTransformations.Add(transformation);
         }
@@ -79,13 +82,15 @@ namespace Bari.Core.Build
 
             if (!cancel)
             {
+                var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+                graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+                
                 if (rootBuilder != null)
-                    RemoveIrrelevantBranches(rootBuilder);
+                    RemoveIrrelevantBranches(graph, rootBuilder);               
 
-                if (!HasCycles(rootBuilder))
+                if (!HasCycles(graph, rootBuilder))
                 {
-                    var nodes = builders.BuildNodes(removeSelfLoops: true);
-                    var sortedBuilders = nodes.TopologicalSort().ToList();
+                    var sortedBuilders = graph.TopologicalSort().ToList();
 
                     log.DebugFormat("Build order: {0}\n", String.Join("\n ", sortedBuilders));
 
@@ -111,23 +116,25 @@ namespace Bari.Core.Build
             return result;
         }
 
-        private bool HasCycles(IBuilder rootBuilder)
+        private bool HasCycles(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
         {
-            return false; // TODO
-//            var rootNode = builders.BuildNodes(rootBuilder, true);
-//            return rootNode.HasCycles(
-//                (source, target) => log.ErrorFormat("Cycle at: {0} => {1}", source, target));
+            Boolean found = false;
+            var dfs = new DepthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            dfs.BackEdge += edge =>
+            {
+                log.DebugFormat("Found back-edge {0} => {1}", edge.Source, edge.Target);
+                found = true;
+            };
+            dfs.Compute(rootBuilder);
+
+            return found;
         }
 
-        private void RemoveIrrelevantBranches(IBuilder rootBuilder)
+        private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
         {
-            var rootNode = builders.BuildNodes(rootBuilder, true);
-            var toKeep = rootNode.DirectedBreadthFirstTraversal(
-                (node, set) =>
-                {
-                    set.Add(node);
-                    return set;
-                }, new HashSet<IBuilder>());
+            var bfs = new BreadthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            bfs.Compute(rootBuilder);
+            var toKeep = new HashSet<IBuilder>(bfs.VisitedGraph.Vertices);
 
             var toRemove = builders.Where(edge => !toKeep.Contains(edge.Source) || !toKeep.Contains(edge.Target)).ToList();
             foreach (var edge in toRemove)
@@ -175,14 +182,15 @@ namespace Bari.Core.Build
         public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
         {
             RunTransformations();
-            if (rootBuilder != null)
-                RemoveIrrelevantBranches(rootBuilder);
 
-            using (var writer = new DotWriter(builderGraphStream))
-            {
-                writer.Rankdir = "RL";
-                writer.WriteGraph(builders);
-            }
+            var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+            graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+
+            if (rootBuilder != null)
+                RemoveIrrelevantBranches(graph, rootBuilder);
+
+            var graphviz = new GraphvizAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            graphviz.Generate(new FileDotEngine(), "graph");            
         }
 
         /// <summary>

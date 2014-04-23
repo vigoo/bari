@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Generic;
-using Bari.Core.Generic.Graph;
+using QuickGraph;
 
 namespace Bari.Core.Build
 {
@@ -26,7 +26,7 @@ namespace Bari.Core.Build
         /// Adds a new graph transformation which will be executed before the builders
         /// </summary>
         /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
-        void AddTransformation(Func<ISet<IDirectedGraphEdge<IBuilder>>, bool> transformation);
+        void AddTransformation(Func<ISet<EquatableEdge<IBuilder>>, bool> transformation);
 
         /// <summary>
         /// Runs all the added builders
@@ -90,7 +90,7 @@ namespace Bari.Core.Build
         /// Adds a new graph transformation which will be executed before the builders
         /// </summary>
         /// <param name="transformation">Transformation function, returns <c>false</c> to cancel the build process</param>
-        public void AddTransformation(Func<ISet<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        public void AddTransformation(Func<ISet<EquatableEdge<IBuilder>>, bool> transformation)
         {
             Contract.Requires(transformation != null);
         }

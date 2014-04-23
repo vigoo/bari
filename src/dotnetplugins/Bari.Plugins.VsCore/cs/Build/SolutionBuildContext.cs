@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Generic;
-using Bari.Core.Generic.Graph;
 using Bari.Core.Model;
+using QuickGraph;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -81,7 +81,7 @@ namespace Bari.Plugins.VsCore.Build
             }
         }
 
-        public void AddTransformation(Func<ISet<IDirectedGraphEdge<IBuilder>>, bool> transformation)
+        public void AddTransformation(Func<ISet<EquatableEdge<IBuilder>>, bool> transformation)
         {
             baseContext.AddTransformation(transformation);
         }

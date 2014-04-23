@@ -7,7 +7,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Ninject;
-using Ninject.Extensions.ChildKernel;
 
 namespace Bari.Core.Test
 {

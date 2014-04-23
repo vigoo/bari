@@ -23,12 +23,14 @@ modules:
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - nuget://DotNetZip
+            - nuget://QuickGraph
         - name: bari
           type: executable
           references:
             - gac://System
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
+            - nuget://QuickGraph
             - module://Bari.Core
           csharp:
             root-namespace: Bari.Console
@@ -74,6 +76,7 @@ modules:
             - gac://System.Xml
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
+            - nuget://QuickGraph
             - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp
           references:

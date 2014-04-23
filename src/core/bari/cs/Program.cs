@@ -8,7 +8,6 @@ using Bari.Core;
 using Bari.Core.Build.Cache;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
-using Bari.Core.Generic.Graph;
 using Bari.Core.Process;
 using Bari.Core.UI;
 using Ninject;
@@ -16,6 +15,8 @@ using Ninject.Modules;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
+using QuickGraph;
+using QuickGraph.Algorithms;
 
 namespace Bari.Console
 {
@@ -72,7 +73,7 @@ namespace Bari.Console
             }
         }
 
-        private static IEnumerable<IDirectedGraphEdge<INinjectModule>> GetModuleGraph(string path, string pattern)
+        private static IEnumerable<EquatableEdge<INinjectModule>> GetModuleGraph(string path, string pattern)
         {
             var instanceCache = new Dictionary<Type, INinjectModule>();
 
@@ -87,13 +88,13 @@ namespace Bari.Console
                 {
                     var instance = CreateModuleInstance(module, instanceCache);
 
-                    yield return new SimpleDirectedGraphEdge<INinjectModule>(instance, instance);
+                    yield return new EquatableEdge<INinjectModule>(instance, instance);
 
                     var deps = module.GetCustomAttributes(typeof (DependsOnAttribute), false).Cast<DependsOnAttribute>();
                     foreach (var dep in deps)
                     {
                         var dependentInstance = CreateModuleInstance(dep.DependentModuleType, instanceCache);
-                        yield return new SimpleDirectedGraphEdge<INinjectModule>(instance, dependentInstance);
+                        yield return new EquatableEdge<INinjectModule>(dependentInstance, instance);
                     }
                 }
             }
@@ -113,7 +114,8 @@ namespace Bari.Console
 
         private static IEnumerable<INinjectModule> GetOrderedModuleList(string path, string pattern)
         {
-            var graph = GetModuleGraph(path, pattern).BuildNodes(removeSelfLoops: true);
+            var graph = GetModuleGraph(path, pattern).ToAdjacencyGraph<INinjectModule, EquatableEdge<INinjectModule>>();
+            graph.RemoveEdgeIf(edge => edge.IsSelfEdge<INinjectModule, EquatableEdge<INinjectModule>>());
             return graph.TopologicalSort();
         }
 
