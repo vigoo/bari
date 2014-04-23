@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Bari.Core.Build.Cache;
@@ -98,9 +99,15 @@ namespace Bari.Core.Build
                     foreach (var builder in sortedBuilders)
                     {
                         log.DebugFormat("===> {0}", builder);
+                        var watch = new Stopwatch();                        
 
                         var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
+
+                        watch.Start();
                         var builderResult = cachedBuilder.Run(this);
+                        watch.Stop();
+
+                        log.DebugFormat("!!! {0} took {1} seconds", builder, watch.Elapsed.TotalSeconds);
 
                         partialResults.Add(builder, builderResult);
                         result.UnionWith(builderResult);
