@@ -219,7 +219,7 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<Stream>() != null);
-            Contract.Ensures(Files.Contains(name));
+            Contract.Ensures(Files.Contains(name, StringComparer.InvariantCultureIgnoreCase));
 
             return null; // dummy value
         }
