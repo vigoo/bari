@@ -9,7 +9,6 @@ using Bari.Core.Generic.Graph;
 using QuickGraph;
 using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
-using QuickGraph.Graphviz;
 
 namespace Bari.Core.Build
 {
@@ -88,7 +87,7 @@ namespace Bari.Core.Build
                 graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
                 
                 if (rootBuilder != null)
-                    RemoveIrrelevantBranches(graph, rootBuilder);               
+                    RemoveIrrelevantBranches(graph, rootBuilder);
 
                 if (!HasCycles(graph, rootBuilder))
                 {
@@ -126,18 +125,9 @@ namespace Bari.Core.Build
             return result;
         }
 
-        private bool HasCycles(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
+        private bool HasCycles(IVertexListGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
         {
-            Boolean found = false;
-            var dfs = new DepthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
-            dfs.BackEdge += edge =>
-            {
-                log.DebugFormat("Found back-edge {0} => {1}", edge.Source, edge.Target);
-                found = true;
-            };
-            dfs.Compute(rootBuilder);
-
-            return found;
+            return !graph.IsDirectedAcyclicGraph();
         }
 
         private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
@@ -145,10 +135,7 @@ namespace Bari.Core.Build
             var bfs = new BreadthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
             bfs.Compute(rootBuilder);
             var toKeep = new HashSet<IBuilder>(bfs.VisitedGraph.Vertices);
-
-            var toRemove = builders.Where(edge => !toKeep.Contains(edge.Source) || !toKeep.Contains(edge.Target)).ToList();
-            foreach (var edge in toRemove)
-                builders.Remove(edge);
+            graph.RemoveVertexIf(v => !toKeep.Contains(v));
         }
 
         private bool RunTransformations()

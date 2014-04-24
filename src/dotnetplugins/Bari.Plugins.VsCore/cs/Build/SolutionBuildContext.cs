@@ -25,11 +25,8 @@ namespace Bari.Plugins.VsCore.Build
             this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
         }
 
-        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        private IBuilder ConvertBuilder(IBuilder builder)
         {
-            IBuilder finalBuilder = builder;
-            IEnumerable<IBuilder> finalPrerequisites = null;
-
             var moduleReferenceBuilder = builder as ModuleReferenceBuilder;
             if (moduleReferenceBuilder != null)
             {
@@ -38,8 +35,8 @@ namespace Bari.Plugins.VsCore.Build
                 {
                     log.DebugFormat("Transforming module reference builder {0}", moduleReferenceBuilder);
 
-                    finalBuilder = ConvertToInSolutionReference(moduleReferenceBuilder, moduleReferenceBuilder.ReferencedProject);
-                    finalPrerequisites = new IBuilder[0];
+                    return ConvertToInSolutionReference(moduleReferenceBuilder, moduleReferenceBuilder.ReferencedProject);
+                    
                 }
             }
             else
@@ -52,12 +49,22 @@ namespace Bari.Plugins.VsCore.Build
                     {
                         log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
 
-                        finalBuilder = ConvertToInSolutionReference(suiteReferenceBuilder,
-                            suiteReferenceBuilder.ReferencedProject);
-                        finalPrerequisites = new IBuilder[0];
+                        return ConvertToInSolutionReference(suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);
                     }
                 }
             }
+
+            return null;
+        }
+
+        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        {
+            IBuilder finalBuilder = ConvertBuilder(builder);            
+            IEnumerable<IBuilder> finalPrerequisites = null;
+            if (finalBuilder != null)
+                finalPrerequisites = new IBuilder[0];
+            else
+                finalBuilder = builder;
 
             if (finalPrerequisites == null)
                 finalPrerequisites = prerequisites.Select(ResolveBuilder);
@@ -98,7 +105,10 @@ namespace Bari.Plugins.VsCore.Build
 
         public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
         {
-            return baseContext.GetDependencies(ResolveBuilder(builder));
+            var resolved = ResolveBuilder(builder);
+            var converted = ConvertBuilder(resolved);
+
+            return baseContext.GetDependencies(converted ?? resolved);
         }
 
         private IBuilder ResolveBuilder(IBuilder builder)
@@ -117,7 +127,10 @@ namespace Bari.Plugins.VsCore.Build
 
         public bool Contains(IBuilder builder)
         {
-            return baseContext.Contains(ResolveBuilder(builder));
+            var resolved = ResolveBuilder(builder);
+            var converted = ConvertBuilder(resolved);
+
+            return baseContext.Contains(converted ?? resolved);
         }
     }
 }

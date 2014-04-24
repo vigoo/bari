@@ -37,7 +37,7 @@ namespace Bari.Core.Build
                 if (referencedProject == null)
                 {
                     string projectName = reference.Uri.Host;
-                    referencedProject = module.GetProjectOrTestProject(projectName);                    
+                    referencedProject = module.GetProjectOrTestProject(projectName);
                 }
 
                 return referencedProject;
@@ -91,7 +91,8 @@ namespace Bari.Core.Build
                 }
                 else
                 {
-                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name, projectName));
+                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}",
+                        module.Name, projectName));
                 }
             }
             else
