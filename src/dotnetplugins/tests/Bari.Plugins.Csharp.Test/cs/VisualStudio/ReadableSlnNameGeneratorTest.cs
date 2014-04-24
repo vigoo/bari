@@ -162,8 +162,13 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
         [Test]
         public void NoMatch()
         {
+            var s = new Suite(new TestFileSystemDirectory("z"));
             var name =
-                generator.GetName(new[] {new Project("x", new Module("y", new Suite(new TestFileSystemDirectory("z"))))});
+                generator.GetName(new[]
+                {
+                    new Project("x", new Module("y", s)),
+                    new Project("xx", new Module("y", s))
+                });
             name.Should().Be("fallback");
         }
     }
