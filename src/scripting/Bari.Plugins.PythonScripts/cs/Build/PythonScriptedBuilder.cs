@@ -88,7 +88,7 @@ namespace Bari.Plugins.PythonScripts.Build
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return buildScript.Equals(other.buildScript);
+            return buildScript.Equals(other.buildScript) && project == other.project;
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Bari.Plugins.PythonScripts.Build
         /// </returns>
         public override int GetHashCode()
         {
-            return buildScript.GetHashCode();
+            return buildScript.GetHashCode() ^ project.GetHashCode();
         }
 
         public static bool operator ==(PythonScriptedBuilder left, PythonScriptedBuilder right)
