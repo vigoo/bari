@@ -75,5 +75,6 @@ Bari.Plugins.Gallio.csproj
 Bari.Plugins.Nuget.csproj
 Bari.Plugins.Csharp.Test.csproj
 Bari.Plugins.PythonScripts.csproj
+Bari.Plugins.PythonScripts.Test.csproj
 bari.Test.csproj
 

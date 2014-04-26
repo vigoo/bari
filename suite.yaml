@@ -44,7 +44,7 @@ modules:
             - gac://System.Data.DataSetExtensions
             - gac://System.Xml
             - gac://System.Xml.Linq
-            - nuget://FluentAssertions
+            - nuget://FluentAssertions/2.2.0
             - nuget://Moq
             - nuget://Castle.Core/3.0.0.4001
             - nuget://Ninject/3.0.1.10
@@ -60,7 +60,7 @@ modules:
             - gac://System.Xml.Linq
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
-            - nuget://FluentAssertions
+            - nuget://FluentAssertions/2.2.0
             - nuget://Moq
             - nuget://NUnit
             - module://Bari.Core
@@ -177,7 +177,7 @@ modules:
             - gac://System.Data.DataSetExtensions
             - gac://System.Xml
             - gac://System.Xml.Linq
-            - nuget://FluentAssertions
+            - nuget://FluentAssertions/2.2.0
             - nuget://Moq
             - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
@@ -198,7 +198,7 @@ modules:
             - gac://System.Data.DataSetExtensions
             - gac://System.Xml
             - gac://System.Xml.Linq
-            - nuget://FluentAssertions
+            - nuget://FluentAssertions/2.2.0
             - nuget://Moq
             - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
@@ -217,7 +217,7 @@ modules:
             - gac://System.Core
             - gac://System.Xml
             - gac://System.Xml.Linq            
-            - nuget://FluentAssertions
+            - nuget://FluentAssertions/2.2.0
             - nuget://Moq
             - nuget://Ninject/3.0.1.10
             - nuget://Castle.Core/3.0.0.4001
@@ -239,6 +239,27 @@ modules:
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
             - suite://core/Bari.Core 
+      tests:
+        - name: Bari.Plugins.PythonScripts.Test
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://FluentAssertions/2.2.0
+            - nuget://Moq
+            - nuget://Ninject/3.0.1.10
+            - nuget://Castle.Core/3.0.0.4001
+            - nuget://Ninject.Extensions.Factory/3.0.1
+            - nuget://NUnit
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - suite://core/Bari.Core
+            - suite://core/Bari.Core.Test
+            - module://Bari.Plugins.PythonScripts
 products:
     - name: full
       modules:
