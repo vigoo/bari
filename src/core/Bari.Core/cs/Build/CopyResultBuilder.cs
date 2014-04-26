@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
+    [ShouldNotCache]
     public class CopyResultBuilder : IBuilder, IEquatable<CopyResultBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ContentBuilder));

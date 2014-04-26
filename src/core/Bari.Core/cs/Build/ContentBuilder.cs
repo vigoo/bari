@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -10,6 +11,7 @@ namespace Bari.Core.Build
     /// <summary>
     /// Copies the contents of a given project's <c>content</c> source set to the target directory
     /// </summary>
+    [ShouldNotCache]
     public class ContentBuilder: IBuilder
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ContentBuilder));

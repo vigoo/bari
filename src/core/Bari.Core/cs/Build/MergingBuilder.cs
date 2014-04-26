@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
 {
+    [ShouldNotCache]
     public class MergingBuilder : IBuilder, IEquatable<MergingBuilder>
     {
         private readonly ISet<IBuilder> sourceBuilders;

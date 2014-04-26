@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -17,6 +18,7 @@ namespace Bari.Plugins.VsCore.Build
     /// means that the System.Xml assembly will be directly referenced from the GAC
     /// </para>
     /// </summary>
+    [ShouldNotCache]
     public class GacReferenceBuilder : IReferenceBuilder, IEquatable<GacReferenceBuilder>
     {
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (GacReferenceBuilder));

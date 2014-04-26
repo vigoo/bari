@@ -89,7 +89,7 @@ namespace Bari.Core.Build
                 if (rootBuilder != null)
                     RemoveIrrelevantBranches(graph, rootBuilder);
 
-                if (!HasCycles(graph, rootBuilder))
+                if (!HasCycles(graph))
                 {
                     var sortedBuilders = graph.TopologicalSort().ToList();
 
@@ -100,7 +100,7 @@ namespace Bari.Core.Build
                         log.DebugFormat("===> {0}", builder);
                         var watch = new Stopwatch();                        
 
-                        var cachedBuilder = cachedBuilderFactory.CreateCachedBuilder(builder);
+                        var cachedBuilder = CreateCachedBuilder(builder);
 
                         watch.Start();
                         var builderResult = cachedBuilder.Run(this);
@@ -125,7 +125,19 @@ namespace Bari.Core.Build
             return result;
         }
 
-        private bool HasCycles(IVertexListGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
+        private IBuilder CreateCachedBuilder(IBuilder builder)
+        {
+            if (builder.GetType().GetCustomAttributes(typeof (ShouldNotCacheAttribute), true).Any())
+            {
+                return builder;
+            }
+            else
+            {
+                return cachedBuilderFactory.CreateCachedBuilder(builder);
+            }
+        }
+
+        private bool HasCycles(IVertexListGraph<IBuilder, EquatableEdge<IBuilder>> graph)
         {
             return !graph.IsDirectedAcyclicGraph();
         }
