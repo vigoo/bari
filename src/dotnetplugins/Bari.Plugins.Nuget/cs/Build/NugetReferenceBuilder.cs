@@ -58,7 +58,7 @@ namespace Bari.Plugins.Nuget.Build
         /// </summary>
         public string Uid
         {
-            get { return reference.Uri.Host; }
+            get { return reference.Uri.Host + "-" + reference.Uri.AbsolutePath.TrimStart('/'); }
         }
 
         /// <summary>
