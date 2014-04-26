@@ -36,7 +36,7 @@ Function InternalCheckExe($name, $path, $exitcode, $output)
     $code = (Start-Process -FilePath $path -RedirectStandardOutput "..\tmp\$name.out" -Wait -NoNewWindow -PassThru).ExitCode
     if ($code -eq $exitcode) 
     {
-        if ((get-content "..\tmp\$name.out") -eq $output) 
+        if (((get-content "..\tmp\$name.out") -join "`n") -eq $output) 
         {
             return $true
         }
@@ -140,9 +140,9 @@ SimpleExeBuild "suite-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
 SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
 SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
 ContentTest
-SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 $null
+SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
 SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
-SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!!!"
+SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
 SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
 SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
