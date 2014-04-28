@@ -51,7 +51,10 @@ namespace Bari.Plugins.PythonScripts.Build
                 }
             }
 
-            return builders.ToArray().Merge();
+            var merged = builders.ToArray().Merge();
+            if (merged != null)
+                merged.AddToContext(context);
+            return merged;
         }
     }
 }

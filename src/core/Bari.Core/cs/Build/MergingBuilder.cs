@@ -10,6 +10,7 @@ namespace Bari.Core.Build
     [ShouldNotCache]
     public class MergingBuilder : IBuilder, IEquatable<MergingBuilder>
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MergingBuilder));
         private readonly ISet<IBuilder> sourceBuilders;
 
         // Debug ID used only in ToString to help debugging
@@ -68,7 +69,10 @@ namespace Bari.Core.Build
             var result = new HashSet<TargetRelativePath>();
 
             foreach (var builder in sourceBuilders)
+            {
+                log.DebugFormat("..merging {0}", builder);
                 result.UnionWith(context.GetResults(builder));
+            }
 
             return result;
         }

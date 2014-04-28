@@ -34,7 +34,10 @@ namespace Bari.Core.Build
             IBuilder[] builders = projects.Where(prj => prj.HasNonEmptySourceSet("content"))
                                           .Select(prj => (IBuilder)new ContentBuilder(prj, fingerprintFactory, suiteRoot, targetRoot)).ToArray();
 
-            return builders.Merge();
+            var merged = builders.Merge();
+            if (merged != null)
+                merged.AddToContext(context);
+            return merged;
         }
     }
 }
