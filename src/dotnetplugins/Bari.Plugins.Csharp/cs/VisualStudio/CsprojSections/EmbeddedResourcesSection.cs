@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
@@ -52,7 +53,16 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             if (path.StartsWith("wpf\\"))
                 return path.Substring(4);
             else
-                return path;
+                return PrefixWithRootNamespace(project, path);
+        }
+
+        private string PrefixWithRootNamespace(Project project, string path)
+        {
+            CsharpProjectParameters parameters = project.HasParameters("csharp")
+                                                     ? project.GetParameters<CsharpProjectParameters>("csharp")
+                                                     : new CsharpProjectParameters(Suite);
+
+            return parameters.RootNamespace + "." + path;
         }
 
 
