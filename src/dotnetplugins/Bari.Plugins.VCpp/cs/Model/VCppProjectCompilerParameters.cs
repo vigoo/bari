@@ -298,7 +298,7 @@ namespace Bari.Plugins.VCpp.Model
             DisableLanguageExtensions = false;
             SuppressedWarnings = new int[0];
             EnableEnhancedInstructionSet = EnhancedInstructionSet.SSE2;
-            EnableFiberSafeOptimizations = true;
+            EnableFiberSafeOptimizations = false;
             CodeAnalysis = true;
             ExceptionHandling = ExceptionHandlingType.NotSpecified;
             ExpandAttributedSource = false;
@@ -312,7 +312,7 @@ namespace Bari.Plugins.VCpp.Model
             GenerateXMLDocumentationFiles = false;
             IgnoreStandardIncludePath = false;
             InlineFunctionExpansion = InlineExpansion.Default;
-            IntrinsicFunctions = true;
+            IntrinsicFunctions = false;
             MinimalRebuild = true;
             MultiProcessorCompilation = true;
             OmitDefaultLibName = false;
