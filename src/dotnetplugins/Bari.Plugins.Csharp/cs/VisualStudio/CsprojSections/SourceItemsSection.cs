@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
@@ -85,8 +86,10 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             return false;
         }
 
-        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, SuiteRelativePath suiteRelativePath)
         {
+            var projectRelativePath = ToProjectRelativePath(project, suiteRelativePath, ProjectSourceSetName);
+
             // Extra options for XAML pages
             var ext = Path.GetExtension(projectRelativePath).ToLowerInvariant();
             if (ext == ".xaml")
@@ -102,7 +105,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     projectRelativePath.Substring(0, projectRelativePath.Length - 3));
             }
 
-            base.WriteAdditionalOptions(writer, project, projectRelativePath);
+            base.WriteAdditionalOptions(writer, project, suiteRelativePath);
         }
     }
 }

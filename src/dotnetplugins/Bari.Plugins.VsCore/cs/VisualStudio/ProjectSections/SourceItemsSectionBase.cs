@@ -52,7 +52,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                     if (ProjectSourceSetName != sourceSetType)
                         writer.WriteElementString("LogicalName", logicalPath.Replace('\\', '.'));
 
-                    WriteAdditionalOptions(writer, project, relativePath);
+                    WriteAdditionalOptions(writer, project, file);
 
                     writer.WriteEndElement();
                 }
@@ -88,8 +88,8 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// </summary>
         /// <param name="writer">The project file writer</param>
         /// <param name="project">Project model</param>
-        /// <param name="projectRelativePath">Project relative path of the source item</param>
-        protected virtual void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        /// <param name="suiteRelativePath">Suite relative path of the source item</param>
+        protected virtual void WriteAdditionalOptions(XmlWriter writer, Project project, SuiteRelativePath suiteRelativePath)
         {
         }
 

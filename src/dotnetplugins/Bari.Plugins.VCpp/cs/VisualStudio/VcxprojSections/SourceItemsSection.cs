@@ -76,10 +76,12 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         /// </summary>
         /// <param name="writer">The project file writer</param>
         /// <param name="project">Project model</param>
-        /// <param name="projectRelativePath">Project relative path of the source item</param>
-        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, string projectRelativePath)
+        /// <param name="suiteRelativePath">Suite relative path of the source item</param>
+        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, SuiteRelativePath suiteRelativePath)
         {
-            base.WriteAdditionalOptions(writer, project, projectRelativePath);
+            base.WriteAdditionalOptions(writer, project, suiteRelativePath);
+
+            var projectRelativePath = ToProjectRelativePath(project, suiteRelativePath, ProjectSourceSetName);
 
             if (projectRelativePath == "stdafx.cpp")
             {

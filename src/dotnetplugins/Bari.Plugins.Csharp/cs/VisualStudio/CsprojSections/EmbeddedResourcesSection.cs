@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Model;
@@ -61,8 +63,17 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             CsharpProjectParameters parameters = project.HasParameters("csharp")
                                                      ? project.GetParameters<CsharpProjectParameters>("csharp")
                                                      : new CsharpProjectParameters(Suite);
+            parameters.FillProjectSpecificMissingInfo(project);
 
             return parameters.RootNamespace + "." + path;
+        }
+
+        protected override void WriteAdditionalOptions(XmlWriter writer, Project project, SuiteRelativePath suiteRelativePath)
+        {            
+            base.WriteAdditionalOptions(writer, project, suiteRelativePath);
+
+            var relativePath = ToProjectRelativePath(project, suiteRelativePath, "resources");
+            writer.WriteElementString("Link", Path.Combine("_Resources", relativePath));
         }
 
 
