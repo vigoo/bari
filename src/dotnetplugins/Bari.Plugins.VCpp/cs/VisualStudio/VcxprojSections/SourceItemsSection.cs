@@ -52,7 +52,8 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
                 ".vcxproj",
-                ".vcxproj.user"
+                ".vcxproj.user",
+                ".cache"
             };
 
         /// <summary>
