@@ -62,6 +62,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         protected override string GetElementNameFor(Project project, string file)
         {
             var ext = Path.GetExtension(file).ToLowerInvariant();
+            var relativePath = ToProjectRelativePath(project, file, ProjectSourceSetName);
+
             if (ext == ".xaml")
             {
                 if (IsWPFApplicationDefinition(project, file))
@@ -69,7 +71,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 else
                     return "Page";
             }
-            else if (file.StartsWith("Service References\\", StringComparison.InvariantCultureIgnoreCase))
+            else if (relativePath.StartsWith("Service References\\", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (ext != ".cs")
                     return "None";
