@@ -71,6 +71,10 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 else
                     return "Page";
             }
+            else if (ext == ".settings")
+            {
+                return "None";
+            }
             else if (relativePath.StartsWith("Service References\\", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (ext != ".cs")
@@ -112,6 +116,21 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             {
                 writer.WriteElementString("DependentUpon",
                     projectRelativePath.Substring(0, projectRelativePath.Length - 3));
+            }
+
+            // Settings file
+            if (projectRelativePath.Equals("Properties\\Settings.Designer.cs",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                writer.WriteElementString("AutoGen", "True");
+                writer.WriteElementString("DesignTimeSharedInput", "True");
+                writer.WriteElementString("DependentUpon", "Settings.settings");
+            }
+            else if (projectRelativePath.Equals("Properties\\Settings.settings",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                writer.WriteElementString("Generator", "PublicSettingsSingleFileGenerator");
+                writer.WriteElementString("LastGenOutput", "Settings.Designer.cs");
             }
 
             // WCF service references
