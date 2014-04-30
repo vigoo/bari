@@ -54,6 +54,7 @@ namespace Bari.Plugins.Csharp
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<CsprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<EmbeddedResourcesSection>().WhenInjectedInto<CsprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<CsprojGenerator>(); 
+            Bind<IMSBuildProjectSection>().To<WCFMetadataSection>().WhenInjectedInto<CsprojGenerator>(); 
             
             Bind<IYamlProjectParametersLoader>().To<CsharpParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<WPFParametersLoader>();

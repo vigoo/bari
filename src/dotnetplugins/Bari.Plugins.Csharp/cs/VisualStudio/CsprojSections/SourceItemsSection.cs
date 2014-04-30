@@ -69,6 +69,13 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 else
                     return "Page";
             }
+            else if (file.StartsWith("Service References\\", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (ext != ".cs")
+                    return "None";
+                else
+                    return "Compile";
+            }
             else
                 return base.GetElementNameFor(project, file);
         }
@@ -103,6 +110,26 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             {
                 writer.WriteElementString("DependentUpon",
                     projectRelativePath.Substring(0, projectRelativePath.Length - 3));
+            }
+
+            // WCF service references
+            if (projectRelativePath.StartsWith("Service References\\", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (ext == ".cs")
+                {
+                    writer.WriteElementString("AutoGen", "True");
+                    writer.WriteElementString("DesignTime", "True");
+                    writer.WriteElementString("DependentUpon", Path.GetFileNameWithoutExtension(projectRelativePath) + ".svcmap");
+                }
+                else if (ext == ".xsd")
+                {
+                    writer.WriteElementString("SubType", "Designer");
+                }
+                else if (ext == ".svcmap")
+                {
+                    writer.WriteElementString("Generator", "WCF Proxy Generator");
+                    writer.WriteElementString("LastGenOutput", Path.GetFileNameWithoutExtension(projectRelativePath) + ".cs");
+                }
             }
 
             base.WriteAdditionalOptions(writer, project, suiteRelativePath);
