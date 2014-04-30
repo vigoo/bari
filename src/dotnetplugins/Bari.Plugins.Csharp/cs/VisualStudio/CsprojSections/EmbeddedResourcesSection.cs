@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -53,9 +55,16 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
             var path = base.GetLogicalPath(project, file, sourceSetType);
             if (path.StartsWith("wpf\\"))
-                return path.Substring(4);
+                return path.Substring(4).Replace('\\', '/');
             else
-                return PrefixWithRootNamespace(project, path);
+                return PrefixWithRootNamespace(project, PrefixNumericComponents(path)).Replace('\\', '.');
+        }
+
+        private string PrefixNumericComponents(string path)
+        {
+            return String.Join("\\",
+                path.Split('\\')
+                    .Select(part => part.Length > 0 && char.IsDigit(part[0]) ? "_" + part : part));
         }
 
         private string PrefixWithRootNamespace(Project project, string path)

@@ -50,7 +50,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                     writer.WriteAttributeString("Include", relativePath);
 
                     if (ProjectSourceSetName != sourceSetType)
-                        writer.WriteElementString("LogicalName", logicalPath.Replace('\\', '.'));
+                        writer.WriteElementString("LogicalName", logicalPath);
 
                     WriteAdditionalOptions(writer, project, file);
 
