@@ -37,6 +37,7 @@ systest/mixed-cpp-cli/cache
 systest/static-lib-test/cache
 systest/cpp-rc-support/cache
 systest/x86-x64-test/cache
+systest/embedded-resources-test/cache
 
 # Systest generated files
 hello.vcxproj
