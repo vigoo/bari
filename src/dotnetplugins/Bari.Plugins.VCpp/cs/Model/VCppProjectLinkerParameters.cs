@@ -114,7 +114,7 @@ namespace Bari.Plugins.VCpp.Model
             IgnoreEmbeddedIDL = false;
             IgnoreImportLibrary = false;
             IgnoreSpecificDefaultLibraries = new string[0];
-            ImageHasSafeExceptionHandlers = true;
+            ImageHasSafeExceptionHandlers = suite.ActiveGoal.Has("x86");
             ImportLibrary = null;
             KeyContainer = null;
             KeyFile = null;
@@ -139,7 +139,7 @@ namespace Bari.Plugins.VCpp.Model
             SupportUnloadOfDelayLoadedDLL = false;
             SwapRunFromCD = false;
             SwapRunFromNet = false;
-            TargetMachine = LinkerTargetMachine.MachineX86;
+            TargetMachine = suite.ActiveGoal.Has("x64") ? LinkerTargetMachine.MachineX64 : LinkerTargetMachine.MachineX86;
             TerminalServerAware = false;
             TreatLinkerWarningAsErrors = false;
             TurnOffAssemblyGeneration = false;

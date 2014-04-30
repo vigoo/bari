@@ -113,6 +113,14 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the suite this module belongs to
+        /// </summary>
+        public Suite Suite
+        {
+            get { return suite; }
+        }
+
+        /// <summary>
         /// Creates the module instance
         /// </summary>
         /// <param name="name">The name of the module</param>

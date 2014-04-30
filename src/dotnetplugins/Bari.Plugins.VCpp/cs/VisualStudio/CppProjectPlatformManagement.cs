@@ -14,8 +14,9 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
         public string GetDefaultPlatform(Project project)
         {
+            var suite = project.Module.Suite;
             if (project.HasNonEmptySourceSet("cpp"))
-                return "Win32"; // TODO: 64 bit support
+                return suite.ActiveGoal.Has("x64") ? "x64" : "Win32";
             else
                 return baseImpl.GetDefaultPlatform(project);
         }
