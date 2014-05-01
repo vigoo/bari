@@ -3,8 +3,6 @@ bari
 
 Bari is an advanced build management tool for .NET projects.
 
-See the [getting started page](https://github.com/vigoo/bari/wiki/GettingStarted) for more information.
-
 # Roadmap #
 
 ## Milestone 1 ##
@@ -29,7 +27,9 @@ Bari itself is now compiled using bari, so you'll have to download the latest ve
 The [latest version is 0.8](https://github.com/vigoo/bari/releases/tag/0.8).
 
 ## Documentation ##
-Documentations is not available yet. Until it's ready, I recommend browsing the following suite definitions for examples:
+Documentation is under construction and available from the [getting started page](https://github.com/vigoo/bari/wiki/GettingStarted).
+
+Additionally I recommend browsing the following suite definitions for examples:
 
 * [Simple C# executable](https://github.com/vigoo/bari/blob/master/systest/single-cs-exe/suite.yaml)
 * [Simple F# executable](https://github.com/vigoo/bari/blob/master/systest/single-fs-exe/suite.yaml)
