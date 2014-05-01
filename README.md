@@ -3,17 +3,17 @@ bari
 
 Bari is an advanced build management tool for .NET projects.
 
-The project is already usable for smaller projects, but there is no documentation available yet.
+See the [getting started page](https://github.com/vigoo/bari/wiki/GettingStarted) for more information.
 
 # Roadmap #
 
 ## Milestone 1 ##
 
-* Bari will be able to compile and test itself.
+* -Bari will be able to compile and test itself.-
 
 ## Milestone 2 ##
 
-* Bari is able to compile one of my more complex projects with multiple _modules_ (currently as Visual Studio solutions) and custom build steps.
+* -Bari is able to compile one of my more complex projects with multiple _modules_ (currently as Visual Studio solutions) and custom build steps.-
 
 ## Milestone 3 (release v1) ##
 
