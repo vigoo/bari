@@ -7,10 +7,11 @@ namespace Bari.Core.Model
     /// <summary>
     /// A product is a named subset of a suite's modules
     /// </summary>
-    public class Product
+    public class Product : IPostProcessorsHolder
     {
         private readonly string name;
         private readonly ISet<Module> modules;
+        private readonly IDictionary<string, PostProcessDefinition> postProcessDefinitions = new Dictionary<string, PostProcessDefinition>();
 
         /// <summary>
         /// Gets the product's name
@@ -39,6 +40,15 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the postprocessors associated with this product
+        /// </summary>
+        public IEnumerable<PostProcessDefinition> PostProcessors
+        {
+            get { return postProcessDefinitions.Values; }
+        }
+
+
+        /// <summary>
         /// Creates the product, initially with empty module set
         /// </summary>
         /// <param name="name">Name of the product</param>
@@ -60,6 +70,25 @@ namespace Bari.Core.Model
             Contract.Ensures(Modules.Contains(module));
 
             modules.Add(module);
+        }
+
+        /// <summary>
+        /// Adds a new postprocessor to this product
+        /// </summary>
+        /// <param name="postProcessDefinition">Post processor type and parameters</param>
+        public void AddPostProcessor(PostProcessDefinition postProcessDefinition)
+        {
+            postProcessDefinitions.Add(postProcessDefinition.Name, postProcessDefinition);
+        }
+
+        /// <summary>
+        /// Gets a registered post processor by its name
+        /// </summary>
+        /// <param name="key">Name of the post processor</param>
+        /// <returns>Returns the post processor definition</returns>
+        public PostProcessDefinition GetPostProcessor(string key)
+        {
+            return postProcessDefinitions[key];
         }
     }
 }

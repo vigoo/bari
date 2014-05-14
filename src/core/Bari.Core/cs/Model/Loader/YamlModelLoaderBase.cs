@@ -123,7 +123,17 @@ namespace Bari.Core.Model.Loader
             if (mapping != null)
             {
                 foreach (var pair in parser.EnumerateNodesOf(mapping))
-                    TryAddParameters(target, pair.Key, pair.Value);
+                {
+                    if (new YamlScalarNode("postprocessors").Equals(pair.Key) &&
+                        pair.Value is YamlMappingNode)
+                    {
+                        // skipping
+                    }
+                    else
+                    {
+                        TryAddParameters(target, pair.Key, pair.Value);
+                    }
+                }
             }
         }
 
@@ -137,6 +147,8 @@ namespace Bari.Core.Model.Loader
                 var module = suite.GetModule(item.Key);
                 product.AddModule(module);
             }
+
+            SetProjectPostProcessors(product, productNode);
         }
 
         private void LoadModule(Module module, YamlNode moduleNode)
@@ -148,6 +160,7 @@ namespace Bari.Core.Model.Loader
             LoadProjects(module, moduleNode);
             LoadTestProjects(module, moduleNode);
             LoadParameters(module, moduleNode);
+            SetProjectPostProcessors(module, moduleNode);
         }
 
         private void LoadModuleVersion(Module module, YamlNode moduleNode)
@@ -218,7 +231,7 @@ namespace Bari.Core.Model.Loader
             SetProjectPostProcessors(project, projectNode);
         }
 
-        private void SetProjectPostProcessors(Project project, YamlNode postProcessorDefinitions)
+        private void SetProjectPostProcessors(IPostProcessorsHolder project, YamlNode postProcessorDefinitions)
         {
             Contract.Requires(project != null);
             Contract.Requires(postProcessorDefinitions != null);

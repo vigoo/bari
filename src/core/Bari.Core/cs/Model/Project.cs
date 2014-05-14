@@ -11,7 +11,7 @@ namespace Bari.Core.Model
     /// 
     /// <example>An example is a set of C# sources compiled into one assembly.</example>
     /// </summary>
-    public class Project: IProjectParametersHolder
+    public class Project: IProjectParametersHolder, IPostProcessorsHolder
     {
         private readonly Module module;
         private readonly string name;

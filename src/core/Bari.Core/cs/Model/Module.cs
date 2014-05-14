@@ -8,19 +8,17 @@ namespace Bari.Core.Model
     /// <summary>
     /// Represents a module of the suite which consists of several projects
     /// </summary>
-    public class Module : IProjectParametersHolder
+    public class Module : IProjectParametersHolder, IPostProcessorsHolder
     {
         private readonly string name;
         private string version;
         
         private readonly Suite suite;
 
-        private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(
-            StringComparer.InvariantCultureIgnoreCase);
-        private readonly IDictionary<string, TestProject> testProjects = new Dictionary<string, TestProject>(
-            StringComparer.InvariantCultureIgnoreCase);
-        private readonly IDictionary<string, IProjectParameters> parameters =
-            new Dictionary<string, IProjectParameters>();
+        private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, TestProject> testProjects = new Dictionary<string, TestProject>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
+        private readonly IDictionary<string, PostProcessDefinition> postProcessDefinitions = new Dictionary<string, PostProcessDefinition>();
             
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -111,6 +109,15 @@ namespace Bari.Core.Model
                 return suite.SuiteRoot.GetChildDirectory("src").GetChildDirectory(name);
             }
         }
+
+        /// <summary>
+        /// Gets the postprocessors associated with this module
+        /// </summary>
+        public IEnumerable<PostProcessDefinition> PostProcessors
+        {
+            get { return postProcessDefinitions.Values; }
+        }
+
 
         /// <summary>
         /// Gets the suite this module belongs to
@@ -250,6 +257,25 @@ namespace Bari.Core.Model
         public void AddParameters(string paramsName, IProjectParameters projectParameters)
         {
             parameters.Add(paramsName, projectParameters);
+        }
+
+        /// <summary>
+        /// Adds a new postprocessor to this module
+        /// </summary>
+        /// <param name="postProcessDefinition">Post processor type and parameters</param>
+        public void AddPostProcessor(PostProcessDefinition postProcessDefinition)
+        {
+            postProcessDefinitions.Add(postProcessDefinition.Name, postProcessDefinition);
+        }
+
+        /// <summary>
+        /// Gets a registered post processor by its name
+        /// </summary>
+        /// <param name="key">Name of the post processor</param>
+        /// <returns>Returns the post processor definition</returns>
+        public PostProcessDefinition GetPostProcessor(string key)
+        {
+            return postProcessDefinitions[key];
         }
 
         public override string ToString()

@@ -646,5 +646,217 @@ goals:
             suite.Goals.First().IncorporatedGoals.Should().BeEquivalentTo(
                 new[] {Suite.DebugGoal});
         }
+
+        [Test]
+        public void ModulePostprocessorsLoaded1()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:    
+    - name: Module
+      projects:
+        - name: Project          
+      postprocessors:
+        - pptype1
+        - pptype2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            suite.GetModule("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetModule("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pptype1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pptype2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+        }
+
+        [Test]
+        public void ModulePostprocessorsLoaded2()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:    
+    - name: Module
+      projects:
+        - name: Project
+      postprocessors:
+        - name: pp1
+          type: pptype1
+        - name: pp2
+          type: pptype2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            suite.GetModule("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetModule("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pp1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pp2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+        }
+
+        [Test]
+        public void ModulePostprocessorsLoadedWithParameters()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:    
+    - name: Module
+      projects:
+        - name: Project
+      postprocessors:
+        - name: pp1
+          type: pptype1
+          param: v1
+        - name: pp2
+          type: pptype2
+          param: v2
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var param1 = new Mock<IProjectParameters>();
+            var param2 = new Mock<IProjectParameters>();
+
+            paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
+            paramLoader.Setup(l => l.Supports("pptype2")).Returns(true);
+
+            paramLoader.Setup(l => l.Load("pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+                .Returns(param1.Object);
+            paramLoader.Setup(l => l.Load("pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+                .Returns(param2.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.GetModule("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetModule("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pp1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pp2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+
+            paramLoader.Verify(l => l.Supports("pptype1"), Times.AtLeastOnce);
+            paramLoader.Verify(l => l.Supports("pptype2"), Times.AtLeastOnce);
+
+            suite.GetModule("Module").GetPostProcessor("pp1").Parameters.Should().Be(param1.Object);
+            suite.GetModule("Module").GetPostProcessor("pp2").Parameters.Should().Be(param2.Object);
+        }
+
+        [Test]
+        public void ProductPostprocessorsLoaded1()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+products:    
+    - name: Module
+      postprocessors:
+        - pptype1
+        - pptype2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            suite.GetProduct("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetProduct("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pptype1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pptype2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+        }
+
+        [Test]
+        public void ProductPostprocessorsLoaded2()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+products:    
+    - name: Module
+      postprocessors:
+        - name: pp1
+          type: pptype1
+        - name: pp2
+          type: pptype2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+
+            suite.GetProduct("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetProduct("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pp1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pp2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+        }
+
+        [Test]
+        public void ProductPostprocessorsLoadedWithParameters()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+products:    
+    - name: Module
+      postprocessors:
+        - name: pp1
+          type: pptype1
+          param: v1
+        - name: pp2
+          type: pptype2
+          param: v2
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var param1 = new Mock<IProjectParameters>();
+            var param2 = new Mock<IProjectParameters>();
+
+            paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
+            paramLoader.Setup(l => l.Supports("pptype2")).Returns(true);
+
+            paramLoader.Setup(l => l.Load("pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+                .Returns(param1.Object);
+            paramLoader.Setup(l => l.Load("pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+                .Returns(param2.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.GetProduct("Module").PostProcessors.Should().HaveCount(2);
+            suite.GetProduct("Module").PostProcessors.Should().OnlyContain(
+                p => (p.Name == "pp1" && p.PostProcessorId == new PostProcessorId("pptype1")) ||
+                     (p.Name == "pp2" && p.PostProcessorId == new PostProcessorId("pptype2")));
+
+            paramLoader.Verify(l => l.Supports("pptype1"), Times.AtLeastOnce);
+            paramLoader.Verify(l => l.Supports("pptype2"), Times.AtLeastOnce);
+
+            suite.GetProduct("Module").GetPostProcessor("pp1").Parameters.Should().Be(param1.Object);
+            suite.GetProduct("Module").GetPostProcessor("pp2").Parameters.Should().Be(param2.Object);
+        }
     }
 }
