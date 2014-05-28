@@ -37,6 +37,11 @@ namespace Bari.Core.UI
         /// Gets the goal name
         /// </summary>
         string Goal { get; }
+
+        /// <summary>
+        /// True if Mono toolchain should be used
+        /// </summary>
+        bool UseMono { get; }
     }
 
     /// <summary>
@@ -97,5 +102,7 @@ namespace Bari.Core.UI
                 return null; // dummy value
             }
         }
+
+        public abstract bool UseMono { get; }
     }
 }

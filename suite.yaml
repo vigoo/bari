@@ -75,6 +75,7 @@ modules:
             - gac://System.Xml
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
+            - nuget://Ninject.Extensions.Factory/3.0.1
             - nuget://QuickGraph
             - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp

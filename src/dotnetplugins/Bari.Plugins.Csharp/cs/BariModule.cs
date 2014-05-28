@@ -38,9 +38,6 @@ namespace Bari.Plugins.Csharp
             Bind<ICleanExtension>().To<CsprojCleaner>();
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
-            Bind<IMSBuild>().To<MSBuild>();
-            
-            Bind<IMSBuildRunnerFactory>().ToFactory();
             Bind<ISlnBuilderFactory>().ToFactory();
             Bind<ICsprojBuilderFactory>().ToFactory();
 

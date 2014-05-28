@@ -67,7 +67,8 @@ namespace Bari.Console.UI
         private bool IsGlobalParameter(string arg)
         {
             return arg == "-v" || arg == "/v" ||
-                   arg == "--target" || arg == "/target";
+                   arg == "--target" || arg == "/target" ||
+                   arg == "--mono";
         }
 
         private int GetGlobalParameterExtraArgCount(string arg)
@@ -134,6 +135,19 @@ namespace Bari.Console.UI
                 }
 
                 return "debug";
+            }
+        }
+
+        public bool UseMono
+        {
+            get
+            {
+                if (globalParams.Any(opt => opt == "--mono"))
+                    return true;
+                else
+                {
+                    return Type.GetType("Mono.Runtime") != null;
+                }
             }
         }
     }

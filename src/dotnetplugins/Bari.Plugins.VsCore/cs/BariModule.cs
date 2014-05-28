@@ -1,6 +1,10 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.Tools;
 using Bari.Plugins.VsCore.VisualStudio;
+using Ninject;
+using Ninject.Extensions.Factory;
 using Ninject.Modules;
 
 namespace Bari.Plugins.VsCore
@@ -21,6 +25,14 @@ namespace Bari.Plugins.VsCore
 
             Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
             Bind<IProjectPlatformManagement>().To<DefaultProjectPlatformManagement>().InSingletonScope();
+
+            var parameters = Kernel.Get<IParameters>();
+
+            if (parameters.UseMono)
+                Bind<IMSBuild>().To<XBuild>();
+            else
+                Bind<IMSBuild>().To<MSBuild>();
+            Bind<IMSBuildRunnerFactory>().ToFactory();
         }
     }
 }

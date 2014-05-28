@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Bari.Core.Exceptions;
 
 namespace Bari.Core.Tools
@@ -9,6 +10,8 @@ namespace Bari.Core.Tools
     /// </summary>
     public class ManuallyInstallableExternalTool: ExternalTool
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ManuallyInstallableExternalTool));
+
         private readonly string defaultInstallLocation;
         private readonly string exeName;
         private readonly Uri manualUri;
@@ -34,7 +37,23 @@ namespace Bari.Core.Tools
         /// </summary>
         protected override void EnsureToolAvailable()
         {
-            if (!File.Exists(ToolPath))
+            bool exists;
+            if (!Path.IsPathRooted(ToolPath))
+            {
+                var paths = Environment.GetEnvironmentVariable("PATH").Split(';');
+                exists = paths.Any(path =>
+                {
+                    var possibility = Path.Combine(path, ToolPath);
+                    log.DebugFormat("Trying {0}", possibility);
+                    return File.Exists(possibility);
+                });
+            }
+            else
+            {
+                exists = File.Exists(ToolPath);
+            }
+
+            if (!exists)
             {
                 throw new ToolMustBeInstalledManually(Name, manualUri);
             }
