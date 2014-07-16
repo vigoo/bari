@@ -118,6 +118,13 @@ namespace Bari.Core.Model
             get { return postProcessDefinitions.Values; }
         }
 
+        /// <summary>
+        /// Gets the relative path to the target directory where this post processable item is compiled to
+        /// </summary>
+        public string RelativeTargetPath
+        {
+            get { return name; }
+        }
 
         /// <summary>
         /// Gets the suite this module belongs to

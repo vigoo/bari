@@ -23,7 +23,7 @@ namespace Bari.Core.Model.Discovery
         }
 
         /// <summary>
-        /// Runs all the available explorers to add their discoveris
+        /// Runs all the available explorers to add their discoveries
         /// to the suite model.
         /// </summary>
         /// <param name="suite">The suite model to be extended.</param>

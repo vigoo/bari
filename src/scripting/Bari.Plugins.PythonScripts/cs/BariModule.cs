@@ -22,8 +22,11 @@ namespace Bari.Plugins.PythonScripts
             log.Info("PythonScripts plugin loaded");
 
             Bind<ISuiteExplorer>().To<PythonBuildScriptDiscovery>();
+            Bind<ISuiteExplorer>().To<PythonPostProcessorScriptDiscovery>();
             Bind<IProjectBuilderFactory>().To<PythonScriptedProjectBuilderFactory>();
+            Bind<IPostProcessorFactory>().To<PythonScriptedPostProcessorFactory>();
             Bind<IProjectBuildScriptRunner>().To<ProjectBuildScriptRunner>();
+            Bind<IPostProcessorScriptRunner>().To<PostProcessorScriptRunner>();
         }
     }
 }

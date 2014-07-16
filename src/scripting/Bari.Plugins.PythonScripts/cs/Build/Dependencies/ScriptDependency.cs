@@ -6,9 +6,9 @@ namespace Bari.Plugins.PythonScripts.Build.Dependencies
 {
     public class ScriptDependency : IDependencies
     {
-        private readonly IBuildScript buildScript;
+        private readonly IScript buildScript;
 
-        public ScriptDependency(IBuildScript buildScript)
+        public ScriptDependency(IScript buildScript)
          {
              this.buildScript = buildScript;
          }

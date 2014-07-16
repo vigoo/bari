@@ -31,6 +31,11 @@ Function BuildWithGoal($namem, $goal)
     Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v --target $goal build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
 }
 
+Function BuildProduct($name, $product)
+{
+    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v build $product" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow        
+}
+
 Function InternalCheckExe($name, $path, $exitcode, $output)
 {
     $code = (Start-Process -FilePath $path -RedirectStandardOutput "..\tmp\$name.out" -Wait -NoNewWindow -PassThru).ExitCode
@@ -68,6 +73,16 @@ Function SimpleExeBuild($name, $path, $exitcode, $output)
     Push-Location -Path $name
     Clean $name
     Build $name
+    CheckExe $name $path $exitcode $output
+    Pop-Location    
+}
+
+Function ExeProductBuild($name, $product, $path, $exitcode, $output)
+{
+    Write-Host "..$name.." -NoNewline
+    Push-Location -Path $name
+    Clean $name
+    BuildProduct $name $product
     CheckExe $name $path $exitcode $output
     Pop-Location    
 }
@@ -148,3 +163,4 @@ SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
 X86X64Test
 SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!"
+ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n"

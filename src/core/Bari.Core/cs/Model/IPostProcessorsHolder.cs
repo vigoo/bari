@@ -10,6 +10,11 @@ namespace Bari.Core.Model
         IEnumerable<PostProcessDefinition> PostProcessors { get; }
 
         /// <summary>
+        /// Gets the relative path to the target directory where this post processable item is compiled to
+        /// </summary>
+        string RelativeTargetPath { get; }
+
+        /// <summary>
         /// Adds a new postprocessor to this project
         /// </summary>
         /// <param name="postProcessDefinition">Post processor type and parameters</param>

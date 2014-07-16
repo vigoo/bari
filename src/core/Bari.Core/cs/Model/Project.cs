@@ -108,6 +108,14 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the relative path to the target directory where this post processable item is compiled to
+        /// </summary>
+        public string RelativeTargetPath
+        {
+            get { return module.Name; }
+        }
+
+        /// <summary>
         /// Gets or sets the root directory of the project's sources
         /// </summary>
         public virtual IFileSystemDirectory RootDirectory

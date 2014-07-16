@@ -165,9 +165,12 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             foreach (var sourcePath in outputs)
             {
-                using (var source = targetRoot.ReadBinaryFile(sourcePath))
-                using (var target = productOutput.CreateBinaryFileWithDirectories(sourcePath.RelativePath))
-                    StreamOperations.Copy(source, target);
+                if (sourcePath.RelativeRoot != product.Name) // Postprocessors can generate output to product output directory directly
+                {
+                    using (var source = targetRoot.ReadBinaryFile(sourcePath))
+                    using (var target = productOutput.CreateBinaryFileWithDirectories(sourcePath.RelativePath))
+                        StreamOperations.Copy(source, target);
+                }
             }
         }
     }

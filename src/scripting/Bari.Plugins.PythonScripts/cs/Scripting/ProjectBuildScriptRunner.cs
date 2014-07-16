@@ -1,31 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using IronPython.Compiler;
-using IronPython.Hosting;
 using IronPython.Runtime;
 using Microsoft.Scripting;
 
 namespace Bari.Plugins.PythonScripts.Scripting
 {
-    public class ProjectBuildScriptRunner : IProjectBuildScriptRunner
-    {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ProjectBuildScriptRunner));
-
-        private readonly IFileSystemDirectory targetRoot;
-        private readonly IReferenceBuilderFactory referenceBuilderFactory;
-        private readonly IBuildContextFactory buildContextFactory;
-
+    public class ProjectBuildScriptRunner : ScriptRunnerBase, IProjectBuildScriptRunner
+    {                
         public ProjectBuildScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory)
+            : base(targetRoot, referenceBuilderFactory, buildContextFactory)
         {
-            this.targetRoot = targetRoot;
-            this.referenceBuilderFactory = referenceBuilderFactory;
-            this.buildContextFactory = buildContextFactory;
         }
 
         /// <summary>
@@ -53,12 +42,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
         /// indicated in the script's <c>results</c> variable, relative to <c>targetDir</c>.</returns>
         public ISet<TargetRelativePath> Run(Project project, IBuildScript buildScript)
         {
-            var engine = Python.CreateEngine();
-
-            var libRoot = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Lib");            
-            log.DebugFormat("Python lib root is {0}", libRoot);
-
-            engine.SetSearchPaths(new[] { libRoot });
+            var engine = CreateEngine();
             
             var runtime = engine.Runtime;
             try
@@ -70,11 +54,11 @@ namespace Bari.Plugins.PythonScripts.Scripting
                                   project.GetSourceSet(buildScript.SourceSetName)
                                          .Files.Select(srp => (string) srp)
                                          .ToList());
-                scope.SetVariable("get_tool", (Func<string, string, string>)((uri, fname) => GetTool(uri, fname, project)));
+                AddGetToolToScope(scope, project);
 
-                var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
+                var targetDir = TargetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
                 var localTargetDir = targetDir as LocalFileSystemDirectory;
-                var localTargetRoot = targetRoot as LocalFileSystemDirectory;
+                var localTargetRoot = TargetRoot as LocalFileSystemDirectory;
                 if (localTargetDir != null && localTargetRoot != null)
                 {
                     scope.SetVariable("targetRoot", localTargetRoot.AbsolutePath);
@@ -101,28 +85,6 @@ namespace Bari.Plugins.PythonScripts.Scripting
             {
                 runtime.Shutdown();
             }
-        }
-
-        private TargetRelativePath GetTargetRelativePath(IFileSystemDirectory innerRoot, string path)
-        {
-            return new TargetRelativePath(targetRoot.GetRelativePath(innerRoot), path);
-        }
-
-        private string GetTool(string uri, string fileName, Project project)
-        {
-            var referenceBuilder = referenceBuilderFactory.CreateReferenceBuilder(
-                new Reference(new Uri(uri), ReferenceType.Build), project);
-
-            var buildContext = buildContextFactory.CreateBuildContext();
-            buildContext.AddBuilder(referenceBuilder, new IBuilder[0]);
-            var files = buildContext.Run(referenceBuilder);
-            var file = files.FirstOrDefault(f => Path.GetFileName(f).Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
-            var localTargetRoot = (LocalFileSystemDirectory)targetRoot;
-
-            if (file != null)
-                return Path.Combine(localTargetRoot.AbsolutePath, file);
-            else
-                return null;
         }
     }
 }
