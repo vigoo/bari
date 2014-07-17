@@ -169,6 +169,17 @@ namespace Bari.Core
             {
                 get { return localRoot.GetAll<ICommand>().Select(cmd => cmd.Name).OrderBy(n => n); }
             }
+
+            public bool NeedsExplicitTargetGoal(string commandName)
+            {
+                var cmd = localRoot.GetAll<ICommand>().FirstOrDefault(c => c.Name == commandName);
+                if (cmd != null)
+                {
+                    return cmd.NeedsExplicitTargetGoal;
+                }    
+                    
+                return true;
+            }
         }
     }
 }

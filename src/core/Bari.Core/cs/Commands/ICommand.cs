@@ -27,6 +27,12 @@ namespace Bari.Core.Commands
         string Help { get; }
 
         /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        bool NeedsExplicitTargetGoal { get; }
+
+        /// <summary>
         /// Runs the command
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
@@ -76,6 +82,12 @@ namespace Bari.Core.Commands
                 return null; // dummy value
             }
         }
+
+        /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public abstract bool NeedsExplicitTargetGoal { get; }
 
         /// <summary>
         /// Runs the command

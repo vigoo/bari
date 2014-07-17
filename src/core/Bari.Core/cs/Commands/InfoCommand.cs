@@ -48,6 +48,15 @@ Example: `bari info`
         }
 
         /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public bool NeedsExplicitTargetGoal
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Constructs the info command instance
         /// </summary>
         /// <param name="output">Interface for writing messages to the user</param>

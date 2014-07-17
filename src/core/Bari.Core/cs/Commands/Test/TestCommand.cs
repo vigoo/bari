@@ -57,6 +57,15 @@ Example: `bari test --dump`
         }
 
         /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public bool NeedsExplicitTargetGoal
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Constructs the test command
         /// </summary>
         /// <param name="buildContextFactory">Factory interface to create build contexts</param>

@@ -63,6 +63,15 @@ Example: `bari clean`
         }
 
         /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public bool NeedsExplicitTargetGoal
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Runs the command
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>

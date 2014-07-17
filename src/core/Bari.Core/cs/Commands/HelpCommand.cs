@@ -50,6 +50,15 @@ Example: `bari help clean`
             }
         }
 
+        /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public bool NeedsExplicitTargetGoal
+        {
+            get { return false; }
+        }
+
         private const string GlobalParameters =
 @"=Global parameters=
 

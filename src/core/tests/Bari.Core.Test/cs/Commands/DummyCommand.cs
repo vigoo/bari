@@ -21,6 +21,11 @@ namespace Bari.Core.Test.Commands
         /// </summary>
         public string Help { get; set; }
 
+        public bool NeedsExplicitTargetGoal
+        {
+            get; set;
+        }
+
         /// <summary>
         /// Runs the command
         /// </summary>

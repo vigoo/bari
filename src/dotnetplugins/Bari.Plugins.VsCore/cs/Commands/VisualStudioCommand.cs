@@ -69,6 +69,15 @@ If called without any module or product name, it adds *every module* to the gene
         }
 
         /// <summary>
+        /// If <c>true</c>, the target goal is important for this command and must be explicitly specified by the user 
+        /// (if the available goal set is not the default)
+        /// </summary>
+        public bool NeedsExplicitTargetGoal
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Initializes the command
         /// </summary>
         /// <param name="buildContextFactory">Interface to create new build contexts</param>

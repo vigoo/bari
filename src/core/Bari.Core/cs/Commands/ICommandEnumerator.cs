@@ -4,6 +4,8 @@ namespace Bari.Core.Commands
 {
     public interface ICommandEnumerator
     {
-        IEnumerable<string> AvailableCommands { get; } 
+        IEnumerable<string> AvailableCommands { get; }
+
+        bool NeedsExplicitTargetGoal(string commandName);
     }
 }
