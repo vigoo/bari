@@ -21,8 +21,9 @@ namespace Bari.Core.Test
         {
             kernel = new StandardKernel();
             Kernel.RegisterCoreBindings(kernel);
-            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
-                <SuiteRootAttribute>();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas<SuiteRootAttribute>();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas<TargetRootAttribute>();
+            kernel.Bind<IUserOutput>().To<TestUserOutput>();
 
             var parameters = new Mock<IParameters>();
             parameters.SetupGet(p => p.Goal).Returns("debug");

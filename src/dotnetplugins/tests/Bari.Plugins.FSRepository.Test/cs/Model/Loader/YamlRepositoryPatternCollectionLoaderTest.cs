@@ -29,6 +29,8 @@ namespace Bari.Plugins.FSRepository.Test.Model.Loader
             Kernel.RegisterCoreBindings(kernel);
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas<TargetRootAttribute>();
+            kernel.Bind<IUserOutput>().To<TestUserOutput>();
 
             parameters = new Mock<IParameters>();
             parameters.SetupGet(p => p.Goal).Returns("debug");
