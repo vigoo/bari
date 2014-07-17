@@ -65,8 +65,7 @@ namespace Bari.Core
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlReferenceAliasesLoader>();
 
             // Command factory and enumerator
-            kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
-            kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));
+            RegisterCommandFactory(kernel);
 
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
@@ -101,6 +100,12 @@ namespace Bari.Core
 
             // Default command target parser
             kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
+        }
+
+        public static void RegisterCommandFactory(IKernel kernel)
+        {
+            kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
+            kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));
         }
 
         class CommandInstanceProvider : StandardInstanceProvider
