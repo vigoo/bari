@@ -65,6 +65,11 @@ namespace Bari.Plugins.VsCore.VisualStudio
             output.WriteLine("# Visual Studio 2012");
 
             var testProjects = new HashSet<TestProject>(projects.OfType<TestProject>());
+            var startupProject = projects.FirstOrDefault(project => project.Type == ProjectType.Executable);
+
+            if (startupProject != null)
+                GenerateProjectSection(startupProject);
+
             if (testProjects.Count > 0)
             {
                 output.WriteLine("Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"Tests\", \"Tests\", \"{0}\"", testProjectNode);
@@ -72,7 +77,8 @@ namespace Bari.Plugins.VsCore.VisualStudio
             }
 
             foreach (var project in projects)
-                GenerateProjectSection(project);
+                if (project != startupProject)
+                    GenerateProjectSection(project);
 
             output.WriteLine("Global");
             output.WriteLine("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
@@ -81,13 +87,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
             output.WriteLine("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
             foreach (var project in projects)
-            {
-                string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
-                string platform = projectPlatformManagement.GetDefaultPlatform(project);
-
-                output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Bari|{1}", projectGuid, platform);
-                output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Bari|{1}", projectGuid, platform);
-            }
+                GenerateProjectConfiguration(project);
 
             output.WriteLine("\tEndGlobalSection");
             output.WriteLine("\tGlobalSection(SolutionProperties) = preSolution");
@@ -103,6 +103,15 @@ namespace Bari.Plugins.VsCore.VisualStudio
             output.WriteLine("\tEndGlobalSection");
 
             output.WriteLine("EndGlobal");
+        }
+
+        private void GenerateProjectConfiguration(Project project)
+        {
+            string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
+            string platform = projectPlatformManagement.GetDefaultPlatform(project);
+
+            output.WriteLine("\t\t{0}.Bari|Bari.ActiveCfg = Bari|{1}", projectGuid, platform);
+            output.WriteLine("\t\t{0}.Bari|Bari.Build.0 = Bari|{1}", projectGuid, platform);
         }
 
         private void GenerateProjectSection(Project project)
