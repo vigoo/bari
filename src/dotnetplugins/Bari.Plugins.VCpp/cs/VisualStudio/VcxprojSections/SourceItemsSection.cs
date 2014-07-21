@@ -53,7 +53,10 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             {
                 ".vcxproj",
                 ".vcxproj.user",
-                ".cache"
+                ".cache",
+                ".ico",
+                ".vcxproj.filters",
+                ".obj"
             };
 
         /// <summary>
