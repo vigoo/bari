@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Bari.Console.UI;
 using Bari.Core;
+using Bari.Core.Build;
 using Bari.Core.Build.Cache;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
@@ -54,11 +55,13 @@ namespace Bari.Console
             root.Bind<IFileSystemDirectory>()
                 .ToConstant(cacheDir)
                 .WhenTargetHas<CacheRootAttribute>();
-            root.Bind<IBuildCache>().To<FileBuildCache>();
-            root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir));
+            root.Bind<IBuildCache>().To<FileBuildCache>();            
 
             // Loading fix plugins
             root.Load(GetOrderedModuleList(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Bari.Plugins.*.dll"));
+
+            // Initializing the cache cleaner
+            root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir, root.GetAll<IReferenceBuilder>()));
 
             var process = root.Get<MainProcess>();
             try

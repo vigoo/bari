@@ -8,6 +8,7 @@
         /// <summary>
         /// Performs the additional cleaning step
         /// </summary>
-        void Clean();
+        /// <param name="parameters"></param>
+        void Clean(ICleanParameters parameters);
     }
 }

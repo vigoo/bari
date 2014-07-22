@@ -9,7 +9,7 @@ namespace Bari.Core.Commands.Clean
     /// Implements the 'clean' command, which removes all the generated and cached files
     /// from the suite file system.
     /// </summary>
-    public class CleanCommand: ICommand
+    public class CleanCommand : ICommand
     {
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
@@ -57,8 +57,11 @@ namespace Bari.Core.Commands.Clean
 
 When used without parameter, it deletes the `target` and `cache` directories.
 Example: `bari clean`
-"; 
-       
+
+When used with the `--keep-references` option, it keeps the 3rd party references in the cache.
+Example: `bari clean --keep-references`
+";
+
             }
         }
 
@@ -78,19 +81,12 @@ Example: `bari clean`
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
         public void Run(Suite suite, string[] parameters)
         {
-            if (parameters.Length == 0)
-            {                
-                targetRoot.Delete();
- 
-                foreach (var cleanExtension in extensions)
-                {
-                    cleanExtension.Clean();
-                }
-            }
-            else
+            var cleanParams = new CleanParameters(parameters);
+            targetRoot.Delete();
+
+            foreach (var cleanExtension in extensions)
             {
-                throw new InvalidCommandParameterException("clean",
-                                                           "The 'clean' command must be called without any parameters!");
+                cleanExtension.Clean(cleanParams);
             }
         }
     }

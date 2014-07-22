@@ -22,6 +22,7 @@ namespace Bari.Plugins.Nuget.Build
     /// The version part is optional.
     /// </para>
     /// </summary>
+    [PersistentReference]
     public class NugetReferenceBuilder: IReferenceBuilder, IEquatable<NugetReferenceBuilder>
     {
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (NugetReferenceBuilder));

@@ -26,7 +26,8 @@ namespace Bari.Plugins.Csharp.Commands.Clean
         /// <summary>
         /// Performs the additional cleaning step
         /// </summary>
-        public void Clean()
+        /// <param name="parameters"></param>
+        public void Clean(ICleanParameters parameters)
         {
             foreach (var projectRoot in from module in suite.Modules
                                         from project in module.Projects.Concat(module.TestProjects)

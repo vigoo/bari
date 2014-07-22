@@ -58,10 +58,10 @@ namespace Bari.Core.Test.Commands
 
         [Test]
         [ExpectedException(typeof(InvalidCommandParameterException))]
-        public void CalledWithParametersThrowException()
+        public void CalledWithMoreParametersThrowException()
         {
             var cmd = kernel.Get<ICommand>("clean");
-            cmd.Run(kernel.Get<Suite>(), new[] { "test2" });
+            cmd.Run(kernel.Get<Suite>(), new[] { "test2", "-test3" });
         }
 
         [Test]
@@ -87,8 +87,8 @@ namespace Bari.Core.Test.Commands
             var cmd = kernel.Get<ICommand>("clean");
             cmd.Run(suite, new string[0]);
 
-            c1.Verify(c => c.Clean(), Times.Once());
-            c2.Verify(c => c.Clean(), Times.Once());
+            c1.Verify(c => c.Clean(It.IsNotNull<ICleanParameters>()), Times.Once());
+            c2.Verify(c => c.Clean(It.IsNotNull<ICleanParameters>()), Times.Once());
         }
     }
 }
