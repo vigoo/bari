@@ -61,7 +61,7 @@ namespace Bari.Console
             root.Load(GetOrderedModuleList(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Bari.Plugins.*.dll"));
 
             // Initializing the cache cleaner
-            root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir, root.GetAll<IReferenceBuilder>()));
+            root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir, root.Get<IBuilderEnumerator>()));
 
             var process = root.Get<MainProcess>();
             try

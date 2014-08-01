@@ -117,6 +117,11 @@ namespace Bari.Core.Generic
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>
         /// <returns>Returns <c>true</c> if the file exists.</returns>
         bool Exists(string relativePath);
+
+        /// <summary>
+        /// Remake the directory if it has been deleted
+        /// </summary>
+        void Remake();
     }
 
     /// <summary>
@@ -312,5 +317,10 @@ namespace Bari.Core.Generic
             Contract.Requires(!String.IsNullOrWhiteSpace(relativePath));
             return false; // dummy value
         }
+
+        /// <summary>
+        /// Remake the directory if it has been deleted
+        /// </summary>
+        public abstract void Remake();
     }
 }

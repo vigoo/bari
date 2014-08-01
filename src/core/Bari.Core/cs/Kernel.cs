@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Build;
@@ -67,12 +68,16 @@ namespace Bari.Core
             // Command factory and enumerator
             RegisterCommandFactory(kernel);
 
+            // Builder enumerator
+            kernel.Bind<IBuilderEnumerator>().ToConstant(new BuilderEnumerator());
+
             // Built-in commands
             kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
             kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
             kernel.Bind<ICommand>().To<CleanCommand>().Named("clean");
             kernel.Bind<ICommand>().To<BuildCommand>().Named("build");
             kernel.Bind<ICommand>().To<TestCommand>().Named("test");
+            kernel.Bind<ICommand>().To<RebuildCommand>().Named("rebuild");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
@@ -105,7 +110,7 @@ namespace Bari.Core
         public static void RegisterCommandFactory(IKernel kernel)
         {
             kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
-            kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));
+            kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));            
         }
 
         class CommandInstanceProvider : StandardInstanceProvider
@@ -184,6 +189,26 @@ namespace Bari.Core
                 }    
                     
                 return true;
+            }
+        }
+
+        class BuilderEnumerator : IBuilderEnumerator
+        {
+            private bool IsPersistentReferenceBuilder(Type referenceBuilderType)
+            {
+                return
+                    referenceBuilderType
+                        .GetCustomAttributes(typeof(PersistentReferenceAttribute), true)
+                        .OfType<PersistentReferenceAttribute>()
+                        .Any();
+            }
+
+            public IEnumerable<Type> GetAllPersistentBuilders()
+            {
+                var types = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(s => s.GetTypes())
+                    .Where(p => typeof (IReferenceBuilder).IsAssignableFrom(p));
+                return types.Where(IsPersistentReferenceBuilder);
             }
         }
     }

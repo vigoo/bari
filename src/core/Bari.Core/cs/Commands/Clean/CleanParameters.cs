@@ -14,8 +14,7 @@ namespace Bari.Core.Commands.Clean
             }
             else if (parameters.Length == 1)
             {
-                keepReferences = parameters[0] == "--keep-references" ||
-                                 parameters[0] == "--keep-refs";
+                keepReferences = IsKeepReferencesParameter(parameters[0]);
             }
             else
             {
@@ -27,6 +26,12 @@ namespace Bari.Core.Commands.Clean
         public bool KeepReferences
         {
             get { return keepReferences; }
+        }
+
+        public bool IsKeepReferencesParameter(string parameter)
+        {
+            return parameter == "--keep-references" ||
+                   parameter == "--keep-refs";
         }
     }
 }

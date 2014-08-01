@@ -228,6 +228,10 @@ namespace Bari.Core.Test.Helper
             return true; // ReadBinaryFile always returns a stream containing the file name
         }
 
+        public void Remake()
+        {            
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;

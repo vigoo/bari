@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Bari.Core.Build;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
@@ -85,9 +86,12 @@ namespace Bari.Core.Test.Build.Cache
         [Test]
         public void DeletesCacheDirectory()
         {
+            var be = new Mock<IBuilderEnumerator>();
+            be.Setup(b => b.GetAllPersistentBuilders()).Returns(new Type[0]);
+
             var parameters = new Mock<ICleanParameters>();
             var cdir = new TestFileSystemDirectory("cache");
-            var cleaner = new CacheCleaner(cdir, new IReferenceBuilder[0]);
+            var cleaner = new CacheCleaner(cdir, be.Object);
 
             cdir.IsDeleted.Should().BeFalse();
             cleaner.Clean(parameters.Object);
@@ -105,7 +109,11 @@ namespace Bari.Core.Test.Build.Cache
                     new TestFileSystemDirectory("Bari.Core.Test.Build.Cache.PersistentReference_3"), 
                     new TestFileSystemDirectory("Bari.Core.Test.Build.Cache.PersistentReference_4")
                 });
-            var cleaner = new CacheCleaner(cdir, new IReferenceBuilder[] {new NonPersistentReference(), new PersistentReference()});
+
+            var be = new Mock<IBuilderEnumerator>();
+            be.Setup(b => b.GetAllPersistentBuilders()).Returns(new[] { typeof(NonPersistentReference), typeof(PersistentReference)});
+
+            var cleaner = new CacheCleaner(cdir, be.Object);
 
             cdir.IsDeleted.Should().BeFalse();
             ((TestFileSystemDirectory) cdir.GetChildDirectory("Bari.Core.Test.Build.Cache.NonPersistentReference_1"))

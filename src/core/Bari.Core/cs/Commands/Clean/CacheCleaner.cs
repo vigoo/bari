@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 
@@ -13,17 +12,17 @@ namespace Bari.Core.Commands.Clean
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CacheCleaner));
 
         private readonly IFileSystemDirectory cacheDir;
-        private readonly IEnumerable<IReferenceBuilder> referenceBuilders;
+        private readonly IBuilderEnumerator builderEnumerator;
 
         /// <summary>
         /// Constructs the cleaner
         /// </summary>
         /// <param name="cacheDir">Directory to be deleted</param>
-        /// <param name="referenceBuilders">All the registered reference builders</param>
-        public CacheCleaner(IFileSystemDirectory cacheDir, IEnumerable<IReferenceBuilder> referenceBuilders)
+        /// <param name="builderEnumerator">All the registered reference builders</param>
+        public CacheCleaner(IFileSystemDirectory cacheDir, IBuilderEnumerator builderEnumerator)
         {
             this.cacheDir = cacheDir;
-            this.referenceBuilders = referenceBuilders;
+            this.builderEnumerator = builderEnumerator;
         }
 
         /// <summary>
@@ -34,8 +33,8 @@ namespace Bari.Core.Commands.Clean
         {
             if (parameters.KeepReferences)
             {
-                var persistentReferenceBuilders = referenceBuilders.Where(IsPersistentReferenceBuilder).ToList();
-                var persistentBuilderPrefixes = persistentReferenceBuilders.Select(b => b.GetType().FullName + "_").ToList();
+                var persistentReferenceBuilders = builderEnumerator.GetAllPersistentBuilders().ToList();
+                var persistentBuilderPrefixes = persistentReferenceBuilders.Select(b => b.FullName + "_").ToList();
 
                 foreach (var directory in cacheDir.ChildDirectories)
                 {
@@ -44,6 +43,7 @@ namespace Bari.Core.Commands.Clean
                         if (!directory.StartsWith(prefix))
                         {
                             cacheDir.GetChildDirectory(directory).Delete();
+                            break;
                         }
                         else
                         {
@@ -59,15 +59,6 @@ namespace Bari.Core.Commands.Clean
             {
                 cacheDir.Delete();
             }
-        }
-
-        private bool IsPersistentReferenceBuilder(IReferenceBuilder referenceBuilder)
-        {
-            return
-                referenceBuilder.GetType()
-                    .GetCustomAttributes(typeof (PersistentReferenceAttribute), true)
-                    .OfType<PersistentReferenceAttribute>()
-                    .Any();
-        }
+        }        
     }
 }

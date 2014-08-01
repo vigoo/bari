@@ -43,5 +43,9 @@ namespace Bari.Core.Test.Helper
         {
             descriptions.Add(Tuple.Create(target, description));
         }
+
+        public void Warning(string message, string[] hints = null)
+        {            
+        }
     }
 }
