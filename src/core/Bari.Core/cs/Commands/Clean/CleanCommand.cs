@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Commands.Clean
 {
@@ -14,6 +17,7 @@ namespace Bari.Core.Commands.Clean
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<ICleanExtension> extensions;
+        private readonly IUserOutput output;
 
         /// <summary>
         /// Constructs the command
@@ -21,11 +25,13 @@ namespace Bari.Core.Commands.Clean
         /// <param name="suiteRoot">Suite root directory</param>
         /// <param name="targetRoot">Target root directory</param>
         /// <param name="extensions">Additional cleaning steps to be performed </param>
-        public CleanCommand([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<ICleanExtension> extensions)
+        /// <param name="output">User interface output interface</param>
+        public CleanCommand([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<ICleanExtension> extensions, IUserOutput output)
         {
             this.suiteRoot = suiteRoot;
             this.targetRoot = targetRoot;
             this.extensions = extensions;
+            this.output = output;
         }
 
         /// <summary>
@@ -82,7 +88,19 @@ Example: `bari clean --keep-references`
         public void Run(Suite suite, string[] parameters)
         {
             var cleanParams = new CleanParameters(parameters);
-            targetRoot.Delete();
+
+            try
+            {
+                targetRoot.Delete();
+            }
+            catch (IOException ex)
+            {
+                output.Warning(String.Format("Failed to clean target root: {0}", ex.Message),
+                    new [] {
+                        "A command prompt may have its current directory set there",
+                        "Maybe the process is running"
+                        });
+            }
 
             foreach (var cleanExtension in extensions)
             {

@@ -90,5 +90,29 @@ namespace Bari.Console.UI
             System.Console.ForegroundColor = ConsoleColor.Gray;
             System.Console.WriteLine(" - " + description);
         }
+
+        /// <summary>
+        /// Shows a warning message
+        /// </summary>
+        /// <param name="message">The message to be shown</param>
+        /// <param name="hints">Optional hints about the warning</param>
+        public void Warning(string message, string[] hints = null)
+        {
+            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.WriteLine("Warning: {0}", message);
+
+            if (hints != null && hints.Length > 0)
+            {
+                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+                System.Console.WriteLine("\nHints:");
+                
+                foreach (var hint in hints)
+                {
+                    System.Console.WriteLine("\t- {0}", hint);
+                }
+            }
+
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+        }
     }
 }
