@@ -1,6 +1,9 @@
 ---
 suite:      bari systemtest postprocessor-script-test
 
+fs-repositories:
+    - fsrepo\%NAME\%FILENAME.%EXT
+
 modules:
     - name: HelloWorld
       projects:

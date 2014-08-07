@@ -42,7 +42,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             return engine;
         }
 
-        protected void AddGetToolToScope(ScriptScope scope, Project project)
+        protected void AddGetToolToScope(ScriptScope scope, Project project = null)
         {
             scope.SetVariable("get_tool", (Func<string, string, string>)((uri, fname) => GetTool(uri, fname, project)));
         }

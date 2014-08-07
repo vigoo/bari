@@ -163,4 +163,4 @@ SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
 X86X64Test
 SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!"
-ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n"
+ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"

@@ -25,7 +25,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             try
             {
                 var scope = runtime.CreateScope();
-                // TODO AddGetToolToScope(scope, ???);
+                AddGetToolToScope(scope);
 
                 var targetDir = TargetRoot.GetChildDirectory(target.RelativeTargetPath, createIfMissing: true);
                 var localTargetDir = targetDir as LocalFileSystemDirectory;
