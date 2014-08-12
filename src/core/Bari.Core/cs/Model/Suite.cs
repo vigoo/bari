@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Generic;
+using Bari.Core.UI;
 
 namespace Bari.Core.Model
 {
@@ -253,6 +254,19 @@ namespace Bari.Core.Model
                 products.Add(productName, result);
                 return result;
             }           
+        }
+
+        /// <summary>
+        /// Checks for warnings in the suite, and displays them through the given output interface
+        /// </summary>
+        /// <param name="output">Output interface</param>
+        public void CheckForWarnings(IUserOutput output)
+        {
+            foreach (var module in modules.Values)            
+                module.CheckForWarnings(output);
+
+            foreach (var product in products.Values)
+                product.CheckForWarnings(output);
         }
     }
 }

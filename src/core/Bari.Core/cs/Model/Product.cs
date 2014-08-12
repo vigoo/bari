@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.UI;
 
 namespace Bari.Core.Model
 {
@@ -96,6 +97,14 @@ namespace Bari.Core.Model
         public PostProcessDefinition GetPostProcessor(string key)
         {
             return postProcessDefinitions[key];
+        }
+
+        /// <summary>
+        /// Checks for warnings in the product, and displays them through the given output interface
+        /// </summary>
+        /// <param name="output">Output interface</param>
+        public void CheckForWarnings(IUserOutput output)
+        {            
         }
     }
 }

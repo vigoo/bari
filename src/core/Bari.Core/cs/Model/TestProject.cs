@@ -1,4 +1,5 @@
-﻿using Bari.Core.Generic;
+﻿using System.IO;
+using Bari.Core.Generic;
 
 namespace Bari.Core.Model
 {
@@ -13,6 +14,14 @@ namespace Bari.Core.Model
         public override IFileSystemDirectory RootDirectory
         {
             get { return Module.RootDirectory.GetChildDirectory("tests").GetChildDirectory(Name); }
+        }
+
+        /// <summary>
+        /// Gets or sets the root directory of the project's sources
+        /// </summary>
+        public override string RelativeRootDirectory
+        {
+            get { return Path.Combine("src", Module.Name, "tests", Name); }
         }
 
         /// <summary>

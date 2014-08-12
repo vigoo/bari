@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
+using Bari.Core.UI;
 
 namespace Bari.Core.Model
 {
@@ -121,6 +123,14 @@ namespace Bari.Core.Model
         public virtual IFileSystemDirectory RootDirectory
         {
             get { return module.RootDirectory.GetChildDirectory(name); }
+        }
+
+        /// <summary>
+        /// Gets or sets the root directory of the project's sources
+        /// </summary>
+        public virtual string RelativeRootDirectory
+        {
+            get { return Path.Combine("src", Module.Name, name); }
         }
 
         /// <summary>
@@ -244,6 +254,23 @@ namespace Bari.Core.Model
         public override string ToString()
         {
             return String.Format("Project {0}.{1}", Module.Name, name);
+        }
+
+        /// <summary>
+        /// Checks for warnings in the project, and displays them through the given output interface
+        /// </summary>
+        /// <param name="output">Output interface</param>
+        public void CheckForWarnings(IUserOutput output)
+        {
+            bool hasFiles = sourceSets.Values.Any(sourceSet => sourceSet.Files.Any());
+
+            if (!hasFiles)
+                output.Warning(String.Format("{0} has no source files", ToString()),
+                    new[]
+                    {
+                        String.Format("The source files must be organized into source sets"),
+                        String.Format("The source sets must be placed in {0}", RelativeRootDirectory)
+                    });
         }
     }
 }

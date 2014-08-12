@@ -62,6 +62,7 @@ namespace Bari.Core.Process
             binding.Bind<Suite>().ToConstant(suite);
             
             explorer.RunAll(suite);
+            suite.CheckForWarnings(output);
 
             var cmd = commandFactory.CreateCommand(parameters.Command);
             if (cmd != null)

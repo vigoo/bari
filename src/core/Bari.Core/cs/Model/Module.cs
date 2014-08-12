@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Bari.Core.Generic;
+using Bari.Core.UI;
 
 namespace Bari.Core.Model
 {
@@ -283,6 +284,16 @@ namespace Bari.Core.Model
         public PostProcessDefinition GetPostProcessor(string key)
         {
             return postProcessDefinitions[key];
+        }
+
+        /// <summary>
+        /// Checks for warnings in the module, and displays them through the given output interface
+        /// </summary>
+        /// <param name="output">Output interface</param>
+        public void CheckForWarnings(IUserOutput output)
+        {
+            foreach (var project in projects.Values)
+                project.CheckForWarnings(output);
         }
 
         public override string ToString()
