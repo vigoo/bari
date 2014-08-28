@@ -37,7 +37,7 @@ namespace Bari.Plugins.VsCore.Tools
             if (localRoot != null)
             {
                 var absPath = Path.Combine(localRoot.AbsolutePath, relativePath);
-                if (!Run(root, (Path.GetFileName(absPath) ?? String.Empty), "/nologo", "/verbosity:" + Verbosity, "/consoleloggerparameters:" + ConsoleLoggerParameters))
+                if (!Run(root, (Path.GetFileName(absPath) ?? String.Empty), "/m", "/nologo", "/verbosity:" + Verbosity, "/consoleloggerparameters:" + ConsoleLoggerParameters))
                     throw new MSBuildFailedException();
             }
             else
