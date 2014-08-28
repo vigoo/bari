@@ -14,8 +14,10 @@ namespace Bari.Core.Build.Dependencies
         /// </summary>
         /// <param name="files">The files in the source set, in suite relative path form</param>
         /// <param name="exclusions">Exclusion function, if returns true for a file name, it won't be taken into account as a dependency</param>
+        /// <param name="fullDependency">If <c>true</c> the fingerprint will take into account the source file's size and modification date as well</param>
         /// <returns>Returns the new instance</returns>
         SourceSetFingerprint CreateSourceSetFingerprint(IEnumerable<SuiteRelativePath> files,
-                                                        Func<string, bool> exclusions);
+                                                        Func<string, bool> exclusions,
+                                                        bool fullDependency);
     }
 }

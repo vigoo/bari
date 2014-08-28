@@ -4,10 +4,12 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Monads;
+using System.Text;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Ninject;
+using QuickGraph.Serialization;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -20,6 +22,7 @@ namespace Bari.Core.Build.Dependencies
     /// </summary>
     public sealed class SourceSetFingerprint : IDependencyFingerprint, IEquatable<SourceSetFingerprint>
     {
+        private readonly bool fullDependency;
         private readonly ISet<SuiteRelativePath> fileNames;
         private readonly IDictionary<SuiteRelativePath, DateTime> lastModifiedDates;
         private readonly IDictionary<SuiteRelativePath, long> lastSizes;
@@ -30,12 +33,14 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="root">The suite's root directory</param>
         /// <param name="files">The files in the source set, in suite relative path form</param>
         /// <param name="exclusions">Exclusion function, if returns true for a file name, it won't be taken into account as a dependency</param>
+        /// <param name="fullDependency">If <c>true</c> the fingerprint will take into account the source file's size and modification date as well</param>
         [Inject]
-        public SourceSetFingerprint([SuiteRoot] IFileSystemDirectory root, IEnumerable<SuiteRelativePath> files, Func<string, bool> exclusions)
-        {
+        public SourceSetFingerprint([SuiteRoot] IFileSystemDirectory root, IEnumerable<SuiteRelativePath> files, Func<string, bool> exclusions, bool fullDependency)
+        {            
             Contract.Requires(root != null);
             Contract.Requires(files != null);
 
+            this.fullDependency = fullDependency;
             fileNames = new SortedSet<SuiteRelativePath>();
             lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
             lastSizes = new Dictionary<SuiteRelativePath, long>();
@@ -45,8 +50,12 @@ namespace Bari.Core.Build.Dependencies
                 if (exclusions == null || !exclusions(file))
                 {
                     fileNames.Add(file);
-                    lastModifiedDates.Add(file, root.GetLastModifiedDate(file));
-                    lastSizes.Add(file, root.GetFileSize(file));
+
+                    if (fullDependency)
+                    {
+                        lastModifiedDates.Add(file, root.GetLastModifiedDate(file));
+                        lastSizes.Add(file, root.GetFileSize(file));
+                    }
                 }
             }
         }
@@ -70,6 +79,7 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="proto">The protocol data which was deserialized from a stream</param>
         public SourceSetFingerprint(SourceSetFingerprintProtocol proto)
         {
+            fullDependency = proto.FullDependency;
             fileNames = new SortedSet<SuiteRelativePath>();
             lastModifiedDates = new Dictionary<SuiteRelativePath, DateTime>();
             lastSizes = new Dictionary<SuiteRelativePath, long>();
@@ -78,8 +88,12 @@ namespace Bari.Core.Build.Dependencies
                 {
                     var path = new SuiteRelativePath(pair.Key);
                     fileNames.Add(path);
-                    lastModifiedDates.Add(path, pair.Value.LastModifiedDate);
-                    lastSizes.Add(path, pair.Value.LastSize);
+
+                    if (fullDependency)
+                    {
+                        lastModifiedDates.Add(path, pair.Value.LastModifiedDate);
+                        lastSizes.Add(path, pair.Value.LastSize);
+                    }
                 });        
         }
 
@@ -118,15 +132,25 @@ namespace Bari.Core.Build.Dependencies
             {
                 var proto = new SourceSetFingerprintProtocol
                 {
+                    FullDependency = fullDependency,
                     Files = new Dictionary<string, SourceSetFingerprintProtocol.FileFingerprint>()
                 };
-                foreach (var path in fileNames)
+
+                if (fullDependency)
                 {
-                    proto.Files.Add(path, new SourceSetFingerprintProtocol.FileFingerprint
+                    foreach (var path in fileNames)
                     {
-                        LastModifiedDate = lastModifiedDates[path],
-                        LastSize = lastSizes[path]
-                    });
+                        proto.Files.Add(path, new SourceSetFingerprintProtocol.FileFingerprint
+                        {
+                            LastModifiedDate = lastModifiedDates[path],
+                            LastSize = lastSizes[path]
+                        });
+                    }
+                }
+                else
+                {
+                    foreach (var path in fileNames)
+                        proto.Files.Add(path, new SourceSetFingerprintProtocol.FileFingerprint());
                 }
 
                 return proto;
@@ -142,12 +166,20 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(SourceSetFingerprint other)
         {
-            if (fileNames.SetEquals(other.fileNames))
-                return fileNames.All(file => 
-                    lastModifiedDates[file] == other.lastModifiedDates[file] &&
-                    lastSizes[file] == other.lastSizes[file]);
+            if (fullDependency == other.fullDependency &&
+                fileNames.SetEquals(other.fileNames))
+            {
+                if (fullDependency)
+                    return fileNames.All(file =>
+                        lastModifiedDates[file] == other.lastModifiedDates[file] &&
+                        lastSizes[file] == other.lastSizes[file]);
+                else
+                    return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         /// <summary>
@@ -173,7 +205,8 @@ namespace Bari.Core.Build.Dependencies
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return lastModifiedDates.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n) ^
+            return fileNames.Aggregate(11, (n, path) => path.GetHashCode() ^ n) ^
+                   lastModifiedDates.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n) ^
                    lastSizes.Aggregate(11, (n, pair) => pair.Key.GetHashCode() ^ pair.Value.GetHashCode() ^ n);
         }
 
@@ -191,6 +224,29 @@ namespace Bari.Core.Build.Dependencies
         public static bool operator !=(SourceSetFingerprint left, SourceSetFingerprint right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("<|");
+            sb.AppendLine(fullDependency ? "FULL" : "STRUCTURE");
+
+            foreach (var fileName in fileNames)
+            {
+                if (fullDependency)
+                {
+                    sb.AppendFormat("\t{0}: {1}; {2}\n", fileName, lastSizes[fileName], lastModifiedDates[fileName]);
+                }
+                else
+                {
+                    sb.AppendLine(fileName);
+                }                
+            }
+            sb.AppendLine("|>");
+
+            return sb.ToString();
         }
     }
 }

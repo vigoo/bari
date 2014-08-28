@@ -9,6 +9,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VCpp.VisualStudio;
+using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.VCpp.Build
 {
@@ -17,7 +18,7 @@ namespace Bari.Plugins.VCpp.Build
     /// 
     /// <para>Uses the <see cref="VcxprojGenerator"/> class internally.</para>
     /// </summary>
-    public class VcxprojBuilder: IProjectBuilder, IEquatable<VcxprojBuilder>
+    public class VcxprojBuilder: ISlnProjectBuilder, IEquatable<VcxprojBuilder>
     {
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
@@ -70,7 +71,7 @@ namespace Bari.Plugins.VCpp.Build
                     var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
                         project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
 
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(filteredSourceSet,
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(filteredSourceSet,
                                                                                     fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
                                                                                           fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
                 }
@@ -83,6 +84,29 @@ namespace Bari.Plugins.VCpp.Build
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
 
                 return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));                  
+            }
+        }
+
+        /// <summary>
+        /// Gets the builder's full source code dependencies
+        /// </summary>
+        public IDependencies FullSourceDependencies
+        {
+            get
+            {
+                var deps = new List<IDependencies>();
+
+                if (project.HasNonEmptySourceSet("cpp"))
+                {
+                    var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
+                        project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
+
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(filteredSourceSet,
+                                                                                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
+                                                                                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
+                }
+
+                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
             }
         }
 

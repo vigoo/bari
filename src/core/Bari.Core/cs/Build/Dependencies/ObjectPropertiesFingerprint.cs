@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Monads;
+using System.Text;
 using Bari.Core.Build.Dependencies.Protocol;
 
 namespace Bari.Core.Build.Dependencies
@@ -152,6 +153,20 @@ namespace Bari.Core.Build.Dependencies
         public static bool operator !=(ObjectPropertiesFingerprint left, ObjectPropertiesFingerprint right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{");
+            foreach (var pair in values)
+            {
+                sb.AppendFormat("\t{0}: {1}\n", pair.Key, pair.Value);
+            }
+            sb.AppendLine("}");
+
+            return sb.ToString();
         }
     }
 }

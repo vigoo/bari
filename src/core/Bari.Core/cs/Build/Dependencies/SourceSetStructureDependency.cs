@@ -4,9 +4,9 @@ using Bari.Core.Model;
 namespace Bari.Core.Build.Dependencies
 {
     /// <summary>
-    /// Represents dependency on a full <see cref="SourceSet"/>
+    /// Represents dependency on the items of a <see cref="SourceSet"/>, but not on the source files' content
     /// </summary>
-    public class SourceSetDependencies: IDependencies
+    public class SourceSetStructureDependency : IDependencies
     {
         private readonly ISourceSetFingerprintFactory fingerprintFactory;
         private readonly ISourceSet sourceSet;
@@ -18,7 +18,7 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="fingerprintFactory">The interface to create new fingerprint instances</param>
         /// <param name="sourceSet">The source set on which we are depending on</param>
         /// <param name="exclusions">Exclusion function, if returns true for a file name, it won't be taken into account as a dependency</param>
-        public SourceSetDependencies(ISourceSetFingerprintFactory fingerprintFactory, ISourceSet sourceSet, Func<string, bool> exclusions = null)
+        public SourceSetStructureDependency(ISourceSetFingerprintFactory fingerprintFactory, ISourceSet sourceSet, Func<string, bool> exclusions = null)
         {
             this.fingerprintFactory = fingerprintFactory;
             this.sourceSet = sourceSet;
@@ -32,7 +32,7 @@ namespace Bari.Core.Build.Dependencies
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
         public IDependencyFingerprint CreateFingerprint()
         {
-            return fingerprintFactory.CreateSourceSetFingerprint(sourceSet.Files, exclusions, fullDependency: true);
+            return fingerprintFactory.CreateSourceSetFingerprint(sourceSet.Files, exclusions, fullDependency: false);
         }
     }
 }

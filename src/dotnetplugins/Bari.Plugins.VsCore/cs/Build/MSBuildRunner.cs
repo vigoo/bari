@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
@@ -43,7 +42,12 @@ namespace Bari.Plugins.VsCore.Build
         {
             get
             {
-                return new SubtaskDependency(slnBuilder);
+                return MultipleDependenciesHelper.CreateMultipleDependencies(
+                    new HashSet<IDependencies>(new[]
+                    {
+                        new SubtaskDependency(slnBuilder),
+                        slnBuilder.FullSourceDependencies
+                    }));
             }
         }
 

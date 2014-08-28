@@ -32,6 +32,11 @@ namespace Bari.Core.Build.Dependencies.Protocol
         public IDictionary<string, FileFingerprint> Files { get; set; }
 
         /// <summary>
+        /// Gets or sets whether the date and size values are valid or not
+        /// </summary>
+        public bool FullDependency { get; set; }
+
+        /// <summary>
         /// Creates a new fingerprint from the data stored in the protocol
         /// </summary>
         /// <returns>Returns a fingerprint object which would save the same protocol as this one.</returns>

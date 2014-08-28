@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.VsCore.VisualStudio
 {
@@ -35,6 +35,6 @@ namespace Bari.Plugins.VsCore.VisualStudio
 
         public abstract string ProjectTypeGuid { get; }
 
-        public abstract IBuilder CreateBuilder(Project project);
+        public abstract ISlnProjectBuilder CreateBuilder(Project project);
     }
 }

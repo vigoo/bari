@@ -165,5 +165,10 @@ namespace Bari.Core.Build.Dependencies
         {
             return !Equals(left, right);
         }
+
+        public override string ToString()
+        {
+            return String.Format("[ {0} ]", String.Join(", ", fingerprints.Select(fp => fp.ToString())));
+        }
     }
 }

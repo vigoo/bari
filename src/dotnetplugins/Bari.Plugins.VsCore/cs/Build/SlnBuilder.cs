@@ -24,7 +24,7 @@ namespace Bari.Plugins.VsCore.Build
         private readonly IList<Project> projects;
         private readonly ISlnNameGenerator slnNameGenerator;
         private readonly IEnumerable<ISlnProject> supportedSlnProjects;
-        private ISet<IBuilder> projectBuilders;
+        private ISet<ISlnProjectBuilder> projectBuilders;
         private IDependencies projectDependencies;
 
         /// <summary>
@@ -75,6 +75,16 @@ namespace Bari.Plugins.VsCore.Build
             get { return projectDependencies; }
         }
 
+        public IDependencies FullSourceDependencies
+        {
+            get
+            {
+                return
+                    MultipleDependenciesHelper.CreateMultipleDependencies(
+                        new HashSet<IDependencies>(projectBuilders.Select(b => b.FullSourceDependencies)));
+            }
+        }
+
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
@@ -95,7 +105,7 @@ namespace Bari.Plugins.VsCore.Build
             {
                 var solutionBuildContext = new SolutionBuildContext(inSolutionReferenceBuilderFactory, context, this);
 
-                projectBuilders = new HashSet<IBuilder>(
+                projectBuilders = new HashSet<ISlnProjectBuilder>(
                     from project in projects
                     select CreateProjectBuilder(solutionBuildContext, project)
                     into builder
@@ -107,13 +117,13 @@ namespace Bari.Plugins.VsCore.Build
             }
             else
             {
-                projectBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+                projectBuilders = new HashSet<ISlnProjectBuilder>(context.GetDependencies(this).Cast<ISlnProjectBuilder>());
             }
 
-            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(projectBuilders);
+            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IBuilder>(projectBuilders));
         }
 
-        private IBuilder CreateProjectBuilder(IBuildContext context, Project project)
+        private ISlnProjectBuilder CreateProjectBuilder(IBuildContext context, Project project)
         {
             var slnProject = supportedSlnProjects.FirstOrDefault(prj => prj.SupportsProject(project));
             if (slnProject != null)

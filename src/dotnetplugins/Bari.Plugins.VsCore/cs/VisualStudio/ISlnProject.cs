@@ -1,5 +1,6 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.VsCore.VisualStudio
 {
@@ -32,6 +33,6 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// Creates a builder for a given project
         /// </summary>
         /// <returns></returns>
-        IBuilder CreateBuilder(Project project);
+        ISlnProjectBuilder CreateBuilder(Project project);
     }
 }

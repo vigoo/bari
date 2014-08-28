@@ -21,12 +21,17 @@ Function Clean($name)
     Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v clean" -RedirectStandardOutput "..\logs\$name.clean.log" -Wait -NoNewWindow    
 }
 
+Function CleanWithGoal($name, $goal)
+{
+    Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v --target $goal clean" -RedirectStandardOutput "..\logs\$name.clean.log" -Wait -NoNewWindow    
+}
+
 Function Build($name)
 {
     Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
 }
 
-Function BuildWithGoal($namem, $goal)
+Function BuildWithGoal($name, $goal)
 {
     Start-Process -FilePath "..\..\target\full\bari.exe" -ArgumentList "-v --target $goal build" -RedirectStandardOutput "..\logs\$name.build.log" -Wait -NoNewWindow    
 }
@@ -90,7 +95,7 @@ Function ExeProductBuild($name, $product, $path, $exitcode, $output)
 Function ExeBuildWithGoal($name, $goal, $path, $exitcode, $output)
 {
     Push-Location -Path $name
-    Clean $name
+    CleanWithGoal $name $goal
     BuildWithGoal $name $goal
     $res = (InternalCheckExe $name $path $exitcode $output)
     Pop-Location    

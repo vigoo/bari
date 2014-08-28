@@ -16,6 +16,7 @@ namespace Bari.Core.Build.Cache
     /// </summary>
     public class FileBuildCache : IBuildCache
     {
+        private const bool EnableFingerprintDiff = false;
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (FileBuildCache));
 
         private const string DepsFileName = ".deps";
@@ -111,7 +112,17 @@ namespace Bari.Core.Build.Cache
                         {
                             var fpType = fingerprint.GetType();
                             var storedFp = Activator.CreateInstance(fpType, protocolSerializer, depsStream);
-                            return fingerprint.Equals(storedFp);
+                            
+                            bool fingerprintEquals = fingerprint.Equals(storedFp);
+
+                            if (!fingerprintEquals && EnableFingerprintDiff)
+                            {
+                                log.DebugFormat("[{0}] Fingerprint differs", dirName);
+                                log.DebugFormat("[{1}] Cached: {0}", storedFp, dirName);
+                                log.DebugFormat("[{1}] Current: {0}", fingerprint, dirName);
+                            }
+
+                            return fingerprintEquals;
                         }
                     }
                 }

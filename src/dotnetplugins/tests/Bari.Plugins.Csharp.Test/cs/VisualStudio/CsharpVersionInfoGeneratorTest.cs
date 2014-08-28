@@ -35,7 +35,7 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
         public void EmptyVersionIsNotWritten()
         {
             project.Version = "  ";
-            project.EffectiveVersion.Should().BeBlank();
+            project.EffectiveVersion.Should().BeNullOrWhiteSpace();
 
             var lines = RunGenerator(project);
             lines.Should().NotContain(l => l.StartsWith("[assembly: AssemblyVersion"));

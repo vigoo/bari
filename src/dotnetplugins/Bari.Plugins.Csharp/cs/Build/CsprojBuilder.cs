@@ -9,6 +9,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build.Dependencies;
 using Bari.Plugins.Csharp.VisualStudio;
+using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.Csharp.Build
 {
@@ -17,7 +18,7 @@ namespace Bari.Plugins.Csharp.Build
     /// 
     /// <para>Uses the <see cref="CsprojGenerator"/> class internally.</para>
     /// </summary>
-    public class CsprojBuilder : IProjectBuilder, IEquatable<CsprojBuilder>
+    public class CsprojBuilder : ISlnProjectBuilder, IEquatable<CsprojBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CsprojBuilder));
 
@@ -68,15 +69,15 @@ namespace Bari.Plugins.Csharp.Build
                 var deps = new List<IDependencies>();
 
                 if (project.HasNonEmptySourceSet("cs"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cs"),
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("cs"),
                         fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
                               fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
                 if (project.HasNonEmptySourceSet("appconfig"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("appconfig"), null));
                 if (project.HasNonEmptySourceSet("manifest"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("manifest"), null));
                 if (project.HasNonEmptySourceSet("resources"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("resources"), null));
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("resources"), null));
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
@@ -86,6 +87,30 @@ namespace Bari.Plugins.Csharp.Build
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
+
+                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+            }
+        }
+
+        /// <summary>
+        /// Gets the builder's full source code dependencies
+        /// </summary>
+        public IDependencies FullSourceDependencies
+        {
+            get
+            {
+                var deps = new List<IDependencies>();
+
+                if (project.HasNonEmptySourceSet("cs"))
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cs"),
+                        fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
+                              fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
+                if (project.HasNonEmptySourceSet("appconfig"))
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
+                if (project.HasNonEmptySourceSet("manifest"))
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
+                if (project.HasNonEmptySourceSet("resources"))
+                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("resources"), null));
 
                 return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
             }

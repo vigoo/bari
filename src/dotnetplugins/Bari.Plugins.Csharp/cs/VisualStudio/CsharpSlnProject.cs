@@ -2,6 +2,7 @@
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
+using Bari.Plugins.VsCore.Build;
 using Bari.Plugins.VsCore.VisualStudio;
 
 namespace Bari.Plugins.Csharp.VisualStudio
@@ -34,7 +35,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
             get { return "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"; }
         }
 
-        public override IBuilder CreateBuilder(Project project)
+        public override ISlnProjectBuilder CreateBuilder(Project project)
         {
             return builderFactory.CreateCsprojBuilder(project);
         }
