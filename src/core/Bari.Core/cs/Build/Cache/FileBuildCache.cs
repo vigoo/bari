@@ -272,19 +272,29 @@ namespace Bari.Core.Build.Cache
                 int idx = 0;
                 foreach (var outputPath in outputs)
                 {
-                    // It is possible that the returned path is a special path and does not refer to an existing file
-                    // In this case we only have to save the filename, without its contents
-                    if (targetRoot.Exists(outputPath))
+                    try
                     {
-                        using (var source = targetRoot.ReadBinaryFile(outputPath))
-                        using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
+                        // It is possible that the returned path is a special path and does not refer to an existing file
+                        // In this case we only have to save the filename, without its contents
+                        if (targetRoot.Exists(outputPath))
                         {
-                            StreamOperations.Copy(source, target);
+                            using (var source = targetRoot.ReadBinaryFile(outputPath))
+                            using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
+                            {
+                                StreamOperations.Copy(source, target);
+                            }
                         }
-                    }
 
-                    names.WriteLine("{0};{1}", outputPath.RelativeRoot, outputPath.RelativePath);
-                    idx++;
+                        names.WriteLine("{0};{1}", outputPath.RelativeRoot, outputPath.RelativePath);
+                        idx++;
+                    }
+                    catch (IOException ex)
+                    {
+                        log.WarnFormat("IOException while reading {0}: {1}", outputPath, ex.Message);
+
+                        if (!outputPath.RelativePath.ToLowerInvariant().EndsWith(".vshost.exe"))
+                            throw;
+                    }
                 }
             }
         }
