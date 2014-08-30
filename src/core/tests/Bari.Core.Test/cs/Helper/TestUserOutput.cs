@@ -8,6 +8,7 @@ namespace Bari.Core.Test.Helper
     {
         private readonly IList<string> messages = new List<string>();
         private readonly IList<Tuple<string, string>> descriptions = new List<Tuple<string, string>>();
+        private readonly IList<string> warnings = new List<string>(); 
 
         public IList<string> Messages
         {
@@ -19,10 +20,16 @@ namespace Bari.Core.Test.Helper
             get { return descriptions; }
         }
 
+        public IList<string> Warnings
+        {
+            get { return warnings; }
+        }
+
         public void Reset()
         {
             messages.Clear();
             descriptions.Clear();
+            warnings.Clear();
         }
 
         /// <summary>
@@ -44,8 +51,14 @@ namespace Bari.Core.Test.Helper
             descriptions.Add(Tuple.Create(target, description));
         }
 
+        /// <summary>
+        /// Shows a warning message
+        /// </summary>
+        /// <param name="message">The message to be shown</param>
+        /// <param name="hints">Optional hints about the warning</param>
         public void Warning(string message, string[] hints = null)
-        {            
+        {
+            warnings.Add(message);
         }
     }
 }

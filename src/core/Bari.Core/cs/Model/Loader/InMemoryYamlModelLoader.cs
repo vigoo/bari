@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Exceptions;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -21,10 +21,12 @@ namespace Bari.Core.Model.Loader
         /// </summary>
         /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
-        public InMemoryYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
-            : base(suiteFactory, parametersLoaders)
+        /// <param name="output">Output interface to issue warnings</param>
+        public InMemoryYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output)
+            : base(suiteFactory, parametersLoaders, output)
         {
             Contract.Requires(suiteFactory != null);
+            Contract.Requires(output != null);
         }
 
         /// <summary>

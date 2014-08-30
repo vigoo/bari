@@ -19,6 +19,7 @@ namespace Bari.Core.Test.Loader
     {
         private IKernel kernel;
         private Mock<IParameters> parameters;
+        private readonly TestUserOutput testOutput = new TestUserOutput();
 
         [SetUp]
         public void Setup()
@@ -29,7 +30,7 @@ namespace Bari.Core.Test.Loader
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas<TargetRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("cache")).WhenTargetHas<CacheRootAttribute>();
-            kernel.Bind<IUserOutput>().To<TestUserOutput>();
+            kernel.Bind<IUserOutput>().ToConstant(testOutput);
             
             parameters = new Mock<IParameters>();
             parameters.SetupGet(p => p.Goal).Returns("debug");
@@ -572,6 +573,41 @@ products:
                 new[] {suite.GetModule("Module1"), suite.GetModule("Module3")});
             suite.GetProduct("mod2").Modules.Should().BeEquivalentTo(
                 new[] { suite.GetModule("Module2") });
+        }
+
+        [Test]
+        public void ProductsReferringToNonExistingModules()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+    - Module1
+    - Module2
+    - Module3
+
+products:
+    - name: invalid
+      modules:
+        - Module1
+        - Module4
+";
+
+            testOutput.Reset();
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Products.Should().HaveCount(1);
+            suite.HasProduct("invalid").Should().BeTrue();
+            suite.Products.Should().Contain(p => p.Name == "invalid");
+
+            suite.GetProduct("invalid").Modules.Should().BeEquivalentTo(
+                new[] { suite.GetModule("Module1") });
+
+            testOutput.Warnings.Should().HaveCount(1);
         }
 
         [Test]

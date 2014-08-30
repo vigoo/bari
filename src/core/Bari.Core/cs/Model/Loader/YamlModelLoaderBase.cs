@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -14,6 +16,7 @@ namespace Bari.Core.Model.Loader
 
         private readonly ISuiteFactory suiteFactory;
         private readonly IEnumerable<IYamlProjectParametersLoader> parametersLoaders;
+        private readonly IUserOutput output;
         private readonly YamlParser parser;
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
 
@@ -22,14 +25,17 @@ namespace Bari.Core.Model.Loader
         /// </summary>
         /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
-        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders)
+        /// <param name="output">Output interface to issue warnings</param>
+        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output)
         {
             Contract.Requires(suiteFactory != null);
+            Contract.Requires(output != null);
             Contract.Ensures(this.suiteFactory == suiteFactory);
             Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
             this.suiteFactory = suiteFactory;
             this.parametersLoaders = parametersLoaders;
+            this.output = output;
 
             parser = new YamlParser();
         }
@@ -144,8 +150,15 @@ namespace Bari.Core.Model.Loader
 
             foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(productNode, "modules"))
             {
-                var module = suite.GetModule(item.Key);
-                product.AddModule(module);
+                if (suite.HasModule(item.Key))
+                {
+                    var module = suite.GetModule(item.Key);
+                    product.AddModule(module);
+                }
+                else
+                {
+                    output.Warning(String.Format("The product {0} refers to a non-existing module {1}", product.Name, item.Key));
+                }
             }
 
             SetProjectPostProcessors(product, productNode);
