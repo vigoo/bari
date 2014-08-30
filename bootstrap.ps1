@@ -22,6 +22,7 @@ $barizip = Join-Path $bootstrap "bari.zip"
 
 Write-Output "Downloading bari"
 
+Remove-Item alias:wget
 wget --no-check-certificate "https://github.com/vigoo/bari/releases/download/0.8/bari-0.8.zip" -O $barizip
 
 Write-Output "Unpacking bari"
