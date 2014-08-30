@@ -3,6 +3,7 @@ bin
 obj
 /cache
 target
+_bootstrap
 
 # mstest test results
 TestResults
