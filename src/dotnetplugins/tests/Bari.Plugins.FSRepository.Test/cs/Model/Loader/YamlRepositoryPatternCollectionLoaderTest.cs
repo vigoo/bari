@@ -30,6 +30,7 @@ namespace Bari.Plugins.FSRepository.Test.Model.Loader
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("root")).WhenTargetHas
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas<TargetRootAttribute>();
+            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("cache")).WhenTargetHas<CacheRootAttribute>();
             kernel.Bind<IUserOutput>().To<TestUserOutput>();
 
             parameters = new Mock<IParameters>();

@@ -51,9 +51,9 @@ namespace Bari.Core.Test.Build.Dependencies
             var factoryMock = new Mock<ISourceSetFingerprintFactory>();
             factoryMock.Setup(
                 f =>
-                f.CreateSourceSetFingerprint(It.IsAny<IEnumerable<SuiteRelativePath>>(), It.IsAny<Func<string, bool>>(), true))
-                       .Returns<IEnumerable<SuiteRelativePath>, Func<string, bool>>(
-                            (files, exclusions) => new SourceSetFingerprint(rootDir, files, exclusions, true));
+                f.CreateSourceSetFingerprint(It.IsAny<IEnumerable<SuiteRelativePath>>(), It.IsAny<Func<string, bool>>(), It.IsAny<bool>()))
+                       .Returns<IEnumerable<SuiteRelativePath>, Func<string, bool>, bool>(
+                            (files, exclusions, fullDependency) => new SourceSetFingerprint(rootDir, files, exclusions, fullDependency));
             fingerprintFactory = factoryMock.Object;
         }
 

@@ -4,6 +4,7 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
+using Bari.Core.UI;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -29,6 +30,8 @@ namespace Bari.Core.Test.Commands
             target = new TestFileSystemDirectory("target");
             kernel.Bind<IFileSystemDirectory>().ToConstant(target).WhenTargetHas
                 <TargetRootAttribute>();
+
+            kernel.Bind<IUserOutput>().To<TestUserOutput>();
 
             suite = kernel.Get<Suite>();
             suite.Name = "test suite";

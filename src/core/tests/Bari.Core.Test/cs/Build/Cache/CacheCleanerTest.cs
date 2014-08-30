@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
@@ -7,6 +8,7 @@ using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
 using Moq;
+using Ninject;
 using NUnit.Framework;
 
 namespace Bari.Core.Test.Build.Cache
@@ -99,6 +101,16 @@ namespace Bari.Core.Test.Build.Cache
         }
 
         [Test]
+        public void BuilderEnumeratorFindsPersistentReferenceBuilders()
+        {
+            var builderEnumerator = Kernel.Root.Get<IBuilderEnumerator>();
+            var persistentBuilders = builderEnumerator.GetAllPersistentBuilders().ToList();
+
+            persistentBuilders.Should().Contain(typeof (PersistentReference));
+            persistentBuilders.Should().NotContain(typeof (NonPersistentReference));
+        }
+
+        [Test]
         public void KeepsPersistentReferences()
         {
             var cdir = new TestFileSystemDirectory("cache",
@@ -111,7 +123,7 @@ namespace Bari.Core.Test.Build.Cache
                 });
 
             var be = new Mock<IBuilderEnumerator>();
-            be.Setup(b => b.GetAllPersistentBuilders()).Returns(new[] { typeof(NonPersistentReference), typeof(PersistentReference)});
+            be.Setup(b => b.GetAllPersistentBuilders()).Returns(new[] {typeof(PersistentReference)});
 
             var cleaner = new CacheCleaner(cdir, be.Object);
 
