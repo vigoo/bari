@@ -65,7 +65,7 @@ namespace Bari.Core.Model.Loader
             var seq = value as YamlSequenceNode;
             if (seq != null)
             {
-                foreach (var referenceNode in seq.Children)
+                foreach (var referenceNode in parser.EnumerateNodesOf(seq))
                 {
                     foreach (var reference in referenceLoader.LoadReference(referenceNode))
                         references.Add(reference);
