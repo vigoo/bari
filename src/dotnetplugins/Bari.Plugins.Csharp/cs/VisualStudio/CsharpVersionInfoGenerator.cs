@@ -34,6 +34,11 @@ namespace Bari.Plugins.Csharp.VisualStudio
                 output.WriteLine("[assembly: AssemblyVersion(\"{0}\")]", project.EffectiveVersion);
                 output.WriteLine("[assembly: AssemblyFileVersion(\"{0}\")]", project.EffectiveVersion);
             }
+
+            if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
+            {
+                output.WriteLine("[assembly: AssemblyCopyright(\"{0}\")]", project.EffectiveCopyright);
+            }
         }
     }
 }

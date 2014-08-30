@@ -17,6 +17,7 @@ namespace Bari.Core.Model
 
         private string name = string.Empty;
         private string version;
+        private string copyright;
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, Product> products = new Dictionary<string, Product>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
@@ -80,6 +81,17 @@ namespace Bari.Core.Model
         {
             get { return version; }
             set { version = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the suite's copyright
+        /// 
+        /// <para>Can be <c>null</c>, in this case there is no suite-wise copyright specified.</para>
+        /// </summary>
+        public string Copyright
+        {
+            get { return copyright; }
+            set { copyright = value; }
         }
 
         /// <summary>

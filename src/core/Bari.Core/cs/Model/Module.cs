@@ -13,6 +13,7 @@ namespace Bari.Core.Model
     {
         private readonly string name;
         private string version;
+        private string copyright;
         
         private readonly Suite suite;
 
@@ -65,11 +66,30 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets or sets the module's copyright
+        /// 
+        /// <para>To use the suite copyright in <see cref="EffectiveCopyright"/>, set this property to <c>null</c>.</para>
+        /// </summary>
+        public string Copyright
+        {
+            get { return copyright; }
+            set { copyright = value; }
+        }
+
+        /// <summary>
         /// Gets the module's version or the suite version if no module specific version was specified
         /// </summary>
         public string EffectiveVersion
         {
             get { return version ?? suite.Version; }
+        }
+
+        /// <summary>
+        /// Gets the module's copyright or the suite's copyright if no module specific copyright was specified
+        /// </summary>
+        public string EffectiveCopyright
+        {
+            get { return copyright ?? suite.Copyright; }
         }
 
         /// <summary>

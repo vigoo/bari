@@ -61,6 +61,7 @@ namespace Bari.Core.Model.Loader
 
             suite.Name = parser.GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
             suite.Version = parser.GetOptionalScalarValue(yaml.RootNode, "version", null);
+            suite.Copyright = parser.GetOptionalScalarValue(yaml.RootNode, "copyright", null);
 
             foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(yaml.RootNode, "modules"))
             {
@@ -170,6 +171,7 @@ namespace Bari.Core.Model.Loader
             Contract.Requires(moduleNode != null);
 
             LoadModuleVersion(module, moduleNode);
+            LoadModuleCopyright(module, moduleNode);
             LoadProjects(module, moduleNode);
             LoadTestProjects(module, moduleNode);
             LoadParameters(module, moduleNode);
@@ -179,6 +181,11 @@ namespace Bari.Core.Model.Loader
         private void LoadModuleVersion(Module module, YamlNode moduleNode)
         {
             module.Version = parser.GetOptionalScalarValue(moduleNode, "version", null);
+        }
+
+        private void LoadModuleCopyright(Module module, YamlNode moduleNode)
+        {
+            module.Copyright = parser.GetOptionalScalarValue(moduleNode, "copyright", null);
         }
 
         private void LoadTestProjects(Module module, YamlNode moduleNode)
@@ -222,6 +229,10 @@ namespace Bari.Core.Model.Loader
                     pair.Value is YamlScalarNode)
                     {
                         project.Version = ((YamlScalarNode)pair.Value).Value;
+                    }
+                    else if (new YamlScalarNode("copyright").Equals(pair.Key) && pair.Value is YamlScalarNode)
+                    {
+                        project.Copyright = ((YamlScalarNode)pair.Value).Value;
                     }
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)

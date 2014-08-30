@@ -23,6 +23,7 @@ namespace Bari.Core.Model
         private readonly IDictionary<string, PostProcessDefinition> postProcessDefinitions = new Dictionary<string, PostProcessDefinition>();
         private ProjectType type = ProjectType.Library;
         private string version;
+        private string copyright;
 
         /// <summary>
         /// Gets the module this project belongs to
@@ -67,12 +68,33 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets or sets the project's copyright
+        /// 
+        /// <para>Set this property to <c>null</c> to use the module's copyright in the
+        /// <see cref="EffectiveCopyright"/> property.</para>
+        /// </summary>
+        public string Copyright
+        {
+            get { return copyright; }
+            set { copyright = value; }
+        }
+
+        /// <summary>
         /// Gets the version of this project, which may come from the module's or suite's version if not explicitly
         /// specified in the <see cref="Version"/> property.
         /// </summary>
         public string EffectiveVersion
         {
             get { return version ?? module.EffectiveVersion; }
+        }
+
+        /// <summary>
+        /// Gets the copyright of this project, which may come from the module's or suite's copyright if not explicitly
+        /// specified in the <see cref="Copyright"/> property.
+        /// </summary>
+        public string EffectiveCopyright
+        {
+            get { return copyright ?? module.EffectiveCopyright; }
         }
 
         /// <summary>

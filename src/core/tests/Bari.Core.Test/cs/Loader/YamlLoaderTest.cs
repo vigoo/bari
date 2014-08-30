@@ -52,6 +52,7 @@ suite: Test suite";
             suite.Should().NotBeNull();
             suite.Name.Should().Be("Test suite");
             suite.Version.Should().BeNull();
+            suite.Copyright.Should().BeNull();
         }
 
         [Test]
@@ -70,6 +71,24 @@ version: 1.0";
             suite.Name.Should().Be("Test suite");
             suite.Version.Should().Be("1.0");
         }
+
+        [Test]
+        public void SuiteCopyrightRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+copyright: test";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Name.Should().Be("Test suite");
+            suite.Copyright.Should().Be("test");
+        }
+
 
         [Test]
         public void EmptyModulesNodeHasNoEffect()
@@ -136,6 +155,28 @@ modules:
         }
 
         [Test]
+        public void ModuleCopyrightRead()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+modules:
+    - name: Module1
+      copyright: test2
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.Modules.Should().HaveCount(1);
+            suite.Modules.Should().OnlyContain(m => m.Name == "Module1");
+            suite.GetModule("Module1").Copyright.Should().Be("test2");
+        }
+
+        [Test]
         public void MultipleModulesWithProjectsAreRead()
         {
             const string yaml = @"---                   
@@ -152,6 +193,7 @@ modules:
           type: static-library
         - name: Project32
           version: 3.0
+          copyright: test3
           type: executable
 ";
 
@@ -177,8 +219,11 @@ modules:
             suite.GetModule("Module3").GetProject("Project32").Type.Should().Be(ProjectType.Executable);
 
             suite.GetModule("Module1").GetProject("Project11").Version.Should().BeNull();
+            suite.GetModule("Module1").GetProject("Project11").Copyright.Should().BeNull();
             suite.GetModule("Module3").GetProject("Project31").Version.Should().BeNull();
+            suite.GetModule("Module3").GetProject("Project31").Copyright.Should().BeNull();
             suite.GetModule("Module3").GetProject("Project32").Version.Should().Be("3.0");
+            suite.GetModule("Module3").GetProject("Project32").Copyright.Should().Be("test3");
         }
 
         [Test]

@@ -3,7 +3,6 @@ using Bari.Core.Model;
 using Bari.Core.Test.Helper;
 using Bari.Plugins.Csharp.VisualStudio;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 
 namespace Bari.Plugins.Csharp.Test.VisualStudio
@@ -63,6 +62,46 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
             var lines = RunGenerator(project);
             lines.Should().Contain("[assembly: AssemblyVersion(\"2.0.0.0\")]");
             lines.Should().Contain("[assembly: AssemblyFileVersion(\"2.0.0.0\")]");
+        }
+
+        [Test]
+        public void NullCopyrightIsNotWritten()
+        {
+            project.EffectiveCopyright.Should().BeNull();
+
+            var lines = RunGenerator(project);
+            lines.Should().NotContain(l => l.StartsWith("[assembly: AssemblyCopyright"));
+        }
+
+        [Test]
+        public void EmptyCopyrightIsNotWritten()
+        {
+            project.Copyright = "  ";
+            project.EffectiveCopyright.Should().BeNullOrWhiteSpace();
+
+            var lines = RunGenerator(project);
+            lines.Should().NotContain(l => l.StartsWith("[assembly: AssemblyCopyright"));
+        }
+
+        [Test]
+        public void NonEmptyCopyrightIsWritten()
+        {
+            project.Copyright = "test";
+            project.EffectiveCopyright.Should().Be("test");
+
+            var lines = RunGenerator(project);
+            lines.Should().Contain("[assembly: AssemblyCopyright(\"test\")]");
+        }
+
+        [Test]
+        public void CopyrightFromModuleIsWrittenIfProjectHasNoCopyright()
+        {
+            project.Copyright = null;
+            module.Copyright = "test2";
+            project.EffectiveCopyright.Should().Be("test2");
+
+            var lines = RunGenerator(project);
+            lines.Should().Contain("[assembly: AssemblyCopyright(\"test2\")]");
         }
 
         private static string[] RunGenerator(Project project)
