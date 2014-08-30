@@ -2,10 +2,6 @@ Write-Output "Installing Chocolatey"
 
 iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 
-Write-Output "Installing wget"
-
-cinst Wget
-
 Write-Output "Installing 7zip"
 
 cinst 7zip.commandline
@@ -22,8 +18,10 @@ $barizip = Join-Path $bootstrap "bari.zip"
 
 Write-Output "Downloading bari"
 
-Remove-Item alias:wget
-wget --no-check-certificate "https://github.com/vigoo/bari/releases/download/0.8/bari-0.8.zip" -O $barizip
+$webclient = New-Object System.Net.WebClient
+$url = "https://github.com/vigoo/bari/releases/download/0.8/bari-0.8.zip"
+$file = Join-Path $bootstrap "bari.zip"
+$webclient.DownloadFile($url,$file)
 
 Write-Output "Unpacking bari"
 
