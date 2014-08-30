@@ -3,6 +3,8 @@ bari
 
 Bari is an advanced build management tool for .NET projects.
 
+[![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1hyg2r66/branch/master)](https://ci.appveyor.com/project/vigoo/bari/branch/master)
+
 # Roadmap #
 
 ## Milestone 1 ##
