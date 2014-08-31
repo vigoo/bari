@@ -85,7 +85,7 @@ Example: `bari clean --keep-references`
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
-        public void Run(Suite suite, string[] parameters)
+        public bool Run(Suite suite, string[] parameters)
         {
             var cleanParams = new CleanParameters(parameters);
 
@@ -106,6 +106,8 @@ Example: `bari clean --keep-references`
             {
                 cleanExtension.Clean(cleanParams);
             }
+
+            return true;
         }
     }
 }

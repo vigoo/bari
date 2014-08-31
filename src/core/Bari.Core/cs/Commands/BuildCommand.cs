@@ -95,7 +95,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
-        public void Run(Suite suite, string[] parameters)
+        public bool Run(Suite suite, string[] parameters)
         {
             int effectiveLength = parameters.Length;
             bool dumpMode = false;
@@ -119,6 +119,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                     lastTargetStr = targetStr;
                     var target = targetParser.ParseTarget(targetStr);
                     RunWithProjects(target, dumpMode);
+
+                    return true;
                 }
                 catch (ArgumentException ex)
                 {

@@ -17,9 +17,9 @@ namespace Bari.Plugins.Gallio.Commands.Test
             this.gallio = gallio;
         }
 
-        public void Run(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
+        public bool Run(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
         {
-            gallio.RunTests(buildOutputs.Where(
+            return gallio.RunTests(buildOutputs.Where(
                 path => ((string)path).EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)));
         }
     }

@@ -85,7 +85,7 @@ Example: `bari test --dump`
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
-        public void Run(Suite suite, string[] parameters)
+        public bool Run(Suite suite, string[] parameters)
         {
             int effectiveLength = parameters.Length;
             bool dumpMode = false;
@@ -105,7 +105,7 @@ Example: `bari test --dump`
                 log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
                 var buildOutputs = RunWithProjects(projects, dumpMode);
-                RunTests(projects, buildOutputs);
+                return RunTests(projects, buildOutputs);
             }
             else
             {
@@ -113,13 +113,14 @@ Example: `bari test --dump`
             }
         }
 
-        private void RunTests(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
+        private bool RunTests(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
         {
             var testProjects = projects as List<TestProject> ?? projects.ToList();
             var buildOutputPaths = buildOutputs as List<TargetRelativePath> ?? buildOutputs.ToList();
-         
-            foreach (var testRunner in testRunners)
-                testRunner.Run(testProjects, buildOutputPaths);
+
+            return testRunners
+                .Select(testRunner => testRunner.Run(testProjects, buildOutputPaths))
+                .All(result => result);
         }
 
         private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode)

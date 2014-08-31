@@ -14,6 +14,7 @@ namespace Bari.Core.Commands.Test
         /// </summary>
         /// <param name="projects">Test projects to be ran</param>
         /// <param name="buildOutputs">Build outputs for these test projects</param>
-        void Run(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs);
+        /// <returns>Returns <c>true</c> if all the tests has passed</returns>
+        bool Run(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs);
     }
 }

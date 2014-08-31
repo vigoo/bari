@@ -25,7 +25,7 @@ namespace Bari.Console
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (Program));
 
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var consoleParams = new ConsoleParameters(args);
             if (consoleParams.VerboseOutput)
@@ -66,13 +66,18 @@ namespace Bari.Console
             var process = root.Get<MainProcess>();
             try
             {
-                process.Run();
+                if (process.Run())
+                    return 0;
+                else
+                    return 1;
             }
             catch (Exception ex)
             {
                 System.Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine(ex.ToString());
                 System.Console.ForegroundColor = ConsoleColor.Gray;
+
+                return 2;
             }
         }
 

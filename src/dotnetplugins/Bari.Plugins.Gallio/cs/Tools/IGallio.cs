@@ -5,6 +5,6 @@ namespace Bari.Plugins.Gallio.Tools
 {
     public interface IGallio
     {
-        void RunTests(IEnumerable<TargetRelativePath> testAssemblies);
+        bool RunTests(IEnumerable<TargetRelativePath> testAssemblies);
     }
 }

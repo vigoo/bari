@@ -72,7 +72,7 @@ Example: `bari info`
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
-        public void Run(Suite suite, string[] parameters)
+        public bool Run(Suite suite, string[] parameters)
         {   
             if (parameters.Length != 0)
                 throw new InvalidCommandParameterException("info",
@@ -91,6 +91,8 @@ Example: `bari info`
             {
                 PrintProductDetails(product);
             }
+
+            return true;
         }
 
         private void PrintProductDetails(Product product)

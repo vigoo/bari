@@ -54,7 +54,7 @@ namespace Bari.Core.Process
         /// <summary>
         /// Runs the main bari process
         /// </summary>
-        public void Run()
+        public bool Run()
         {
             output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
 
@@ -68,7 +68,7 @@ namespace Bari.Core.Process
             if (cmd != null)
             {
                 binding.Bind<ICommand>().ToConstant(cmd).WhenTargetHas<CurrentAttribute>();
-                cmd.Run(suite, parameters.CommandParameters);
+                return cmd.Run(suite, parameters.CommandParameters);
             }
             else
             {

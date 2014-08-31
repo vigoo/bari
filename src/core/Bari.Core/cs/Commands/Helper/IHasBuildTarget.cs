@@ -1,4 +1,4 @@
-﻿namespace Bari.Core.Commands
+﻿namespace Bari.Core.Commands.Helper
 {
     public interface IHasBuildTarget
     {

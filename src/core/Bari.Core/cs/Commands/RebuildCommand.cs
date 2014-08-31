@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Commands.Clean;
+using Bari.Core.Commands.Helper;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Ninject;
@@ -84,19 +85,21 @@ Example: `bari rebuild --keep-references HelloWorldModule`
         /// </summary>
         /// <param name="suite">The current suite model the command is applied to</param>
         /// <param name="parameters">Parameters given to the command (in unprocessed form)</param>
-        public void Run(Suite suite, string[] parameters)
+        public bool Run(Suite suite, string[] parameters)
         {
             var cleanParams = new CleanParameters(new string[0]);
 
             var cleanParameters = parameters.Where(cleanParams.IsKeepReferencesParameter).ToArray();
             var buildParameters = parameters.Where(p => !cleanParams.IsKeepReferencesParameter(p)).ToArray();
 
-            cleanCommand.Run(suite, cleanParameters);
+            var cleanSucceeded = cleanCommand.Run(suite, cleanParameters);
 
             targetRoot.Remake();
             cacheRoot.Remake();
 
-            buildCommand.Run(suite, buildParameters);
+            var buildSucceeded = buildCommand.Run(suite, buildParameters);
+
+            return cleanSucceeded && buildSucceeded;
         }
 
         public string BuildTarget
