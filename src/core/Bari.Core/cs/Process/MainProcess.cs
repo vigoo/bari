@@ -67,6 +67,7 @@ namespace Bari.Core.Process
             var cmd = commandFactory.CreateCommand(parameters.Command);
             if (cmd != null)
             {
+                binding.Bind<ICommand>().ToConstant(cmd).WhenTargetHas<CurrentAttribute>();
                 cmd.Run(suite, parameters.CommandParameters);
             }
             else

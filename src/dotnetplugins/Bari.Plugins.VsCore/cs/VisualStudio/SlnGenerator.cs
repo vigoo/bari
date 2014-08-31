@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 
 namespace Bari.Plugins.VsCore.VisualStudio
 {
@@ -20,7 +21,9 @@ namespace Bari.Plugins.VsCore.VisualStudio
         private readonly IList<Project> projects;
         private readonly IEnumerable<ISlnProject> supportedSlnProjects;
         private readonly Func<Project, IEnumerable<Project>> getProjectSolutionReferences;
+        private readonly IEnumerable<ISolutionItemProvider> solutionItemProviders;
         private readonly TextWriter output;
+        private readonly string slnName;
 
         /// <summary>
         /// Initializes the solution file generator
@@ -33,7 +36,9 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="slnDir">Directory where the sln is being generated </param>
         /// <param name="getProjectSolutionReferences">Function which returns all the referenced projects which are in the same solution</param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences)
+        /// <param name="solutionItemProviders">List of registered solution item providers</param>
+        /// <param name="slnName">Solution's unique name</param>
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences, IEnumerable<ISolutionItemProvider> solutionItemProviders, string slnName)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projectPlatformManagement != null);
@@ -43,6 +48,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
             Contract.Requires(slnDir != null);
             Contract.Requires(getProjectSolutionReferences != null);
             Contract.Requires(supportedSlnProjects != null);
+            Contract.Requires(solutionItemProviders != null);
 
             this.projectGuidManagement = projectGuidManagement;
             this.projectPlatformManagement = projectPlatformManagement;
@@ -51,6 +57,8 @@ namespace Bari.Plugins.VsCore.VisualStudio
             this.suiteRoot = suiteRoot;
             this.slnDir = slnDir;
             this.getProjectSolutionReferences = getProjectSolutionReferences;
+            this.solutionItemProviders = solutionItemProviders;
+            this.slnName = slnName;
             this.supportedSlnProjects = supportedSlnProjects;
         }
 
@@ -60,6 +68,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
         public void Generate()
         {
             const string testProjectNode = "{6181E5C5-1B34-46C3-9917-0E6779125067}";
+            const string solutionItemsNode = "{9163c076-18a2-46f8-a018-d225f8020b4f}";
 
             output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
             output.WriteLine("# Visual Studio 2012");
@@ -79,6 +88,8 @@ namespace Bari.Plugins.VsCore.VisualStudio
             foreach (var project in projects)
                 if (project != startupProject)
                     GenerateProjectSection(project);
+
+            GenerateSolutionItems(solutionItemsNode);
 
             output.WriteLine("Global");
             output.WriteLine("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
@@ -103,6 +114,25 @@ namespace Bari.Plugins.VsCore.VisualStudio
             output.WriteLine("\tEndGlobalSection");
 
             output.WriteLine("EndGlobal");
+        }
+
+        private void GenerateSolutionItems(string solutionItemsNode)
+        {
+            output.WriteLine(
+                "Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"Solution Items\", \"Solution Items\", \"{0}\"",
+                solutionItemsNode);
+            output.WriteLine("\tProjectSection(SolutionItems) = preProject");
+
+            foreach (var solutionItemProvider in solutionItemProviders)
+            {
+                foreach (var item in solutionItemProvider.GetItems(slnName))
+                {
+                    output.WriteLine("\t\t{0} = {0}", (string)item);
+                }
+            }
+
+            output.WriteLine("\tEndProjectSection");
+            output.WriteLine("EndProject");
         }
 
         private void GenerateProjectConfiguration(Project project)

@@ -14,7 +14,7 @@ namespace Bari.Core.Commands
     /// Implements 'build' command, which runs one or more builder (<see cref="IBuilder"/>) for a <see cref="Project"/>,
     /// <see cref="Module"/> or product.
     /// </summary>
-    public class BuildCommand: ICommand
+    public class BuildCommand : ICommand, IHasBuildTarget
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildCommand));
 
@@ -23,6 +23,7 @@ namespace Bari.Core.Commands
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly ICommandTargetParser targetParser;
         private readonly IUserOutput output;
+        private string lastTargetStr;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -115,6 +116,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
                 try
                 {
+                    lastTargetStr = targetStr;
                     var target = targetParser.ParseTarget(targetStr);
                     RunWithProjects(target, dumpMode);
                 }
@@ -181,6 +183,11 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                         StreamOperations.Copy(source, target);
                 }
             }
+        }
+
+        public string BuildTarget
+        {
+            get { return lastTargetStr; }
         }
     }
 }

@@ -261,9 +261,21 @@ modules:
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.PythonScripts
+
+    - name: addon
+      projects:
+        - name: Bari.Plugins.AddonSupport
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://Ninject/3.0.1.10            
+            - suite://core/Bari.Core
+            - suite://dotnetplugins/Bari.Plugins.VsCore
+
 products:
     - name: full
       modules:
           - core
           - dotnetplugins
           - scripting
+          - addon

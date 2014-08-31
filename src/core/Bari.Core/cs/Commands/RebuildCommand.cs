@@ -11,7 +11,7 @@ namespace Bari.Core.Commands
     /// Implements 'rebuild' command, which runs one or more builder (<see cref="IBuilder"/>) for a <see cref="Project"/>,
     /// <see cref="Module"/> or product after cleaning the suite.
     /// </summary>
-    public class RebuildCommand : ICommand
+    public class RebuildCommand : ICommand, IHasBuildTarget
     {
         private readonly ICommand cleanCommand;
         private readonly ICommand buildCommand;
@@ -97,6 +97,11 @@ Example: `bari rebuild --keep-references HelloWorldModule`
             cacheRoot.Remake();
 
             buildCommand.Run(suite, buildParameters);
+        }
+
+        public string BuildTarget
+        {
+            get { return ((IHasBuildTarget)buildCommand).BuildTarget; }
         }
     }
 }

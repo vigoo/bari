@@ -3,6 +3,7 @@ using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
 using Bari.Plugins.VsCore.Tools;
 using Bari.Plugins.VsCore.VisualStudio;
+using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
@@ -25,6 +26,8 @@ namespace Bari.Plugins.VsCore
 
             Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
             Bind<IProjectPlatformManagement>().To<DefaultProjectPlatformManagement>().InSingletonScope();
+
+            Bind<ISolutionItemProvider>().To<SuiteDefinitionSolutionItemProvider>();
 
             var parameters = Kernel.Get<IParameters>();
 

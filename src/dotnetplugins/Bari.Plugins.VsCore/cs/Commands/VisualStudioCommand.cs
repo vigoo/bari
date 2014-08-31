@@ -18,7 +18,7 @@ namespace Bari.Plugins.VsCore.Commands
     /// files for a given module or product, and launches Microsoft Visual Studio loading the generated
     /// solution.
     /// </summary>
-    public class VisualStudioCommand : ICommand
+    public class VisualStudioCommand : ICommand, IHasBuildTarget
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(VisualStudioCommand));
 
@@ -26,6 +26,7 @@ namespace Bari.Plugins.VsCore.Commands
         private readonly ISlnBuilderFactory slnBuilderFactory;
         private readonly IFileSystemDirectory targetDir;
         private readonly ICommandTargetParser targetParser;
+        private string lastTargetStr;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -118,6 +119,7 @@ If called without any module or product name, it adds *every module* to the gene
 
             try
             {
+                lastTargetStr = targetStr;
                 var target = targetParser.ParseTarget(targetStr);
                 Run(target, openSolution);
             }
@@ -158,6 +160,11 @@ If called without any module or product name, it adds *every module* to the gene
                     }
                 }
             }
+        }
+
+        public string BuildTarget
+        {
+            get { return lastTargetStr; }
         }
     }
 }
