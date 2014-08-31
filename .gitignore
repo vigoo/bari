@@ -81,3 +81,4 @@ Bari.Plugins.PythonScripts.csproj
 Bari.Plugins.PythonScripts.Test.csproj
 bari.Test.csproj
 
+src/addon/Bari.Plugins.AddonSupport/cs/Bari.Plugins.AddonSupport.csproj
