@@ -134,7 +134,7 @@ namespace Bari.Core.Generic
             if (!File.Exists(absolutePath))
                 throw new ArgumentException("File does not exists" + absolutePath, "relativePath");
 
-            return new FileStream(absolutePath, FileMode.Open);
+            return new FileStream(absolutePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         /// <summary>
