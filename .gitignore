@@ -66,6 +66,7 @@ Bari.Core.csproj
 version.cs
 Bari.Core.Test.csproj
 bari.csproj
+Bari.Plugins.AddonSupport.csproj
 Bari.Plugins.Csharp.csproj
 Bari.Plugins.Fsharp.csproj
 Bari.Plugins.FSRepository.csproj
@@ -80,5 +81,3 @@ Bari.Plugins.Csharp.Test.csproj
 Bari.Plugins.PythonScripts.csproj
 Bari.Plugins.PythonScripts.Test.csproj
 bari.Test.csproj
-
-src/addon/Bari.Plugins.AddonSupport/cs/Bari.Plugins.AddonSupport.csproj
