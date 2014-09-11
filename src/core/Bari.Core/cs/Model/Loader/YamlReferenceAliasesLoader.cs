@@ -11,11 +11,6 @@ namespace Bari.Core.Model.Loader
     {
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
 
-        public YamlReferenceAliasesLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

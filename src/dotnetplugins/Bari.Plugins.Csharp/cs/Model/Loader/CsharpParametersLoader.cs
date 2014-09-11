@@ -14,11 +14,6 @@ namespace Bari.Plugins.Csharp.Model.Loader
     /// </summary>
     public class CsharpParametersLoader : YamlProjectParametersLoaderBase<CsharpProjectParameters>
     {
-        public CsharpParametersLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         protected override string BlockName
         {
             get { return "csharp"; }

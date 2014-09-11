@@ -14,11 +14,6 @@ namespace Bari.Plugins.Fsharp.Model.Loader
     /// </summary>
     public class FsharpParametersLoader : YamlProjectParametersLoaderBase<FsharpProjectParameters>
     {
-        public FsharpParametersLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

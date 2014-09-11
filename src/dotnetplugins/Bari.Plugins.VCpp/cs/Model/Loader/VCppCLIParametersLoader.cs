@@ -11,11 +11,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppCLIParametersLoader : YamlProjectParametersLoaderBase<VCppProjectCLIParameters>
     {
-        public VCppCLIParametersLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>
@@ -34,9 +29,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
             return new VCppProjectCLIParameters();
         }
 
-        public override IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public override IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)
         {
-            var result = CreateNewParameters(Suite);
+            Suite = suite;
+
+            var result = CreateNewParameters(suite);
             result.Mode = ParseEnum<CppCliMode>(value, "Managed C++ mode");
 
             return result;

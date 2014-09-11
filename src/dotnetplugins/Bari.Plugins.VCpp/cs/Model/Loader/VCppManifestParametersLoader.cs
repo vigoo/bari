@@ -11,10 +11,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppManifestParametersLoader : YamlProjectParametersLoaderBase<VCppProjectManifestParameters>
     {
-        public VCppManifestParametersLoader(Suite suite) : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

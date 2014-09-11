@@ -23,10 +23,11 @@ namespace Bari.Core.Model.Loader
         /// <summary>
         /// Loads the YAML block
         /// </summary>
+        /// <param name="suite">The suite being loaded (at load time it is not yet bound in the kernel)</param>
         /// <param name="name">Name of the block (same that was passed to <see cref="Supports"/>)</param>
         /// <param name="value">The YAML node representing the value</param>
         /// <param name="parser">The YAML parser to be used</param>
         /// <returns>Returns the loaded node</returns>
-        IProjectParameters Load(string name, YamlNode value, YamlParser parser);
+        IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser);
     }
 }

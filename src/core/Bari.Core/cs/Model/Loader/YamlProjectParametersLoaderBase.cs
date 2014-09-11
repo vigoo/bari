@@ -14,16 +14,16 @@ namespace Bari.Core.Model.Loader
     public abstract class YamlProjectParametersLoaderBase<TParamType>: IYamlProjectParametersLoader
         where TParamType: IProjectParameters
     {
-        private readonly Suite suite;
+        private Suite suite;
 
         protected Suite Suite
         {
             get { return suite; }
+            set { suite = value; }
         }
 
-        protected YamlProjectParametersLoaderBase(Suite suite)
+        protected YamlProjectParametersLoaderBase()
         {
-            this.suite = suite;
         }
 
         /// <summary>
@@ -48,8 +48,10 @@ namespace Bari.Core.Model.Loader
         /// <returns>Returns the new instance to be filled with loaded data</returns>
         protected abstract TParamType CreateNewParameters(Suite suite);
 
-        public virtual IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public virtual IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)
         {
+            this.suite = suite;
+
             var result = CreateNewParameters(suite);
             var mapping = value as YamlMappingNode;
 
@@ -143,11 +145,11 @@ namespace Bari.Core.Model.Loader
             return result;
         }
 
-        protected string[] ParseStringArray(YamlNode value)
+        protected string[] ParseStringArray(YamlParser parser, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                return seq.Children.OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
+                return parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
             else
                 return new string[0];
         }

@@ -12,10 +12,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppLinkerParametersLoader : YamlProjectParametersLoaderBase<VCppProjectLinkerParameters>
     {
-        public VCppLinkerParametersLoader(Suite suite) : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>
@@ -38,11 +34,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
         {
             return new Dictionary<string, Action>
                 {
-                    { "additional-dependencies", () => target.AdditionalDependencies = ParseStringArray(value) },
-                    { "additional-library-dependencies", () => target.AdditionalLibraryDirectories = ParseStringArray(value) },
-                    { "additional-manifest-dependencies", () => target.AdditionalManifestDependencies = ParseStringArray(value) },
-                    { "additional-options", () => target.AdditionalOptions = ParseStringArray(value) },
-                    { "add-module-names-to-assembly", () => target.AddModuleNamesToAssembly = ParseStringArray(value) },
+                    { "additional-dependencies", () => target.AdditionalDependencies = ParseStringArray(parser, value) },
+                    { "additional-library-dependencies", () => target.AdditionalLibraryDirectories = ParseStringArray(parser, value) },
+                    { "additional-manifest-dependencies", () => target.AdditionalManifestDependencies = ParseStringArray(parser, value) },
+                    { "additional-options", () => target.AdditionalOptions = ParseStringArray(parser, value) },
+                    { "add-module-names-to-assembly", () => target.AddModuleNamesToAssembly = ParseStringArray(parser, value) },
                     { "allow-isolation", () => target.AllowIsolation = ParseBool(value) },
                     { "assembly-debug", () => target.AssemblyDebug = ParseBool(value) },
                     { "base-address", () => target.BaseAddress = ParseString(value) },
@@ -52,7 +48,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     { "clr-unmanaged-code-check", () => target.CLRUnmanagedCodeCheck = ParseBool(value) },
                     { "create-hotpatchable-image", () => target.CreateHotPatchableImage = ParseEnum<LinkerHotPatchingOption>(value, "hot patching") },
                     { "data-execution-prevention", () => target.DataExecutionPrevention = ParseBool(value) },
-                    { "delay-load-dlls", () => target.DelayLoadDLLs = ParseStringArray(value) },
+                    { "delay-load-dlls", () => target.DelayLoadDLLs = ParseStringArray(parser, value) },
                     { "delay-sign", () => target.DelaySign = ParseBool(value) },
                     { "driver", () => target.Driver = ParseEnum<LinkerDriverOption>(value, "driver") },
                     { "enable-comdat-folding", () => target.EnableCOMDATFolding = ParseBool(value)},
@@ -69,7 +65,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     { "ignore-all-default-libraries", () => target.IgnoreAllDefaultLibraries = ParseBool(value) },
                     { "ignore-embedded-idl", () => target.IgnoreEmbeddedIDL = ParseBool(value) },
                     { "ignore-import-library", () => target.IgnoreImportLibrary = ParseBool(value) },
-                    { "ignore-specific-default-libraries", () => target.IgnoreSpecificDefaultLibraries = ParseStringArray(value)},
+                    { "ignore-specific-default-libraries", () => target.IgnoreSpecificDefaultLibraries = ParseStringArray(parser, value)},
                     { "image-has-safe-exception-handlers", () => target.ImageHasSafeExceptionHandlers = ParseBool(value) },
                     { "import-library", () => target.ImportLibrary = ParseString(value) },
                     { "key-container", () => target.KeyContainer = ParseString(value) },

@@ -12,12 +12,10 @@ namespace Bari.Plugins.FSRepository.Model.Loader
     /// </summary>
     public class YamlRepositoryPatternCollectionLoader : YamlProjectParametersLoaderBase<RepositoryPatternCollection>
     {
-        private readonly Suite suite;
         private readonly IFileSystemRepositoryAccess fsAccess;
 
-        public YamlRepositoryPatternCollectionLoader(Suite suite, IFileSystemRepositoryAccess fsAccess) : base(suite)
+        public YamlRepositoryPatternCollectionLoader(IFileSystemRepositoryAccess fsAccess)
         {
-            this.suite = suite;
             this.fsAccess = fsAccess;
         }
 
@@ -60,8 +58,10 @@ namespace Bari.Plugins.FSRepository.Model.Loader
         /// <param name="value">The YAML node representing the value</param>
         /// <param name="parser">The YAML parser to be used</param>
         /// <returns>Returns the loaded node</returns>
-        public override IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public override IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)
         {
+            Suite = suite;
+
             var target = CreateNewParameters(suite);
 
             var seq = value as YamlSequenceNode;

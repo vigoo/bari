@@ -14,11 +14,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppCompilerParametersLoader : YamlProjectParametersLoaderBase<VCppProjectCompilerParameters>
     {
-        public VCppCompilerParametersLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>
@@ -50,9 +45,9 @@ namespace Bari.Plugins.VCpp.Model.Loader
         {
             return new Dictionary<string, Action>
                 {
-                    {"additional-include-directories", () => target.AdditionalIncludeDirectories = ParseStringArray(value) },
-                    {"additional-options", () => target.AdditionalOptions = ParseStringArray(value) },
-                    {"additional-using-directories", () => target.AdditionalUsingDirectories = ParseStringArray(value) },
+                    {"additional-include-directories", () => target.AdditionalIncludeDirectories = ParseStringArray(parser, value) },
+                    {"additional-options", () => target.AdditionalOptions = ParseStringArray(parser, value) },
+                    {"additional-using-directories", () => target.AdditionalUsingDirectories = ParseStringArray(parser, value) },
                     {"assembler-listing-location", () => target.AssemblerListingLocation = ParseString(value) },
                     {"assembler-output", () => target.AssemblerOutput = ParseEnum<AssemblerOutputType>(value, "assembler output type") },
                     {"basic-runtime-checks", () => target.BasicRuntimeChecks = ParseEnum<RuntimeCheckType>(value, "runtime check type") },
@@ -74,8 +69,8 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"floating-point-exceptions", () => target.FloatingPointExceptions = ParseBool(value)},
                     {"floating-point-model", () => target.FloatingPointModel = ParseEnum<FloatingPointModel>(value, "floating point model")},
                     {"force-conformance-in-for-loop-scope", () => target.ForceConformanceInForLoopScope = ParseBool(value)},
-                    {"forced-include-files", () => target.ForcedIncludeFiles = ParseStringArray(value)},
-                    {"forced-using-files", () => target.ForcedUsingFiles = ParseStringArray(value)},
+                    {"forced-include-files", () => target.ForcedIncludeFiles = ParseStringArray(parser, value)},
+                    {"forced-using-files", () => target.ForcedUsingFiles = ParseStringArray(parser, value)},
                     {"function-level-linking", () => target.FunctionLevelLinking = ParseBool(value)},
                     {"generate-xml-documentation-files", () => target.GenerateXMLDocumentationFiles = ParseBool(value)},
                     {"ignore-standard-include-path", () => target.IgnoreStandardIncludePath = ParseBool(value)},
@@ -87,7 +82,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"omit-frame-pointers", () => target.OmitFramePointers = ParseBool(value)},
                     {"openmp-support", () => target.OpenMPSupport = ParseBool(value)},
                     {"optimization", () => target.Optimization = ParseEnum<OptimizationLevel>(value, "optimization level")},
-                    {"defines", () => target.Defines = ParseStringArray(value) },
+                    {"defines", () => target.Defines = ParseStringArray(parser, value) },
                     {"processor-count", () => target.ProcessorNumber = (int?)ParseUint32(value)},
                     {"runtime-library", () => target.RuntimeLibrary = ParseEnum<RuntimeLibraryType>(value, "runtime library")},
                     {"runtime-type-info", () => target.RuntimeTypeInfo = ParseBool(value)},
@@ -96,7 +91,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"struct-member-alignment", () => target.StructMemberAlignment = (int?) ParseUint32(value)},
                     {"warnings-as-error", () => ParseWarningsAsError(target, value)},
                     {"treat-wchart-as-buildin-type", () => target.TreatWCharTAsBuiltInType = ParseBool(value)},
-                    {"undefine-preprocessor-definitions", () => ParseUndefinePreprocessorDefinitions(target, value)},
+                    {"undefine-preprocessor-definitions", () => ParseUndefinePreprocessorDefinitions(parser, target, value)},
                     {"warning-level", () => target.WarningLevel = ParseWarningLevel(value)},
                     {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(value)},
                     {"pdb-file-name", () => target.PDBFileName = ParseString(value)}
@@ -126,11 +121,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
             }
         }
 
-        private void ParseUndefinePreprocessorDefinitions(VCppProjectCompilerParameters target, YamlNode value)
+        private void ParseUndefinePreprocessorDefinitions(YamlParser parser, VCppProjectCompilerParameters target, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                target.UndefinePreprocessorDefinitions = ParseStringArray(value);
+                target.UndefinePreprocessorDefinitions = ParseStringArray(parser, value);
             else
                 target.UndefineAllPreprocessorDefinitions = ParseBool(value);
         }

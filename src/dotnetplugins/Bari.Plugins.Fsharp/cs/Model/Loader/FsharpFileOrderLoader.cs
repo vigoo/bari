@@ -8,10 +8,6 @@ namespace Bari.Plugins.Fsharp.Model.Loader
 {
     public class FsharpFileOrderLoader : YamlProjectParametersLoaderBase<FsharpFileOrder>
     {
-        public FsharpFileOrderLoader(Suite suite) : base(suite)
-        {
-        }
-
         protected override string BlockName
         {
             get { return "order"; }
@@ -27,9 +23,11 @@ namespace Bari.Plugins.Fsharp.Model.Loader
             throw new NotSupportedException();
         }
 
-        public override IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public override IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)
         {
-            var target = CreateNewParameters(Suite);
+            Suite = suite;
+
+            var target = CreateNewParameters(suite);
 
             var seq = value as YamlSequenceNode;
             if (seq != null)

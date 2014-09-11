@@ -438,9 +438,9 @@ modules:
             paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
             paramLoader.Setup(l => l.Supports("pptype2")).Returns(true);
 
-            paramLoader.Setup(l => l.Load("pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param1.Object);
-            paramLoader.Setup(l => l.Load("pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param2.Object);
 
             var loader = kernel.Get<InMemoryYamlModelLoader>();
@@ -565,7 +565,7 @@ test2:
             var paramLoader = new Mock<IYamlProjectParametersLoader>();
             var paramBlock = new Mock<IProjectParameters>();
             paramLoader.Setup(l => l.Supports("test1")).Returns(true);
-            paramLoader.Setup(l => l.Load("test1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>())).Returns(paramBlock.Object);
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "test1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>())).Returns(paramBlock.Object);
 
             kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
 
@@ -576,8 +576,8 @@ test2:
 
             suite.Should().NotBeNull();
 
-            paramLoader.Verify(l => l.Load("test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode) node).Value == "something"), It.IsAny<YamlParser>()), Times.Once());
-            paramLoader.Verify(l => l.Load("test2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()), Times.Never());
+            paramLoader.Verify(l => l.Load(suite, "test1", It.Is<YamlNode>(node => (node is YamlScalarNode) && ((YamlScalarNode)node).Value == "something"), It.IsAny<YamlParser>()), Times.Once());
+            paramLoader.Verify(l => l.Load(suite, "test2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()), Times.Never());
 
             suite.GetParameters<IProjectParameters>("test1").Should().Be(paramBlock.Object);
         }
@@ -817,9 +817,9 @@ modules:
             paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
             paramLoader.Setup(l => l.Supports("pptype2")).Returns(true);
 
-            paramLoader.Setup(l => l.Load("pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param1.Object);
-            paramLoader.Setup(l => l.Load("pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param2.Object);
 
             var loader = kernel.Get<InMemoryYamlModelLoader>();
@@ -920,9 +920,9 @@ products:
             paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
             paramLoader.Setup(l => l.Supports("pptype2")).Returns(true);
 
-            paramLoader.Setup(l => l.Load("pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param1.Object);
-            paramLoader.Setup(l => l.Load("pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype2", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
                 .Returns(param2.Object);
 
             var loader = kernel.Get<InMemoryYamlModelLoader>();

@@ -48,7 +48,7 @@ namespace Bari.Plugins.FSRepository.Test.Model.Loader
         [Test]
         public void Supports()
         {
-            var loader = new YamlRepositoryPatternCollectionLoader(new Suite(new Mock<IFileSystemDirectory>().Object), fsAccess);
+            var loader = new YamlRepositoryPatternCollectionLoader(fsAccess);
             loader.Supports("fs-repositories").Should().BeTrue();
         }
 

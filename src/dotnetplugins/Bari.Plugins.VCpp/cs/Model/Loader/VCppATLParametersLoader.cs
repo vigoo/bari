@@ -11,10 +11,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppATLParametersLoader: YamlProjectParametersLoaderBase<VCppProjectATLParameters>
     {
-        public VCppATLParametersLoader(Suite suite) : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>
@@ -33,9 +29,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
             return new VCppProjectATLParameters();
         }
 
-        public override IProjectParameters Load(string name, YamlNode value, YamlParser parser)
+        public override IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)
         {
-            var result = CreateNewParameters(Suite);
+            Suite = suite;
+
+            var result = CreateNewParameters(suite);
             result.UseOfATL = ParseEnum<UseOfATL>(value, "ATL usage mode");
 
             return result;

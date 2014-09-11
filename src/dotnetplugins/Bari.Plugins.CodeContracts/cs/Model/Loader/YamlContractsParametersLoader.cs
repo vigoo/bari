@@ -12,10 +12,6 @@ namespace Bari.Plugins.CodeContracts.Model.Loader
     /// </summary>
     public class YamlContractsParametersLoader : YamlProjectParametersLoaderBase<ContractsProjectParameters>
     {
-        public YamlContractsParametersLoader(Suite suite) : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

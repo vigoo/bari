@@ -79,7 +79,7 @@ namespace Bari.Core.Model.Loader
                     LoadProduct(suite, product, item.Value);
             }
 
-            LoadParameters(suite, yaml.RootNode);
+            LoadParameters(suite, suite, yaml.RootNode);
 
             log.Debug("Finished processing YAML document.");
             return suite;
@@ -124,7 +124,7 @@ namespace Bari.Core.Model.Loader
             }
         }
 
-        private void LoadParameters(IProjectParametersHolder target, YamlNode node)
+        private void LoadParameters(Suite suite, IProjectParametersHolder target, YamlNode node)
         {
             var mapping = node as YamlMappingNode;
             if (mapping != null)
@@ -138,7 +138,7 @@ namespace Bari.Core.Model.Loader
                     }
                     else
                     {
-                        TryAddParameters(target, pair.Key, pair.Value);
+                        TryAddParameters(suite, target, pair.Key, pair.Value);
                     }
                 }
             }
@@ -162,7 +162,7 @@ namespace Bari.Core.Model.Loader
                 }
             }
 
-            SetProjectPostProcessors(product, productNode);
+            SetProjectPostProcessors(suite, product, productNode);
         }
 
         private void LoadModule(Module module, YamlNode moduleNode)
@@ -174,8 +174,8 @@ namespace Bari.Core.Model.Loader
             LoadModuleCopyright(module, moduleNode);
             LoadProjects(module, moduleNode);
             LoadTestProjects(module, moduleNode);
-            LoadParameters(module, moduleNode);
-            SetProjectPostProcessors(module, moduleNode);
+            LoadParameters(module.Suite, module, moduleNode);
+            SetProjectPostProcessors(module.Suite, module, moduleNode);
         }
 
         private void LoadModuleVersion(Module module, YamlNode moduleNode)
@@ -195,7 +195,7 @@ namespace Bari.Core.Model.Loader
                 var testProject = module.GetTestProject(item.Key);
 
                 if (item.Value != null)
-                    LoadProject(testProject, item.Value);
+                    LoadProject(module.Suite, testProject, item.Value);
             }
         }
 
@@ -206,12 +206,13 @@ namespace Bari.Core.Model.Loader
                 var project = module.GetProject(item.Key);
 
                 if (item.Value != null)
-                    LoadProject(project, item.Value);
+                    LoadProject(module.Suite, project, item.Value);
             }
         }
 
-        private void LoadProject(Project project, YamlNode projectNode)
+        private void LoadProject(Suite suite, Project project, YamlNode projectNode)
         {
+            Contract.Requires(suite != null);
             Contract.Requires(project != null);
             Contract.Requires(projectNode != null);
 
@@ -246,17 +247,18 @@ namespace Bari.Core.Model.Loader
                     }
                     else
                     {
-                        TryAddParameters(project, pair.Key, pair.Value);
+                        TryAddParameters(suite, project, pair.Key, pair.Value);
                     }
                 }
             }
 
             // Adding post processors
-            SetProjectPostProcessors(project, projectNode);
+            SetProjectPostProcessors(suite, project, projectNode);
         }
 
-        private void SetProjectPostProcessors(IPostProcessorsHolder project, YamlNode postProcessorDefinitions)
+        private void SetProjectPostProcessors(Suite suite, IPostProcessorsHolder project, YamlNode postProcessorDefinitions)
         {
+            Contract.Requires(suite != null);
             Contract.Requires(project != null);
             Contract.Requires(postProcessorDefinitions != null);
 
@@ -286,7 +288,7 @@ namespace Bari.Core.Model.Loader
                     IProjectParameters param = null;
                     if (loader != null)
                     {
-                        param = loader.Load(ppid.AsString, value, parser);                        
+                        param = loader.Load(suite, ppid.AsString, value, parser);                        
                     }
 
                     project.AddPostProcessor(new PostProcessDefinition(name, ppid)
@@ -333,7 +335,7 @@ namespace Bari.Core.Model.Loader
             }
         }
 
-        private void TryAddParameters(IProjectParametersHolder target, YamlNode key, YamlNode value)
+        private void TryAddParameters(Suite suite, IProjectParametersHolder target, YamlNode key, YamlNode value)
         {
             if (parametersLoaders != null)
             {
@@ -345,7 +347,7 @@ namespace Bari.Core.Model.Loader
                     var loader = parametersLoaders.FirstOrDefault(l => l.Supports(name));
                     if (loader != null)
                     {
-                        var param = loader.Load(name, value, parser);
+                        var param = loader.Load(suite, name, value, parser);
                         target.AddParameters(name, param);
                     }
                 }

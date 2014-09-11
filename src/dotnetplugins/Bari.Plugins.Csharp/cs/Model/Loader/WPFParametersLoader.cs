@@ -8,10 +8,6 @@ namespace Bari.Plugins.Csharp.Model.Loader
 {
     public class WPFParametersLoader : YamlProjectParametersLoaderBase<WPFParameters>
     {
-        public WPFParametersLoader(Suite suite) : base(suite)
-        {
-        }
-
         protected override string BlockName
         {
             get { return "wpf"; }

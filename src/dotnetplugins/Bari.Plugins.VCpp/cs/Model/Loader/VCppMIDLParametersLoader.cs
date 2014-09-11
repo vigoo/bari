@@ -12,11 +12,6 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppMIDLParametersLoader : YamlProjectParametersLoaderBase<VCppProjectMIDLParameters>
     {
-        public VCppMIDLParametersLoader(Suite suite)
-            : base(suite)
-        {
-        }
-
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>
@@ -48,11 +43,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
         {
             return new Dictionary<string, Action>
             {
-                {"additional-include-directories", () => target.AdditionalIncludeDirectories = ParseStringArray(value)},
-                {"additional-options", () => target.AdditionalOptions = ParseStringArray(value)},
+                {"additional-include-directories", () => target.AdditionalIncludeDirectories = ParseStringArray(parser, value)},
+                {"additional-options", () => target.AdditionalOptions = ParseStringArray(parser, value)},
                 {"application-configuration-mode", () => target.ApplicationConfigurationMode = ParseBool(value)},
                 {"client-stub-file", () => target.ClientStubFile = ParseString(value)},
-                {"c-preprocess-options", () => target.CPreprocessOptions = ParseStringArray(value)},
+                {"c-preprocess-options", () => target.CPreprocessOptions = ParseStringArray(parser, value)},
                 {"default-char-type", () => target.DefaultCharType = ParseEnum<CharType>(value, "character type")},
                 {"dll-data-file-name", () => target.DllDataFileName = ParseString(value)},
                 {"enable-error-checks", () => target.EnableErrorChecks = ParseEnum<MidlErrorChecks>(value, "MIDL error checking mode")},
@@ -70,7 +65,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                 {"interface-identifier-file-name", () => target.InterfaceIdentifierFileName = ParseString(value)},
                 {"locale-id", () => target.LocaleID = ParseInt32(value)},
                 {"mktyplib-compatible", () => target.MkTypLibCompatible = ParseBool(value)},
-                {"preprocessor-definitions", () => target.PreprocessorDefinitions = ParseStringArray(value)},
+                {"preprocessor-definitions", () => target.PreprocessorDefinitions = ParseStringArray(parser, value)},
                 {"proxy-file-name", () => target.ProxyFileName = ParseString(value)},
                 {"server-stub-file", () => target.ServerStubFile = ParseString(value)},
                 {"struct-member-alignment", () => target.StructMemberAlignment = ParseInt32(value)},
@@ -78,7 +73,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                 {"target-environment", () => target.TargetEnvironment = ParseEnum<MidlTargetEnvironment>(value, "MIDL target environment")},
                 {"new-typelib-format", () => target.NewTypeLibFormat = ParseBool(value)},
                 {"type-library-name", () => target.TypeLibraryName = ParseString(value)},
-                {"undefine-preprocessor-definitions", () => target.UndefinePreprocessorDefinitions = ParseStringArray(value)},
+                {"undefine-preprocessor-definitions", () => target.UndefinePreprocessorDefinitions = ParseStringArray(parser, value)},
                 {"validate-all-parameters", () => target.ValidateAllParameters = ParseBool(value)},
                 {"warnings-as-error", () => target.WarningsAsError = ParseBool(value)},
                 {"warning-level", () => target.WarningLevel = ParseEnum<WarningLevel>(value, "warning level")}

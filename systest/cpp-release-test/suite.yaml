@@ -1,0 +1,29 @@
+---
+suite:      bari systemtest cpp-release-test
+
+goals:
+    - name: debug
+    - name: release
+    - name: custom-debug
+      incorporates:
+        - debug
+    - name: custom-release
+      incorporates:
+        - release
+
+
+modules:
+    - name: Module1
+      projects:
+        - name: hello
+          type: executable
+          cpp-compiler:
+             defines:
+               - when debug:
+                 - _DEBUG
+               - when release:
+                 - NDEBUG
+               - TEST
+          cpp-linker:
+            subsystem: Console
+

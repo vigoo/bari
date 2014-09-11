@@ -148,6 +148,17 @@ Function X86X64Test
     }
 }
 
+Function CppReleaseTest
+{
+    Write-Host "..cpp-release-test.." -NoNewline
+    $res = (ExeBuildWithGoal "cpp-release-test" "custom-release" "target\Module1\hello.exe" 13 "Test C++ executable running")
+
+    if ($res1 -eq $true) 
+    {
+        Write-Host "OK"
+    }
+}
+
 Write-Host "Executing system tests for bari..."
 Initialize
 
@@ -169,3 +180,4 @@ SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executab
 X86X64Test
 SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!"
 ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
+CppReleaseTest

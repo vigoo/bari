@@ -40,6 +40,7 @@ systest/cpp-rc-support/cache
 systest/x86-x64-test/cache
 systest/embedded-resources-test/cache
 systest/postprocessor-script-test/cache
+systest/cpp-release-test/cache
 
 # Systest generated files
 hello.vcxproj

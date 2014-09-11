@@ -41,7 +41,7 @@ namespace Bari.Core.Test.Loader
         [Test]
         public void Supports()
         {
-            var loader = new YamlReferenceAliasesLoader(new Suite(new Mock<IFileSystemDirectory>().Object));
+            var loader = new YamlReferenceAliasesLoader();
             loader.Supports("aliases").Should().BeTrue();
         }
 

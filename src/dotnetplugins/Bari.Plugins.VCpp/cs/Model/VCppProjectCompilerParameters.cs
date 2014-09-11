@@ -334,7 +334,7 @@ namespace Bari.Plugins.VCpp.Model
                                  : RuntimeLibraryType.MultiThreadedDLL;
 
             RuntimeTypeInfo = true;
-            SmallerTypeCheck = true;
+            SmallerTypeCheck = suite.ActiveGoal.Has(Suite.DebugGoal.Name);
             StringPooling = true;
             StructMemberAlignment = null;
             AllWarningsAsError = false;
