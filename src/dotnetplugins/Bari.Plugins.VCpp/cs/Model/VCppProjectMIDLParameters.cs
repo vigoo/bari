@@ -48,7 +48,7 @@ namespace Bari.Plugins.VCpp.Model
             ApplicationConfigurationMode = false;
             PreprocessorDefinitions = suite.ActiveGoal.Has(Suite.DebugGoal.Name) ? new[] {"_DEBUG"} : new string[0];
             MkTypLibCompatible = false;
-            TargetEnvironment = MidlTargetEnvironment.Win32;
+            TargetEnvironment = suite.ActiveGoal.Has("x64") ? MidlTargetEnvironment.X64 : MidlTargetEnvironment.Win32;
             GenerateStublessProxies = true;            
             EnableErrorChecks = MidlErrorChecks.All;
             ErrorCheckAllocations = true;
