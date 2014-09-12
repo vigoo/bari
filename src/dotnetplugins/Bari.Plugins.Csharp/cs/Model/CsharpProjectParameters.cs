@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Xml;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.Model;
 
@@ -34,6 +36,7 @@ namespace Bari.Plugins.Csharp.Model
         public bool AllWarningsAsError { get; set; }
         public int[] SpecificWarningsAsError { get; set; }
         public string RootNamespace { get; set; }
+        public string ApplicationIcon { get; set; }
 
         public CsharpProjectParameters(Suite suite)
         {
@@ -84,6 +87,17 @@ namespace Bari.Plugins.Csharp.Model
         {
             if (RootNamespace == null)
                 RootNamespace = project.Name;
+
+            if (project.HasNonEmptySourceSet("resources"))
+            {
+                var resources = project.GetSourceSet("resources");
+                var icons = resources.Files.Where(p => Path.GetExtension(p) == ".ico").ToList();
+
+                if (icons.Count == 1 && ApplicationIcon == null)
+                {
+                    ApplicationIcon = project.Module.Suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory("resources"), icons[0]);
+                }
+            }
         }
 
         public void ToCsprojProperties(XmlWriter writer)

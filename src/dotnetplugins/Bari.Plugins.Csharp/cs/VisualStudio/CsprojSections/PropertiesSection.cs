@@ -63,6 +63,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
             WriteAppConfig(writer, project);
             WriteManifest(writer, project);
+            WriteApplicationIcon(writer, project, parameters);
 
             writer.WriteEndElement();
         }
@@ -131,6 +132,19 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 if (manifestPath != null)
                 {
                     writer.WriteElementString("ApplicationManifest", ToProjectRelativePath(project, manifestPath, "cs"));
+                }
+            }
+        }
+
+        private void WriteApplicationIcon(XmlWriter writer, Project project, CsharpProjectParameters parameters)
+        {
+            if (project.Type == ProjectType.Executable ||
+                project.Type == ProjectType.WindowsExecutable)
+            {
+                string iconPath = Path.Combine(project.RelativeRootDirectory, "resources", parameters.ApplicationIcon);
+                if (!String.IsNullOrWhiteSpace(iconPath))
+                {
+                    writer.WriteElementString("ApplicationIcon", ToProjectRelativePath(project, iconPath, "cs"));
                 }
             }
         }

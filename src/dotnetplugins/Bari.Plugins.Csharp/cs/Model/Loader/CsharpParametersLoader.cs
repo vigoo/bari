@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Exceptions;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using Bari.Plugins.VsCore.Model;
@@ -51,7 +52,8 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"unsafe", () => { target.Unsafe = ParseBool(value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
                     {"warnings-as-error", () => ParseWarningsAsError(target, value) },
-                    {"root-namespace", () => { target.RootNamespace = ParseString(value); }}
+                    {"root-namespace", () => { target.RootNamespace = ParseString(value); }},
+                    {"application-icon", () => { target.ApplicationIcon = ParseString(value); }}
                     };
         }
 
