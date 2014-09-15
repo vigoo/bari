@@ -81,6 +81,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                         writer.WriteAttributeString("Include", Path.GetFileNameWithoutExtension(relativePath));
                         writer.WriteElementString("HintPath", relativePath);
                         writer.WriteElementString("SpecificVersion", "False");
+                        writer.WriteElementString("Private", "True");
                     }
                     writer.WriteEndElement();
                 }
