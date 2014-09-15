@@ -1,4 +1,6 @@
-﻿using Bari.Plugins.AddonSupport.VisualStudio.SolutionItems;
+﻿using Bari.Core.Model.Loader;
+using Bari.Plugins.AddonSupport.Model.Loader;
+using Bari.Plugins.AddonSupport.VisualStudio.SolutionItems;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Ninject.Modules;
 
@@ -19,6 +21,7 @@ namespace Bari.Plugins.AddonSupport
             log.Info("AddonSupport plugin loaded");
 
             Kernel.Bind<ISolutionItemProvider>().To<AddonSupportSolutionItemProvider>();
+            Bind<IYamlProjectParametersLoader>().To<StartupModuleParametersLoader>();
         }
     }
 }

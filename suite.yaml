@@ -269,8 +269,31 @@ modules:
             - gac://System
             - nuget://log4net
             - nuget://Ninject/3.0.1.10            
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel            
             - suite://core/Bari.Core
             - suite://dotnetplugins/Bari.Plugins.VsCore
+      tests:
+        - name: Bari.Plugins.AddonSupport.Test
+          references:
+            - gac://Microsoft.CSharp
+            - gac://System
+            - gac://System.Core
+            - gac://System.Data
+            - gac://System.Data.DataSetExtensions
+            - gac://System.Xml
+            - gac://System.Xml.Linq
+            - nuget://FluentAssertions/2.2.0
+            - nuget://Moq
+            - nuget://Ninject/3.0.1.10
+            - nuget://Castle.Core/3.0.0.4001
+            - nuget://Ninject.Extensions.Factory/3.0.1
+            - nuget://NUnit
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
+            - suite://core/Bari.Core
+            - suite://core/Bari.Core.Test
+            - module://Bari.Plugins.AddonSupport            
 
 products:
     - name: full

@@ -68,6 +68,7 @@ version.cs
 Bari.Core.Test.csproj
 bari.csproj
 Bari.Plugins.AddonSupport.csproj
+Bari.Plugins.AddonSupport.Test.csproj
 Bari.Plugins.Csharp.csproj
 Bari.Plugins.Fsharp.csproj
 Bari.Plugins.FSRepository.csproj

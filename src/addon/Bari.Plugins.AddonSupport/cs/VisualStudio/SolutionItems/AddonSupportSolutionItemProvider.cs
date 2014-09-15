@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.AddonSupport.Model;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 
 namespace Bari.Plugins.AddonSupport.VisualStudio.SolutionItems
@@ -59,39 +57,15 @@ namespace Bari.Plugins.AddonSupport.VisualStudio.SolutionItems
 
         private string AddonSupportData()
         {
-            string bariPath = new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath;
-            string goal = suite.ActiveGoal.Name;
-            string target = FindOutCurrentTarget();
-            string startupPath = FindOutResultExecutablePath(target);
+            var data = new AddonSupportSolutionItemData(targetParser, currentCommand as IHasBuildTarget, suite.ActiveGoal);
 
             return String.Format(@"---
 bari-path: {0}
 goal: {1}
 target: {2}
 startup-path: {3}
-", bariPath, goal, target, startupPath);
+", data.BariPath, data.Goal, data.Target, data.StartupPath);
         }
 
-        private string FindOutResultExecutablePath(string targetStr)
-        {
-            var target = targetParser.ParseTarget(targetStr);
-            var exeProject =
-                target.Projects.FirstOrDefault(
-                    prj => prj.Type == ProjectType.Executable || prj.Type == ProjectType.WindowsExecutable);
-
-            if (exeProject != null)
-                return Path.Combine(exeProject.RelativeTargetPath, exeProject.Name + ".exe");
-            else
-                return String.Empty;
-        }
-
-        private string FindOutCurrentTarget()
-        {
-            var buildTargetSource = currentCommand as IHasBuildTarget;
-            if (buildTargetSource != null)
-                return buildTargetSource.BuildTarget;
-            else
-                return String.Empty;
-        }
     }
 }

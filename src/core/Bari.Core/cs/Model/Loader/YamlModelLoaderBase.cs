@@ -163,6 +163,7 @@ namespace Bari.Core.Model.Loader
             }
 
             SetProjectPostProcessors(suite, product, productNode);
+            LoadParameters(suite, product, productNode);
         }
 
         private void LoadModule(Module module, YamlNode moduleNode)
