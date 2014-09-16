@@ -141,9 +141,9 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             if (project.Type == ProjectType.Executable ||
                 project.Type == ProjectType.WindowsExecutable)
             {
-                string iconPath = Path.Combine(project.RelativeRootDirectory, "resources", parameters.ApplicationIcon);
-                if (!String.IsNullOrWhiteSpace(iconPath))
+                if (!String.IsNullOrWhiteSpace(parameters.ApplicationIcon))
                 {
+                    string iconPath = Path.Combine(project.RelativeRootDirectory, "resources", parameters.ApplicationIcon);
                     writer.WriteElementString("ApplicationIcon", ToProjectRelativePath(project, iconPath, "cs"));
                 }
             }
