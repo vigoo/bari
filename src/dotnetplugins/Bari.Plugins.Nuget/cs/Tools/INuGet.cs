@@ -20,5 +20,13 @@ namespace Bari.Plugins.Nuget.Tools
         /// <returns>Returns the <c>root</c> relative paths of the files to be used, and the common root for them 
         /// to help preserving the package's directory structure</returns>
         Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly);
+
+        /// <summary>
+        /// Creates a package based on a nuspec
+        /// </summary>
+        /// <param name="targetRoot">Target root directory</param>
+        /// <param name="packageName">Name of the package to be generated</param>
+        /// <param name="nuspec">The package's nuspec in XML</param>
+        void CreatePackage(IFileSystemDirectory targetRoot, string packageName, string nuspec);
     }
 }

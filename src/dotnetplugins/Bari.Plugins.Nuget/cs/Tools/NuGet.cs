@@ -77,6 +77,19 @@ namespace Bari.Plugins.Nuget.Tools
             return Tuple.Create(commonRoot, result.AsEnumerable());
         }
 
+        public void CreatePackage(IFileSystemDirectory targetRoot, string packageName, string nuspec)
+        {
+            var localRoot = targetRoot as LocalFileSystemDirectory;
+            if (localRoot != null)
+            {
+                var nuSpecName = packageName + ".nuspec";
+                using (var writer = localRoot.CreateTextFile(nuSpecName))
+                    writer.WriteLine(nuspec);
+
+                Run(targetRoot, "pack", nuSpecName, "-Verbosity", Verbosity);
+            }
+        }
+
         private string GetRelativePath(string path, LocalFileSystemDirectory root)
         {
             return path.Substring(root.AbsolutePath.Length).TrimStart('\\');

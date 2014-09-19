@@ -127,6 +127,8 @@ modules:
             - gac://System.Xml.Linq
             - nuget://log4net
             - nuget://Ninject/3.0.1.10
+            - nuget://YamlDotNet.Core
+            - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
         - name: Bari.Plugins.FSRepository
           references:
@@ -302,3 +304,11 @@ products:
           - dotnetplugins
           - scripting
           - addon
+      packager:
+        type: nuget
+        param:
+          id: bari
+          description: Bari is an advanced build manager for .NET
+          author: Daniel Vigovszky
+          project-url: http://github.com/vigoo/bari
+          package-as-tool: true

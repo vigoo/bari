@@ -942,5 +942,42 @@ products:
             suite.GetProduct("Module").GetPostProcessor("pp1").Parameters.Should().Be(param1.Object);
             suite.GetProduct("Module").GetPostProcessor("pp2").Parameters.Should().Be(param2.Object);
         }
+
+        [Test]
+        public void ProductPackagerLoadedWithParameters()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+products:    
+    - name: Module
+      packager:
+        type: pptype1
+        param: v1        
+";
+
+            var paramLoader = new Mock<IYamlProjectParametersLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
+
+            var param1 = new Mock<IPackagerParameters>();
+
+            paramLoader.Setup(l => l.Supports("pptype1")).Returns(true);
+
+            paramLoader.Setup(l => l.Load(It.IsAny<Suite>(), "pptype1", It.IsAny<YamlNode>(), It.IsAny<YamlParser>()))
+                .Returns(param1.Object);
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.GetProduct("Module").Packager.Should().NotBeNull();
+            suite.GetProduct("Module").Packager.PackagerType.Should().Be(new PackagerId("pptype1"));
+
+            paramLoader.Verify(l => l.Supports("pptype1"), Times.AtLeastOnce);
+
+            suite.GetProduct("Module").Packager.Parameters.Should().Be(param1.Object);
+        }
     }
 }

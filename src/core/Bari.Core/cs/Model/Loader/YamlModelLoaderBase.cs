@@ -131,7 +131,8 @@ namespace Bari.Core.Model.Loader
             {
                 foreach (var pair in parser.EnumerateNodesOf(mapping))
                 {
-                    if (new YamlScalarNode("postprocessors").Equals(pair.Key) &&
+                    if ((new YamlScalarNode("postprocessors").Equals(pair.Key) ||
+                         new YamlScalarNode("packager").Equals(pair.Key)) &&
                         pair.Value is YamlMappingNode)
                     {
                         // skipping
@@ -139,6 +140,35 @@ namespace Bari.Core.Model.Loader
                     else
                     {
                         TryAddParameters(suite, target, pair.Key, pair.Value);
+                    }
+                }
+            }
+        }
+
+        private void LoadPackager(Suite suite , Product product, YamlNode node)
+        {
+            var mapping = node as YamlMappingNode;
+            if (mapping != null)
+            {
+                var packagerKey = new YamlScalarNode("packager");
+                if (mapping.Children.ContainsKey(packagerKey))
+                {
+                    var packagerNode = mapping.Children[packagerKey] as YamlMappingNode;
+                    if (packagerNode != null)
+                    {
+                        string type = parser.GetScalarValue(packagerNode, "type", "Packager type is not defined");
+                        IPackagerParameters param = null;
+                        
+                        YamlNode paramNode;
+                        if (packagerNode.Children.TryGetValue(new YamlScalarNode("param"), out paramNode))
+                        {
+                            var loader = parametersLoaders.FirstOrDefault(l => l.Supports(type));
+                            
+                            if (loader != null)
+                                param = loader.Load(suite, type, paramNode, parser) as IPackagerParameters;
+                        }
+
+                        product.Packager = new PackagerDefinition(type, param);
                     }
                 }
             }
@@ -164,6 +194,7 @@ namespace Bari.Core.Model.Loader
 
             SetProjectPostProcessors(suite, product, productNode);
             LoadParameters(suite, product, productNode);
+            LoadPackager(suite, product, productNode);
         }
 
         private void LoadModule(Module module, YamlNode moduleNode)

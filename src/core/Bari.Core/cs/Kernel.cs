@@ -9,6 +9,7 @@ using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Commands.Helper;
+using Bari.Core.Commands.Pack;
 using Bari.Core.Commands.Test;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
@@ -78,6 +79,7 @@ namespace Bari.Core
             kernel.Bind<ICommand>().To<BuildCommand>().Named("build");
             kernel.Bind<ICommand>().To<TestCommand>().Named("test");
             kernel.Bind<ICommand>().To<RebuildCommand>().Named("rebuild");
+            kernel.Bind<ICommand>().To<PackCommand>().Named("pack");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
@@ -102,6 +104,9 @@ namespace Bari.Core
             kernel.Bind<ISourceSetFingerprintFactory>().ToFactory();
 
             kernel.Bind<IProjectBuilderFactory>().To<ContentProjectBuilderFactory>();
+
+            // Packager factory
+            kernel.Bind<IProductPackagerFactory>().ToFactory(() => new PackagerFactoryInstanceProvider());
 
             // Default command target parser
             kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
@@ -163,6 +168,15 @@ namespace Bari.Core
                 {
                     return null;
                 }
+            }
+        }
+
+        class PackagerFactoryInstanceProvider : StandardInstanceProvider
+        {
+            protected override string GetName(System.Reflection.MethodInfo methodInfo, object[] arguments)
+            {
+                var type = (PackagerId)arguments[0];
+                return type.AsString;
             }
         }
 

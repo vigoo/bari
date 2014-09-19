@@ -14,6 +14,7 @@ namespace Bari.Core.Model
         private readonly ISet<Module> modules;
         private readonly IDictionary<string, PostProcessDefinition> postProcessDefinitions = new Dictionary<string, PostProcessDefinition>();
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
+        private PackagerDefinition packager;
 
         /// <summary>
         /// Gets the product's name
@@ -55,6 +56,15 @@ namespace Bari.Core.Model
         public string RelativeTargetPath
         {
             get { return name; }
+        }
+
+        /// <summary>
+        /// Gets or sets the packager definition for this product
+        /// </summary>
+        public PackagerDefinition Packager
+        {
+            get { return packager; }
+            set { packager = value; }
         }
 
         /// <summary>

@@ -1,5 +1,9 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Commands.Pack;
+using Bari.Core.Model.Loader;
 using Bari.Plugins.Nuget.Build;
+using Bari.Plugins.Nuget.Packager;
+using Bari.Plugins.Nuget.Packager.Loader;
 using Bari.Plugins.Nuget.Tools;
 using Ninject.Modules;
 
@@ -20,6 +24,8 @@ namespace Bari.Plugins.Nuget
             log.Info("Nuget plugin loaded");
 
             Bind<IReferenceBuilder>().To<NugetReferenceBuilder>().Named("nuget");
+            Bind<IProductPackager>().To<NugetProductPackager>().Named("nuget");
+            Bind<IYamlProjectParametersLoader>().To<NugetPackagerParametersLoader>();
             Bind<INuGet>().To<NuGet>();
         }
     }
