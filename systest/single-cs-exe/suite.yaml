@@ -6,4 +6,5 @@ modules:
       projects:
         - name: HelloWorld
           type: executable
-          
+          csharp:
+            target-framework: v4.5-client

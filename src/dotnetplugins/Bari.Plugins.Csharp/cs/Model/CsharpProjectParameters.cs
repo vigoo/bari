@@ -37,6 +37,8 @@ namespace Bari.Plugins.Csharp.Model
         public int[] SpecificWarningsAsError { get; set; }
         public string RootNamespace { get; set; }
         public string ApplicationIcon { get; set; }
+        public FrameworkVersion TargetFrameworkVersion { get; set; }
+        public FrameworkProfile TargetFrameworkProfile { get; set; }
 
         public CsharpProjectParameters(Suite suite)
         {
@@ -81,6 +83,9 @@ namespace Bari.Plugins.Csharp.Model
                 Optimize = true;
                 Defines = new string[0];
             }
+
+            TargetFrameworkVersion = FrameworkVersion.v4;
+            TargetFrameworkProfile = FrameworkProfile.Default;
         }
 
         public void FillProjectSpecificMissingInfo(Project project)
@@ -143,6 +148,43 @@ namespace Bari.Plugins.Csharp.Model
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
             if (RootNamespace != null)
                 writer.WriteElementString("RootNamespace", RootNamespace);
+
+            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(TargetFrameworkVersion));
+            writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(TargetFrameworkProfile));
+        }
+
+        private string ToFrameworkProfile(FrameworkProfile targetFrameworkProfile)
+        {
+            switch (targetFrameworkProfile)
+            {
+                case FrameworkProfile.Default:
+                    return string.Empty;
+                case FrameworkProfile.Client:
+                    return "client";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkProfile");
+            }
+        }
+
+        private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
+        {
+            switch (targetFrameworkVersion)
+            {
+                case FrameworkVersion.v20:
+                    return "v2.0";
+                case FrameworkVersion.v30:
+                    return "v3.0";
+                case FrameworkVersion.v35:
+                    return "v3.5";
+                case FrameworkVersion.v4:
+                    return "v4.0";
+                case FrameworkVersion.v45:
+                    return "v4.5";
+                case FrameworkVersion.v451:
+                    return "v4.5.1";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
+            }
         }
 
         private string ToParameter(CsharpLanguageVersion languageVersion)
