@@ -17,9 +17,10 @@ namespace Bari.Plugins.Nuget.Tools
         /// <param name="root">Root directory for storing the downloaded packages</param>
         /// <param name="relativeTargetDirectory">Path relative to <c>root</c> where the downloaded package should be placed</param>
         /// <param name="dllsOnly">If <c>true</c>, only the DLLs will be returned, otherwise all the files in the package</param>
+        /// <param name="maxProfile">Maximum allowed profile</param>
         /// <returns>Returns the <c>root</c> relative paths of the files to be used, and the common root for them 
         /// to help preserving the package's directory structure</returns>
-        Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly);
+        Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly, NugetLibraryProfile maxProfile);
 
         /// <summary>
         /// Creates a package based on a nuspec

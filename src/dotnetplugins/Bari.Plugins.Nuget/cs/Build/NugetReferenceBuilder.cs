@@ -7,7 +7,9 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.UI;
+using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.Nuget.Tools;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Nuget.Build
 {
@@ -30,6 +32,7 @@ namespace Bari.Plugins.Nuget.Build
         private readonly INuGet nuget;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IUserOutput output;
+        private readonly Project project;
 
         private Reference reference;
 
@@ -39,11 +42,13 @@ namespace Bari.Plugins.Nuget.Build
         /// <param name="nuget">Interface to the NuGet package manager</param>
         /// <param name="targetRoot">Target root directory</param>
         /// <param name="output">User output interface</param>
-        public NugetReferenceBuilder(INuGet nuget, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output)
+        /// <param name="project">The project his reference belong sto</param>
+        public NugetReferenceBuilder(INuGet nuget, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output, Project project)
         {
             this.nuget = nuget;
             this.targetRoot = targetRoot;
             this.output = output;
+            this.project = project;
         }
 
         /// <summary>
@@ -89,12 +94,37 @@ namespace Bari.Plugins.Nuget.Build
             var depsRoot = targetRoot.CreateDirectory("deps");
             var depDir = depsRoot.CreateDirectory(pkgName);
 
-            var files = nuget.InstallPackage(pkgName, pkgVersion, depDir, "", dllsOnly: reference.Type == ReferenceType.Build);
+            var files = nuget.InstallPackage(pkgName, pkgVersion, depDir, "", dllsOnly: reference.Type == ReferenceType.Build, maxProfile: GetMaxProfile());
             var relativeRoot = Path.Combine(targetRoot.GetRelativePath(depDir), files.Item1);
             return new HashSet<TargetRelativePath>(
                 from path in files.Item2
                 let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
                 select new TargetRelativePath(relativeRoot, relativePath));
+        }
+
+        private NugetLibraryProfile GetMaxProfile()
+        {
+            if (project.HasParameters("csharp"))
+            {
+                var csharpParams = project.GetParameters<CsharpProjectParameters>("csharp");
+
+                switch (csharpParams.TargetFrameworkVersion)
+                {
+                    case FrameworkVersion.v20: return NugetLibraryProfile.Net2;
+                    case FrameworkVersion.v30: return NugetLibraryProfile.Net3;
+                    case FrameworkVersion.v35: return NugetLibraryProfile.Net35;
+                    case FrameworkVersion.v4:
+                        return csharpParams.TargetFrameworkProfile == FrameworkProfile.Default
+                            ? NugetLibraryProfile.Net4
+                            : NugetLibraryProfile.Net4Client;
+                    case FrameworkVersion.v45:
+                        return NugetLibraryProfile.Net45;
+                    case FrameworkVersion.v451:
+                        return NugetLibraryProfile.Net45;
+                }
+            }
+
+            return NugetLibraryProfile.Net4;
         }
 
         /// <summary>

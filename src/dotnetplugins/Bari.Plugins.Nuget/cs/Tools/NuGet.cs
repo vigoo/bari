@@ -35,8 +35,9 @@ namespace Bari.Plugins.Nuget.Tools
         /// <param name="root">Root directory for storing the downloaded packages</param>
         /// <param name="relativeTargetDirectory">Path relative to <c>root</c> where the downloaded package should be placed</param>
         /// <param name="dllsOnly">If <c>true</c>, only the DLLs will be returned, otherwise all the files in the package</param>
+        /// <param name="maxProfile">Maximum allowed profile</param>
         /// <returns>Returns the <c>root</c> relative paths of the DLL files to be used</returns>
-        public Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly)
+        public Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly, NugetLibraryProfile maxProfile)
         {
             if (String.IsNullOrWhiteSpace(version))
                 Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"", "-Verbosity", Verbosity);
@@ -60,7 +61,7 @@ namespace Bari.Plugins.Nuget.Tools
 
                     if (libRoot != null)
                     {
-                        AddDlls(libRoot, result, localRoot);
+                        AddDlls(libRoot, result, localRoot, maxProfile);
                         commonRoot = GetRelativePath(libRoot.FullName, localRoot);
                     }
                     if (contentRoot != null && !dllsOnly)
@@ -95,25 +96,27 @@ namespace Bari.Plugins.Nuget.Tools
             return path.Substring(root.AbsolutePath.Length).TrimStart('\\');
         }
 
-        private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot)
+        private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot, NugetLibraryProfile maxProfile)
         {
-            var lib40full = libRoot.GetDirectories("net40-full").FirstOrDefault();
-            var lib40 = libRoot.GetDirectories("net40").FirstOrDefault() ?? 
+            var lib45 = libRoot.GetDirectories("net45-full").FirstOrDefault() ??
+                        libRoot.GetDirectories("net45").FirstOrDefault();
+            var lib40 = libRoot.GetDirectories("net40-full").FirstOrDefault() ??
+                        libRoot.GetDirectories("net40").FirstOrDefault() ?? 
                         libRoot.GetDirectories("net4").FirstOrDefault();
             var lib40client = libRoot.GetDirectories("net40-client").FirstOrDefault();
             var lib35 = libRoot.GetDirectories("net35").FirstOrDefault();
             var lib20 = libRoot.GetDirectories("net20").FirstOrDefault() ??
                         libRoot.GetDirectories("20").FirstOrDefault();
 
-            if (lib40full != null)
-                result.AddRange(GetDllsIn(localRoot, lib40full));
-            else if (lib40 != null)
+            if (lib45 != null && maxProfile == NugetLibraryProfile.Net45)
+                result.AddRange(GetDllsIn(localRoot, lib45));
+            else if (lib40 != null && maxProfile >= NugetLibraryProfile.Net4)
                 result.AddRange(GetDllsIn(localRoot, lib40));
-            else if (lib40client != null)
+            else if (lib40client != null && maxProfile >= NugetLibraryProfile.Net4Client)
                 result.AddRange(GetDllsIn(localRoot, lib40client));
-            else if (lib35 != null)
+            else if (lib35 != null && maxProfile != NugetLibraryProfile.Net35)
                 result.AddRange(GetDllsIn(localRoot, lib35));
-            else if (lib20 != null)
+            else if (lib20 != null && maxProfile != NugetLibraryProfile.Net2)
                 result.AddRange(GetDllsIn(localRoot, lib20));
             else
                 result.AddRange(GetDllsIn(localRoot, libRoot));

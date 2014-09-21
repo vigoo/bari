@@ -130,6 +130,8 @@ modules:
             - nuget://YamlDotNet.Core
             - nuget://YamlDotNet.RepresentationModel
             - suite://core/Bari.Core
+            - module://Bari.Plugins.VsCore
+            - module://Bari.Plugins.Csharp
         - name: Bari.Plugins.FSRepository
           references:
             - gac://Microsoft.CSharp
