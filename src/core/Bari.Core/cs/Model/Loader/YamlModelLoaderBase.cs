@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
+using Bari.Core.Generic;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
@@ -19,6 +21,9 @@ namespace Bari.Core.Model.Loader
         private readonly IUserOutput output;
         private readonly YamlParser parser;
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
+
+        private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext =
+            new VersioningEnvironmentVariableContext();
 
         /// <summary>
         /// Initializes the yaml loader
@@ -60,7 +65,7 @@ namespace Bari.Core.Model.Loader
             parser.SetActiveGoal(suite.ActiveGoal);
 
             suite.Name = parser.GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
-            suite.Version = parser.GetOptionalScalarValue(yaml.RootNode, "version", null);
+            suite.Version = ParseVersion(parser.GetOptionalScalarValue(yaml.RootNode, "version", null));
             suite.Copyright = parser.GetOptionalScalarValue(yaml.RootNode, "copyright", null);
 
             foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(yaml.RootNode, "modules"))
@@ -212,7 +217,7 @@ namespace Bari.Core.Model.Loader
 
         private void LoadModuleVersion(Module module, YamlNode moduleNode)
         {
-            module.Version = parser.GetOptionalScalarValue(moduleNode, "version", null);
+            module.Version = ParseVersion(parser.GetOptionalScalarValue(moduleNode, "version", null));
         }
 
         private void LoadModuleCopyright(Module module, YamlNode moduleNode)
@@ -261,7 +266,7 @@ namespace Bari.Core.Model.Loader
                     else if (new YamlScalarNode("version").Equals(pair.Key) &&
                     pair.Value is YamlScalarNode)
                     {
-                        project.Version = ((YamlScalarNode)pair.Value).Value;
+                        project.Version = ParseVersion(((YamlScalarNode)pair.Value).Value);
                     }
                     else if (new YamlScalarNode("copyright").Equals(pair.Key) && pair.Value is YamlScalarNode)
                     {
@@ -383,6 +388,21 @@ namespace Bari.Core.Model.Loader
                         target.AddParameters(name, param);
                     }
                 }
+            }
+        }
+
+        private string ParseVersion(string version)
+        {
+            if (version != null)
+            {
+                var result = new StringBuilder(version);
+                EnvironmentVariables.ResolveEnvironmentVariables(versioningEnvironmentVariableContext, result);
+
+                return result.ToString();
+            }
+            else
+            {
+                return null;
             }
         }
     }
