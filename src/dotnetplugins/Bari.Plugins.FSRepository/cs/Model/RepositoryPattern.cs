@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Text;
-using System.Text.RegularExpressions;
+using Bari.Core.Generic;
 
 namespace Bari.Plugins.FSRepository.Model
 {
@@ -20,8 +20,7 @@ namespace Bari.Plugins.FSRepository.Model
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (RepositoryPattern));
 
-        private readonly string pattern;
-        private readonly Regex envVarsRegex = new Regex(@"\$([a-zA-Z0-9]+)", RegexOptions.Singleline);
+        private readonly string pattern;        
 
         /// <summary>
         /// Gets the repository pattern
@@ -54,7 +53,8 @@ namespace Bari.Plugins.FSRepository.Model
 
             var resultBuilder = new StringBuilder(pattern);
 
-            if (!ResolveEnvironmentVariables(context, resultBuilder)) 
+            if (!EnvironmentVariables.ResolveEnvironmentVariables(context, resultBuilder, 
+                m => log.InfoFormat("Failed to resolve FS repository pattern {0}: environment variable {1} does not exists", pattern, m)))
                 return null;
 
             resultBuilder.Replace("%NAME", context.DependencyName);
@@ -70,32 +70,6 @@ namespace Bari.Plugins.FSRepository.Model
             }
 
             return resultBuilder.ToString();
-        }
-
-        private bool ResolveEnvironmentVariables(IPatternResolutionContext context, StringBuilder resultBuilder)
-        {
-            Match match;
-            do
-            {
-                match = envVarsRegex.Match(resultBuilder.ToString());
-
-                if (match.Success)
-                {
-                    string value = context.GetEnvironmentVariable(match.Groups[1].Captures[0].Value);
-                    if (value == null)
-                    {
-                        log.InfoFormat("Failed to resolve FS repository pattern {0}: environment variable {1} does not exists", pattern, match.Value);
-                        return false;
-                    }
-                    else
-                    {
-                        resultBuilder.Remove(match.Index, match.Length);
-                        resultBuilder.Insert(match.Index, value);
-                    }
-                }
-            } while (match.Success);
-            
-            return true;
         }
     }
 }

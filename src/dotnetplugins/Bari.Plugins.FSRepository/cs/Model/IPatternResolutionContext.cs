@@ -1,14 +1,9 @@
-﻿namespace Bari.Plugins.FSRepository.Model
-{
-    public interface IPatternResolutionContext
-    {
-        /// <summary>
-        /// Gets an environment variable
-        /// </summary>
-        /// <param name="name">Name of the environment variable</param>
-        /// <returns>Returns the value of the environment variable or <c>null</c> if it is no available</returns>
-        string GetEnvironmentVariable(string name);
+﻿using Bari.Core.Generic;
 
+namespace Bari.Plugins.FSRepository.Model
+{
+    public interface IPatternResolutionContext: IEnvironmentVariableContext
+    {        
         /// <summary>
         /// Gets the repository name, if specified, otherwise <c>null</c>
         /// </summary>
