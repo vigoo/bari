@@ -24,6 +24,8 @@ modules:
             - nuget://YamlDotNet.RepresentationModel
             - nuget://DotNetZip
             - nuget://QuickGraph
+            - nuget://Nuget.Core/1.5.20902.9026
+            - nuget://NuSelfUpdate/0.1.1.16794
         - name: bari
           type: executable
           references:

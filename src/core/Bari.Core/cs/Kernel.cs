@@ -80,6 +80,7 @@ namespace Bari.Core
             kernel.Bind<ICommand>().To<TestCommand>().Named("test");
             kernel.Bind<ICommand>().To<RebuildCommand>().Named("rebuild");
             kernel.Bind<ICommand>().To<PackCommand>().Named("pack");
+            kernel.Bind<ICommand>().To<SelfUpdateCommand>().Named("selfupdate");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();

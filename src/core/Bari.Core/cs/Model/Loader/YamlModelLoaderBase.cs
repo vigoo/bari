@@ -21,9 +21,7 @@ namespace Bari.Core.Model.Loader
         private readonly IUserOutput output;
         private readonly YamlParser parser;
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
-
-        private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext =
-            new VersioningEnvironmentVariableContext();
+        private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext = new VersioningEnvironmentVariableContext();
 
         /// <summary>
         /// Initializes the yaml loader
