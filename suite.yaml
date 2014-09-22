@@ -1,6 +1,6 @@
 ---
 suite:      bari
-version:    0.9.1.$APPVEYOR_BUILD_NUMBER
+version:    0.9.1.$BUILDNO
 contracts:  enabled
 
 modules:
