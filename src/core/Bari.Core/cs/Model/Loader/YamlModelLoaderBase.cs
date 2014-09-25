@@ -160,15 +160,21 @@ namespace Bari.Core.Model.Loader
                     if (packagerNode != null)
                     {
                         string type = parser.GetScalarValue(packagerNode, "type", "Packager type is not defined");
+
+                        var loader = parametersLoaders.FirstOrDefault(l => l.Supports(type));
                         IPackagerParameters param = null;
-                        
-                        YamlNode paramNode;
-                        if (packagerNode.Children.TryGetValue(new YamlScalarNode("param"), out paramNode))
-                        {
-                            var loader = parametersLoaders.FirstOrDefault(l => l.Supports(type));
-                            
-                            if (loader != null)
+                        if (loader != null)
+                        {                            
+
+                            YamlNode paramNode;
+                            if (packagerNode.Children.TryGetValue(new YamlScalarNode("param"), out paramNode))
+                            {
                                 param = loader.Load(suite, type, paramNode, parser) as IPackagerParameters;
+                            }
+                            else
+                            {
+                                param = loader.Load(suite, type, new YamlMappingNode(), parser) as IPackagerParameters;
+                            }
                         }
 
                         product.Packager = new PackagerDefinition(type, param);

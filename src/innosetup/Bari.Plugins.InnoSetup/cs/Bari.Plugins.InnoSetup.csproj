@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  ToolsVersion="4.0"
+  DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition=" '$(Configuration)|$(Platform)' == 'Bari|Bari' ">
+    <OutputPath>..\..\..\..\target\innosetup</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\innosetup</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>..\..\..\..\target\innosetup</OutputPath>
+    <IntermediateOutputPath>..\..\..\..\target\tmp\innosetup</IntermediateOutputPath>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Bari.Plugins.InnoSetup</AssemblyName>
+    <ProjectGuid>{731433e2-0d29-4f49-8ffc-0a040ce39146}</ProjectGuid>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DelaySign>false</DelaySign>
+    <HighEntropyVA>false</HighEntropyVA>
+    <LangVersion>default</LangVersion>
+    <NoWin32Manifest>false</NoWin32Manifest>
+    <Optimize>false</Optimize>
+    <PlatformTarget>anycpu</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RootNamespace>Bari.Plugins.InnoSetup</RootNamespace>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference
+      Include="system" />
+    <Reference
+      Include="log4net">
+      <HintPath>..\..\..\..\target\deps\log4net\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference
+      Include="Ninject">
+      <HintPath>..\..\..\..\target\deps\ninject\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.Core">
+      <HintPath>..\..\..\..\target\deps\yamldotnet.core\YamlDotNet.Core.2.2.0\lib\net35\YamlDotNet.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference
+      Include="YamlDotNet.RepresentationModel">
+      <HintPath>..\..\..\..\target\deps\yamldotnet.representationmodel\YamlDotNet.RepresentationModel.2.2.0\lib\net35\YamlDotNet.RepresentationModel.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <!--Project reference 078b4d5b-3051-450d-add3-ae4ec102812b-->
+    <Reference
+      Include="Bari.Core">
+      <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="BariModule.cs" />
+    <Compile
+      Include="Model\Discovery\InnoSetupScriptDiscovery.cs" />
+    <Compile
+      Include="Packager\InnoSetupPackagerParameters.cs" />
+    <Compile
+      Include="Packager\InnoSetupProductPackager.cs" />
+    <Compile
+      Include="Packager\Loader\InnoSetupPackagerParametersLoader.cs" />
+    <Compile
+      Include="Tools\IInnoSetupCompiler.cs" />
+    <Compile
+      Include="Tools\InnoSetupCompiler.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile
+      Include="..\version.cs">
+      <Link>_Generated\version.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <PropertyGroup>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <CodeContractsEnableRuntimeChecking>true</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>false</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>true</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>false</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>false</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>false</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>true</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>true</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>true</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>true</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>true</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>false</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>true</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>false</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>false</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>false</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>true</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>true</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>true</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>false</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>true</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>true</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>true</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>false</CodeContractsDisjunctiveRequires>
+  </PropertyGroup>
+  <Import
+    Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
