@@ -14,6 +14,8 @@ The [latest released version is 0.9.1](https://github.com/vigoo/bari/releases/ta
 
 To use the latest build, install [bari from NuGet](https://www.nuget.org/packages/bari).
 
+To upgrade an existing version use `bari selfupdate`.
+
 ## Documentation ##
 Documentation is under construction and available from the [getting started page](https://github.com/vigoo/bari/wiki/GettingStarted).
 
@@ -36,3 +38,7 @@ And the [Bari suite definition](https://github.com/vigoo/bari/blob/master/suite.
 
 To get a list of available commands, use
 `bari help`.
+
+## Visual Studio add-on
+
+A Visual Studio add-on for bari [is also in development](https://github.com/zvrana/bari-vs-addon). 
