@@ -87,6 +87,7 @@ Example: `bari selfupdate`
                 updater.ApplyPreparedUpdate(preparedUpdate);
 
                 output.Message("Update completed.");
+                output.Warning("You should rebuild your suites with the updated bari before using them!");
                 return true; 
             }
             else
