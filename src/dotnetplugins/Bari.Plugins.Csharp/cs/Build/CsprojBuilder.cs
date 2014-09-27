@@ -81,9 +81,8 @@ namespace Bari.Plugins.Csharp.Build
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
-                // TODO: depend on C# properties                           
-                if (project.HasParameters("wpf"))
-                    deps.Add(new WPFParametersDependencies(project));
+                WPFParametersDependencies.Add(project, deps);
+                CsharpParametersDependencies.Add(project, deps);
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));

@@ -7,6 +7,7 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Build.Dependencies;
 using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VCpp.VisualStudio;
 using Bari.Plugins.VsCore.Build;
@@ -78,7 +79,12 @@ namespace Bari.Plugins.VCpp.Build
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
-                // TODO: depend on C++ properties
+                VCppATLParametersDependencies.Add(project, deps);
+                VCppCLIParametersDependencies.Add(project, deps);
+                VCppCompilerParametersDependencies.Add(project, deps);
+                VCppLinkerParametersDependencies.Add(project, deps);
+                VCppManifestParametersDependencies.Add(project, deps);
+                VCppMIDLParametersDependencies.Add(project, deps);
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));

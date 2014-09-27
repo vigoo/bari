@@ -7,6 +7,7 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Fsharp.Build.Dependencies;
 using Bari.Plugins.Fsharp.VisualStudio;
 using Bari.Plugins.VsCore.Build;
 
@@ -72,7 +73,8 @@ namespace Bari.Plugins.Fsharp.Build
 
                 deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
 
-                // TODO: depend on F# properties
+                FsharpParametersDependencies.Add(project, deps);
+                FileOrderDependencies.Add(project, deps);
 
                 if (referenceBuilders != null)
                     deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
