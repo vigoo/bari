@@ -1,6 +1,6 @@
 ---
 suite:      bari
-version:    0.9.1.$BUILDNO
+version:    0.9.2.$BUILDNO
 contracts:  enabled
 
 modules:
