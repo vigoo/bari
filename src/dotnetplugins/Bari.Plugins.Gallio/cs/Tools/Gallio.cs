@@ -9,7 +9,6 @@ namespace Bari.Plugins.Gallio.Tools
 {
     public class Gallio: DownloadablePackedExternalTool, IGallio
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (Gallio));
         private readonly IFileSystemDirectory targetDir;
 
         public Gallio([TargetRoot] IFileSystemDirectory targetDir)
@@ -22,6 +21,10 @@ namespace Bari.Plugins.Gallio.Tools
         public bool RunTests(IEnumerable<TargetRelativePath> testAssemblies)
         {
             List<string> ps = testAssemblies.Select(p => (string)p).ToList();
+            ps.Add("/report-type:Xml");
+            ps.Add("/report-directory:.");
+            ps.Add("/report-formatter-property:AttachmentContentDisposition=Absent");
+            ps.Add("/report-name-format:test-report");
             return Run(targetDir, ps.ToArray());
         }
     }
