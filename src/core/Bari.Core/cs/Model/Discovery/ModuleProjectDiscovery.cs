@@ -47,7 +47,7 @@ namespace Bari.Core.Model.Discovery
                             foreach (var testProjectName in testsDir.ChildDirectories)
                             {
                                 var testProject = module.GetTestProject(testProjectName);
-                                DiscoverProjectSources(testProject, testsDir.GetChildDirectory(testProjectName));
+                                DiscoverProjectSources(testProject, testsDir.GetChildDirectory(testProjectName), suite.SourceSetIgnoreLists);
                             }
                         }
                         else
@@ -55,7 +55,7 @@ namespace Bari.Core.Model.Discovery
                             // This is a project directory
 
                             Project project = module.GetProject(projectName);
-                            DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName));
+                            DiscoverProjectSources(project, moduleDir.GetChildDirectory(projectName), suite.SourceSetIgnoreLists);
                         }
                     }
                 }));
@@ -66,12 +66,13 @@ namespace Bari.Core.Model.Discovery
         /// </summary>
         /// <param name="project">The project to be extended with source sets</param>
         /// <param name="projectDir">The project's directory</param>
-        private void DiscoverProjectSources(Project project, IFileSystemDirectory projectDir)
+        /// <param name="ignoreLists">The suite's source set ignore lists</param>
+        private void DiscoverProjectSources(Project project, IFileSystemDirectory projectDir, SourceSetIgnoreLists ignoreLists)
         {
             foreach (var sourceSetName in projectDir.ChildDirectories)
             {
                 var sourceSet = project.GetSourceSet(sourceSetName);
-                AddAllFiles(sourceSet, projectDir.GetChildDirectory(sourceSetName));
+                AddAllFiles(sourceSet, projectDir.GetChildDirectory(sourceSetName), ignoreLists.Get(new SourceSetType(sourceSetName)));
             }
         }
 
@@ -80,16 +81,19 @@ namespace Bari.Core.Model.Discovery
         /// </summary>
         /// <param name="target">The target source set to be extended</param>
         /// <param name="dir">The root directory for the operation</param>
-        private void AddAllFiles(SourceSet target, IFileSystemDirectory dir)
+        /// <param name="ignoreList">Ignore list for the target source set</param>
+        private void AddAllFiles(SourceSet target, IFileSystemDirectory dir, SourceSetIgnoreList ignoreList)
         {
             foreach (var fileName in dir.Files)
             {
-                target.Add(new SuiteRelativePath(Path.Combine(suiteRoot.GetRelativePath(dir), fileName)));
+                var suiteRelativePath = new SuiteRelativePath(Path.Combine(suiteRoot.GetRelativePath(dir), fileName));                
+                if (!ignoreList.IsIgnored(suiteRelativePath))
+                    target.Add(suiteRelativePath);
             }
 
             foreach (var childDirectory in dir.ChildDirectories)
             {
-                AddAllFiles(target, dir.GetChildDirectory(childDirectory));
+                AddAllFiles(target, dir.GetChildDirectory(childDirectory), ignoreList);
             }
         }
     }

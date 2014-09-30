@@ -11,17 +11,17 @@ namespace Bari.Core.Model
     /// </summary>
     public class SourceSet : ISourceSet
     {
-        private readonly string type;
+        private readonly SourceSetType type;
         private readonly ISet<SuiteRelativePath> files = new SortedSet<SuiteRelativePath>();
 
         /// <summary>
         /// Gets the type of sources in this set
         /// </summary>
-        public string Type
+        public SourceSetType Type
         {
             get
             {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                Contract.Ensures(Contract.Result<SourceSetType>() != null);
                 
                 return type;
             }
@@ -46,9 +46,9 @@ namespace Bari.Core.Model
         /// Creates an empty source set
         /// </summary>
         /// <param name="type">Type of sources in this set</param>
-        public SourceSet(string type)
+        public SourceSet(SourceSetType type)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(type));
+            Contract.Requires(type != null);
 
             this.type = type;
         }

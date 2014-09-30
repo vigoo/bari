@@ -83,9 +83,25 @@ namespace Bari.Core.Model.Loader
             }
 
             LoadParameters(suite, suite, yaml.RootNode);
+            LoadSourceSetIgnoreLists(suite.SourceSetIgnoreLists, yaml.RootNode);
 
             log.Debug("Finished processing YAML document.");
             return suite;
+        }
+
+        private void LoadSourceSetIgnoreLists(SourceSetIgnoreLists ignoreLists, YamlNode rootNode)
+        {
+            foreach (var item in parser.EnumerateNamedNodesOf(rootNode, "ignore-lists"))
+            {
+                var ignoreList = ignoreLists.Get(item.Key);
+
+                var mappedItem = (YamlMappingNode) item.Value;
+
+                foreach (var expression in parser.EnumerateNodesOf((YamlSequenceNode)mappedItem.Children[new YamlScalarNode("ignore")]))
+                {
+                    ignoreList.Add(((YamlScalarNode)expression).Value);
+                }
+            }
         }
 
         private IEnumerable<Goal> LoadGoals(YamlNode rootNode)

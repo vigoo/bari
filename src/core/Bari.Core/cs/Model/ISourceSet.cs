@@ -8,7 +8,7 @@ namespace Bari.Core.Model
         /// <summary>
         /// Gets the type of sources in this set
         /// </summary>
-        string Type { get; }
+        SourceSetType Type { get; }
 
         /// <summary>
         /// Gets the files belonging to this set

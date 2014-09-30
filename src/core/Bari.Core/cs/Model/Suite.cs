@@ -21,7 +21,8 @@ namespace Bari.Core.Model
         private readonly IDictionary<string, Module> modules = new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, Product> products = new Dictionary<string, Product>(StringComparer.InvariantCultureIgnoreCase);
         private readonly IDictionary<string, IProjectParameters> parameters = new Dictionary<string, IProjectParameters>();
-        private readonly IDictionary<string, Goal> goals = new Dictionary<string, Goal>();        
+        private readonly IDictionary<string, Goal> goals = new Dictionary<string, Goal>();
+        private readonly SourceSetIgnoreLists sourceSetIgnoreLists = new SourceSetIgnoreLists();
         private readonly IFileSystemDirectory suiteRoot;
 
         private readonly Goal activeGoal;
@@ -51,6 +52,7 @@ namespace Bari.Core.Model
                                    pair.Value != null &&
                                    pair.Value.Name == pair.Key));
             Contract.Invariant(activeGoal != null  && goals.ContainsKey(activeGoal.Name));
+            Contract.Invariant(sourceSetIgnoreLists != null);
         }
 
         /// <summary>
@@ -279,6 +281,14 @@ namespace Bari.Core.Model
 
             foreach (var product in products.Values)
                 product.CheckForWarnings(output);
+        }
+
+        /// <summary>
+        /// Gets the source-set ignore lists
+        /// </summary>
+        public SourceSetIgnoreLists SourceSetIgnoreLists
+        {
+            get { return sourceSetIgnoreLists; }
         }
     }
 }

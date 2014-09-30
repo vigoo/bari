@@ -34,7 +34,7 @@ namespace Bari.Plugins.PythonScripts.Model
         /// <returns>Returns <c>true</c> if there is a build script available</returns>
         public bool HasBuildScriptFor(ISourceSet sourceSet)
         {
-            return buildScriptsForSourceSets.ContainsKey(sourceSet.Type);
+            return buildScriptsForSourceSets.ContainsKey(sourceSet.Type.AsString);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Bari.Plugins.PythonScripts.Model
         /// <returns>Returns the build script mapped to the given source set type</returns>
         public IBuildScript GetBuildScriptFor(ISourceSet sourceSet)
         {
-            return buildScriptsForSourceSets[sourceSet.Type];
+            return buildScriptsForSourceSets[sourceSet.Type.AsString];
         }
     }
 }

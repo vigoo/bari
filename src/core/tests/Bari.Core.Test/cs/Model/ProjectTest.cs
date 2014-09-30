@@ -31,7 +31,7 @@ namespace Bari.Core.Test.Model
             var set1 = project.GetSourceSet("cs");
 
             set1.Should().NotBeNull();
-            set1.Type.Should().Be("cs");
+            set1.Type.Should().Be(new SourceSetType("cs"));
         }
 
         [Test]

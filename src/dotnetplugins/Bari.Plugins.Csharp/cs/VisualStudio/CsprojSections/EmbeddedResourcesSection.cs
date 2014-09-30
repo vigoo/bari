@@ -51,7 +51,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 return "EmbeddedResource";
         }
 
-        protected override string GetLogicalPath(Project project, SuiteRelativePath file, string sourceSetType)
+        protected override string GetLogicalPath(Project project, SuiteRelativePath file, SourceSetType sourceSetType)
         {
             var path = base.GetLogicalPath(project, file, sourceSetType);
             if (path.StartsWith("wpf\\"))

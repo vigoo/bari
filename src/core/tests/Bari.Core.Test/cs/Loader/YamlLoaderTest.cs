@@ -31,7 +31,7 @@ namespace Bari.Core.Test.Loader
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas<TargetRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("cache")).WhenTargetHas<CacheRootAttribute>();
             kernel.Bind<IUserOutput>().ToConstant(testOutput);
-            
+
             parameters = new Mock<IParameters>();
             parameters.SetupGet(p => p.Goal).Returns("debug");
             kernel.Bind<IParameters>().ToConstant(parameters.Object);
@@ -475,7 +475,7 @@ test2:
 
             var paramLoader = new Mock<IYamlProjectParametersLoader>();
             kernel.Bind<IYamlProjectParametersLoader>().ToConstant(paramLoader.Object);
-            
+
             var loader = kernel.Get<InMemoryYamlModelLoader>();
             loader.Should().NotBeNull();
 
@@ -615,7 +615,7 @@ products:
             suite.Products.Should().Contain(p => p.Name == "mod2");
 
             suite.GetProduct("one_three").Modules.Should().BeEquivalentTo(
-                new[] {suite.GetModule("Module1"), suite.GetModule("Module3")});
+                new[] { suite.GetModule("Module1"), suite.GetModule("Module3") });
             suite.GetProduct("mod2").Modules.Should().BeEquivalentTo(
                 new[] { suite.GetModule("Module2") });
         }
@@ -694,7 +694,7 @@ goals:
         }
 
         [Test]
-        [ExpectedException(typeof (InvalidGoalException))]
+        [ExpectedException(typeof(InvalidGoalException))]
         public void ExceptionThrownIfTargetGoalIsNotInTheGoalList()
         {
             const string yaml = @"---                   
@@ -728,7 +728,7 @@ goals:
             suite.Goals.Should().HaveCount(1);
             suite.Goals.First().Name.Should().Be("test-goal");
             suite.Goals.First().IncorporatedGoals.Should().BeEquivalentTo(
-                new[] {Suite.DebugGoal});
+                new[] { Suite.DebugGoal });
         }
 
         [Test]
@@ -978,6 +978,40 @@ products:
             paramLoader.Verify(l => l.Supports("pptype1"), Times.AtLeastOnce);
 
             suite.GetProduct("Module").Packager.Parameters.Should().Be(param1.Object);
+        }
+
+        [Test]
+        public void SourceSetIgnoreListsLoaded()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+ignore-lists:    
+    - name: cs
+      ignore:
+        - .+\.log$
+        - .+\.tmp$
+    - name: fs
+      ignore:
+        - .+\.orig$
+";
+
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Should().NotBeNull();
+
+            var suite = loader.Load(yaml);
+
+            suite.Should().NotBeNull();
+            suite.SourceSetIgnoreLists.Should().NotBeNull();
+
+            var cs = suite.SourceSetIgnoreLists.Get("cs");
+            cs.Expressions.Should().HaveCount(2);
+            cs.Expressions.Should().Contain(".+\\.log$");
+            cs.Expressions.Should().Contain(".+\\.tmp$");
+
+            var fs = suite.SourceSetIgnoreLists.Get("fs");
+            fs.Expressions.Should().HaveCount(1);
+            fs.Expressions.Should().Contain(".+\\.orig$");
         }
     }
 }

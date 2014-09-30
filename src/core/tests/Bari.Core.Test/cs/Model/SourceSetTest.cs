@@ -25,7 +25,7 @@ namespace Bari.Core.Test.Model
         public void SourceSetTypeCanBeQueried()
         {
             var set = new SourceSet("abcd");
-            set.Type.Should().Be("abcd");
+            set.Type.Should().Be(new SourceSetType("abcd"));
         }
     }
 }

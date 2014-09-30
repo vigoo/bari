@@ -60,12 +60,12 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
             writer.WriteEndElement();
         }
 
-        protected virtual string GetLogicalPath(Project project, SuiteRelativePath file, string sourceSetType)
+        protected virtual string GetLogicalPath(Project project, SuiteRelativePath file, SourceSetType sourceSetType)
         {
             return ToProjectRelativePath(project, file, sourceSetType);
         }
 
-        private IEnumerable<Tuple<SuiteRelativePath, string>> GetOrderedFiles(Project project)
+        private IEnumerable<Tuple<SuiteRelativePath, SourceSetType>> GetOrderedFiles(Project project)
         {
             return from sourceSet in GetSourceSets(project) 
                    from file in OrderSourceFiles(project, sourceSet.Files) 
