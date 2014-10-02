@@ -16,7 +16,7 @@ namespace Bari.Core.Commands
     /// </summary>
     public class BuildCommand : ICommand, IHasBuildTarget
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (BuildCommand));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(BuildCommand));
 
         private readonly IBuildContextFactory buildContextFactory;
         private readonly IFileSystemDirectory targetRoot;
@@ -48,7 +48,9 @@ namespace Bari.Core.Commands
         /// </summary>
         public string Help
         {
-            get { return
+            get
+            {
+                return
 @"=Build command=
 
 When used without parameter, it builds every module in the *suite*. 
@@ -63,7 +65,8 @@ Example: `bari build HelloWorldModule.HelloWorld`
 When the special `--dump` argument is specified, the build is not executed, but the build graph and the dependency graph will be dumped
 to GraphViz dot files.
 Example: `bari build --dump` or `bari build HelloWorldModule --dump`
-"; }
+";
+            }
         }
 
         /// <summary>
@@ -148,6 +151,12 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                                       .Where(b => b != null).ToArray().Merge();
             rootBuilder.AddToContext(context);
 
+            var productTarget = target as ProductTarget;
+            if (productTarget != null)
+            {
+                rootBuilder = AddProductBuildStep(context, productTarget.Product, rootBuilder);
+            }
+
             if (dumpMode)
             {
                 using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
@@ -155,19 +164,13 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
             else
             {
-                var productTarget = target as ProductTarget;
-                if (productTarget != null)
-                {
-                    rootBuilder = AddProductBuildStep(context, productTarget.Product, rootBuilder);
-                }
-
                 context.Run(rootBuilder);
 
                 var outputs = context.GetResults(rootBuilder);
                 foreach (var outputPath in outputs)
                     log.DebugFormat("Generated output for build: {0}", outputPath);
             }
-            
+
             output.Message("Build completed.");
         }
 
@@ -182,12 +185,12 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             if (product.PostProcessors.Any())
             {
-                var factories = postProcessorFactories.ToList();                
+                var factories = postProcessorFactories.ToList();
 
                 foreach (var pp in product.PostProcessors)
                 {
                     var postProcessor =
-                        factories.Select(f => f.CreatePostProcessorFor(product, pp, new[] {copyResultsStep}))
+                        factories.Select(f => f.CreatePostProcessorFor(product, pp, new[] { copyResultsStep }))
                             .FirstOrDefault(p => p != null);
                     if (postProcessor != null)
                     {
@@ -196,7 +199,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                     }
                 }
             }
-            
+
             if (resultBuilders.Any())
             {
                 var merger = new MergingBuilder(resultBuilders);
