@@ -5,7 +5,6 @@ using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Bari.Plugins.VsCore.VisualStudio.SolutionName;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -18,9 +17,7 @@ namespace Bari.Plugins.VsCore.Build
         private readonly IMSBuildRunnerFactory msBuildRunnerFactory;
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly IFileSystemDirectory targetRoot;
-        private readonly ISuiteContentsAnalyzer analyzer;
         private readonly IEnumerable<IPostProcessorFactory> postProcessorFactories;
-        private readonly Suite suite;
 
         /// <summary>
         /// Constructs the project builder factory
@@ -29,18 +26,14 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="msBuildRunnerFactory">Interface to create new MSBuild runners</param>
         /// <param name="referenceBuilderFactory">Interface to create new reference builders</param>
         /// <param name="targetRoot">Target root directory</param>
-        /// <param name="analyzer">Suite content analyzer implementation</param>
-        /// <param name="suite">The active suite</param>
         /// <param name="postProcessorFactories">List of registered post processor factories</param>
         public VsProjectBuilderFactory(ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory, IReferenceBuilderFactory referenceBuilderFactory, 
-            [TargetRoot] IFileSystemDirectory targetRoot, ISuiteContentsAnalyzer analyzer, Suite suite, IEnumerable<IPostProcessorFactory> postProcessorFactories)
+            [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IPostProcessorFactory> postProcessorFactories)
         {
             this.slnBuilderFactory = slnBuilderFactory;
             this.msBuildRunnerFactory = msBuildRunnerFactory;
             this.referenceBuilderFactory = referenceBuilderFactory;
             this.targetRoot = targetRoot;
-            this.analyzer = analyzer;
-            this.suite = suite;
             this.postProcessorFactories = postProcessorFactories;
         }
 
@@ -83,9 +76,6 @@ namespace Bari.Plugins.VsCore.Build
         {
             var modules = prjs.Select(p => p.Module).Distinct().ToList();
             var postProcessableItems = prjs.Concat(modules.Cast<IPostProcessorsHolder>()).ToList();
-            var productName = analyzer.GetProductName(modules);
-            if (productName != null)
-                postProcessableItems.Add(suite.GetProduct(productName));
 
             var factories = postProcessorFactories.ToList();
             var resultBuilders = new List<IPostProcessor>();

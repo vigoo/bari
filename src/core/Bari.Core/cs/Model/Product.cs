@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.UI;
@@ -148,6 +149,11 @@ namespace Bari.Core.Model
         public void AddParameters(string paramsName, IProjectParameters projectParameters)
         {
             parameters.Add(paramsName, projectParameters);
+        }
+
+        public override string ToString()
+        {
+            return "Product__" + name;
         }
     }
 }

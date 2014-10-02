@@ -23,6 +23,7 @@ namespace Bari.Core.Commands
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly ICommandTargetParser targetParser;
         private readonly IUserOutput output;
+        private readonly IEnumerable<IPostProcessorFactory> postProcessorFactories;
         private string lastTargetStr;
 
         /// <summary>
@@ -81,13 +82,14 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// <param name="projectBuilders">The set of registered project builder factories</param>
         /// <param name="targetRoot">Build target root directory </param>
         /// <param name="targetParser">Command target parser implementation to be used</param>
-        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser, IUserOutput output)
+        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser, IUserOutput output, IEnumerable<IPostProcessorFactory> postProcessorFactories)
         {
             this.buildContextFactory = buildContextFactory;
             this.projectBuilders = projectBuilders;
             this.targetRoot = targetRoot;
             this.targetParser = targetParser;
             this.output = output;
+            this.postProcessorFactories = postProcessorFactories;
         }
 
         /// <summary>
@@ -153,37 +155,57 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
             else
             {
+                var productTarget = target as ProductTarget;
+                if (productTarget != null)
+                {
+                    rootBuilder = AddProductBuildStep(context, productTarget.Product, rootBuilder);
+                }
+
                 context.Run(rootBuilder);
 
                 var outputs = context.GetResults(rootBuilder);
                 foreach (var outputPath in outputs)
                     log.DebugFormat("Generated output for build: {0}", outputPath);
-
-                var productTarget = target as ProductTarget;
-                if (productTarget != null)
-                {
-                    MergeOutputForProduct(productTarget.Product, outputs);
-                }
             }
             
             output.Message("Build completed.");
         }
 
-        private void MergeOutputForProduct(Product product, ISet<TargetRelativePath> outputs)
-        {            
-            log.InfoFormat("Merging {0} files to product output directory {1}...",
-                outputs.Count, new TargetRelativePath(product.Name, String.Empty));
-
+        private IBuilder AddProductBuildStep(IBuildContext context, Product product, IBuilder rootBuilder)
+        {
             var productOutput = targetRoot.GetChildDirectory(product.Name, createIfMissing: true);
 
-            foreach (var sourcePath in outputs)
+            var copyResultsStep = new CopyResultBuilder(rootBuilder, targetRoot, productOutput);
+            copyResultsStep.AddToContext(context);
+
+            var resultBuilders = new List<IPostProcessor>();
+
+            if (product.PostProcessors.Any())
             {
-                if (sourcePath.RelativeRoot != product.Name) // Postprocessors can generate output to product output directory directly
+                var factories = postProcessorFactories.ToList();                
+
+                foreach (var pp in product.PostProcessors)
                 {
-                    using (var source = targetRoot.ReadBinaryFile(sourcePath))
-                    using (var target = productOutput.CreateBinaryFileWithDirectories(sourcePath.RelativePath))
-                        StreamOperations.Copy(source, target);
+                    var postProcessor =
+                        factories.Select(f => f.CreatePostProcessorFor(product, pp, new[] {copyResultsStep}))
+                            .FirstOrDefault(p => p != null);
+                    if (postProcessor != null)
+                    {
+                        postProcessor.AddToContext(context);
+                        resultBuilders.Add(postProcessor);
+                    }
                 }
+            }
+            
+            if (resultBuilders.Any())
+            {
+                var merger = new MergingBuilder(resultBuilders);
+                merger.AddToContext(context);
+                return merger;
+            }
+            else
+            {
+                return copyResultsStep;
             }
         }
 
