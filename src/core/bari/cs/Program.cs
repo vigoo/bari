@@ -73,9 +73,8 @@ namespace Bari.Console
             }
             catch (Exception ex)
             {
-                System.Console.ForegroundColor = ConsoleColor.Red;
-                System.Console.WriteLine(ex.ToString());
-                System.Console.ForegroundColor = ConsoleColor.Gray;
+                var output = root.Get<IUserOutput>();
+                output.Error(ex.ToString());                
 
                 return 2;
             }

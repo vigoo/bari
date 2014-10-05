@@ -114,5 +114,16 @@ namespace Bari.Console.UI
 
             System.Console.ForegroundColor = ConsoleColor.Gray;
         }
+
+        /// <summary>
+        /// Shows an error message
+        /// </summary>
+        /// <param name="message">Error message</param>
+        public void Error(string message)
+        {
+            System.Console.ForegroundColor = ConsoleColor.Red;
+            System.Console.WriteLine(message);
+            System.Console.ForegroundColor = ConsoleColor.Gray;
+        }
     }
 }

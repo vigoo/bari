@@ -36,6 +36,12 @@ namespace Bari.Core.UI
         /// <param name="message">The message to be shown</param>
         /// <param name="hints">Optional hints about the warning</param>
         void Warning(string message, string[] hints = null);
+
+        /// <summary>
+        /// Shows an error message
+        /// </summary>
+        /// <param name="message">Error message</param>
+        void Error(string message);
     }
 
     /// <summary>
@@ -79,6 +85,15 @@ namespace Bari.Core.UI
         /// <param name="message">The message to be shown</param>
         /// <param name="hints">Optional hints about the warning</param>
         public void Warning(string message, string[] hints = null)
+        {
+            Contract.Requires(message != null);
+        }
+
+        /// <summary>
+        /// Shows an error message
+        /// </summary>
+        /// <param name="message">Error message</param>
+        public void Error(string message)
         {
             Contract.Requires(message != null);
         }
