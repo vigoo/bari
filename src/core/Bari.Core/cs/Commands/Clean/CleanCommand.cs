@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.UI;
@@ -14,24 +13,24 @@ namespace Bari.Core.Commands.Clean
     /// </summary>
     public class CleanCommand : ICommand
     {
-        private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<ICleanExtension> extensions;
         private readonly IUserOutput output;
+        private readonly ISoftCleanPredicates predicates;
 
         /// <summary>
         /// Constructs the command
         /// </summary>
-        /// <param name="suiteRoot">Suite root directory</param>
         /// <param name="targetRoot">Target root directory</param>
         /// <param name="extensions">Additional cleaning steps to be performed </param>
         /// <param name="output">User interface output interface</param>
-        public CleanCommand([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<ICleanExtension> extensions, IUserOutput output)
+        /// <param name="predicates">Soft clean predicate registry</param>
+        public CleanCommand([TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<ICleanExtension> extensions, IUserOutput output, ISoftCleanPredicates predicates)
         {
-            this.suiteRoot = suiteRoot;
             this.targetRoot = targetRoot;
             this.extensions = extensions;
             this.output = output;
+            this.predicates = predicates;
         }
 
         /// <summary>
@@ -66,6 +65,12 @@ Example: `bari clean`
 
 When used with the `--keep-references` option, it keeps the 3rd party references in the cache.
 Example: `bari clean --keep-references`
+
+When used with the `--soft-clean` option, it keeps some files not directly relate to the build,
+such as `.suo` files.
+Example: `bari clean --soft-clean`
+
+The two options can be used together!
 ";
 
             }
@@ -91,15 +96,22 @@ Example: `bari clean --keep-references`
 
             try
             {
-                targetRoot.Delete();
+                if (cleanParams.SoftClean)
+                {
+                    targetRoot.Delete(predicates.ShouldDelete);
+                }
+                else
+                {
+                    targetRoot.Delete();
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                CleanWarning(ex);                
             }
             catch (IOException ex)
             {
-                output.Warning(String.Format("Failed to clean target root: {0}", ex.Message),
-                    new [] {
-                        "A command prompt may have its current directory set there",
-                        "Maybe the process is running"
-                        });
+                CleanWarning(ex);
             }
 
             foreach (var cleanExtension in extensions)
@@ -108,6 +120,16 @@ Example: `bari clean --keep-references`
             }
 
             return true;
+        }
+
+        private void CleanWarning(Exception ex)
+        {
+            output.Warning(String.Format("Failed to clean target root: {0}", ex.Message),
+                new[]
+                {
+                    "A command prompt may have its current directory set there",
+                    "Maybe the process is running"
+                });
         }
     }
 }

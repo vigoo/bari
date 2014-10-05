@@ -27,7 +27,8 @@ namespace Bari.Core.Test.Helper
         {
             lock (globalLock)
             {
-                Directory.Delete(path, true);
+                if (Directory.Exists(path))
+                    Directory.Delete(path, true);
             }
         }
     }

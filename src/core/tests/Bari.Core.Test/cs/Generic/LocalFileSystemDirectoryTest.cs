@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Bari.Core.Generic;
 using Bari.Core.Test.Helper;
+using Castle.Core.Resource;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -188,6 +190,78 @@ namespace Bari.Core.Test.Generic
 
                 lastModifiedDate.Should().Be(lastWriteTime);
             }        
+        }
+
+        [Test]
+        public void PartialDelete()
+        {
+            using (var tmp = new TempDirectory())
+            {
+                var dir = new LocalFileSystemDirectory(tmp);
+                
+                Directory.CreateDirectory(Path.Combine(tmp, "dir1"));
+                Directory.CreateDirectory(Path.Combine(tmp, "dir1", "dir2"));
+                using (var f = File.CreateText(Path.Combine(tmp, "dir1", "file.delete")))
+                    f.WriteLine("test");
+                using (var f = File.CreateText(Path.Combine(tmp, "dir1", "file.keep")))
+                    f.WriteLine("test");
+                using (var f = File.CreateText(Path.Combine(tmp, "dir1", "dir2", "file.delete")))
+                    f.WriteLine("test");
+
+                var paths = new HashSet<string>();
+
+                dir.Delete(p =>
+                {
+                    paths.Add(p);
+                    return false;
+                });
+
+                paths.Should().HaveCount(3);
+                paths.Should().Contain(@"dir1\file.delete");
+                paths.Should().Contain(@"dir1\file.keep");
+                paths.Should().Contain(@"dir1\dir2\file.delete");
+
+                Directory.Exists(tmp).Should().BeTrue();
+                Directory.Exists(Path.Combine(tmp, "dir1")).Should().BeTrue();
+                Directory.Exists(Path.Combine(tmp, "dir1", "dir2")).Should().BeTrue();
+                File.Exists(Path.Combine(tmp, "dir1", "file.delete")).Should().BeTrue();
+                File.Exists(Path.Combine(tmp, "dir1", "file.keep")).Should().BeTrue();
+                File.Exists(Path.Combine(tmp, "dir1", "dir2", "file.delete")).Should().BeTrue();
+
+                paths.Clear();
+                dir.Delete(p =>
+                {
+                    paths.Add(p);
+                    return !p.EndsWith(".keep");
+                });
+
+                paths.Should().HaveCount(4);
+                paths.Should().Contain(@"dir1\file.delete");
+                paths.Should().Contain(@"dir1\file.keep");
+                paths.Should().Contain(@"dir1\dir2");
+                paths.Should().Contain(@"dir1\dir2\file.delete");
+
+                Directory.Exists(tmp).Should().BeTrue();
+                Directory.Exists(Path.Combine(tmp, "dir1")).Should().BeTrue();
+                Directory.Exists(Path.Combine(tmp, "dir1", "dir2")).Should().BeFalse();
+                File.Exists(Path.Combine(tmp, "dir1", "file.delete")).Should().BeFalse();
+                File.Exists(Path.Combine(tmp, "dir1", "file.keep")).Should().BeTrue();
+                File.Exists(Path.Combine(tmp, "dir1", "dir2", "file.delete")).Should().BeFalse();
+
+                paths.Clear();
+                dir.Delete(p =>
+                {
+                    paths.Add(p);
+                    return true;
+                });
+
+                paths.Should().HaveCount(3);
+                paths.Should().Contain(@"dir1\file.keep");
+                paths.Should().Contain(@"dir1");
+                paths.Should().Contain(@"");
+
+                Directory.Exists(tmp).Should().BeFalse();
+            }
         }
     }
 }

@@ -112,6 +112,12 @@ namespace Bari.Core.Generic
         void Delete();
 
         /// <summary>
+        /// Partially deletes the directory, based on a filter function
+        /// </summary>
+        /// <param name="filter">Filter function, a relative path, and if it returns <c>true</c>, the file/directory is going to be deleted</param>
+        void Delete(Func<string, bool> filter);
+
+        /// <summary>
         /// Checks whether a file exists at the given relative path
         /// </summary>
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>
@@ -306,6 +312,15 @@ namespace Bari.Core.Generic
         /// Deletes the directory
         /// </summary>
         public abstract void Delete();
+
+        /// <summary>
+        /// Partially deletes the directory, based on a filter function
+        /// </summary>
+        /// <param name="filter">Filter function, a relative path, and if it returns <c>true</c>, the file/directory is going to be deleted</param>
+        public void Delete(Func<string, bool> filter)
+        {
+            Contract.Requires(filter != null);
+        }
 
         /// <summary>
         /// Checks whether a file exists at the given relative path

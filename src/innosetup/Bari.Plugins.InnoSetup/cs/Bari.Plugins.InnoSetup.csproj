@@ -12,7 +12,7 @@
     <IntermediateOutputPath>..\..\..\..\target\tmp\innosetup</IntermediateOutputPath>
     <OutputType>Library</OutputType>
     <AssemblyName>Bari.Plugins.InnoSetup</AssemblyName>
-    <ProjectGuid>{731433e2-0d29-4f49-8ffc-0a040ce39146}</ProjectGuid>
+    <ProjectGuid>{8a96f839-8a2e-4c29-b588-2619898b14f7}</ProjectGuid>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG</DefineConstants>
@@ -56,7 +56,7 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
-    <!--Project reference 078b4d5b-3051-450d-add3-ae4ec102812b-->
+    <!--Project reference ef831c5e-23f1-462e-84fc-e9be4c68ec45-->
     <Reference
       Include="Bari.Core">
       <HintPath>..\..\..\..\target\core\Bari.Core.dll</HintPath>

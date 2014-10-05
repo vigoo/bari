@@ -219,6 +219,15 @@ namespace Bari.Core.Test.Helper
         }
 
         /// <summary>
+        /// Partially deletes the directory, based on a filter function
+        /// </summary>
+        /// <param name="filter">Filter function, a relative path, and if it returns <c>true</c>, the file/directory is going to be deleted</param>
+        public void Delete(Func<string, bool> filter)
+        {
+            isDeleted = true;
+        }
+
+        /// <summary>
         /// Checks whether a file exists at the given relative path
         /// </summary>
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>

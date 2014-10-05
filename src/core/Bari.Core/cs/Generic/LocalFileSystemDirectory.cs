@@ -210,6 +210,37 @@ namespace Bari.Core.Generic
         }
 
         /// <summary>
+        /// Partially deletes the directory, based on a filter function
+        /// </summary>
+        /// <param name="filter">Filter function, a relative path, and if it returns <c>true</c>, the file/directory is going to be deleted</param>
+        public void Delete(Func<string, bool> filter)
+        {
+            Delete(filter, String.Empty);
+        }
+
+        private void Delete(Func<string, bool> filter, string prefix)
+        {
+            foreach (var child in ChildDirectories)
+            {                
+                var wrapper = new LocalFileSystemDirectory(Path.Combine(path, child));
+                wrapper.Delete(filter, Path.Combine(prefix, child));
+            }
+
+            foreach (var file in Files)
+            {
+                if (filter(Path.Combine(prefix, file)))
+                    DeleteFile(file);
+            }
+
+            if (!ChildDirectories.Any() &&
+                !Files.Any())
+            {
+                if (filter(prefix))
+                    Delete();
+            }
+        }
+
+        /// <summary>
         /// Checks whether a file exists at the given relative path
         /// </summary>
         /// <param name="relativePath">Path to the file to check, relative to this directory</param>

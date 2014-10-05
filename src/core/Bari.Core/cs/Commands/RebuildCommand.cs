@@ -67,6 +67,10 @@ Example: `bari rebuild HelloWorldModule.HelloWorld`
 
 When used with the `--keep-references` option, it keeps the 3rd party references in the cache.
 Example: `bari rebuild --keep-references HelloWorldModule`
+
+When used with the `--soft-clean` option, it keeps some files not directly relate to the build,
+such as `.suo` files.
+Example: `bari rebuild --soft-clean HelloWorldModule`
 ";
             }
         }
@@ -89,8 +93,8 @@ Example: `bari rebuild --keep-references HelloWorldModule`
         {
             var cleanParams = new CleanParameters(new string[0]);
 
-            var cleanParameters = parameters.Where(cleanParams.IsKeepReferencesParameter).ToArray();
-            var buildParameters = parameters.Where(p => !cleanParams.IsKeepReferencesParameter(p)).ToArray();
+            var cleanParameters = parameters.Where(p => cleanParams.IsKeepReferencesParameter(p) || cleanParams.IsSoftCleanParameter(p)).ToArray();
+            var buildParameters = parameters.Where(p => !cleanParams.IsKeepReferencesParameter(p) && !cleanParams.IsSoftCleanParameter(p)).ToArray();
 
             var cleanSucceeded = cleanCommand.Run(suite, cleanParameters);
 

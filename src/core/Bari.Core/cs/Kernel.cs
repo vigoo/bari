@@ -111,6 +111,9 @@ namespace Bari.Core
 
             // Default command target parser
             kernel.Bind<ICommandTargetParser>().To<CommandTargetParser>();
+
+            // Clean helpers
+            kernel.Bind<ISoftCleanPredicates>().To<SoftCleanPredicates>().InSingletonScope();
         }
 
         public static void RegisterCommandFactory(IKernel kernel)

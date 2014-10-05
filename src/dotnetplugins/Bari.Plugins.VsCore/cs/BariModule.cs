@@ -1,4 +1,5 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Commands.Clean;
 using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
 using Bari.Plugins.VsCore.Tools;
@@ -36,6 +37,11 @@ namespace Bari.Plugins.VsCore
             else
                 Bind<IMSBuild>().To<MSBuild>();
             Bind<IMSBuildRunnerFactory>().ToFactory();
+
+            // Extending soft-clean behavior
+            var predicates = Kernel.Get<ISoftCleanPredicates>();
+            predicates.Add(path => path.EndsWith(".vshost.exe"));
+            predicates.Add(path => path.EndsWith(".suo"));
         }
     }
 }
