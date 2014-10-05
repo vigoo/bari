@@ -64,7 +64,7 @@ namespace Bari.Core.Test.Commands
         public void CalledWithMoreParametersThrowException()
         {
             var cmd = kernel.Get<ICommand>("clean");
-            cmd.Run(kernel.Get<Suite>(), new[] { "test2", "-test3" });
+            cmd.Run(kernel.Get<Suite>(), new[] { "test2", "-test3", "something" });
         }
 
         [Test]

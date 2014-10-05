@@ -294,7 +294,6 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Requires(ChildDirectories.Contains(name));
-            Contract.Ensures(!ChildDirectories.Contains(name));
         }
 
         /// <summary>
@@ -305,7 +304,6 @@ namespace Bari.Core.Generic
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Requires(Files.Contains(name));
-            Contract.Ensures(!Files.Contains(name));
         }
 
         /// <summary>

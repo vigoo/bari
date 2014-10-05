@@ -16,6 +16,13 @@ namespace Bari.Core.Test.Build.Cache
         }
 
         [Test]
+        public void ByDefaultNoSoftClean()
+        {
+            var parameters = new CleanParameters(new string[0]);
+            parameters.SoftClean.Should().BeFalse();
+        }
+
+        [Test]
         public void AcceptsKeepReferencesParameter()
         {
             var parameters = new CleanParameters(new[] {"--keep-references"});
@@ -30,10 +37,29 @@ namespace Bari.Core.Test.Build.Cache
         }
 
         [Test]
+        public void AcceptsSoftCleanParameter()
+        {
+            var parameters = new CleanParameters(new[] {"--soft-clean"});
+            parameters.SoftClean.Should().BeTrue();
+        }
+
+        [Test]
+        public void AcceptsBothParametersInAnyOrder()
+        {
+            var parameters1 = new CleanParameters(new[] { "--soft-clean", "--keep-refs" });
+            parameters1.SoftClean.Should().BeTrue();
+            parameters1.KeepReferences.Should().BeTrue();
+
+            var parameters2 = new CleanParameters(new[] { "--keep-references", "--soft-clean" });
+            parameters2.SoftClean.Should().BeTrue();
+            parameters2.KeepReferences.Should().BeTrue();
+        }
+
+        [Test]
         [ExpectedException(typeof(InvalidCommandParameterException))]
         public void ThrowsExceptionForMoreParameters()
         {
-            new CleanParameters(new[] {"-test1", "-test2"});
+            new CleanParameters(new[] {"-test1", "-test2", "-test3"});
         }
     }
 }

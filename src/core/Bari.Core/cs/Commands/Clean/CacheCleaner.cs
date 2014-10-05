@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Generic;
 
@@ -13,16 +14,19 @@ namespace Bari.Core.Commands.Clean
 
         private readonly IFileSystemDirectory cacheDir;
         private readonly IBuilderEnumerator builderEnumerator;
+        private readonly Func<ISoftCleanPredicates> predicatesFactory;
 
         /// <summary>
         /// Constructs the cleaner
         /// </summary>
         /// <param name="cacheDir">Directory to be deleted</param>
         /// <param name="builderEnumerator">All the registered reference builders</param>
-        public CacheCleaner(IFileSystemDirectory cacheDir, IBuilderEnumerator builderEnumerator)
+        /// <param name="predicatesFactory">Factory for soft-clean predicate registry</param>
+        public CacheCleaner(IFileSystemDirectory cacheDir, IBuilderEnumerator builderEnumerator, Func<ISoftCleanPredicates> predicatesFactory)
         {
             this.cacheDir = cacheDir;
             this.builderEnumerator = builderEnumerator;
+            this.predicatesFactory = predicatesFactory;
         }
 
         /// <summary>
@@ -42,7 +46,7 @@ namespace Bari.Core.Commands.Clean
                     {
                         if (!directory.StartsWith(prefix))
                         {
-                            cacheDir.GetChildDirectory(directory).Delete();
+                            DeleteDirectory(cacheDir.GetChildDirectory(directory), parameters);
                             break;
                         }
                         else
@@ -53,12 +57,22 @@ namespace Bari.Core.Commands.Clean
                 }
 
                 if (!cacheDir.ChildDirectories.Any())
-                    cacheDir.Delete();
+                    DeleteDirectory(cacheDir, parameters);
             }
             else
             {
-                cacheDir.Delete();
+                DeleteDirectory(cacheDir, parameters);
             }
-        }        
+        }
+
+        private void DeleteDirectory(IFileSystemDirectory directory, ICleanParameters parameters)
+        {
+            var predicates = predicatesFactory();
+
+            if (parameters.SoftClean)
+                directory.Delete(predicates.ShouldDelete);
+            else
+                directory.Delete();
+        }
     }
 }

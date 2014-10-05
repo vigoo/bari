@@ -42,6 +42,7 @@ namespace Bari.Plugins.VsCore
             var predicates = Kernel.Get<ISoftCleanPredicates>();
             predicates.Add(path => path.EndsWith(".vshost.exe"));
             predicates.Add(path => path.EndsWith(".suo"));
+            predicates.Add(path => path == "guids");
         }
     }
 }
