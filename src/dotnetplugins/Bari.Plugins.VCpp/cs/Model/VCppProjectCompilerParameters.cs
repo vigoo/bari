@@ -386,6 +386,22 @@ namespace Bari.Plugins.VCpp.Model
                     Defines = Defines.Concat(new[] {"_LIB"}).ToArray();
                 }
             }
+
+            if (project.EffectiveVersion != null)
+            {
+                Defines = Defines.Concat(new[]
+                {
+                    String.Format("BARI_PROJECT_VERSION=\"{0}\"", project.EffectiveVersion)
+                }).ToArray();
+            }
+
+            if (project.EffectiveCopyright != null)
+            {
+                Defines = Defines.Concat(new[]
+                {
+                    String.Format("BARI_PROJECT_COPYRIGHT=\"{0}\"", project.EffectiveCopyright)
+                }).ToArray();
+            }
         }
 
         public void ToVcxprojProperties(XmlWriter writer)

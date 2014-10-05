@@ -56,7 +56,8 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                 ".cache",
                 ".ico",
                 ".vcxproj.filters",
-                ".obj"
+                ".obj",
+                ".aps"
             };
 
         /// <summary>

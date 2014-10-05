@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -76,6 +78,39 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             WriteCompilerParameters(writer, project);
             WriteLinkerParameters(writer, project);
             WriteManifestParameters(writer, project);
+            WriteResourceCompilerParameters(writer, project);
+            writer.WriteEndElement();
+        }
+
+        private void WriteResourceCompilerParameters(XmlWriter writer, Project project)
+        {
+            writer.WriteStartElement("ResourceCompile");
+
+            var items = new List<string>();
+            var ver = project.EffectiveVersion;
+
+            if (ver != null)
+            {
+                items.Add(String.Format("BARI_PROJECT_VERSION=\"\\\"{0}\\0\\\"\"", ver));
+                string[] parts = ver.Split('.');
+
+                if (parts.Length == 4)
+                {
+                    var nums = parts.Select(int.Parse).ToArray();
+                    items.Add(String.Format("BARI_PROJECT_VERSION_VI={0},{1},{2},{3}", nums[0], nums[1], nums[2], nums[3]));
+                }                
+            }
+
+            if (project.EffectiveCopyright != null)
+            {
+                items.Add(String.Format("BARI_PROJECT_COPYRIGHT=\"\\\"{0}\\0\\\"\"", project.EffectiveCopyright));
+            }
+
+            if (items.Count > 0)
+            {
+                writer.WriteElementString("PreprocessorDefinitions", String.Join(";", items));
+            }
+
             writer.WriteEndElement();
         }
 
