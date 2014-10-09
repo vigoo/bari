@@ -32,7 +32,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"checked", () => { target.Checked = ParseBool(value); }},
                     {"code-page", () => { target.CodePage = ParseString(value); }},
                     {"debug", () => { target.Debug = ParseDebugLevel(value); }},
-                    {"defines", () => { target.Defines = ParseDefines(value); }},
+                    {"defines", () => { target.Defines = ParseDefines(parser, value); }},
                     {"delay-sign", () => { target.DelaySign = ParseBool(value); }},
                     {"doc-output", () => { target.DocOutput = ParseString(value); }},
                     {"file-align", () => { target.FileAlign = ParseUint32(value); }},
@@ -42,7 +42,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"language-version", () => { target.LanguageVersion = ParseLanguageVersion(value); }},
                     {"main-class", () => { target.MainClass = ParseString(value); }},
                     {"no-std-lib", () => { target.NoStdLib = ParseBool(value); }},
-                    {"suppressed-warnings", () => { target.SuppressedWarnings = ParseWarnings(value); }},
+                    {"suppressed-warnings", () => { target.SuppressedWarnings = ParseWarnings(parser, value); }},
                     {"no-win23-manifest", () => { target.NoWin32Manifest = ParseBool(value); }},
                     {"optimize", () => { target.Optimize = ParseBool(value); }},
                     {"platform", () => { target.Platform = ParsePlatform(value); }},
@@ -50,7 +50,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"subsystem-version", () => { target.SubsystemVersion = ParseString(value); }},
                     {"unsafe", () => { target.Unsafe = ParseBool(value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
-                    {"warnings-as-error", () => ParseWarningsAsError(target, value) },
+                    {"warnings-as-error", () => ParseWarningsAsError(parser, target, value) },
                     {"root-namespace", () => { target.RootNamespace = ParseString(value); }},
                     {"application-icon", () => { target.ApplicationIcon = ParseString(value); }},
                     {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
@@ -96,29 +96,29 @@ namespace Bari.Plugins.Csharp.Model.Loader
             }
         }
 
-        private void ParseWarningsAsError(CsharpProjectParameters target, YamlNode value)
+        private void ParseWarningsAsError(YamlParser parser, CsharpProjectParameters target, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                target.SpecificWarningsAsError = ParseWarnings(value);
+                target.SpecificWarningsAsError = ParseWarnings(parser, value);
             else
                 target.AllWarningsAsError = ParseBool(value);
         }
 
-        private int[] ParseWarnings(YamlNode value)
+        private int[] ParseWarnings(YamlParser parser, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                return seq.Children.OfType<YamlScalarNode>().Select(childValue => Int32.Parse(childValue.Value)).ToArray();
+                return parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => Int32.Parse(childValue.Value)).ToArray();
             else
                 return new int[0];
         }
 
-        private string[] ParseDefines(YamlNode value)
+        private string[] ParseDefines(YamlParser parser, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                return seq.Children.OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
+                return parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
             else
                 return new string[0];
         }
