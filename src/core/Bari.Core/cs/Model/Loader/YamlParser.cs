@@ -12,6 +12,7 @@ namespace Bari.Core.Model.Loader
     public class YamlParser
     {
         private const string ConditionalPrefix = "when ";
+        private const string NegationPrefix = "not ";
         private Goal activeGoal = Suite.DebugGoal;
 
         /// <summary>
@@ -142,8 +143,18 @@ namespace Bari.Core.Model.Loader
                     if (keyScalar.Value.StartsWith(ConditionalPrefix))
                     {
                         // This is a conditional node
-                        var condition = keyScalar.Value.Substring(ConditionalPrefix.Length);
-                        if (activeGoal.Has(condition))
+                        var remaining = keyScalar.Value.Substring(ConditionalPrefix.Length);
+
+                        string condition = remaining;
+                        bool negated = false;
+
+                        if (remaining.StartsWith(NegationPrefix))
+                        {
+                            condition = remaining.Substring(NegationPrefix.Length);
+                            negated = true;
+                        }
+                        
+                        if (activeGoal.Has(condition) ^ negated)
                         {
                             var mappingValue = pair.Value as YamlMappingNode;
                             if (mappingValue != null)

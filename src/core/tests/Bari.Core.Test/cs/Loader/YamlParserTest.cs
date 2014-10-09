@@ -310,6 +310,37 @@ items:
                        .And.Contain(pair => pair.Key == "fourth");
         }
 
+        [Test]
+        public void EnumerateNodesOfSimpleMappingWithNegatedCondition()
+        {
+            var doc = Load(@"---
+first: 1
+when not X:
+  second: 2
+  third: 3
+fourth: 4
+");
+
+            var nodesWithoutX = parser.EnumerateNodesOf((YamlMappingNode) doc.RootNode);
+            nodesWithoutX.Should().NotBeNull().And.HaveCount(4);
+            nodesWithoutX.Should().Contain(new[]
+                {
+                    NodePair(Scalar("first"), Scalar("1")),
+                    NodePair(Scalar("second"), Scalar("2")),
+                    NodePair(Scalar("third"), Scalar("3")),
+                    NodePair(Scalar("fourth"), Scalar("4")),
+                });                
+
+            parser.SetActiveGoal(new Goal("X"));
+            var nodesWithX = parser.EnumerateNodesOf((YamlMappingNode) doc.RootNode);
+
+            nodesWithX.Should().NotBeNull().And.HaveCount(2);
+            nodesWithX.Should().Contain(new[]
+                {
+                    NodePair(Scalar("first"), Scalar("1")),
+                    NodePair(Scalar("fourth"), Scalar("4")),
+                });
+        }
 
         private KeyValuePair<YamlNode, YamlNode> NodePair(YamlNode k, YamlNode v)
         {
@@ -333,7 +364,8 @@ items:
                     yaml.Documents[0].RootNode != null)
                     return yaml.Documents[0];
                 else
-                    throw new InvalidSpecificationException(string.Format("The yaml source contains multiple yaml documents!"));
+                    throw new InvalidSpecificationException(
+                        string.Format("The yaml source contains multiple yaml documents!"));
             }
         }
     }
