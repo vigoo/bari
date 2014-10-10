@@ -194,9 +194,17 @@ namespace Bari.Core.Model.Loader
                         {
                             if (keyScalar.Value.StartsWith(ConditionalPrefix))
                             {
-                                // This is a conditional node
+                                 // This is a conditional node
                                 var condition = keyScalar.Value.Substring(ConditionalPrefix.Length);
-                                if (activeGoal.Has(condition))
+                                var negated = false;
+
+                                if (condition.StartsWith(NegationPrefix))
+                                {
+                                    condition = condition.Substring(NegationPrefix.Length);
+                                    negated = true;
+                                }
+
+                                if (activeGoal.Has(condition) ^ negated)
                                 {
                                     var seqValue = pair.Value as YamlSequenceNode;
                                     if (seqValue != null)
