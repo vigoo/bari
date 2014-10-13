@@ -6,4 +6,9 @@ modules:
       projects:
         - name: HelloWorld
           type: executable
-          
+          references:
+              - gac://System
+              - gac://PresentationFramework
+              - gac://PresentationCore
+              - gac://WindowsBase
+              - gac://System.Xaml

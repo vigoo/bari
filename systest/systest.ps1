@@ -178,7 +178,7 @@ SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
 SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
 X86X64Test
-SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!"
+SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
 ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
 CppReleaseTest
 SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
