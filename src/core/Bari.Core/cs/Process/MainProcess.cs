@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.Contracts;
+using System.IO;
 using System.Reflection;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.UI;
@@ -58,11 +60,21 @@ namespace Bari.Core.Process
         {
             output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
 
-            var suite = loader.Load(parameters.Suite);
-            binding.Bind<Suite>().ToConstant(suite);
-            
-            explorer.RunAll(suite);
-            suite.CheckForWarnings(output);
+            var cmdPrereq = commandFactory.CreateCommandPrerequisites(parameters.Command);
+
+            Suite suite;
+            if (cmdPrereq == null || cmdPrereq.RequiresSuite)
+            {
+                suite = loader.Load(parameters.Suite);
+                binding.Bind<Suite>().ToConstant(suite);
+
+                explorer.RunAll(suite);
+                suite.CheckForWarnings(output);
+            }
+            else
+            {
+                suite = new Suite(new LocalFileSystemDirectory(Path.GetTempPath()));
+            }
 
             var cmd = commandFactory.CreateCommand(parameters.Command);
             if (cmd != null)

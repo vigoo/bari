@@ -49,6 +49,14 @@ namespace Bari.Core
             RegisterCoreBindings(root);
         }
 
+        public static void RegisterCommand<TCommand, TCommandPrerequisites>(IKernel kernel, string name)
+            where TCommand : ICommand
+            where TCommandPrerequisites : ICommandPrerequisites
+        {
+            kernel.Bind<ICommand>().To<TCommand>().Named(name);
+            kernel.Bind<ICommandPrerequisites>().To<TCommandPrerequisites>().Named(name);
+        }
+
         /// <summary>
         /// Registers default bindings offered by the core bari module to the given ninject kernel
         /// </summary>
@@ -73,14 +81,14 @@ namespace Bari.Core
             kernel.Bind<IBuilderEnumerator>().ToConstant(new BuilderEnumerator());
 
             // Built-in commands
-            kernel.Bind<ICommand>().To<HelpCommand>().Named("help");
-            kernel.Bind<ICommand>().To<InfoCommand>().Named("info");
-            kernel.Bind<ICommand>().To<CleanCommand>().Named("clean");
-            kernel.Bind<ICommand>().To<BuildCommand>().Named("build");
-            kernel.Bind<ICommand>().To<TestCommand>().Named("test");
-            kernel.Bind<ICommand>().To<RebuildCommand>().Named("rebuild");
-            kernel.Bind<ICommand>().To<PackCommand>().Named("pack");
-            kernel.Bind<ICommand>().To<SelfUpdateCommand>().Named("selfupdate");
+            RegisterCommand<HelpCommand, HelpCommandPrerequisites>(kernel, "help");
+            RegisterCommand<InfoCommand, DefaultCommandPrerequisites>(kernel, "info");
+            RegisterCommand<CleanCommand, DefaultCommandPrerequisites>(kernel, "clean");
+            RegisterCommand<BuildCommand, DefaultCommandPrerequisites>(kernel, "build");
+            RegisterCommand<TestCommand, DefaultCommandPrerequisites>(kernel, "test");
+            RegisterCommand<RebuildCommand, DefaultCommandPrerequisites>(kernel, "rebuild");
+            RegisterCommand<PackCommand, DefaultCommandPrerequisites>(kernel, "pack");
+            RegisterCommand<SelfUpdateCommand, SelfUpdateCommandPrerequisites>(kernel, "selfupdate");
 
             // Built-in suite explorers
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
