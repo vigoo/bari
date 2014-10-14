@@ -171,5 +171,20 @@ namespace Bari.Plugins.Csharp.Test.VisualStudio
                 });
             name.Should().Be("fallback");
         }
+
+        [Test]
+        public void Issue90_SingleProjectProduct()
+        {
+            var s = new Suite(new TestFileSystemDirectory("z"));
+            var m = s.GetModule("m");
+            var p = m.GetProject("p");
+            var prod = s.GetProduct("prod");
+            prod.AddModule(m);
+
+            var sc = new DefaultSuiteContentsAnalyzer(s);
+            var g = new ReadableSlnNameGenerator(fallback.Object, sc);
+            var name = g.GetName(new[] { p });
+            name.Should().Be("prod");
+        }
     }
 }

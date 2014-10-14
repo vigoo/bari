@@ -41,6 +41,29 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
         {
             var prjs = projects.ToList();
 
+            var matches = analyzer.GetCoveredModules(prjs).ToList();
+            if (matches.Count > 0 && matches.All(m => !m.Partial))
+            {
+                bool? allTests = AllHasTests(matches);
+
+                if (allTests.HasValue)
+                {
+                    var productName = analyzer.GetProductName(matches.Select(m => m.Module));
+                    if (productName != null)
+                    {
+                        // this covers a product
+                        return GetNameBasedOnProduct(productName, allTests.Value);
+                    }
+                    else if (matches.Count <= MaxModuleCount)
+                    {
+                        return GetNameBasedOnMultipleModules(matches.Select(m => m.Module), allTests.Value);
+                    }
+                    // otherwise: many modules -> fallback
+                }
+                // otherwise: contains modules both with tests included and without included -> fallback
+            }
+            // otherwise: there are partial matches -> fallback
+
             if (prjs.Count == 1)
             {
                 // Single project
@@ -48,29 +71,6 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
             }
             else
             {
-                var matches = analyzer.GetCoveredModules(prjs).ToList();
-                if (matches.Count > 0 && matches.All(m => !m.Partial))
-                {
-                    bool? allTests = AllHasTests(matches);
-
-                    if (allTests.HasValue)
-                    {
-                        var productName = analyzer.GetProductName(matches.Select(m => m.Module));
-                        if (productName != null)
-                        {
-                            // this covers a product
-                            return GetNameBasedOnProduct(productName, allTests.Value);
-                        }
-                        else if (matches.Count <= MaxModuleCount)
-                        {
-                            return GetNameBasedOnMultipleModules(matches.Select(m => m.Module), allTests.Value);
-                        }
-                        // otherwise: many modules -> fallback
-                    }
-                    // otherwise: contains modules both with tests included and without included -> fallback
-                }
-                // otherwise: there are partial matches -> fallback
-
                 return fallbackGenerator.GetName(prjs);
             }
         }
