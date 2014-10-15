@@ -9,11 +9,11 @@ using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
-{        
+{
     /// <summary>
     /// .csproj section listing all the embedded resources
     /// </summary>
-    public class EmbeddedResourcesSection: SourceItemsSectionBase
+    public class EmbeddedResourcesSection : SourceItemsSectionBase
     {
         /// <summary>
         /// Initializes the class
@@ -31,7 +31,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <returns>Returns an enumeration of source sets, all belonging to the given project</returns>
         protected override IEnumerable<ISourceSet> GetSourceSets(Project project)
         {
-            return new[] {project.GetSourceSet("resources")};
+            return new[] { project.GetSourceSet("resources") };
         }
 
         /// <summary>
@@ -78,11 +78,17 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         }
 
         protected override void WriteAdditionalOptions(XmlWriter writer, Project project, SuiteRelativePath suiteRelativePath)
-        {            
+        {
             base.WriteAdditionalOptions(writer, project, suiteRelativePath);
 
             var relativePath = ToProjectRelativePath(project, suiteRelativePath, "resources");
-            writer.WriteElementString("Link", Path.Combine("_Resources", relativePath));
+
+            if (relativePath.StartsWith("wpf\\"))
+                relativePath = GetLogicalPath(project, suiteRelativePath, "resources");
+            else
+                relativePath = Path.Combine("_Resources", relativePath);
+
+            writer.WriteElementString("Link", relativePath);
         }
 
 
