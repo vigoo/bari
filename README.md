@@ -10,7 +10,7 @@ Bari is an advanced build management tool for .NET projects.
 
 Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. 
 
-The [latest released version is 0.9.1](https://github.com/vigoo/bari/releases/tag/0.9.1).
+The [latest released version is 0.9.2](https://github.com/vigoo/bari/releases/tag/0.9.2).
 
 To use the latest build, install [bari from NuGet](https://www.nuget.org/packages/bari).
 
