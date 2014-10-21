@@ -192,7 +192,7 @@ namespace Bari.Plugins.Csharp.Model
             switch (languageVersion)
             {
                 case CsharpLanguageVersion.Default:
-                    return "default";
+                    return "Default";
                 case CsharpLanguageVersion.ISO1:
                     return "ISO-1";
                 case CsharpLanguageVersion.ISO2:
