@@ -4,6 +4,7 @@ using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using Bari.Plugins.VsCore.Model;
 using YamlDotNet.RepresentationModel;
 
@@ -14,6 +15,10 @@ namespace Bari.Plugins.Csharp.Model.Loader
     /// </summary>
     public class CsharpParametersLoader : YamlProjectParametersLoaderBase<CsharpProjectParameters>
     {
+        public CsharpParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         protected override string BlockName
         {
             get { return "csharp"; }

@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.Fsharp.Model.Loader
 {
     public class FsharpFileOrderLoader : YamlProjectParametersLoaderBase<FsharpFileOrder>
     {
+        public FsharpFileOrderLoader(IUserOutput output) : base(output)
+        {
+        }
+
         protected override string BlockName
         {
             get { return "order"; }

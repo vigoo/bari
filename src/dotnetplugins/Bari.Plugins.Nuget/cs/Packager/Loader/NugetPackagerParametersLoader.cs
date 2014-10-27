@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.Nuget.Packager.Loader
 {
     public class NugetPackagerParametersLoader: YamlProjectParametersLoaderBase<NugetPackagerParameters>
     {
+        public NugetPackagerParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         protected override string BlockName
         {
             get { return "nuget"; }

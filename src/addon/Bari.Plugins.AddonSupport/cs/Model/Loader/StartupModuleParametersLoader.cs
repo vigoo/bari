@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.AddonSupport.Model.Loader
 {
     public class StartupModuleParametersLoader : YamlProjectParametersLoaderBase<StartupModuleParameters>
     {
+        public StartupModuleParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         protected override string BlockName
         {
             get { return "startup"; }

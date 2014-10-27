@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using Bari.Plugins.VsCore.Model;
 using YamlDotNet.RepresentationModel;
 
@@ -12,6 +13,10 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppMIDLParametersLoader : YamlProjectParametersLoaderBase<VCppProjectMIDLParameters>
     {
+        public VCppMIDLParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

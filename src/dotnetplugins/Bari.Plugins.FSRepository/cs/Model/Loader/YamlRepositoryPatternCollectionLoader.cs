@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.FSRepository.Model.Loader
@@ -14,7 +15,7 @@ namespace Bari.Plugins.FSRepository.Model.Loader
     {
         private readonly IFileSystemRepositoryAccess fsAccess;
 
-        public YamlRepositoryPatternCollectionLoader(IFileSystemRepositoryAccess fsAccess)
+        public YamlRepositoryPatternCollectionLoader(IFileSystemRepositoryAccess fsAccess, IUserOutput output) : base(output)
         {
             this.fsAccess = fsAccess;
         }

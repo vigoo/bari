@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Bari.Core.Exceptions;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -14,6 +15,7 @@ namespace Bari.Core.Model.Loader
     public abstract class YamlProjectParametersLoaderBase<TParamType>: IYamlProjectParametersLoader
         where TParamType: IProjectParameters
     {
+        private readonly IUserOutput output;
         private Suite suite;
 
         protected Suite Suite
@@ -22,8 +24,9 @@ namespace Bari.Core.Model.Loader
             set { suite = value; }
         }
 
-        protected YamlProjectParametersLoaderBase()
+        protected YamlProjectParametersLoaderBase(IUserOutput output)
         {
+            this.output = output;
         }
 
         /// <summary>
@@ -63,6 +66,15 @@ namespace Bari.Core.Model.Loader
                     if (scalarKey != null)
                         TryAddParameter(result, scalarKey.Value, pair.Value, parser);
                 }
+            }
+            else
+            {
+                var hints = new List<string>();
+                
+                if (value is YamlSequenceNode)
+                    hints.Add("Remove the `-` characters to make it a mapping instead of sequence");
+                
+                output.Warning(String.Format("{0} block (line {1}) is not a mapping node", BlockName, value.Start.Line), hints.ToArray());
             }
 
             return result;

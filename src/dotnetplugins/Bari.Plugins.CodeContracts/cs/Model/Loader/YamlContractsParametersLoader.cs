@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.CodeContracts.Model.Loader
@@ -12,6 +13,10 @@ namespace Bari.Plugins.CodeContracts.Model.Loader
     /// </summary>
     public class YamlContractsParametersLoader : YamlProjectParametersLoaderBase<ContractsProjectParameters>
     {
+        public YamlContractsParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

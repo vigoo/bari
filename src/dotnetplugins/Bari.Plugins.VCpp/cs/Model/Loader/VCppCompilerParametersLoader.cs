@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Plugins.VCpp.Model.Loader
@@ -14,6 +15,10 @@ namespace Bari.Plugins.VCpp.Model.Loader
     /// </summary>
     public class VCppCompilerParametersLoader : YamlProjectParametersLoaderBase<VCppProjectCompilerParameters>
     {
+        public VCppCompilerParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

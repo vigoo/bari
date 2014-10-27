@@ -4,6 +4,7 @@ using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.UI;
 using Bari.Plugins.VsCore.Model;
 using YamlDotNet.RepresentationModel;
 
@@ -14,6 +15,10 @@ namespace Bari.Plugins.Fsharp.Model.Loader
     /// </summary>
     public class FsharpParametersLoader : YamlProjectParametersLoaderBase<FsharpProjectParameters>
     {
+        public FsharpParametersLoader(IUserOutput output) : base(output)
+        {
+        }
+
         /// <summary>
         /// Gets the name of the yaml block the loader supports
         /// </summary>

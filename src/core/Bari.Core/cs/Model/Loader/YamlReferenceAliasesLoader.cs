@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
@@ -10,6 +11,10 @@ namespace Bari.Core.Model.Loader
     public class YamlReferenceAliasesLoader : YamlProjectParametersLoaderBase<ReferenceAliases>
     {
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
+
+        public YamlReferenceAliasesLoader(IUserOutput output) : base(output)
+        {
+        }
 
         /// <summary>
         /// Gets the name of the yaml block the loader supports
