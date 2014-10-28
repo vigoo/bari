@@ -53,6 +53,8 @@ namespace Bari.Plugins.Nuget.Packager
                 writer.WriteElementString("projectUrl", parameters.ProjectUrl.ToString());
             if (parameters.LicenseUrl != null)
                 writer.WriteElementString("licenseUrl", parameters.LicenseUrl.ToString());
+            if (parameters.IconUrl != null)
+                writer.WriteElementString("iconUrl", parameters.IconUrl.ToString());
             if (parameters.Tags != null)
                 writer.WriteElementString("tags", String.Join(", ", parameters.Tags));
             writer.WriteEndElement();

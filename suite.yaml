@@ -327,4 +327,5 @@ products:
           description: Bari is an advanced build manager for .NET
           author: Daniel Vigovszky
           project-url: http://github.com/vigoo/bari
+          icon-url: https://raw.githubusercontent.com/vigoo/bari/master/doc/logo.png
           package-as-tool: true
