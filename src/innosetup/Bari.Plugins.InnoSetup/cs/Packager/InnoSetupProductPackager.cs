@@ -29,7 +29,7 @@ namespace Bari.Plugins.InnoSetup.Packager
             compiler.Compile(
                 parameters.ScriptPath, 
                 new TargetRelativePath("", String.Format("{0}-{1}.exe", product.Name, suite.Version)), 
-                suite.Version);
+                suite.Version, suite.ActiveGoal);
         }
     }
 }

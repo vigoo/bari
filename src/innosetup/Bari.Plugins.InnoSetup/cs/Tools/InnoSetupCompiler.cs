@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Bari.Core.Generic;
+using Bari.Core.Model;
 using Bari.Core.Tools;
 
 namespace Bari.Plugins.InnoSetup.Tools
@@ -25,10 +26,14 @@ namespace Bari.Plugins.InnoSetup.Tools
             return String.Format("/verysilent /norestart /dir=\"{0}\"", targetDir);
         }
 
-        public void Compile(SuiteRelativePath scriptPath, TargetRelativePath targetPath, string version)
+        public void Compile(SuiteRelativePath scriptPath, TargetRelativePath targetPath, string version, Goal targetGoal)
         {
+            var platform = targetGoal.Has("x64") ? "x64" : "x86";
+
             Run(suiteRoot, 
                 "/dVERSION="+version,
+                "/dPLATFORM="+platform,
+                "/dGOAL="+targetGoal.Name,
                 "/o"+Path.GetDirectoryName(Path.Combine(suiteRoot.GetRelativePath(targetRoot), targetPath)),
                 "/f"+Path.GetFileName(targetPath),
                 scriptPath);
