@@ -1,9 +1,0 @@
----
-suite:      bari systemtest single-cs-exe
-
-modules:
-    - name: HelloWorld
-      projects:
-        - name: HelloWorld
-          type: executable
-          
