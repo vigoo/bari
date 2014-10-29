@@ -1,0 +1,15 @@
+{
+  "name": "package-name",
+  "version": "0.0.1",
+  "main": "public/js/app.js",
+  "dependencies": {
+    "console-polyfill": "latest",
+    "lodash": "latest",
+    "jquery": "1.11.0"
+  },
+  "overrides": {
+    "jquery": {
+      "main": "dist/jquery.js"
+    }
+  }
+}
