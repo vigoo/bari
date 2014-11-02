@@ -42,6 +42,7 @@ systest/embedded-resources-test/cache
 systest/postprocessor-script-test/cache
 systest/cpp-release-test/cache
 systest/cpp-version/cache
+systest/custom-plugin-test/cache
 
 # Systest generated files
 hello.vcxproj

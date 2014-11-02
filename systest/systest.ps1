@@ -182,3 +182,4 @@ SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "
 ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
 CppReleaseTest
 SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
+SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"

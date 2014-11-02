@@ -104,7 +104,7 @@ namespace Bari.Plugins.Nuget.Build
 
         private NugetLibraryProfile GetMaxProfile()
         {
-            if (project.HasParameters("csharp"))
+            if (project != null && project.HasParameters("csharp"))
             {
                 var csharpParams = project.GetParameters<CsharpProjectParameters>("csharp");
 

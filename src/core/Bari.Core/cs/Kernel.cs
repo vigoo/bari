@@ -14,6 +14,7 @@ using Bari.Core.Commands.Test;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
+using log4net.Plugin;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Parameters;
@@ -67,6 +68,8 @@ namespace Bari.Core
 
             kernel.Bind<IBindingRoot>().ToConstant(kernel);
 
+            kernel.Bind<IPluginLoader>().To<DefaultPluginLoader>();
+
             kernel.Bind<ISuiteFactory>().To<DefaultSuiteFactory>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<LocalYamlModelLoader>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
@@ -104,6 +107,7 @@ namespace Bari.Core
             kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
             kernel.Bind<IReferenceBuilder>().To<AliasReferenceBuilder>().Named("alias");
+            kernel.Bind<IReferenceBuilder>().To<FileReferenceBuilder>().Named("file");
 
             // Builder factories
             kernel.Bind<ICachedBuilderFactory>().ToFactory();

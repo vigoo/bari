@@ -1,0 +1,13 @@
+---
+suite:      bari systemtest custom-plugin-test
+plugins:
+    - file://test-plugin.dll
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          references:           
+            - module://Dep      
+        - name: Dep

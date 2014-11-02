@@ -22,8 +22,9 @@ namespace Bari.Core.Model.Loader
         /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
         /// <param name="output">Output interface to issue warnings</param>
-        public InMemoryYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output)
-            : base(suiteFactory, parametersLoaders, output)
+        /// <param name="pluginLoader">Plugin loader interface</param>
+        public InMemoryYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader)
+            : base(suiteFactory, parametersLoaders, output, pluginLoader)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Requires(output != null);

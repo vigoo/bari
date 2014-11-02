@@ -22,6 +22,7 @@ namespace Bari.Core.Model.Loader
         private readonly YamlParser parser;
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
         private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext = new VersioningEnvironmentVariableContext();
+        private readonly IPluginLoader pluginLoader;
 
         /// <summary>
         /// Initializes the yaml loader
@@ -29,16 +30,19 @@ namespace Bari.Core.Model.Loader
         /// <param name="suiteFactory">Factory interface to create new suite instances</param>
         /// <param name="parametersLoaders">Parameter loader implementations</param>
         /// <param name="output">Output interface to issue warnings</param>
-        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output)
+        /// <param name="pluginLoader">Plugin loader interface</param>
+        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Requires(output != null);
+            Contract.Requires(pluginLoader != null);
             Contract.Ensures(this.suiteFactory == suiteFactory);
             Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
             this.suiteFactory = suiteFactory;
             this.parametersLoaders = parametersLoaders;
             this.output = output;
+            this.pluginLoader = pluginLoader;
 
             parser = new YamlParser();
         }
@@ -56,6 +60,9 @@ namespace Bari.Core.Model.Loader
             Contract.Ensures(Contract.Result<Suite>() != null);
 
             log.Debug("Processing YAML document...");
+
+            foreach (var pluginUri in LoadPlugins(yaml.RootNode))
+                pluginLoader.Load(pluginUri);
 
             var goals = new HashSet<Goal>(LoadGoals(yaml.RootNode));
             var suite = suiteFactory.CreateSuite(goals);
@@ -87,6 +94,42 @@ namespace Bari.Core.Model.Loader
 
             log.Debug("Finished processing YAML document.");
             return suite;
+        }
+
+        private IEnumerable<Uri> LoadPlugins(YamlNode rootNode)
+        {
+            var result = new List<Uri>();
+
+            var rootMapping = (YamlMappingNode) rootNode;
+            YamlNode node;
+            if (rootMapping.Children.TryGetValue(new YamlScalarNode("plugins"), out node))
+            {
+                var pluginsNode = node as YamlSequenceNode;
+                if (pluginsNode != null)
+                {
+                    foreach (var item in parser.EnumerateNodesOf(pluginsNode))
+                    {
+                        var scalar = item as YamlScalarNode;
+                        if (scalar != null)
+                        {
+                            try
+                            {
+                                result.Add(new Uri(scalar.Value));
+                            }
+                            catch (UriFormatException)
+                            {
+                                output.Warning(String.Format("Invalid plugin reference: {0}", scalar.Value));
+                            }
+                        }
+                        else
+                        {
+                            output.Warning("Invalid child item ");
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         private void LoadSourceSetIgnoreLists(SourceSetIgnoreLists ignoreLists, YamlNode rootNode)
