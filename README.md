@@ -1,7 +1,7 @@
-bari
+[bari](http://vigoo.github.io/bari/)
 ====
 
-Bari is an advanced build management tool for .NET projects.
+[Bari](http://vigoo.github.io/bari/) is an advanced build management tool for .NET projects.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1hyg2r66/branch/master)](https://ci.appveyor.com/project/vigoo/bari/branch/master)
 
@@ -33,6 +33,8 @@ Additionally I recommend browsing the following suite definitions for examples:
 * [C++ resource support](https://github.com/vigoo/bari/blob/master/systest/cpp-rc-support/suite.yaml)
 * [C++/CLI support](https://github.com/vigoo/bari/blob/master/systest/mixed-cpp-cli/suite.yaml)
 * [Registration-free COM support](https://github.com/vigoo/bari/blob/master/systest/regfree-com-server/suite.yaml)
+* [Postprocessor scripts](https://github.com/vigoo/bari/blob/master/systest/postprocessor-script-test/suite.yaml)
+* [Custom plugin support](https://github.com/vigoo/bari/blob/master/systest/custom-plugin-test/suite.yaml)
 
 And the [Bari suite definition](https://github.com/vigoo/bari/blob/master/suite.yaml) itself! 
 
