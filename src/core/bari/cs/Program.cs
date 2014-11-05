@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Bari.Console.UI;
 using Bari.Core;
 using Bari.Core.Build;
