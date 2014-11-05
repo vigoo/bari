@@ -28,8 +28,6 @@ namespace Bari.Console
 
         static int Main(string[] args)
         {
-            Thread.Sleep(8000);
-
             var consoleParams = new ConsoleParameters(args);
             if (consoleParams.VerboseOutput)
                 EnableConsoleDebugLog();
