@@ -35,7 +35,6 @@ namespace Bari.Plugins.InnoSetup.Tools
                 "/dPLATFORM="+platform,
                 "/dGOAL="+targetGoal.Name,
                 "/o"+Path.GetDirectoryName(Path.Combine(suiteRoot.GetRelativePath(targetRoot), targetPath)),
-                "/f"+Path.GetFileName(targetPath),
                 scriptPath);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Bari.Console.UI;
 using Bari.Core;
 using Bari.Core.Build;
@@ -27,6 +28,8 @@ namespace Bari.Console
 
         static int Main(string[] args)
         {
+            Thread.Sleep(8000);
+
             var consoleParams = new ConsoleParameters(args);
             if (consoleParams.VerboseOutput)
                 EnableConsoleDebugLog();
