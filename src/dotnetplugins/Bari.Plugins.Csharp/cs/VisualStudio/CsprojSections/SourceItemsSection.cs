@@ -114,8 +114,9 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Extra options for XAML page code-behind files
             if (projectRelativePath.ToLowerInvariant().EndsWith(".xaml.cs"))
             {
+                var fileName = Path.GetFileName(projectRelativePath);
                 writer.WriteElementString("DependentUpon",
-                    projectRelativePath.Substring(0, projectRelativePath.Length - 3));
+                    fileName.Substring(0, fileName.Length - 3));
             }
 
             // Settings file
