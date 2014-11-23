@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -8,9 +10,9 @@ namespace Bari.Core.Build.Cache
     /// Wraps a builder so it is only ran if its dependencies has been modified,
     /// or the cache has been corrupted.
     /// </summary>
-    public class CachedBuilder: IBuilder
+    public class CachedBuilder : IBuilder
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CachedBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(CachedBuilder));
 
         private readonly IBuilder wrappedBuilder;
         private readonly IBuildCache cache;
@@ -67,26 +69,80 @@ namespace Bari.Core.Build.Cache
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
             var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
 
             cache.LockForBuilder(buildKey);
             try
             {
-                if (cache.Contains(buildKey, currentFingerprint))
+                if (wrappedBuilder.CanRun())
                 {
-                    log.DebugFormat("Restoring cached build outputs for {0}", buildKey);
-                    return cache.Restore(buildKey, targetDir);
+                    try
+                    {
+                        var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
+
+                        if (cache.Contains(buildKey, currentFingerprint))
+                        {
+                            log.DebugFormat("Restoring cached build outputs for {0}", buildKey);
+                            return cache.Restore(buildKey, targetDir);
+                        }
+                        else
+                        {
+                            log.DebugFormat("Running builder {0}", buildKey);
+                            var files = wrappedBuilder.Run(context);
+
+                            log.DebugFormat("Storing build outputs of {0}", buildKey);
+                            cache.Store(buildKey, currentFingerprint, files, targetDir);
+                            return files;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("Failed to run builder {0}: {1}", wrappedBuilder.Uid, ex);
+
+                        // Fallback to any cached value
+                        if (cache.ContainsAny(buildKey))
+                        {
+                            log.DebugFormat("Restoring cached build outputs for {0} without fingerprint check", buildKey);
+                            return cache.Restore(buildKey, targetDir);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                 }
                 else
                 {
-                    log.DebugFormat("Running builder {0}", buildKey);
-                    var files = wrappedBuilder.Run(context);
-
-                    log.DebugFormat("Storing build outputs of {0}", buildKey);
-                    cache.Store(buildKey, currentFingerprint, files, targetDir);
-                    return files;
+                    // Fallback to any cached value
+                    if (cache.ContainsAny(buildKey))
+                    {
+                        log.DebugFormat("Restoring cached build outputs for {0} without fingerprint check", buildKey);
+                        return cache.Restore(buildKey, targetDir);
+                    }
+                    else
+                    {
+                        throw new BuilderCantRunException(wrappedBuilder.Uid);
+                    }
                 }
+            }
+            finally
+            {
+                cache.UnlockForBuilder(buildKey);
+            }
+        }
+
+        /// <summary>
+        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
+        /// </summary>
+        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
+        public bool CanRun()
+        {
+            var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
+
+            cache.LockForBuilder(buildKey);
+            try
+            {
+                return wrappedBuilder.CanRun() || cache.ContainsAny(buildKey);
             }
             finally
             {

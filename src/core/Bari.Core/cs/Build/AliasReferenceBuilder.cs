@@ -109,6 +109,15 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
+        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
+        /// </summary>
+        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
+        public bool CanRun()
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
         public Reference Reference

@@ -134,6 +134,11 @@ namespace Bari.Core.Build
                 path => Path.GetFileNameWithoutExtension(path).ToLowerInvariant() == expectedFileName));
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>

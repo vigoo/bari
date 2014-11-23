@@ -35,6 +35,11 @@ namespace Bari.Core.Test.Build.Cache
             throw new System.NotImplementedException();
         }
 
+        public bool CanRun()
+        {
+            throw new NotImplementedException();
+        }
+
         public Reference Reference
         {
             get { throw new System.NotImplementedException(); }
@@ -68,6 +73,11 @@ namespace Bari.Core.Test.Build.Cache
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool CanRun()
+        {
+            throw new NotImplementedException();
         }
 
         public Reference Reference

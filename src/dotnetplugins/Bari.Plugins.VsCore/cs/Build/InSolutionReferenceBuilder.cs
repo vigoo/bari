@@ -61,6 +61,11 @@ namespace Bari.Plugins.VsCore.Build
                     });
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>

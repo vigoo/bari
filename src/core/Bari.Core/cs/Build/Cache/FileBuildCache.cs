@@ -17,7 +17,7 @@ namespace Bari.Core.Build.Cache
     public class FileBuildCache : IBuildCache
     {
         private const bool EnableFingerprintDiff = false;
-        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (FileBuildCache));
+        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(FileBuildCache));
 
         private const string DepsFileName = ".deps";
         private const string NamesFileName = ".names";
@@ -112,7 +112,7 @@ namespace Bari.Core.Build.Cache
                         {
                             var fpType = fingerprint.GetType();
                             var storedFp = Activator.CreateInstance(fpType, protocolSerializer, depsStream);
-                            
+
                             bool fingerprintEquals = fingerprint.Equals(storedFp);
 
                             if (!fingerprintEquals && EnableFingerprintDiff)
@@ -136,6 +136,34 @@ namespace Bari.Core.Build.Cache
         }
 
         /// <summary>
+        /// Checks if the cache contains stored outputs for a given builder with any dependency fingerprint
+        /// </summary>
+        /// <param name="builder">Builder key</param>
+        /// <returns>Returns <c>true</c> if there are stored outputs for the given builder.</returns>
+        public bool ContainsAny(BuildKey builder)
+        {
+            var lck = GetOrCreateLock(builder);
+            lck.EnterReadLock();
+            try
+            {
+                var dirName = GetCacheDirectoryName(builder);
+                if (cacheRoot.ChildDirectories.Contains(dirName))
+                {
+                    var cacheDir = cacheRoot.GetChildDirectory(dirName);
+                    if (cacheDir.Files.Contains(DepsFileName))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            finally
+            {
+                lck.ExitReadLock();
+            }
+        }
+
+        /// <summary>
         /// Restores the stored files for a given builder to a file system directory
         /// 
         /// <para>The cache only stores the latest stored results and this is what will be restored
@@ -146,7 +174,8 @@ namespace Bari.Core.Build.Cache
         /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
-        public ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot)
+        public
+        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterReadLock();

@@ -196,6 +196,11 @@ namespace Bari.Plugins.VCpp.Build
                     });
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Gets the target relative path to the outmost directory in which the <see cref="Run"/> method generates
         /// any files.

@@ -186,6 +186,11 @@ namespace Bari.Plugins.Fsharp.Build
                     });
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

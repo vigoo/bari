@@ -96,6 +96,19 @@ namespace Bari.Core.Build.Cache
         }
 
         /// <summary>
+        /// Checks if the cache contains stored outputs for a given builder with any dependency fingerprint
+        /// </summary>
+        /// <param name="builder">Builder key</param>
+        /// <returns>Returns <c>true</c> if there are stored outputs for the given builder.</returns>
+        public bool ContainsAny(BuildKey builder)
+        {
+            lock (cache)
+            {
+                return cache.ContainsKey(builder);
+            }
+        }
+
+        /// <summary>
         /// Restores the stored files for a given builder to a file system directory
         /// 
         /// <para>The cache only stores the latest stored results and this is what will be restored

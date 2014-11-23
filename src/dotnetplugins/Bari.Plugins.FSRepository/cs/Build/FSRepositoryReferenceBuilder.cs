@@ -42,6 +42,9 @@ namespace Bari.Plugins.FSRepository.Build
         {
             get
             {
+                if (reference != null && resolutionContext == null)
+                    ResolveReference();
+
                 return new FSRepositoryReferenceDependencies(fingerprintFactory, repository, resolvedPath);
             }
         }
@@ -76,6 +79,9 @@ namespace Bari.Plugins.FSRepository.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
+            if (reference != null && resolutionContext == null)
+                ResolveReference();
+
             if (output != null)
                 output.Message(String.Format("Resolving reference {0}", reference.Uri));
 
@@ -90,6 +96,19 @@ namespace Bari.Plugins.FSRepository.Build
                 return DeployDirectoryContents(depDir);
             else
                 return DeploySingleFile(depDir, fileName);
+        }
+
+        public bool CanRun()
+        {
+            if (reference != null && resolutionContext == null)
+                ResolveReference();
+
+            string fileName = resolutionContext.FileName + "." + resolutionContext.Extension;
+
+            if (fileName == "*.*")
+                return Directory.Exists(Path.GetDirectoryName(resolvedPath));
+            else
+                return File.Exists(resolvedPath);
         }
 
         private ISet<TargetRelativePath> DeployDirectoryContents(IFileSystemDirectory depDir)
@@ -124,8 +143,8 @@ namespace Bari.Plugins.FSRepository.Build
             set 
             { 
                 reference = value;
-                if (reference != null)
-                    ResolveReference();
+                resolutionContext = null;
+                resolvedPath = null;                
             }
         }
 

@@ -54,6 +54,11 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             return scriptRunner.Run(target, definition, script);
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         public PostProcessDefinition Definition
         {
             get { return definition; }

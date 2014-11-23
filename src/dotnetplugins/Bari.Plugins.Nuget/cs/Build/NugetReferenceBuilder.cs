@@ -102,6 +102,11 @@ namespace Bari.Plugins.Nuget.Build
                 select new TargetRelativePath(relativeRoot, relativePath));
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         private NugetLibraryProfile GetMaxProfile()
         {
             if (project != null && project.HasParameters("csharp"))

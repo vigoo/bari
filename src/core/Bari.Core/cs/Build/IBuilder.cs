@@ -35,6 +35,12 @@ namespace Bari.Core.Build
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         ISet<TargetRelativePath> Run(IBuildContext context);
+
+        /// <summary>
+        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
+        /// </summary>
+        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
+        bool CanRun();
     }
 
     /// <summary>
@@ -86,5 +92,11 @@ namespace Bari.Core.Build
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
             return null; // dummy value
         }
+
+        /// <summary>
+        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
+        /// </summary>
+        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
+        public abstract bool CanRun();
     }
 }

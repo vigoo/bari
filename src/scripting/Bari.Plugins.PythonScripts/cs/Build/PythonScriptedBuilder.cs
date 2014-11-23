@@ -64,6 +64,11 @@ namespace Bari.Plugins.PythonScripts.Build
             return scriptRunner.Run(project, buildScript);
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         public PythonScriptedBuilder(Project project, IBuildScript buildScript, ISourceSetFingerprintFactory fingerprintFactory, IProjectBuildScriptRunner scriptRunner)
         {
             this.project = project;

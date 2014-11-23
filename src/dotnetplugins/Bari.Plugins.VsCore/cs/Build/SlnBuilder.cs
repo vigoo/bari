@@ -161,6 +161,11 @@ namespace Bari.Plugins.VsCore.Build
             return new HashSet<TargetRelativePath> { new TargetRelativePath(String.Empty, slnPath) };
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
         private IEnumerable<Project> GetInSolutionReferences(Project project)
         {
             foreach (var reference in project.References)
