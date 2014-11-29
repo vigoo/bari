@@ -93,7 +93,7 @@ namespace Bari.Plugins.Nuget.Tools
 
         private string GetRelativePath(string path, LocalFileSystemDirectory root)
         {
-            return path.Substring(root.AbsolutePath.Length).TrimStart('\\');
+            return path.Substring(root.AbsolutePath.Length).TrimStart(Path.DirectorySeparatorChar);
         }
 
         private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot, NugetLibraryProfile maxProfile)

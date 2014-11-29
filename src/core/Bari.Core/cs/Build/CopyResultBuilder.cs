@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
@@ -38,7 +39,7 @@ namespace Bari.Core.Build
         /// </summary>
         public string Uid
         {
-            get { return sourceBuilder.Uid + "__" + targetRoot.GetRelativePath(targetDirectory).Replace('\\', '_'); }
+            get { return sourceBuilder.Uid + "__" + targetRoot.GetRelativePath(targetDirectory).Replace(Path.DirectorySeparatorChar, '_'); }
         }
 
         /// <summary>

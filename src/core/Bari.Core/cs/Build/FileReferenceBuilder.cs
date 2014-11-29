@@ -66,7 +66,7 @@ namespace Bari.Core.Build
                 output.Message(String.Format("Resolving reference {0}", reference.Uri));
 
             var depsRoot = targetRoot.CreateDirectory("deps");
-            var sourcePath = reference.Uri.OriginalString.Substring(7).Replace('/', '\\').TrimEnd('\\');
+            var sourcePath = reference.Uri.OriginalString.Substring(7).Replace('/', Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
             var fileName = Path.GetFileName(sourcePath);
             
             using (var source = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read))

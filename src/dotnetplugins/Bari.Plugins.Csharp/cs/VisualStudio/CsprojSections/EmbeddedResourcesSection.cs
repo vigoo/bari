@@ -45,7 +45,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
             var relativePath = ToProjectRelativePath(project, file, "resources");
 
-            if (relativePath.StartsWith("wpf\\"))
+            if (relativePath.StartsWith("wpf" + Path.DirectorySeparatorChar))
                 return "Resource";
             else
                 return "EmbeddedResource";
@@ -54,16 +54,16 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         protected override string GetLogicalPath(Project project, SuiteRelativePath file, SourceSetType sourceSetType)
         {
             var path = base.GetLogicalPath(project, file, sourceSetType);
-            if (path.StartsWith("wpf\\"))
-                return path.Substring(4).Replace('\\', '/');
+            if (path.StartsWith("wpf" + Path.DirectorySeparatorChar))
+                return path.Substring(4).Replace(Path.DirectorySeparatorChar, '/');
             else
-                return PrefixWithRootNamespace(project, PrefixNumericComponents(path)).Replace('\\', '.');
+                return PrefixWithRootNamespace(project, PrefixNumericComponents(path)).Replace(Path.DirectorySeparatorChar, '.');
         }
 
         private string PrefixNumericComponents(string path)
         {
-            return String.Join("\\",
-                path.Split('\\')
+            return String.Join(Path.DirectorySeparatorChar.ToString(),
+                path.Split(Path.DirectorySeparatorChar)
                     .Select(part => part.Length > 0 && char.IsDigit(part[0]) ? "_" + part : part));
         }
 
@@ -83,7 +83,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
             var relativePath = ToProjectRelativePath(project, suiteRelativePath, "resources");
 
-            if (relativePath.StartsWith("wpf\\"))
+            if (relativePath.StartsWith("wpf" + Path.DirectorySeparatorChar))
                 relativePath = GetLogicalPath(project, suiteRelativePath, "resources");
             else
                 relativePath = Path.Combine("_Resources", relativePath);

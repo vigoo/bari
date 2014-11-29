@@ -69,7 +69,7 @@ namespace Bari.Plugins.FSRepository.Model
         /// <returns>Returns the files in the given directory, all prefixed with the directory path</returns>
         public IEnumerable<string> ListFiles(string path)
         {
-            return GetDirectory(path+"\\").Files.Select(fname => Path.Combine(path, fname));
+            return GetDirectory(path + Path.DirectorySeparatorChar).Files.Select(fname => Path.Combine(path, fname));
         }
     }
 }

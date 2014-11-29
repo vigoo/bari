@@ -12,7 +12,8 @@ namespace Bari.Core.Model.Discovery
     /// </summary>
     public class ModuleProjectDiscovery : ISuiteExplorer
     {
-        private readonly IFileSystemDirectory suiteRoot;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ModuleProjectDiscovery));
+        private readonly IFileSystemDirectory suiteRoot;        
 
         /// <summary>
         /// Constructs the suite discovery implementation
@@ -86,9 +87,11 @@ namespace Bari.Core.Model.Discovery
         {
             foreach (var fileName in dir.Files)
             {
-                var suiteRelativePath = new SuiteRelativePath(Path.Combine(suiteRoot.GetRelativePath(dir), fileName));                
+                var suiteRelativePath = new SuiteRelativePath(Path.Combine(suiteRoot.GetRelativePath(dir), fileName));
                 if (!ignoreList.IsIgnored(suiteRelativePath))
+                {
                     target.Add(suiteRelativePath);
+                }
             }
 
             foreach (var childDirectory in dir.ChildDirectories)

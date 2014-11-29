@@ -245,9 +245,9 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
         {
             writer.WriteElementString("OutDir",
-                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name), "cpp") + '\\');
+                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name), "cpp") + Path.DirectorySeparatorChar);
             writer.WriteElementString("IntDir",
-                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name), "cpp") + '\\');
+                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name), "cpp") + Path.DirectorySeparatorChar);
 
             var manifestParameters = GetManifestParameters(project);
             writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.EmbedManifest));

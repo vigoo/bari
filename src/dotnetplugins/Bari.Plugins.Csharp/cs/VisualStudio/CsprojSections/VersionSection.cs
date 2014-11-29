@@ -2,6 +2,7 @@
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
+using System.IO;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
@@ -33,8 +34,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Adding reference to it to the .csproj file
             writer.WriteStartElement("ItemGroup");
             writer.WriteStartElement("Compile");
-            writer.WriteAttributeString("Include", "..\\"+context.VersionFileName);
-            writer.WriteElementString("Link", "_Generated\\version.cs");
+            writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
+            writer.WriteElementString("Link", Path.Combine("_Generated", "version.cs"));
             writer.WriteEndElement();
             writer.WriteEndElement();
         }        

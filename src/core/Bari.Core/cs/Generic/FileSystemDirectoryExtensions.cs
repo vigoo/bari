@@ -96,11 +96,11 @@ namespace Bari.Core.Generic
             else
             {
                 string innerFromOuter = root.GetRelativePath(innerRoot);
-                if (outerRelativePath.StartsWith(innerFromOuter + '\\', StringComparison.InvariantCultureIgnoreCase))
-                    return outerRelativePath.Substring(innerFromOuter.Length).TrimStart('\\');
+                if (outerRelativePath.StartsWith(innerFromOuter + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase))
+                    return outerRelativePath.Substring(innerFromOuter.Length).TrimStart(Path.DirectorySeparatorChar);
                 else
                 {
-                    string prefix = String.Join("\\", innerFromOuter.Split('\\').Select(_ => ".."));
+                    string prefix = String.Join(Path.DirectorySeparatorChar.ToString(), innerFromOuter.Split(Path.DirectorySeparatorChar).Select(_ => ".."));
                     return Path.Combine(prefix, outerRelativePath);
                 }
             }

@@ -2,6 +2,7 @@
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
+using System.IO;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
@@ -31,13 +32,13 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     writer.WriteStartElement("ItemGroup");
                     
                     writer.WriteStartElement("WCFMetadata");
-                    writer.WriteAttributeString("Include", "Service References\\");
+                    writer.WriteAttributeString("Include", "Service References" + Path.DirectorySeparatorChar);
                     writer.WriteEndElement();
 
                     foreach (var child in serviceReferencesRoot.ChildDirectories)
                     {
                         writer.WriteStartElement("WCFMetadataStorage");
-                        writer.WriteAttributeString("Include", "Service References\\" + child + "\\");
+                        writer.WriteAttributeString("Include", "Service References\\" + child + Path.DirectorySeparatorChar);
                         writer.WriteEndElement();
                     }
 

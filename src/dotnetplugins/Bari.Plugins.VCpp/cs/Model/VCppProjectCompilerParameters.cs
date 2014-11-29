@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using System.IO;
 
 namespace Bari.Plugins.VCpp.Model
 {
@@ -350,9 +351,10 @@ namespace Bari.Plugins.VCpp.Model
         {
             if (targetDir != null)
             {
-                PDBFileName = string.Format("{0}\\{1}.{2}.pdb",
+                PDBFileName = string.Format("{0}{3}{1}.{2}.pdb",
                                             targetDir.AbsolutePath,
-                                            project.Module.Name, project.Name);
+                                            project.Module.Name, project.Name,
+                                            Path.DirectorySeparatorChar);
             }
 
             if (cliMode != CppCliMode.Disabled)

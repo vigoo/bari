@@ -36,7 +36,10 @@ namespace Bari.Core.Generic
         /// </summary>
         public IEnumerable<string> Files
         {
-            get { return Directory.EnumerateFiles(path).Select(Path.GetFileName); }
+            get 
+            {
+                return Directory.EnumerateFiles(path).Select(Path.GetFileName); 
+            }
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace Bari.Core.Generic
             if (!childPath.StartsWith(path))
                 throw new ArgumentException("The argument is not a child directory of this directory", "childDirectory");
 
-            return childPath.Substring(path.Length).TrimStart('\\');
+            return childPath.Substring(path.Length).TrimStart(Path.DirectorySeparatorChar);
         }
 
         /// <summary>
