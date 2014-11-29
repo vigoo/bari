@@ -128,16 +128,32 @@ namespace Bari.Console
 
         private static void EnableConsoleDebugLog()
         {
+            log4net.Appender.IAppender appender;
             var consoleAppender = new log4net.Appender.ColoredConsoleAppender
                 {
                     Layout = new SimpleLayout(),
                     Threshold = Level.All
                 };
-            consoleAppender.ActivateOptions();
+            try
+            {
+                consoleAppender.ActivateOptions();
+                appender = consoleAppender;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                var fallbackAppender = new log4net.Appender.ConsoleAppender
+                {
+                    Layout = new SimpleLayout(),
+                    Threshold = Level.All
+                };
+
+                fallbackAppender.ActivateOptions();
+                appender = fallbackAppender;
+            }
 
             var repo = (Hierarchy)log4net.LogManager.GetRepository();
             var root = repo.Root;
-            root.AddAppender(consoleAppender);
+            root.AddAppender(appender);
 
             repo.Configured = true;
 
