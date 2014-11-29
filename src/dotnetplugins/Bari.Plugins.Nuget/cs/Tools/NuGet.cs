@@ -22,7 +22,7 @@ namespace Bari.Plugins.Nuget.Tools
         /// Creates the external tool
         /// </summary>
         public NuGet(IParameters parameters)
-            : base("NuGet", @"C:\Programs\", "NuGet.exe", new Uri("https://nuget.org/nuget.exe"))
+            : base("NuGet", @"C:\Programs\", "NuGet.exe", new Uri("https://nuget.org/nuget.exe"), true, parameters)
         {
             this.parameters = parameters;
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Bari.Core.Generic;
+using Bari.Core.UI;
 
 namespace Bari.Core.Tools
 {    
@@ -11,6 +13,7 @@ namespace Bari.Core.Tools
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ExternalTool));
         private readonly string name;
+        private readonly IParameters parameters;
 
         /// <summary>
         /// Gets the tool's name
@@ -24,9 +27,11 @@ namespace Bari.Core.Tools
         /// Initializes the tool runner
         /// </summary>
         /// <param name="name">Name of the external tool, for debugging and error handling purposes</param>
-        protected ExternalTool(string name)
+        /// <param name="parameters">Parameters, to determine if running in mono mode or not</param>
+        protected ExternalTool(string name, IParameters parameters)
         {
             this.name = name;
+            this.parameters = parameters;
         }
 
         /// <summary>
@@ -40,6 +45,11 @@ namespace Bari.Core.Tools
         /// Gets the path to the executable of the external tool
         /// </summary>
         protected abstract string ToolPath { get; }
+
+        /// <summary>
+        /// If <c>true</c> the process will be executed with mono when not running on MS CLR
+        /// </summary>
+        protected abstract bool IsDotNETProcess { get; }
 
         /// <summary>
         /// Runs the external tool with the given parameters
@@ -56,11 +66,15 @@ namespace Bari.Core.Tools
             {
                 string path = ToolPath;
 
+                var useMono = IsDotNETProcess && parameters.UseMono;
+                var fileName = useMono ? "mono" : path;
+                var arguments = useMono ? String.Join(" ", new [] { path }.Concat(args)) : String.Join(" ", args);
+
                 var psi = new ProcessStartInfo
                 {
-                    FileName = path,
+                    FileName = fileName,
                     WorkingDirectory = localRoot.AbsolutePath,
-                    Arguments = String.Join(" ", args),
+                    Arguments = arguments,
                     UseShellExecute = false
                 };
 

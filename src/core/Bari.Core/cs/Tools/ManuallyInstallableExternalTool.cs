@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using Bari.Core.Exceptions;
+using Bari.Core.UI;
+using Ninject.Parameters;
 
 namespace Bari.Core.Tools
 {
@@ -15,6 +17,7 @@ namespace Bari.Core.Tools
         private readonly string defaultInstallLocation;
         private readonly string exeName;
         private readonly Uri manualUri;
+        private readonly bool isDotNetProcess;
 
         /// <summary>
         /// Defines the external tool
@@ -23,11 +26,15 @@ namespace Bari.Core.Tools
         /// <param name="defaultInstallLocation">Default install location where the external tool can be found</param>
         /// <param name="exeName">Executable file name</param>
         /// <param name="manualUri">URI where the user can start solving the problem if the tool is missing</param>
-        public ManuallyInstallableExternalTool(string name, string defaultInstallLocation, string exeName, Uri manualUri) : base(name)
+        /// <param name="isDotNETProcess">If <c>true</c> the process will be executed with mono when not running on MS CLR</param>
+        /// <param name="parameters">Application parameters</param>
+        public ManuallyInstallableExternalTool(string name, string defaultInstallLocation, string exeName, Uri manualUri, bool isDotNETProcess, IParameters parameters) 
+            : base(name, parameters)
         {
             this.defaultInstallLocation = defaultInstallLocation;
             this.exeName = exeName;
             this.manualUri = manualUri;
+            isDotNetProcess = isDotNETProcess;
         }
 
         /// <summary>
@@ -65,6 +72,11 @@ namespace Bari.Core.Tools
         protected override string ToolPath
         {
             get { return Path.Combine(defaultInstallLocation, exeName); }
+        }
+
+        protected override bool IsDotNETProcess
+        {
+            get { return isDotNetProcess; }
         }
     }
 }

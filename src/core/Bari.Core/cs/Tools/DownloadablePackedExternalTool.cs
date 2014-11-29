@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using Bari.Core.UI;
 using Ionic.Zip;
 
 namespace Bari.Core.Tools
@@ -20,8 +21,10 @@ namespace Bari.Core.Tools
         /// <param name="defaultInstallLocation">Default installation location where the tool can be found</param>
         /// <param name="executableName">File name of the executable to be ran</param>
         /// <param name="url">The URL where the tool archive can be downloaded from </param>
-        public DownloadablePackedExternalTool(string name, string defaultInstallLocation, string executableName, Uri url) 
-            : base(name, defaultInstallLocation, executableName, url)
+        /// <param name="isDotNETProcess">If <c>true</c> the process will be executed with mono when not running on MS CLR</param>
+        /// <param name="parameters">Application parameters</param>
+        public DownloadablePackedExternalTool(string name, string defaultInstallLocation, string executableName, Uri url, bool isDotNETProcess, IParameters parameters) 
+            : base(name, defaultInstallLocation, executableName, url, isDotNETProcess, parameters)
         {
         }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Tools;
+using Bari.Core.UI;
 
 namespace Bari.Plugins.Gallio.Tools
 {
@@ -11,9 +12,9 @@ namespace Bari.Plugins.Gallio.Tools
     {
         private readonly IFileSystemDirectory targetDir;
 
-        public Gallio([TargetRoot] IFileSystemDirectory targetDir)
+        public Gallio([TargetRoot] IFileSystemDirectory targetDir, IParameters parameters)
             : base("Gallio", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "gallio"),
-                   @"bin\Gallio.Echo.exe", new Uri("http://mb-unit.googlecode.com/files/GallioBundle-3.4.14.0.zip"))
+                   @"bin\Gallio.Echo.exe", new Uri("http://mb-unit.googlecode.com/files/GallioBundle-3.4.14.0.zip"), true, parameters)
         {
             this.targetDir = targetDir;
         }

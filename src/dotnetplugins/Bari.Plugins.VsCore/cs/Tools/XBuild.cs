@@ -21,7 +21,7 @@ namespace Bari.Plugins.VsCore.Tools
         public XBuild(IParameters parameters)
             : base("xbuild", 
                    "",
-                   "xbuild.bat", new Uri("http://www.go-mono.com/mono-downloads/download.html"))
+                   "xbuild", new Uri("http://www.go-mono.com/mono-downloads/download.html"), false, parameters)
         {
             this.parameters = parameters;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using Bari.Core.UI;
 
 namespace Bari.Core.Tools
 {
@@ -15,6 +16,7 @@ namespace Bari.Core.Tools
         private readonly string bariInstallLocation;
         private readonly string executableName;
         private readonly Uri url;
+        private readonly bool isDotNetProcess;
 
         /// <summary>
         /// Gets the download URI for the tool
@@ -31,11 +33,15 @@ namespace Bari.Core.Tools
         /// <param name="defaultInstallLocation">Default installation location where the tool can be found</param>
         /// <param name="executableName">File name of the executable to be ran</param>
         /// <param name="url">The URL where the tool can be downloaded from </param>
-        public DownloadableExternalTool(string name, string defaultInstallLocation, string executableName, Uri url) : base(name)
+        /// <param name="isDotNETProcess">If <c>true</c> the process will be executed with mono when not running on MS CLR</param>
+        /// <param name="parameters">Application parameters</param>
+        public DownloadableExternalTool(string name, string defaultInstallLocation, string executableName, Uri url, bool isDotNETProcess, IParameters parameters) 
+            : base(name, parameters)
         {
             this.defaultInstallLocation = defaultInstallLocation;
             this.executableName = executableName;
             this.url = url;
+            isDotNetProcess = isDotNETProcess;
 
             bariInstallLocation =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -74,6 +80,11 @@ namespace Bari.Core.Tools
 
                 throw new InvalidOperationException("Tool not found");
             }
+        }
+
+        protected override bool IsDotNETProcess
+        {
+            get { return isDotNetProcess; }
         }
 
         private void DownloadTool()

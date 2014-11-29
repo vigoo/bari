@@ -21,7 +21,7 @@ namespace Bari.Plugins.VsCore.Tools
         public MSBuild(IParameters parameters)
             : base("msbuild40", 
                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework\v4.0.30319\"), 
-                   "MSBuild.exe", new Uri("http://www.microsoft.com/en-us/download/details.aspx?id=17851"))
+                   "MSBuild.exe", new Uri("http://www.microsoft.com/en-us/download/details.aspx?id=17851"), false, parameters)
         {
             this.parameters = parameters;
         }

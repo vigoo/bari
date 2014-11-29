@@ -3,6 +3,7 @@ using System.IO;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Tools;
+using Bari.Core.UI;
 
 namespace Bari.Plugins.InnoSetup.Tools
 {
@@ -11,11 +12,12 @@ namespace Bari.Plugins.InnoSetup.Tools
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
 
-        public InnoSetupCompiler([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot) :
+        public InnoSetupCompiler([SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot, IParameters parameters) :
             base("InnoSetup",
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Inno Setup 5"),
                 "iscc.exe",
-                new Uri("http://www.jrsoftware.org/download.php/ispack-unicode.exe"))
+                new Uri("http://www.jrsoftware.org/download.php/ispack-unicode.exe"),
+                false, parameters)
         {
             this.suiteRoot = suiteRoot;
             this.targetRoot = targetRoot;
