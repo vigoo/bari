@@ -47,7 +47,7 @@ namespace Bari.Core.Tools
             bool exists;
             if (!Path.IsPathRooted(ToolPath))
             {
-                var paths = Environment.GetEnvironmentVariable("PATH").Split(';');
+                var paths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
                 exists = paths.Any(path =>
                 {
                     var possibility = Path.Combine(path, ToolPath);
