@@ -3,7 +3,8 @@
 
 [Bari](http://vigoo.github.io/bari/) is an advanced build management tool for .NET projects.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1hyg2r66/branch/master)](https://ci.appveyor.com/project/vigoo/bari/branch/master)
+Default: [![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1hyg2r66/branch/master)](https://ci.appveyor.com/project/vigoo/bari/branch/master) Mono: [![Build status](https://ci.appveyor.com/api/projects/status/e36xnxe43qtjp41s/branch/master)](https://ci.appveyor.com/project/vigoo/bari-211/branch/master)
+
 
 # Getting started #
 ## Getting bari ##
