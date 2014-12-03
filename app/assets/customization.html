@@ -45,7 +45,7 @@
 			<div class="navbar-collapse collapse">							
 				<ul class="nav navbar-nav">
 					<li><a href="index.html">Home</a></li>
-					<li class="active"><a href="about.html">About</a></li>
+					<li><a href="about.html">About</a></li>
 					<li><a href="gettingstarted.html">Getting started</a></li>
 					<li><a href="contact.html">Contact</a></li>
 				</ul>
@@ -53,7 +53,6 @@
 		</div>
 
 		<a href="https://github.com/vigoo/bari"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
-		</div>
 	</div>
 
 	<div class="jumbotron">
@@ -66,62 +65,37 @@
 	<div class="container">
 		<div class="row">			
 			<div class="col-xs-8">
-				<h3>Overview</h3>
-				<p class="lead">
-				Bari is a <i>build management system</i>, trying to fix Visual Studio's bad parts while keeping the good ones. 
-				</p>
-				<p>
-				Basically it tries to make .NET development more convenient, when
-				<ul>
-					<li>The application may consist of <strong>a large number of projects</strong></li>
-					<li>There may be several different <strong>subsets</strong> of these projects defining valuable target <strong>products</strong></li>
-					<li><strong>Custom build steps</strong> may be required</li>
-					<li>It is important to be able to <strong>reproduce</strong> the build environment as easily as possible</li>
-					<li>The developers want to use the full power of their <strong>IDE</strong></li>
-				</ul>
-				</p>
-
-				<h3>Concepts</h3>
-
-				<p>
-				The main idea is to generate Visual Studio solutions and projects <strong>on the fly</strong> as needed, from a concise <i>declarative</i> build description, optimized for human readability.
-				</p>
-
-				<p>
-				To keep the build definitions short, bari prefers <a href="coc.html"><strong>convention over configuration</strong></a>. Many things has reasonable defaults, and the suite's filesystem layout itself is carrying information.
-				</p>
-
-				<h3>Example</h3>
-				The following example is part of bari's own build definition:
-
-				<pre>
-modules:
-    - name: core
-      projects:
-        - name: bari
-          type: executable
-          references:
-            - gac://System
-            - nuget://log4net
-            - nuget://Ninject/3.0.1.10
-            - nuget://QuickGraph
-            - module://Bari.Core
-          csharp:
-            root-namespace: Bari.Console
-</pre>
-
-				<div class="alert alert-info">
-					<strong>The name</strong> Bari was named after my dog, who is also responsible for the icon.					
-				</div>
+				<h3>Customization</h3>
+				<h5>There are usable defaults but everything is customisable</h5>
+                <ul>
+                  <li>For example compiler options for C#, C++, F#...</li>
+                  <li>Code contracts settings</li>                  
+                </ul>
+                <h5>Builder scripts</h5>
+                <ul>
+                  <li>Custom build steps transforming a subset of the source files to an build output</li>
+                </ul>
+                <h5>Post-processor scripts</h5>
+                <ul>
+                  <li>Custom build steps working on the result files
+                    <ul>
+                      <li>For example <em>signing</em></li>
+                    </ul>
+                  </li>
+                </ul>
+                <h5>Fully extensible architecture</h5>
+                <ul>
+                  <li>Everything is customizable with <em>plugins</em></li>
+                  <li>For example new <em>reference types</em>, new <em>packager types</em>, support for other compilers, new <em>commands</em> etc.
+                </ul>
 			</div>
 		</div>
 
 		<hr>
 
 		<footer>
-		<p>&copy; <a href="contact.html">Daniel Vigovszky</a>, 2014</p>		  
+		<p>&copy; <a href="contact.html">Daniel Vigovszky</a>, 2014</p>
 		</footer>
-	</div>
-
+	</div>	
 </body>
 </html>
