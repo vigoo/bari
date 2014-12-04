@@ -16,7 +16,7 @@ goals:
           - mono
 
 fs-repositories:
-    - lib\%NAME\%FILENAME.%EXT
+    - lib/%NAME/%FILENAME.%EXT
 
 aliases:
     ninject:
