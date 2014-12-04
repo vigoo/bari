@@ -48,6 +48,17 @@ modules:
             - nuget://QuickGraph
             - nuget://Nuget.Core/1.5.20902.9026
             - nuget://NuSelfUpdate/0.1.1.16794
+          csharp:
+            when mono:
+              defines:
+                - MONO
+                - when debug:                
+                  - DEBUG
+            when not mono:              
+              defines: 
+                - when debug:                
+                  - DEBUG
+
         - name: bari
           type: executable
           references:

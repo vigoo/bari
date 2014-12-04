@@ -12,6 +12,12 @@ namespace Bari.Core.Commands
 {
     public class SelfUpdateCommand: ICommand
     {
+#if !MONO
+		private const string NUGET_PACKAGE_ID = "bari";
+#else
+		private const string NUGET_PACKAGE_ID = "bari-mono";
+#endif
+
         private readonly IUserOutput output;
 
         public SelfUpdateCommand(IUserOutput output)
@@ -70,7 +76,7 @@ Example: `bari selfupdate`
         public bool Run(Suite suite, string[] parameters)
         {
             var fileSystem = new ExtendedPhysicalFileSystem(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            var updater = new AppUpdaterBuilder("bari")
+            var updater = new AppUpdaterBuilder(NUGET_PACKAGE_ID)
                 .FileSystemAccessedThrough(fileSystem)
                 .Build();
 
