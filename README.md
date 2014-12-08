@@ -11,7 +11,7 @@ Default: [![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1h
 
 Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. 
 
-The [latest released version is 0.9.2](https://github.com/vigoo/bari/releases/tag/0.9.2).
+The [latest released version is 1.0](https://github.com/vigoo/bari/releases/tag/1.0).
 
 To use the latest build, install [bari from NuGet](https://www.nuget.org/packages/bari).
 
