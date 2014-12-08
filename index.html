@@ -1,92 +1,70 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>		<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>		 <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>		 <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>bari</title>
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width">
+<html>
+  <head>
+    <title>bari</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
     <meta property="og:image" content="http://vigoo.github.io/bari/img/barilogo-mid.png">
+    <meta property="og:title" content="bari - An advanced build management tool for .NET projects.">
+    <meta property="og:description" content="Bari is a build management system, trying to fix Visual Studio's bad parts while keeping the good ones.">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <script src="js/vendor.js"></script>
+    <script src="js/app.js"></script>
+    <script>require('initialize')</script>
+    <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	                     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-	<link rel="stylesheet" href="css/app.css">
+ga('create', 'UA-56320875-1', 'auto');
+ga('send', 'pageview');
 
-	<script src="js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-
-	<script src="js/vendor.js"></script>
-	<script src="js/app.js"></script>
-	<script>require('initialize')</script>
-
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-	  ga('create', 'UA-56320875-1', 'auto');
-	  ga('send', 'pageview');
-	</script>
-</head>
-<body>
-	<!--[if lt IE 7]>
-		<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-	<![endif]-->
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="index.html">bari</a>
-			</div>
-			<div class="navbar-collapse collapse">							
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="index.html">Home</a></li>
-					<li><a href="about.html">About</a></li>
-					<li><a href="gettingstarted.html">Getting started</a></li>
-					<li><a href="contact.html">Contact</a></li>
-				</ul>
-			</div><!--/.navbar-collapse -->
-		</div>
-
-		<a href="https://github.com/vigoo/bari"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>		
-	</div>
-
-	<div class="jumbotron">
-		<div class="container">
-			<h1>bari <img src="img/barilogo-small.png" /></h1>			
-			<p>An advanced build management tool for .NET projects.</p>
-
-			<p><a href="about.html" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-		</div>
-	</div>
-
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-4">
-				<h2><a href="coc.html">Convention</a></h2>
-				<p>..over configuration. With bari you only have to specify what's really important for building your project, by following a few simple rules when structuring the projects.</p>				
-			</div>
-			<div class="col-lg-4">
-				<h2><a href="largescale.html">Large scale</a></h2>
-				<p>One of the main design goals is to support build of complex moduler products, consist of a large number of projects.</p>				
-			</div>
-			<div class="col-lg-4">
-				<h2><a href="customization.html">Customization</a></h2>
-				<p>The build process is easily extensible with scripted steps; if it is not enough, bari has a modular architecture easily extensible with plugins.</p>				
-			</div>
-		</div>
-
-		<hr>
-
-		<footer>
-		<p>&copy; <a href="contact.html">Daniel Vigovszky</a>, 2014</p>
-		</footer>
-	</div>
-
-</body>
+    </script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="index.html" class="navbar-brand">bari</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gettingstarted.html">Getting started</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div><a href="https://github.com/vigoo/bari"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+    </div>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>bari&nbsp;<img src="img/barilogo-small.png"></h1>
+        <p>An advanced build management tool for .NET projects.</p>
+        <p><a href="about.html" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h2><a href="coc.html">Convention</a></h2>
+          <p>..over configuration. With bari you only have to specify what's really important for building your project, by following a few simple rules when structuring the projects.</p>
+        </div>
+        <div class="col-lg-4">
+          <h2><a href="largescale.html">Large scale</a></h2>
+          <p>One of the main design goals is to support build of complex moduler products, consist of a large number of projects.</p>
+        </div>
+        <div class="col-lg-4">
+          <h2><a href="customization.html">Customization</a></h2>
+          <p>The build process is easily extensible with scripted steps; if it is not enough, bari has a modular architecture easily extensible with plugins.</p>
+        </div>
+      </div>
+      <hr>
+      <footer>
+        <p>&copy;<a href="contact.html">Daniel Vigovszky</a>, 2014</p>
+      </footer>
+    </div>
+  </body>
 </html>
