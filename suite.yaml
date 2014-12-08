@@ -1,6 +1,6 @@
 ---
 suite:      bari
-version:    0.9.9.$BUILDNO
+version:    1.0.0.$BUILDNO
 contracts:  enabled
 
 goals:

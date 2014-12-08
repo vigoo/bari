@@ -19,7 +19,7 @@ $barizip = Join-Path $bootstrap "bari.zip"
 Write-Output "Downloading bari"
 
 $webclient = New-Object System.Net.WebClient
-$url = "https://github.com/vigoo/bari/releases/download/0.9.2/bari-0.9.2.zip"
+$url = "https://github.com/vigoo/bari/releases/download/1.0/bari-1.0.zip"
 $file = Join-Path $bootstrap "bari.zip"
 $webclient.DownloadFile($url,$file)
 
