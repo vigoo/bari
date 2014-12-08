@@ -1,0 +1,52 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+
+          h3 Large scale
+          h5 Bari provides an additional layer on top of VS solution/project hierarchy
+          ul
+            li A suite is a set of modules
+            li A module is a set of projects
+            li A project is equivalent of a VS project<
+            li Set of modules form a product
+            li A suite can define multiple products, or the whole suite itself can be a single product
+
+          h5 It is not necessary to view the whole suite at once in VS
+          ul
+            li You can open a subset (a module, or a product) in VS but while compiling with bari it still takes into account the whole suite
+            li <strong>Example:</strong> Work on a single module, somebody push a change to an underlying one, a third person opens the full suite for refactoring
+
+          h5 Frees you from the complicated and error prone <em>“Solution configuration”</em> functionality of VS
+
+      include includes/footer.jade

@@ -1,0 +1,44 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li(class='active')
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+          h3 Project
+          p The project is hosted on <a href="https://github.com/vigoo/bari">GitHub</a><br>Built on <a href="https://ci.appveyor.com/project/vigoo/bari">AppVeyor</a><br>Published to <a href="https://www.nuget.org/packages/bari">nuget</a><br> Mono version is published to <a href="https://www.nuget.org/packages/bari-mono">another nuget package</a><br>
+
+          h3 Mailing list
+          p Join the project's <a href="https://groups.google.com/forum/#!forum/bari-build">mailing list</a> to discuss anything bari related. Bugs and feature requests can be directly added to <a href="https://github.com/vigoo/bari">GitHub</a>.
+
+          h3 Author
+          address <strong>Daniel Vigovszky (vigoo)</strong><br><a href="mailto:daniel.vigovszky@gmail.com">daniel.vigovszky@gmail.com</a><br><a href="https://github.com/vigoo">GitHub</a><br>            
+
+      include includes/footer.jade

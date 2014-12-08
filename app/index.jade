@@ -1,0 +1,49 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li(class='active')
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-lg-4')
+          h2
+            a(href='coc.html') Convention
+          p ..over configuration. With bari you only have to specify what's really important for building your project, by following a few simple rules when structuring the projects.
+        
+        div(class='col-lg-4')
+          h2
+            a(href='largescale.html') Large scale
+          p One of the main design goals is to support build of complex moduler products, consist of a large number of projects.
+
+        div(class='col-lg-4')
+          h2
+            a(href='customization.html') Customization
+          p The build process is easily extensible with scripted steps; if it is not enough, bari has a modular architecture easily extensible with plugins.
+
+      include includes/footer.jade

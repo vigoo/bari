@@ -1,0 +1,48 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li(class='active')
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+
+          h3 Intallation
+          p To install bari, first download and extract the <a href="https://github.com/vigoo/bari/releases/tag/1.0">latest binary package</a>. You may want to add it to the <code>PATH</code>.
+
+          p Once it's extracted, it is recommended to upgrade it to the <strong>latest version</strong> using the <a href="https://github.com/vigoo/bari/wiki/SelfUpdateCommand"><code>selfupdate</code></a> command:
+           pre bari selfupdate
+          
+          h4 Mono on OSX
+          p Bari has experimental <a href="http://www.mono-project.com/">mono</a> support. To install it, download the <a href="https://github.com/vigoo/bari/releases/tag/1.0-mono">latest <em>mono-specific</em> binary package</a> and unpack it.
+
+          h3 Getting started
+          p Please read the <a href="https://github.com/vigoo/bari/wiki/GettingStarted#first-project"><strong>user guide</strong> on the project's wiki</a> to learn how to start working with bari.             
+
+      include includes/footer.jade

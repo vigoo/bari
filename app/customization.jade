@@ -1,0 +1,57 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+          h3 Customization
+          
+          h5 There are usable defaults but everything is customisable
+          ul
+            li For example compiler options for C#, C++, F#...
+            li Code contracts settings
+
+          h5 Builder scripts
+          ul
+            li Custom build steps transforming a subset of the source files to an build output
+
+          h5 Post-processor scripts
+          ul
+            li Custom build steps working on the result files
+              ul
+                li For example <em>signing</em>
+
+          h5 Fully extensible architecture
+          ul
+            li Everything is customizable with <em>plugins</em>
+            li For example new <em>reference types</em>, new <em>packager types</em>, support for other compilers, new <em>commands</em> etc.
+
+      include includes/footer.jade

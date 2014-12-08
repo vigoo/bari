@@ -1,0 +1,13 @@
+modules:
+    - name: core
+      projects:
+        - name: bari
+          type: executable
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://Ninject/3.0.1.10
+            - nuget://QuickGraph
+            - module://Bari.Core
+          csharp:
+            root-namespace: Bari.Console

@@ -1,0 +1,48 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+
+          h3 Convention over configuration
+          h5 Directory layout determines a lot of things
+          ul
+            li For example the <em>modules</em> and <em>projects</em>
+            li What compilation and custom steps should be performed
+
+          h5 Several things are <em>automatic</em> if put in the correct place
+          ul
+            li Custom build scripts
+            li Setting the application's <em>icon</em>, <em>manifest</em> and <em>configuration
+            li <em>InnoSetup</em> plugin's setup scripts
+
+      include includes/footer.jade

@@ -25,3 +25,9 @@ exports.config =
       defaultExtension: 'less'
       joinTo: 
         'css/app.css': /^(app|vendor)/
+
+  plugins:
+    jaded:
+      staticPatterns: /^app(\/|\\)(.+)\.jade$/
+      jade:
+        pretty: yes

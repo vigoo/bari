@@ -1,0 +1,59 @@
+doctype html
+html()
+  head
+    include includes/head.jade
+
+  body
+    div(class='navbar navbar-inverse navbar-fixed-top')
+      div(class='container')
+        div(class='navbar-header')
+          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+
+          a(class='navbar-brand', href='index.html') bari
+
+        div(class='navbar-collapse collapse')
+          ul(class='nav navbar-nav')
+            li
+              a(href='index.html') Home
+            li(class='active')
+              a(href='about.html') About
+            li
+              a(href='gettingstarted.html') Getting started
+            li
+              a(href='contact.html') Contact
+
+      include includes/fork.jade
+
+    include includes/jumbotron.jade
+
+    div(class='container')
+      div(class='row')
+        div(class='col-xs-8')
+          h3 Overview
+          p(class="lead") Bari is a <i>build management system</i>, trying to fix Visual Studio's bad parts while keeping the good ones.
+          p Basically it tries to make .NET development more convenient, when
+            ul
+              li The application may consist of <strong>a large number of projects</strong>
+              li There may be several different <strong>subsets</strong> of these projects defining valuable target <strong>products</strong>
+              li <strong>Custom build steps</strong> may be required
+              li It is important to be able to <strong>reproduce</strong> the build environment as easily as possible
+              li The developers want to use the full power of their <strong>IDE</strong>
+
+          h3 Concepts
+
+          p The main idea is to generate Visual Studio solutions and projects <strong>on the fly</strong> as needed, from a concise <i>declarative</i> build description, optimized for human readability.
+          p To keep the build definitions short, bari prefers <a href="coc.html"><strong>convention over configuration</strong></a>. Many things has reasonable defaults, and the suite's filesystem layout itself is carrying information.
+
+          h3 Example
+
+          p The following example is part of bari's own build definition:
+          pre
+            include includes/example.yaml
+
+          div(class='alert alert-info')
+            p <strong>The name</strong> Bari was named after my dog, who is also responsible for the icon.					
+
+      include includes/footer.jade
