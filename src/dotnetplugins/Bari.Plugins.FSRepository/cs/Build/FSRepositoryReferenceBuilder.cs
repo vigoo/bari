@@ -12,6 +12,7 @@ using Bari.Plugins.FSRepository.Model;
 namespace Bari.Plugins.FSRepository.Build
 {
     [PersistentReference]
+    [FallbackToCache]
     public class FSRepositoryReferenceBuilder : IReferenceBuilder, IEquatable<FSRepositoryReferenceBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (FSRepositoryReferenceBuilder));

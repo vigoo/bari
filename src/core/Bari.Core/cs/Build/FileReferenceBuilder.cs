@@ -8,6 +8,7 @@ using Bari.Core.UI;
 
 namespace Bari.Core.Build
 {
+    [FallbackToCache]
     public class FileReferenceBuilder: IReferenceBuilder
     {
         private readonly IFileSystemDirectory targetRoot;

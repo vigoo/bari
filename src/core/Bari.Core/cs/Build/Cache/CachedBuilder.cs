@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 
@@ -100,7 +101,7 @@ namespace Bari.Core.Build.Cache
                         log.ErrorFormat("Failed to run builder {0}: {1}", wrappedBuilder.Uid, ex);
 
                         // Fallback to any cached value
-                        if (cache.ContainsAny(buildKey))
+                        if (SupportsFallback && cache.ContainsAny(buildKey))
                         {
                             log.DebugFormat("Restoring cached build outputs for {0} without fingerprint check", buildKey);
                             return cache.Restore(buildKey, targetDir);
@@ -148,6 +149,11 @@ namespace Bari.Core.Build.Cache
             {
                 cache.UnlockForBuilder(buildKey);
             }
+        }
+
+        private bool SupportsFallback
+        {
+            get { return wrappedBuilder.GetType().GetCustomAttributes(typeof (FallbackToCacheAttribute), false).Any(); }
         }
 
         /// <summary>
