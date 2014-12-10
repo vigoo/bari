@@ -19,6 +19,17 @@ fs-repositories:
     - lib/%NAME/%FILENAME.%EXT
 
 aliases:
+    common:
+        - gac://Microsoft.CSharp
+        - gac://System
+        - gac://System.Core
+        - gac://System.Data
+        - gac://System.Data.DataSetExtensions
+        - gac://System.Xml
+        - gac://System.Xml.Linq   
+    yaml:
+        - nuget://YamlDotNet.Core
+        - nuget://YamlDotNet.RepresentationModel
     ninject:
         - nuget://Castle.Core/3.0.0.4001
         - nuget://Ninject.Extensions.Factory/3.0.1
@@ -26,24 +37,21 @@ aliases:
             - nuget://Ninject/3.0.1.10
         - when mono:
             - fsrepo://ninject-mono/Ninject.dll
+    testing:
+        - nuget://FluentAssertions/2.2.0
+        - nuget://Moq
+        - nuget://NUnit
 
 modules:
     - name: core
       projects:
         - name: Bari.Core         
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq   
+            - alias://common
             - alias://ninject
             - nuget://Monads
             - nuget://log4net
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - nuget://DotNetZip
             - nuget://QuickGraph
             - nuget://Nuget.Core/1.5.20902.9026
@@ -72,19 +80,10 @@ modules:
       tests:
         - name: Bari.Core.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
+            - alias://common
             - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://testing
+            - alias://yaml
             - module://Bari.Core
         - name: bari.Test
           references:
@@ -93,9 +92,7 @@ modules:
             - gac://System.Xml.Linq
             - nuget://log4net
             - alias://ninject
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
-            - nuget://NUnit
+            - alias://testing
             - module://Bari.Core
             - module://bari
           csharp:
@@ -112,17 +109,10 @@ modules:
             - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
+            - alias://common
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - module://Bari.Plugins.VsCore
             - suite://core/Bari.Core
         - name: Bari.Plugins.Fsharp
@@ -131,8 +121,7 @@ modules:
             - gac://System.Xml
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - suite://core/Bari.Core
             - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.VCpp
@@ -141,23 +130,15 @@ modules:
             - gac://System.Xml
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - suite://core/Bari.Core
             - module://Bari.Plugins.VsCore            
         - name: Bari.Plugins.Nuget
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
+            - alias://common
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - suite://core/Bari.Core
             - module://Bari.Plugins.VsCore
             - module://Bari.Plugins.Csharp
@@ -169,89 +150,50 @@ modules:
             - nuget://log4net
             - alias://ninject
             - nuget://Monads
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel            
+            - alias://yaml
             - suite://core/Bari.Core            
         - name: Bari.Plugins.Gallio
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
+            - alias://common
             - nuget://log4net
             - alias://ninject
             - suite://core/Bari.Core            
         - name: Bari.Plugins.CodeContracts
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
+            - alias://common
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - suite://core/Bari.Core
             - module://Bari.Plugins.Csharp
             - module://Bari.Plugins.VsCore
       tests:
         - name: Bari.Plugins.Csharp.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
-            - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://common
+            - alias://testing
+            - alias://ninject            
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.Csharp                        
             - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.VCpp.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
+            - alias://common
+            - alias://testing
             - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.VCpp                        
             - module://Bari.Plugins.VsCore            
         - name: Bari.Plugins.FSRepository.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Xml
-            - gac://System.Xml.Linq            
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
-            - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://common           
+            - alias://testing
+            - alias://ninject            
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.FSRepository                        
@@ -269,19 +211,10 @@ modules:
       tests:
         - name: Bari.Plugins.PythonScripts.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
-            - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://common
+            - alias://testing
+            - alias://ninject            
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.PythonScripts
@@ -293,26 +226,16 @@ modules:
             - gac://System
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel            
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://dotnetplugins/Bari.Plugins.VsCore
       tests:
         - name: Bari.Plugins.AddonSupport.Test
           references:
-            - gac://Microsoft.CSharp
-            - gac://System
-            - gac://System.Core
-            - gac://System.Data
-            - gac://System.Data.DataSetExtensions
-            - gac://System.Xml
-            - gac://System.Xml.Linq
-            - nuget://FluentAssertions/2.2.0
-            - nuget://Moq
-            - alias://ninject
-            - nuget://NUnit
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel
+            - alias://common
+            - alias://testing
+            - alias://ninject            
+            - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
             - module://Bari.Plugins.AddonSupport            
@@ -324,8 +247,7 @@ modules:
             - gac://System
             - nuget://log4net
             - alias://ninject
-            - nuget://YamlDotNet.Core
-            - nuget://YamlDotNet.RepresentationModel            
+            - alias://yaml
             - suite://core/Bari.Core
 
 products:
