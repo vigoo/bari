@@ -241,6 +241,11 @@ namespace Bari.Core.Test.Helper
         {            
         }
 
+        public void CopyFile(string name, IFileSystemDirectory target, string targetName)
+        {
+            throw new NotImplementedException();
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;

@@ -94,6 +94,11 @@ namespace Bari.Plugins.Csharp.Test.Build
                 return true;
             }
 
+            public Type BuilderType
+            {
+                get { return typeof (RefBuilder); }
+            }
+
             /// <summary>
             /// Gets or sets the reference to be resolved
             /// </summary>

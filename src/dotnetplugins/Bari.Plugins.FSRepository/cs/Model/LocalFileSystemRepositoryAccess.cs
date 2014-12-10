@@ -55,11 +55,7 @@ namespace Bari.Plugins.FSRepository.Model
         /// <param name="targetFileName">Target file name</param>
         public void Copy(string path, IFileSystemDirectory targetDir, string targetFileName)
         {
-            using (var source = GetDirectory(path).ReadBinaryFile(Path.GetFileName(path)))
-            using (var target = targetDir.CreateBinaryFile(targetFileName))
-            {
-                StreamOperations.Copy(source, target);
-            }
+            GetDirectory(path).CopyFile(Path.GetFileName(path), targetDir, targetFileName);
         }
 
         /// <summary>

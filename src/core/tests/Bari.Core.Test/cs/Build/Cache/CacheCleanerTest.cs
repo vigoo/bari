@@ -40,6 +40,11 @@ namespace Bari.Core.Test.Build.Cache
             throw new NotImplementedException();
         }
 
+        public Type BuilderType
+        {
+            get { return typeof(NonPersistentReference); }
+        }
+
         public Reference Reference
         {
             get { throw new System.NotImplementedException(); }
@@ -78,6 +83,11 @@ namespace Bari.Core.Test.Build.Cache
         public bool CanRun()
         {
             throw new NotImplementedException();
+        }
+
+        public Type BuilderType
+        {
+            get { return typeof (PersistentReference); }
         }
 
         public Reference Reference

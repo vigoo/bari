@@ -128,6 +128,14 @@ namespace Bari.Core.Generic
         /// Remake the directory if it has been deleted
         /// </summary>
         void Remake();
+
+        /// <summary>
+        /// Copy a file to a target directory
+        /// </summary>
+        /// <param name="name">Name of the file</param>
+        /// <param name="target">Target file system directory</param>
+        /// <param name="targetName">Name (relative path) in the target directory</param>
+        void CopyFile(string name, IFileSystemDirectory target, string targetName);
     }
 
     /// <summary>
@@ -335,5 +343,18 @@ namespace Bari.Core.Generic
         /// Remake the directory if it has been deleted
         /// </summary>
         public abstract void Remake();
+
+        /// <summary>
+        /// Copy a file to a target directory
+        /// </summary>
+        /// <param name="name">Name of the file</param>
+        /// <param name="target">Target file system directory</param>
+        /// <param name="targetName">Name (relative path) in the target directory</param>
+        public void CopyFile(string name, IFileSystemDirectory target, string targetName)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(name));
+            Contract.Requires(!String.IsNullOrWhiteSpace(targetName));
+            Contract.Requires(target != null);
+        }
     }
 }

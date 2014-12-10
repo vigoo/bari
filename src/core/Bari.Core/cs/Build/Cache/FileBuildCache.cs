@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Generic;
 using MD5 = System.Security.Cryptography.MD5;
@@ -14,7 +16,7 @@ namespace Bari.Core.Build.Cache
     /// Build cache storing build outputs together with their actual dependency fingerprint
     /// in the file system.
     /// </summary>
-    public class FileBuildCache : IBuildCache
+    public class FileBuildCache : IBuildCache, IDisposable
     {
         private const bool EnableFingerprintDiff = false;
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(FileBuildCache));
@@ -25,6 +27,9 @@ namespace Bari.Core.Build.Cache
         private readonly IFileSystemDirectory cacheRoot;
         private readonly IProtocolSerializer protocolSerializer;
         private readonly IDictionary<BuildKey, ReaderWriterLockSlim> locks;
+
+        private readonly MD5 md5a = MD5.Create();
+        private readonly MD5 md5b = MD5.Create();
 
         /// <summary>
         /// Constructs the cache
@@ -245,18 +250,16 @@ namespace Bari.Core.Build.Cache
                 long targetSize = targetRoot.GetFileSize(targetRelativePath);
                 if (sourceSize == targetSize)
                 {
-                    byte[] sourceChecksum = ComputeChecksum(sourceDirectory, sourceFileName);
-                    byte[] targetChecksum = ComputeChecksum(targetRoot, targetRelativePath);
+                    var sourceChecksum = Task.Factory.StartNew(() => ComputeChecksum(md5a, sourceDirectory, sourceFileName));
+                    var targetChecksum = Task.Factory.StartNew(() => ComputeChecksum(md5b, targetRoot, targetRelativePath));
 
-                    copy = !sourceChecksum.SequenceEqual(targetChecksum);
+                    copy = !sourceChecksum.Result.SequenceEqual(targetChecksum.Result);
                 }
             }
 
             if (copy)
             {
-                using (var source = sourceDirectory.ReadBinaryFile(sourceFileName))
-                using (var target = targetRoot.CreateBinaryFileWithDirectories(targetRelativePath))
-                    StreamOperations.Copy(source, target);
+                sourceDirectory.CopyFile(sourceFileName, targetRoot, targetRelativePath);
             }
             else
             {
@@ -264,13 +267,12 @@ namespace Bari.Core.Build.Cache
             }
         }
 
-        private byte[] ComputeChecksum(IFileSystemDirectory root, string path)
+        private byte[] ComputeChecksum(HashAlgorithm hash, IFileSystemDirectory root, string path)
         {
             using (var stream = root.ReadBinaryFile(path))
-            using (var bufferedStream = new BufferedStream(stream, 1048576))
-            using (var md5 = MD5.Create())
+            using (var bufferedStream = new BufferedStream(stream, 1048576))            
             {
-                return md5.ComputeHash(bufferedStream);
+                return hash.ComputeHash(bufferedStream);
             }
         }
 
@@ -307,11 +309,7 @@ namespace Bari.Core.Build.Cache
                         // In this case we only have to save the filename, without its contents
                         if (targetRoot.Exists(outputPath))
                         {
-                            using (var source = targetRoot.ReadBinaryFile(outputPath))
-                            using (var target = cacheDir.CreateBinaryFile(idx.ToString(CultureInfo.InvariantCulture)))
-                            {
-                                StreamOperations.Copy(source, target);
-                            }
+                            targetRoot.CopyFile(outputPath, cacheDir, idx.ToString(CultureInfo.InvariantCulture));
                         }
 
                         names.WriteLine("{0};{1}", outputPath.RelativeRoot, outputPath.RelativePath);
@@ -347,6 +345,12 @@ namespace Bari.Core.Build.Cache
         private static string GetCacheDirectoryName(BuildKey builder)
         {
             return builder.ToString().Replace("/", "___");
+        }
+
+        public void Dispose()
+        {
+            md5a.Dispose();
+            md5b.Dispose();
         }
     }
 }

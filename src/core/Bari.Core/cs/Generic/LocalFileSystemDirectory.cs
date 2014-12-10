@@ -264,6 +264,36 @@ namespace Bari.Core.Generic
         }
 
         /// <summary>
+        /// Copy a file to a target directory
+        /// </summary>
+        /// <param name="name">Name of the file</param>
+        /// <param name="target">Target file system directory</param>
+        /// <param name="targetName">Name (relative path) in the target directory</param>
+        public void CopyFile(string name, IFileSystemDirectory target, string targetName)
+        {
+            var localTarget = target as LocalFileSystemDirectory;
+            if (localTarget != null)
+            {
+                var targetSubdir = Path.GetDirectoryName(targetName);
+
+                if (!String.IsNullOrWhiteSpace(targetSubdir))
+                {
+                    var absoluteTargetDir = Path.Combine(localTarget.AbsolutePath, targetSubdir);
+                    if (!Directory.Exists(absoluteTargetDir))
+                        Directory.CreateDirectory(absoluteTargetDir);
+                }
+
+                File.Copy(Path.Combine(path, name), Path.Combine(localTarget.AbsolutePath, targetName), overwrite: true);
+            }
+            else
+            {
+                using (var sourceStream = ReadBinaryFile(name))
+                using (var targetStream = target.CreateBinaryFileWithDirectories(targetName))
+                    StreamOperations.Copy(sourceStream, targetStream);
+            }
+        }
+
+        /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
@@ -288,7 +318,7 @@ namespace Bari.Core.Generic
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((LocalFileSystemDirectory) obj);
         }
 

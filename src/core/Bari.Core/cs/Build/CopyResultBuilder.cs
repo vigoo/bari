@@ -63,15 +63,15 @@ namespace Bari.Core.Build
             var files = context.GetResults(sourceBuilder);
 
             var result = new HashSet<TargetRelativePath>();
-
+            var relativeTargetDirectory = targetRoot.GetRelativePath(targetDirectory);
             foreach (var sourcePath in files)
             {
                 log.DebugFormat("Copying result {0}...", sourcePath);
 
                 var relativePath = sourcePath.RelativePath;
-                Copy(sourcePath, relativePath);
+                targetRoot.CopyFile(sourcePath, targetDirectory, relativePath);
 
-                result.Add(new TargetRelativePath(targetRoot.GetRelativePath(targetDirectory), relativePath));
+                result.Add(new TargetRelativePath(relativeTargetDirectory, relativePath));
             }
 
             return result;
@@ -94,13 +94,6 @@ namespace Bari.Core.Build
 			}
 		}
 
-        private void Copy(TargetRelativePath sourcePath, string relativePath)
-        {
-            using (var source = targetRoot.ReadBinaryFile(sourcePath))
-            using (var target = targetDirectory.CreateBinaryFileWithDirectories(relativePath))
-                StreamOperations.Copy(source, target);
-        }
-
         public override string ToString()
         {
             return String.Format("[result of {0} to {1}]", sourceBuilder, targetRoot.GetRelativePath(targetDirectory));
@@ -118,7 +111,7 @@ namespace Bari.Core.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((CopyResultBuilder) obj);
         }
 

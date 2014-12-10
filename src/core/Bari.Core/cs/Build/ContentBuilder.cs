@@ -69,6 +69,7 @@ namespace Bari.Core.Build
             var contents = project.GetSourceSet("content");
             var contentsDir = project.RootDirectory.GetChildDirectory("content");
 
+            var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
             var result = new HashSet<TargetRelativePath>();
             foreach (var sourcePath in contents.Files)
             {
@@ -76,7 +77,7 @@ namespace Bari.Core.Build
 
                 var relativePath = suiteRoot.GetRelativePathFrom(contentsDir, sourcePath);
 
-                Copy(sourcePath, relativePath);
+                suiteRoot.CopyFile(sourcePath, targetDir, relativePath);
 
                 result.Add(new TargetRelativePath(project.Module.Name, relativePath));
             }
@@ -100,21 +101,6 @@ namespace Bari.Core.Build
 				return typeof(ContentBuilder);
 			}
 		}
-
-        private void Copy(SuiteRelativePath sourcePath, string relativePath)
-        {
-            var relativeDir = Path.GetDirectoryName(relativePath);
-            var fileName = Path.GetFileName(relativePath);
-            var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true); 
-
-            IFileSystemDirectory realTargetDir = String.IsNullOrWhiteSpace(relativeDir)
-                ? targetDir
-                : targetDir.GetChildDirectory(relativeDir, createIfMissing: true);
-
-            using (var source = suiteRoot.ReadBinaryFile(sourcePath))
-            using (var target = realTargetDir.CreateBinaryFile(fileName))
-                StreamOperations.Copy(source, target);
-        }
 
         public override string ToString()
         {
