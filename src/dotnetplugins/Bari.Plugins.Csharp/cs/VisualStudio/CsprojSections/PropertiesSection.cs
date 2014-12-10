@@ -71,13 +71,16 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
         {
             writer.WriteElementString("OutputPath",
-                                      ToProjectRelativePath(project,
-                                                            Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
-                                                                         project.Module.Name), "cs"));
+                ToProjectRelativePath(project,
+                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
+                        project.Module.Name), "cs"));
             writer.WriteElementString("IntermediateOutputPath",
-                                      ToProjectRelativePath(project,
-                                                            Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp",
-                                                                         project.Module.Name), "cs"));
+                ToProjectRelativePath(project,
+                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
+                                "tmp",
+                                project.Module.Name,
+                                project.Name),
+                    "cs"));
         }
 
         private string GetOutputType(ProjectType type)

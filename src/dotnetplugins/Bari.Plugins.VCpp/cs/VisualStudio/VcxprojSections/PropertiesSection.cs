@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -247,7 +246,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             writer.WriteElementString("OutDir",
                                       ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.Module.Name), "cpp") + Path.DirectorySeparatorChar);
             writer.WriteElementString("IntDir",
-                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name), "cpp") + Path.DirectorySeparatorChar);
+                                      ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name, project.Name), "cpp") + Path.DirectorySeparatorChar);
 
             var manifestParameters = GetManifestParameters(project);
             writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.EmbedManifest));
