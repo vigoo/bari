@@ -29,12 +29,12 @@ namespace Bari.Core.Build.Statistics
 			var byTotal = builderStats.OrderByDescending(kv => kv.Value.Total);
 			foreach (var item in byTotal)
 			{
-				log.DebugFormat("# {0} ({1}x) => total: {1:F}s, average: {2:F}s", item.Key.Name, item.Value.Count, item.Value.Total.TotalSeconds, item.Value.Average.TotalSeconds);
+				log.DebugFormat("# {0} ({1}x) => total: {2:F3}s, average: {3:F3}s", item.Key.Name, item.Value.Count, item.Value.Total.TotalSeconds, item.Value.Average.TotalSeconds);
 
 				var records = item.Value.All.OrderByDescending(r => r.Length);
 				foreach (var record in records)
 				{
-					log.DebugFormat("    - {0}: {1:F}s", record.Id, record.Length);
+					log.DebugFormat("    - {0}: {1:F3}s", record.Id, record.Length.TotalSeconds);
 				}
 			}
 
