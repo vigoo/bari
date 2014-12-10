@@ -98,6 +98,14 @@ namespace Bari.Plugins.VsCore.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(MSBuildRunner);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

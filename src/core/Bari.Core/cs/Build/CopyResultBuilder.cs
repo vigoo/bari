@@ -86,6 +86,14 @@ namespace Bari.Core.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(CopyResultBuilder);
+			}
+		}
+
         private void Copy(TargetRelativePath sourcePath, string relativePath)
         {
             using (var source = targetRoot.ReadBinaryFile(sourcePath))

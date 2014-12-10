@@ -166,6 +166,14 @@ namespace Bari.Plugins.VsCore.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(SlnBuilder);
+			}
+		}
+
         private IEnumerable<Project> GetInSolutionReferences(Project project)
         {
             foreach (var reference in project.References)

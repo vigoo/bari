@@ -59,6 +59,14 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(PythonScriptedPostProcessor);
+			}
+		}
+
         public PostProcessDefinition Definition
         {
             get { return definition; }

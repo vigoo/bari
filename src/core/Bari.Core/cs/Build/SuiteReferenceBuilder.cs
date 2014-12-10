@@ -174,6 +174,14 @@ namespace Bari.Core.Build
             get { return true; }
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(SuiteReferenceBuilder);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

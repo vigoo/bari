@@ -12,7 +12,7 @@ namespace Bari.Core.Build
     /// A reference builder implementation which is a placeholder for a set of real references
     /// given by a name.
     /// </summary>
-    public class AliasReferenceBuilder: IReferenceBuilder, IEquatable<AliasReferenceBuilder>
+	public class AliasReferenceBuilder: IReferenceBuilder, IEquatable<AliasReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly Project project;
@@ -162,6 +162,14 @@ namespace Bari.Core.Build
         {
             return string.Format("[{0} ({1})]", reference.Uri, reference.Type);
         }
+
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(AliasReferenceBuilder);
+			}
+		}
 
         public bool Equals(AliasReferenceBuilder other)
         {

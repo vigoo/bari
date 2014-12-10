@@ -91,6 +91,14 @@ namespace Bari.Plugins.VsCore.Build
             get { return true; }
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(GacReferenceBuilder);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

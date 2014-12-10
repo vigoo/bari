@@ -157,6 +157,14 @@ namespace Bari.Plugins.FSRepository.Build
             get { return true; }
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(FSRepositoryReferenceBuilder);
+			}
+		}
+
         private void ResolveReference()
         {
             var uri = reference.Uri;

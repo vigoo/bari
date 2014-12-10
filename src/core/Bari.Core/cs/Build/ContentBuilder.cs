@@ -93,6 +93,14 @@ namespace Bari.Core.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(ContentBuilder);
+			}
+		}
+
         private void Copy(SuiteRelativePath sourcePath, string relativePath)
         {
             var relativeDir = Path.GetDirectoryName(relativePath);

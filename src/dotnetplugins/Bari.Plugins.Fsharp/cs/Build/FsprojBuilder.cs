@@ -191,6 +191,14 @@ namespace Bari.Plugins.Fsharp.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(FsprojBuilder);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

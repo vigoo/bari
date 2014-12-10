@@ -150,6 +150,14 @@ namespace Bari.Plugins.Nuget.Build
             get { return true; }
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(NugetReferenceBuilder);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

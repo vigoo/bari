@@ -9,6 +9,7 @@ using Bari.Core.Generic.Graph;
 using QuickGraph;
 using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
+using Bari.Core.Build.Statistics;
 
 namespace Bari.Core.Build
 {
@@ -30,14 +31,20 @@ namespace Bari.Core.Build
             new HashSet<Func<ISet<EquatableEdge<IBuilder>>, bool>>();
 
         private readonly ICachedBuilderFactory cachedBuilderFactory;
+		private readonly IMonitoredBuilderFactory monitoredBuilderFactory;
+		private readonly Func<IBuilderStatistics> createBuilderStatistics;
 
         /// <summary>
         /// Initializes the build context
         /// </summary>
         /// <param name="cachedBuilderFactory">Interface to create new cached builders</param>
-        public BuildContext(ICachedBuilderFactory cachedBuilderFactory)
+		/// <param name="monitoredBuilderFactory">Interface to create new monitored builders</param>
+		/// <param name="createBuilderStatistics">Factory function for IBuilderStatistics instances</param>
+		public BuildContext(ICachedBuilderFactory cachedBuilderFactory, IMonitoredBuilderFactory monitoredBuilderFactory, Func<IBuilderStatistics> createBuilderStatistics)
         {
             this.cachedBuilderFactory = cachedBuilderFactory;
+			this.monitoredBuilderFactory = monitoredBuilderFactory;
+			this.createBuilderStatistics = createBuilderStatistics;
         }
 
         /// <summary>
@@ -95,22 +102,21 @@ namespace Bari.Core.Build
 
                     log.DebugFormat("Build order:\n {0}\n", String.Join("\n ", sortedBuilders));
 
+					var statistics = createBuilderStatistics();
+
                     foreach (var builder in sortedBuilders)
                     {
                         log.DebugFormat("===> {0}", builder);
-                        var watch = new Stopwatch();                        
 
-                        var cachedBuilder = CreateCachedBuilder(builder);
+						var wrappedBuilder = WrapBuilder(builder, statistics);
 
-                        watch.Start();
-                        var builderResult = cachedBuilder.Run(this);
-                        watch.Stop();
-
-                        log.DebugFormat("!!! {0} took {1} seconds", builder, watch.Elapsed.TotalSeconds);
+						var builderResult = wrappedBuilder.Run(this);
 
                         partialResults.Add(builder, builderResult);
                         result.UnionWith(builderResult);
                     }
+
+					statistics.Dump();
                 }
                 else
                 {
@@ -125,7 +131,17 @@ namespace Bari.Core.Build
             return result;
         }
 
-        private IBuilder CreateCachedBuilder(IBuilder builder)
+		private IBuilder WrapBuilder(IBuilder builder, IBuilderStatistics statistics)
+		{
+			return CreateMonitoredBuilder(CreateCachedBuilder(builder, statistics), statistics);
+		}
+
+		private IBuilder CreateMonitoredBuilder(IBuilder builder, IBuilderStatistics statistics)
+		{
+			return monitoredBuilderFactory.CreateMonitoredBuilder(builder, statistics);
+		}
+
+		private IBuilder CreateCachedBuilder(IBuilder builder, IBuilderStatistics statistics)
         {
             if (builder.GetType().GetCustomAttributes(typeof (ShouldNotCacheAttribute), true).Any())
             {
@@ -133,7 +149,7 @@ namespace Bari.Core.Build
             }
             else
             {
-                return cachedBuilderFactory.CreateCachedBuilder(builder);
+				return cachedBuilderFactory.CreateCachedBuilder(CreateMonitoredBuilder(builder, statistics));
             }
         }
 

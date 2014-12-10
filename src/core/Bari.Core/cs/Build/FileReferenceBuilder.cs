@@ -91,6 +91,14 @@ namespace Bari.Core.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(FileReferenceBuilder);
+			}
+		}
+
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>

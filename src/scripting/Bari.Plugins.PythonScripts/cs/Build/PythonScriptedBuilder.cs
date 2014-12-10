@@ -69,6 +69,14 @@ namespace Bari.Plugins.PythonScripts.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(PythonScriptedBuilder);
+			}
+		}
+
         public PythonScriptedBuilder(Project project, IBuildScript buildScript, ISourceSetFingerprintFactory fingerprintFactory, IProjectBuildScriptRunner scriptRunner)
         {
             this.project = project;

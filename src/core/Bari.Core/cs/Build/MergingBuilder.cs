@@ -86,6 +86,14 @@ namespace Bari.Core.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(MergingBuilder);
+			}
+		}
+
         public override string ToString()
         {
             return String.Format("[Merge #{0}]", debugId);

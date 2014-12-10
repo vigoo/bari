@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Bari.Core.Generic;
+using System;
 
 namespace Bari.Core.Build
 {
@@ -41,13 +42,19 @@ namespace Bari.Core.Build
         /// </summary>
         /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
         bool CanRun();
+
+		/// <summary>
+		/// Gets the type of the builder, without any decorators.
+		/// </summary>
+		/// <value>The type of the builder.</value>
+		Type BuilderType { get; }
     }
 
     /// <summary>
     /// Contracts for <see cref="IBuilder"/> interface
     /// </summary>
     [ContractClassFor(typeof(IBuilder))]
-    abstract class IBuilderContracts : IBuilder
+	abstract class IBuilderContracts : IBuilder
     {
         /// <summary>
         /// Dependencies required for running this builder
@@ -98,5 +105,14 @@ namespace Bari.Core.Build
         /// </summary>
         /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
         public abstract bool CanRun();
+
+		public Type BuilderType
+		{
+			get
+			{
+				Contract.Ensures(Contract.Result<Type>() != null);
+				return null; // dummy
+			}
+		}
     }
 }

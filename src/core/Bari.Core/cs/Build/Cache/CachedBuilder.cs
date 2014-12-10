@@ -11,7 +11,7 @@ namespace Bari.Core.Build.Cache
     /// Wraps a builder so it is only ran if its dependencies has been modified,
     /// or the cache has been corrupted.
     /// </summary>
-    public class CachedBuilder : IBuilder
+	public class CachedBuilder : IBuilder
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(CachedBuilder));
 
@@ -70,7 +70,7 @@ namespace Bari.Core.Build.Cache
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
+			var buildKey = new BuildKey(wrappedBuilder.BuilderType, wrappedBuilder.Uid);
 
             cache.LockForBuilder(buildKey);
             try
@@ -138,7 +138,7 @@ namespace Bari.Core.Build.Cache
         /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
         public bool CanRun()
         {
-            var buildKey = new BuildKey(wrappedBuilder.GetType(), wrappedBuilder.Uid);
+			var buildKey = new BuildKey(wrappedBuilder.BuilderType, wrappedBuilder.Uid);
 
             cache.LockForBuilder(buildKey);
             try
@@ -153,8 +153,16 @@ namespace Bari.Core.Build.Cache
 
         private bool SupportsFallback
         {
-            get { return wrappedBuilder.GetType().GetCustomAttributes(typeof (FallbackToCacheAttribute), false).Any(); }
+			get { return wrappedBuilder.BuilderType.GetCustomAttributes(typeof (FallbackToCacheAttribute), false).Any(); }
         }
+
+		public Type BuilderType
+		{
+			get
+			{
+				return wrappedBuilder.BuilderType;
+			}
+		}
 
         /// <summary>
         /// Returns a string that represents the current object.

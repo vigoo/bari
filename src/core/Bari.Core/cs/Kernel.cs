@@ -19,6 +19,7 @@ using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Parameters;
 using Ninject.Syntax;
+using Bari.Core.Build.Statistics;
 
 namespace Bari.Core
 {
@@ -98,6 +99,10 @@ namespace Bari.Core
 
             // Default serializer
             kernel.Bind<IProtocolSerializer>().To<BinarySerializer>();
+
+			// Builder statistics
+			kernel.Bind<IBuilderStatistics>().To<DefaultBuilderStatistics>();
+			kernel.Bind<IMonitoredBuilderFactory>().ToFactory();
 
             // Default build context
             kernel.Bind<IBuildContext>().To<BuildContext>();

@@ -201,6 +201,14 @@ namespace Bari.Plugins.VCpp.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(VcxprojBuilder);
+			}
+		}
+
         /// <summary>
         /// Gets the target relative path to the outmost directory in which the <see cref="Run"/> method generates
         /// any files.

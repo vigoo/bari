@@ -210,6 +210,14 @@ namespace Bari.Plugins.Csharp.Build
             return true;
         }
 
+		public Type BuilderType
+		{
+			get
+			{
+				return typeof(CsprojBuilder);
+			}
+		}
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
