@@ -12,3 +12,9 @@ modules:
     - name: OtherModule
       projects:
          - name: Dep
+
+products:
+    - name: all
+      modules:
+        - HelloWorld
+        - OtherModule

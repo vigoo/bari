@@ -159,6 +159,33 @@ Function CppReleaseTest
     }
 }
 
+Function MultiSolutionTest
+{
+    Write-Host "..multi-solution-test.." -NoNewline
+
+    Push-Location -Path "suite-ref-test"
+    Clean "multi-solution-test1"
+    BuildProduct "multi-solution-test1" "all"
+    $res1 = (InternalCheckExe "multi-solution-test1" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+
+    Get-ChildItem "target" | Remove-Item -Recurse -Force 
+
+    BuildProduct "multi-solution-test2" "HelloWorld"
+    $res2 = (InternalCheckExe "multi-solution-test2" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+
+    Get-ChildItem "target" | Remove-Item -Recurse -Force 
+
+    BuildProduct "multi-solution-test3" "all"
+    $res3 = (InternalCheckExe "multi-solution-test3" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+
+    Pop-Location
+
+    if ($res1 -and $res2 -and $res3)
+    {
+        Write-Host "OK"
+    }
+}
+
 Write-Host "Executing system tests for bari..."
 Initialize
 
@@ -183,3 +210,4 @@ ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 
 CppReleaseTest
 SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
 SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+MultiSolutionTest
