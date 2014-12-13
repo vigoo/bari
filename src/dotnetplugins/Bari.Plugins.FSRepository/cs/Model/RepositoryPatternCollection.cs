@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Text;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.FSRepository.Model
@@ -50,9 +51,11 @@ namespace Bari.Plugins.FSRepository.Model
         /// </summary>
         /// <param name="context">Resolution context</param>
         /// <returns>Returns the path to the dependency if resolution succeeded. Otherwise it returns <c>null</c>.</returns>
-        public string Resolve(IPatternResolutionContext context)
+        public PatternResolution Resolve(IPatternResolutionContext context)
         {
             Contract.Requires(context != null);
+
+            var logLines = new StringBuilder();
 
             foreach (RepositoryPattern pattern in patterns)
             {
@@ -60,15 +63,16 @@ namespace Bari.Plugins.FSRepository.Model
 
                 if (res != null)
                 {
-                    log.DebugFormat("Trying resolved FS repository path: {0}", res);
+                    logLines.AppendFormat("Trying resolved FS repository path: {0}\n", res);
 
                     if (fsAccess.Exists(res))
-                        return res;
+                        return PatternResolution.Success(res);
                     else
-                        log.DebugFormat("FS repository path `{0}` is invalid", res);
+                        logLines.AppendFormat("FS repository path `{0}` is invalid\n", res);
                 }
             }
-            return null;
+
+            return PatternResolution.Failure(logLines.ToString());
         }
     }
 }

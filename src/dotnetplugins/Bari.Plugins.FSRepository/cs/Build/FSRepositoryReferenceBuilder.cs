@@ -143,10 +143,14 @@ namespace Bari.Plugins.FSRepository.Build
             var uri = reference.Uri;
             var repositories = suite.GetFSRepositories();
             resolutionContext = new UriBasedPatternResolutionContext(uri);
-            resolvedPath = repositories.Resolve(resolutionContext);
+            var resolution = repositories.Resolve(resolutionContext);
 
-            if (resolvedPath == null)
+            resolvedPath = resolution.Result;
+            if (!resolution.IsSuccesful)
+            {
+                log.Debug(resolution.FailLog);
                 throw new InvalidReferenceException("Could not resolve FS repository dependency: " + uri);
+            }
         }
 
         /// <summary>
