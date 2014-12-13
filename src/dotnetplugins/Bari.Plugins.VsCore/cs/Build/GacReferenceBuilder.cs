@@ -19,7 +19,7 @@ namespace Bari.Plugins.VsCore.Build
     /// </para>
     /// </summary>
     [ShouldNotCache]
-    public class GacReferenceBuilder : IReferenceBuilder, IEquatable<GacReferenceBuilder>
+    public class GacReferenceBuilder : BuilderBase<GacReferenceBuilder>, IReferenceBuilder, IEquatable<GacReferenceBuilder>
     {
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (GacReferenceBuilder));
 
@@ -28,7 +28,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get { return new NoDependencies(); }
         }
@@ -36,7 +36,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return reference.Uri.Host; }
         }
@@ -47,7 +47,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {           
             context.AddBuilder(this, new IBuilder[0]);
         }
@@ -57,7 +57,7 @@ namespace Bari.Plugins.VsCore.Build
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             log.DebugFormat("Resolving reference {0}", reference.Uri);
 
@@ -69,7 +69,7 @@ namespace Bari.Plugins.VsCore.Build
                 });
         }
 
-        public bool CanRun()
+        public override bool CanRun()
         {
             return true;
         }
@@ -91,7 +91,7 @@ namespace Bari.Plugins.VsCore.Build
             get { return true; }
         }
 
-		public Type BuilderType
+        public override Type BuilderType
 		{
 			get
 			{

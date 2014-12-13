@@ -9,7 +9,7 @@ using Bari.Core.Model;
 namespace Bari.Plugins.VsCore.Build
 {
     [ShouldNotCache]
-    public class InSolutionReferenceBuilder: IReferenceBuilder, IEquatable<InSolutionReferenceBuilder>
+    public class InSolutionReferenceBuilder: ReferenceBuilderBase<InSolutionReferenceBuilder>, IReferenceBuilder, IEquatable<InSolutionReferenceBuilder>
     {
         private readonly Project project;
         private Reference reference;
@@ -20,76 +20,36 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         /// <summary>
-        /// Dependencies required for running this builder
-        /// </summary>
-        public IDependencies Dependencies
-        {
-            get { return new NoDependencies(); }
-        }
-
-        /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return project.Module.Name + "#" + project.Name; }
         }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
-
+        
         /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            // TODO
             return new HashSet<TargetRelativePath>(
                 new[]
                     {
                         new TargetRelativePath(String.Empty, "SLN!"+Uid), 
                     });
         }
-
-        public bool CanRun()
-        {
-            return true;
-        }
-
+        
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
-        public Reference Reference
+        public override Reference Reference
         {
             get { return reference; }
             set { reference = value; }
         }
 
-        /// <summary>
-        /// If <c>false</c>, the reference builder can be ignored as an optimization
-        /// </summary>
-        public bool IsEffective
-        {
-            get { return true; }
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(InSolutionReferenceBuilder);
-			}
-		}
 
         /// <summary>
         /// Returns a string that represents the current object.

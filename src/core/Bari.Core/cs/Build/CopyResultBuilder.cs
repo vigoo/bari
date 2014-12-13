@@ -8,7 +8,7 @@ using Bari.Core.Generic;
 namespace Bari.Core.Build
 {
     [ShouldNotCache]
-    public class CopyResultBuilder : IBuilder, IEquatable<CopyResultBuilder>
+    public class CopyResultBuilder : BuilderBase<CopyResultBuilder>, IEquatable<CopyResultBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ContentBuilder));
 
@@ -26,7 +26,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -37,7 +37,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return sourceBuilder.Uid + "__" + targetRoot.GetRelativePath(targetDirectory).Replace(Path.DirectorySeparatorChar, '_'); }
         }
@@ -48,7 +48,7 @@ namespace Bari.Core.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             context.AddBuilder(this, new[] { sourceBuilder });
         }
@@ -58,7 +58,7 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var files = context.GetResults(sourceBuilder);
 
@@ -77,22 +77,6 @@ namespace Bari.Core.Build
             return result;
         }
 
-        /// <summary>
-        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
-        /// </summary>
-        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(CopyResultBuilder);
-			}
-		}
 
         public override string ToString()
         {

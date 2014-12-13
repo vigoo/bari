@@ -10,7 +10,7 @@ using Bari.Plugins.PythonScripts.Scripting;
 
 namespace Bari.Plugins.PythonScripts.Build.PostProcessors
 {
-    public class PythonScriptedPostProcessor: IPostProcessor
+    public class PythonScriptedPostProcessor: BuilderBase<PythonScriptedPostProcessor>, IPostProcessor
     {
         private readonly IPostProcessorScript script;
         private readonly IPostProcessorsHolder target;
@@ -27,7 +27,10 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             this.dependencies = new HashSet<IBuilder>(dependencies);
         }
 
-        public IDependencies Dependencies
+        /// <summary>
+        /// Dependencies required for running this builder
+        /// </summary>
+        public override IDependencies Dependencies
         {
             get
             {
@@ -39,34 +42,35 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             }
         }
 
-        public string Uid
+        /// <summary>
+        /// Gets an unique identifier which can be used to identify cached results
+        /// </summary>
+        public override string Uid
         {
             get { return string.Format("pp/{0}/{1}", target, script.Name); }
         }
 
-        public void AddToContext(IBuildContext context)
+        /// <summary>
+        /// Prepares a builder to be ran in a given build context.
+        /// 
+        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// </summary>
+        /// <param name="context">The current build context</param>
+        public override void AddToContext(IBuildContext context)
         {
             context.AddBuilder(this, dependencies);
         }
 
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        /// <summary>
+        /// Runs this builder
+        /// </summary>
+        /// <param name="context">Current build context</param>
+        /// <returns>Returns a set of generated files, in target relative paths</returns>
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             return scriptRunner.Run(target, definition, script);
         }
-
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(PythonScriptedPostProcessor);
-			}
-		}
-
+        
         public PostProcessDefinition Definition
         {
             get { return definition; }

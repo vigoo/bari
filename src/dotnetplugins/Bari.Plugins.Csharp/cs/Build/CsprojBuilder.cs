@@ -18,7 +18,7 @@ namespace Bari.Plugins.Csharp.Build
     /// 
     /// <para>Uses the <see cref="CsprojGenerator"/> class internally.</para>
     /// </summary>
-    public class CsprojBuilder : ISlnProjectBuilder, IEquatable<CsprojBuilder>
+    public class CsprojBuilder : BuilderBase<CsprojBuilder>, ISlnProjectBuilder, IEquatable<CsprojBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CsprojBuilder));
 
@@ -62,7 +62,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -125,7 +125,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return project.Module.Name + "." + project.Name; }
         }
@@ -136,7 +136,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             if (!context.Contains(this))
             {
@@ -175,7 +175,7 @@ namespace Bari.Plugins.Csharp.Build
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var csprojPath = project.Name + ".csproj";
             const string csversionPath = "version.cs";
@@ -204,19 +204,6 @@ namespace Bari.Plugins.Csharp.Build
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csversionPath)))
                     });
         }
-
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(CsprojBuilder);
-			}
-		}
 
         /// <summary>
         /// Returns a string that represents the current object.

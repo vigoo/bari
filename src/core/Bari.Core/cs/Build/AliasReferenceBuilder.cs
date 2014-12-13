@@ -12,7 +12,7 @@ namespace Bari.Core.Build
     /// A reference builder implementation which is a placeholder for a set of real references
     /// given by a name.
     /// </summary>
-	public class AliasReferenceBuilder: IReferenceBuilder, IEquatable<AliasReferenceBuilder>
+	public class AliasReferenceBuilder: ReferenceBuilderBase<AliasReferenceBuilder>, IReferenceBuilder, IEquatable<AliasReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly Project project;
@@ -35,7 +35,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return string.Format("alias.{0}__{1}", reference.Uri.Host, reference.Type); }
         }
@@ -65,7 +65,7 @@ namespace Bari.Core.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             builders.Clear();
 
@@ -96,7 +96,7 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var results = new HashSet<TargetRelativePath>();
 
@@ -108,19 +108,11 @@ namespace Bari.Core.Build
             return results;
         }
 
-        /// <summary>
-        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
-        /// </summary>
-        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
-        public bool CanRun()
-        {
-            return true;
-        }
 
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
-        public Reference Reference
+        public override Reference Reference
         {
             get { return reference; }
             set
@@ -140,7 +132,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// If <c>false</c>, the reference builder can be ignored as an optimization
         /// </summary>
-        public bool IsEffective
+        public override bool IsEffective
         {
             get
             {
@@ -163,13 +155,6 @@ namespace Bari.Core.Build
             return string.Format("[{0} ({1})]", reference.Uri, reference.Type);
         }
 
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(AliasReferenceBuilder);
-			}
-		}
 
         public bool Equals(AliasReferenceBuilder other)
         {

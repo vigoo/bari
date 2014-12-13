@@ -26,7 +26,7 @@ namespace Bari.Plugins.Nuget.Build
     /// </summary>
     [PersistentReference]
     [FallbackToCache]
-    public class NugetReferenceBuilder: IReferenceBuilder, IEquatable<NugetReferenceBuilder>
+    public class NugetReferenceBuilder: ReferenceBuilderBase<NugetReferenceBuilder>, IReferenceBuilder, IEquatable<NugetReferenceBuilder>
     {
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (NugetReferenceBuilder));
 
@@ -51,40 +51,22 @@ namespace Bari.Plugins.Nuget.Build
             this.output = output;
             this.project = project;
         }
-
-        /// <summary>
-        /// Dependencies required for running this builder
-        /// </summary>
-        public IDependencies Dependencies
-        {
-            get { return new NoDependencies(); }
-        }
-
+        
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return reference.Uri.Host + "-" + reference.Uri.AbsolutePath.TrimStart('/'); }
         }
 
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
 
         /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             if (output != null)
                 output.Message(String.Format("Resolving reference {0}", reference.Uri));
@@ -101,11 +83,6 @@ namespace Bari.Plugins.Nuget.Build
                 from path in files.Item2
                 let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
                 select new TargetRelativePath(relativeRoot, relativePath));
-        }
-
-        public bool CanRun()
-        {
-            return true;
         }
 
         private NugetLibraryProfile GetMaxProfile()
@@ -136,27 +113,11 @@ namespace Bari.Plugins.Nuget.Build
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
-        public Reference Reference
+        public override Reference Reference
         {
             get { return reference; }
             set { reference = value; }
         }
-
-        /// <summary>
-        /// If <c>false</c>, the reference builder can be ignored as an optimization
-        /// </summary>
-        public bool IsEffective
-        {
-            get { return true; }
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(NugetReferenceBuilder);
-			}
-		}
 
         /// <summary>
         /// Returns a string that represents the current object.

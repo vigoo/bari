@@ -12,7 +12,7 @@ namespace Bari.Plugins.PythonScripts.Build
     /// <summary>
     /// Builder that executes a python script on a given project's given source set
     /// </summary>
-    public class PythonScriptedBuilder: IBuilder, IEquatable<PythonScriptedBuilder>
+    public class PythonScriptedBuilder: BuilderBase<PythonScriptedBuilder>, IEquatable<PythonScriptedBuilder>
     {
         private readonly Project project;
         private readonly IBuildScript buildScript;
@@ -22,7 +22,7 @@ namespace Bari.Plugins.PythonScripts.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -38,45 +38,21 @@ namespace Bari.Plugins.PythonScripts.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return project.Module + "." + project.Name + "/" + buildScript.Name; }
         }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
-
+        
         /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             return scriptRunner.Run(project, buildScript);
         }
-
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(PythonScriptedBuilder);
-			}
-		}
-
+        
         public PythonScriptedBuilder(Project project, IBuildScript buildScript, ISourceSetFingerprintFactory fingerprintFactory, IProjectBuildScriptRunner scriptRunner)
         {
             this.project = project;
@@ -115,7 +91,7 @@ namespace Bari.Plugins.PythonScripts.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((PythonScriptedBuilder) obj);
         }
 

@@ -9,7 +9,7 @@ using Bari.Core.UI;
 namespace Bari.Core.Build
 {
     [FallbackToCache]
-    public class FileReferenceBuilder: IReferenceBuilder
+    public class FileReferenceBuilder: ReferenceBuilderBase<FileReferenceBuilder>, IReferenceBuilder
     {
         private readonly IFileSystemDirectory targetRoot;
         private readonly IUserOutput output;
@@ -24,7 +24,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -35,7 +35,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get
             {
@@ -45,23 +45,13 @@ namespace Bari.Core.Build
             }
         }
 
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
 
         /// <summary>
         /// Runs this builder
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             if (output != null)
                 output.Message(String.Format("Resolving reference {0}", reference.Uri));
@@ -83,37 +73,12 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
-        /// Verifies if the builder is able to run. Can be used to fallback to cached results without getting en error.
-        /// </summary>
-        /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(FileReferenceBuilder);
-			}
-		}
-
-        /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
-        public Reference Reference
+        public override Reference Reference
         {
             get { return reference; }
             set { reference = value; }
-        }
-
-        /// <summary>
-        /// If <c>false</c>, the reference builder can be ignored as an optimization
-        /// </summary>
-        public bool IsEffective
-        {
-            get { return true; }
         }
 
         /// <summary>

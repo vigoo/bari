@@ -15,7 +15,7 @@ namespace Bari.Plugins.VsCore.Build
     /// <summary>
     /// Builder for generating Visual Studio solution files from a set of projects.
     /// </summary>
-    public class SlnBuilder : IBuilder, IEquatable<SlnBuilder>
+    public class SlnBuilder : BuilderBase<SlnBuilder>, IBuilder, IEquatable<SlnBuilder>
     {
         private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
         private readonly IEnumerable<ISolutionItemProvider> solutionItemProviders;
@@ -75,7 +75,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get { return projectDependencies; }
         }
@@ -93,7 +93,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return slnNameGenerator.GetName(projects); }
         }
@@ -104,7 +104,7 @@ namespace Bari.Plugins.VsCore.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             if (!context.Contains(this))
             {
@@ -148,7 +148,7 @@ namespace Bari.Plugins.VsCore.Build
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             string slnPath = Uid + ".sln";
 
@@ -161,12 +161,12 @@ namespace Bari.Plugins.VsCore.Build
             return new HashSet<TargetRelativePath> { new TargetRelativePath(String.Empty, slnPath) };
         }
 
-        public bool CanRun()
+        public override bool CanRun()
         {
             return true;
         }
 
-		public Type BuilderType
+        public override Type BuilderType
 		{
 			get
 			{

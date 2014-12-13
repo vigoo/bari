@@ -19,7 +19,7 @@ namespace Bari.Plugins.VCpp.Build
     /// 
     /// <para>Uses the <see cref="VcxprojGenerator"/> class internally.</para>
     /// </summary>
-    public class VcxprojBuilder: ISlnProjectBuilder, IEquatable<VcxprojBuilder>
+    public class VcxprojBuilder: BuilderBase<VcxprojBuilder>, ISlnProjectBuilder, IEquatable<VcxprojBuilder>
     {
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
@@ -61,7 +61,7 @@ namespace Bari.Plugins.VCpp.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get
             {
@@ -126,7 +126,7 @@ namespace Bari.Plugins.VCpp.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return project.Module.Name + "." + project.Name; }
         }
@@ -137,7 +137,7 @@ namespace Bari.Plugins.VCpp.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             if (!context.Contains(this))
             {
@@ -171,7 +171,7 @@ namespace Bari.Plugins.VCpp.Build
         /// </summary>
         /// <param name="context"> </param>
         /// <returns>Returns a set of generated files, in suite relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var vcxprojPath = project.Name + ".vcxproj";
 
@@ -195,19 +195,6 @@ namespace Bari.Plugins.VCpp.Build
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "cpp", vcxprojPath))),
                     });
         }
-
-        public bool CanRun()
-        {
-            return true;
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(VcxprojBuilder);
-			}
-		}
 
         /// <summary>
         /// Gets the target relative path to the outmost directory in which the <see cref="Run"/> method generates

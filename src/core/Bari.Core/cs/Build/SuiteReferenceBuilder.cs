@@ -19,7 +19,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the given module.
     /// </para>
     /// </summary>
-    public class SuiteReferenceBuilder : IReferenceBuilder, IEquatable<SuiteReferenceBuilder>, IEquatable<ModuleReferenceBuilder>
+    public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IReferenceBuilder, IEquatable<SuiteReferenceBuilder>, IEquatable<ModuleReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -64,7 +64,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
-        public IDependencies Dependencies
+        public override IDependencies Dependencies
         {
             get { return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks); }
         }
@@ -72,7 +72,7 @@ namespace Bari.Core.Build
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
-        public string Uid
+        public override string Uid
         {
             get { return reference.Uri.Host + "." + Reference.Uri.AbsolutePath.TrimStart('/'); }
         }
@@ -83,7 +83,7 @@ namespace Bari.Core.Build
         /// <para>This is the place where a builder can add additional dependencies.</para>
         /// </summary>
         /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
+        public override void AddToContext(IBuildContext context)
         {
             var moduleName = reference.Uri.Host;
             var projectName = reference.Uri.AbsolutePath.TrimStart('/');
@@ -137,7 +137,7 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="context">Current build context</param>
         /// <returns>Returns a set of generated files, in target relative paths</returns>
-        public ISet<TargetRelativePath> Run(IBuildContext context)
+        public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var result = new HashSet<TargetRelativePath>();
             foreach (var subtask in subtasks)
@@ -152,36 +152,16 @@ namespace Bari.Core.Build
                 path => Path.GetFileNameWithoutExtension(path).ToLowerInvariant() == expectedFileName));
         }
 
-        public bool CanRun()
-        {
-            return true;
-        }
-
         /// <summary>
         /// Gets or sets the reference to be resolved
         /// </summary>
-        public Reference Reference
+        public override Reference Reference
         {
             get { return reference; }
             set { reference = value; }
         }
 
-        /// <summary>
-        /// If <c>false</c>, the reference builder can be ignored as an optimization
-        /// </summary>
-        public bool IsEffective
-        {
-            get { return true; }
-        }
-
-		public Type BuilderType
-		{
-			get
-			{
-				return typeof(SuiteReferenceBuilder);
-			}
-		}
-
+        
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
