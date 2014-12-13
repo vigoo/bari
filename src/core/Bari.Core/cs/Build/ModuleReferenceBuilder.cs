@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -19,7 +20,8 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the same module where the reference has been used.
     /// </para>
     /// </summary>
-    public class ModuleReferenceBuilder : ReferenceBuilderBase<ModuleReferenceBuilder>, IReferenceBuilder, IEquatable<ModuleReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
+    [AggressiveCacheRestore]
+    public class ModuleReferenceBuilder : ReferenceBuilderBase<ModuleReferenceBuilder>, IEquatable<ModuleReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
         private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;

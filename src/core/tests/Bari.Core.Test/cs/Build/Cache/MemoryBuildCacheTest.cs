@@ -124,7 +124,7 @@ namespace Bari.Core.Test.Build.Cache
             target.Setup(t => t.CreateBinaryFile("b")).Returns(b);
             target.Setup(t => t.CreateBinaryFile("c")).Returns(c);
             
-            var paths = cache.Restore(T, target.Object);
+            var paths = cache.Restore(T, target.Object, false);
 
             paths.Should().HaveCount(3).And.Contain(
                 new[]
@@ -154,7 +154,7 @@ namespace Bari.Core.Test.Build.Cache
         [Test]
         public void RestoreNonCachedItemDoesNotDoAnything()
         {
-            cache.Restore(T, root).Should().BeEmpty();
+            cache.Restore(T, root, false).Should().BeEmpty();
         }
     }
 }

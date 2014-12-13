@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 
@@ -18,6 +19,9 @@ namespace Bari.Core.Build.Cache
         private readonly IBuilder wrappedBuilder;
         private readonly IBuildCache cache;
         private readonly IFileSystemDirectory targetDir;
+        private readonly bool supportsFallback;
+        private readonly bool aggressive;
+        private readonly Regex[] agressiveModeExceptions;
 
         /// <summary>
         /// Dependencies required for running this builder
@@ -50,6 +54,14 @@ namespace Bari.Core.Build.Cache
             this.wrappedBuilder = wrappedBuilder;
             this.cache = cache;
             this.targetDir = targetDir;
+
+            supportsFallback = wrappedBuilder.BuilderType.GetCustomAttributes(typeof(FallbackToCacheAttribute), false).Any();
+
+            var agressiveAttribute = wrappedBuilder.BuilderType.GetCustomAttributes(typeof (AggressiveCacheRestoreAttribute), false).OfType<AggressiveCacheRestoreAttribute>().FirstOrDefault();
+            aggressive = agressiveAttribute != null;
+            agressiveModeExceptions = agressiveAttribute != null
+                ? agressiveAttribute.ExceptionExpressions
+                : new Regex[0];
         }
 
         /// <summary>
@@ -84,7 +96,7 @@ namespace Bari.Core.Build.Cache
                         if (cache.Contains(buildKey, currentFingerprint))
                         {
                             log.DebugFormat("Restoring cached build outputs for {0}", buildKey);
-                            return cache.Restore(buildKey, targetDir);
+                            return cache.Restore(buildKey, targetDir, aggressive, agressiveModeExceptions);
                         }
                         else
                         {
@@ -104,7 +116,7 @@ namespace Bari.Core.Build.Cache
                         if (SupportsFallback && cache.ContainsAny(buildKey))
                         {
                             log.DebugFormat("Restoring cached build outputs for {0} without fingerprint check", buildKey);
-                            return cache.Restore(buildKey, targetDir);
+                            return cache.Restore(buildKey, targetDir, aggressive, agressiveModeExceptions);
                         }
                         else
                         {
@@ -118,7 +130,7 @@ namespace Bari.Core.Build.Cache
                     if (cache.ContainsAny(buildKey))
                     {
                         log.DebugFormat("Restoring cached build outputs for {0} without fingerprint check", buildKey);
-                        return cache.Restore(buildKey, targetDir);
+                        return cache.Restore(buildKey, targetDir, aggressive, agressiveModeExceptions);
                     }
                     else
                     {
@@ -153,7 +165,7 @@ namespace Bari.Core.Build.Cache
 
         private bool SupportsFallback
         {
-			get { return wrappedBuilder.BuilderType.GetCustomAttributes(typeof (FallbackToCacheAttribute), false).Any(); }
+			get { return supportsFallback; }
         }
 
 		public Type BuilderType

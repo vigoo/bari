@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -12,7 +13,8 @@ namespace Bari.Core.Build
     /// A reference builder implementation which is a placeholder for a set of real references
     /// given by a name.
     /// </summary>
-	public class AliasReferenceBuilder: ReferenceBuilderBase<AliasReferenceBuilder>, IReferenceBuilder, IEquatable<AliasReferenceBuilder>
+	[AggressiveCacheRestore]
+    public class AliasReferenceBuilder: ReferenceBuilderBase<AliasReferenceBuilder>, IEquatable<AliasReferenceBuilder>
     {
         private readonly Suite suite;
         private readonly Project project;

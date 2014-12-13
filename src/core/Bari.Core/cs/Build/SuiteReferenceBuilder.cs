@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -19,6 +20,7 @@ namespace Bari.Core.Build
     /// means the project called <c>ProjectName</c> in the given module.
     /// </para>
     /// </summary>
+    [AggressiveCacheRestore]
     public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IReferenceBuilder, IEquatable<SuiteReferenceBuilder>, IEquatable<ModuleReferenceBuilder>
     {
         private readonly Suite suite;

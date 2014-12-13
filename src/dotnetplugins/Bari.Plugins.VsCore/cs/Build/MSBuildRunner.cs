@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -12,7 +13,8 @@ namespace Bari.Plugins.VsCore.Build
     /// <summary>
     /// Builder for running MSBuild on a Visual Studio solution file.
     /// </summary>
-    public class MSBuildRunner: BuilderBase<MSBuildRunner>, IBuilder, IEquatable<MSBuildRunner>
+    [AggressiveCacheRestore(Exceptions = new [] { @".+\.vshost\.exe$" })]
+    public class MSBuildRunner: BuilderBase<MSBuildRunner>, IEquatable<MSBuildRunner>
     {
         private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;

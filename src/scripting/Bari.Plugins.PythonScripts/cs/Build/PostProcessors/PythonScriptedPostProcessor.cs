@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -10,6 +11,7 @@ using Bari.Plugins.PythonScripts.Scripting;
 
 namespace Bari.Plugins.PythonScripts.Build.PostProcessors
 {
+    [AggressiveCacheRestore]
     public class PythonScriptedPostProcessor: BuilderBase<PythonScriptedPostProcessor>, IPostProcessor
     {
         private readonly IPostProcessorScript script;

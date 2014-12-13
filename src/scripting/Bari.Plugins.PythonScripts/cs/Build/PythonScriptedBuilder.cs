@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -12,6 +13,7 @@ namespace Bari.Plugins.PythonScripts.Build
     /// <summary>
     /// Builder that executes a python script on a given project's given source set
     /// </summary>
+    [AggressiveCacheRestore]
     public class PythonScriptedBuilder: BuilderBase<PythonScriptedBuilder>, IEquatable<PythonScriptedBuilder>
     {
         private readonly Project project;

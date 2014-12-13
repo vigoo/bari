@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Bari.Core.Build.Dependencies.Protocol;
@@ -178,9 +179,11 @@ namespace Bari.Core.Build.Cache
         /// </summary>
         /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
+        /// <param name="aggressive">If <c>true</c>, files in the target directory won't be checked by hash before overriding them</param>
+        /// <param name="aggressiveExceptions">Exceptions to the aggresivve mode. Can be <c>null</c> if not used.</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
         public
-        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot)
+        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot, bool aggressive, Regex[] aggressiveExceptions = null)
         {
             var lck = GetOrCreateLock(builder);
             lck.EnterReadLock();
@@ -212,7 +215,15 @@ namespace Bari.Core.Build.Cache
                                     // It is possible that only a file name (a virtual file) was cached without any contents:
                                     if (cacheDir.Exists(cacheFileName))
                                     {
-                                        CopyIfDifferent(cacheDir, cacheFileName, targetRoot, fullPath);
+                                        if (aggressive && BeAggressive(aggressiveExceptions, fullPath))
+                                            cacheDir.CopyFile(cacheFileName, targetRoot, fullPath);
+                                        else
+                                        {
+                                            if (aggressive)
+                                                log.DebugFormat("Agressive cache restore is disabled for file {0}", fullPath);
+
+                                            CopyIfDifferent(cacheDir, cacheFileName, targetRoot, fullPath);
+                                        }
                                     }
 
                                     result.Add(new TargetRelativePath(relativeRoot, relativePath));
@@ -231,6 +242,12 @@ namespace Bari.Core.Build.Cache
             {
                 lck.ExitReadLock();
             }
+        }
+
+        private static bool BeAggressive(IEnumerable<Regex> aggressiveExceptions, string fullPath)
+        {
+            return aggressiveExceptions == null ||
+                   !aggressiveExceptions.Any(r => r.IsMatch(fullPath));
         }
 
         /// <summary>

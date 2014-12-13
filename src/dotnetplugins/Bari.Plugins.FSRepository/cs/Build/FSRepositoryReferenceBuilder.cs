@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Bari.Core.Build;
+using Bari.Core.Build.Cache;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -13,7 +14,8 @@ namespace Bari.Plugins.FSRepository.Build
 {
     [PersistentReference]
     [FallbackToCache]
-    public class FSRepositoryReferenceBuilder : ReferenceBuilderBase<FSRepositoryReferenceBuilder>, IReferenceBuilder, IEquatable<FSRepositoryReferenceBuilder>
+    [AggressiveCacheRestore]
+    public class FSRepositoryReferenceBuilder : ReferenceBuilderBase<FSRepositoryReferenceBuilder>, IEquatable<FSRepositoryReferenceBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (FSRepositoryReferenceBuilder));
 

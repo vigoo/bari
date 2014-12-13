@@ -54,7 +54,7 @@ namespace Bari.Core.Test.Build.Cache
 
             // Modifying cache behavior
             cache.Setup(c => c.Contains(new BuildKey(realBuilder.Object.BuilderType, ""), initialFingerprint.Object)).Returns(true);
-            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir)).Returns(resultSet);
+            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir, It.IsAny<bool>())).Returns(resultSet);
 
             // Running the builder for the second time
             var result2 = cachedBuilder.Run(buildContext.Object);
@@ -147,7 +147,7 @@ namespace Bari.Core.Test.Build.Cache
             var cachedBuilder = new CachedBuilder(realBuilder.Object, cache.Object, targetDir);
 
             cache.Setup(c => c.ContainsAny(new BuildKey(realBuilder.Object.BuilderType, ""))).Returns(true);
-            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir)).Returns(resultSet);
+            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir, It.IsAny<bool>())).Returns(resultSet);
 
             // Making it wrong
             realBuilder.Setup(b => b.CanRun()).Returns(false);
@@ -187,7 +187,7 @@ namespace Bari.Core.Test.Build.Cache
             var cachedBuilder = new CachedBuilder(realBuilder.Object, cache.Object, targetDir);
 
             cache.Setup(c => c.ContainsAny(new BuildKey(realBuilder.Object.BuilderType, ""))).Returns(true);
-            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir)).Returns(resultSet);
+            cache.Setup(c => c.Restore(new BuildKey(realBuilder.Object.BuilderType, ""), targetDir, It.IsAny<bool>())).Returns(resultSet);
 
             // Making it wrong
             realBuilder.Setup(b => b.Run(It.IsAny<IBuildContext>())).Throws<InvalidOperationException>();

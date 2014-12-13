@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -9,6 +10,7 @@ using Bari.Core.UI;
 namespace Bari.Core.Build
 {
     [FallbackToCache]
+    [AggressiveCacheRestore]
     public class FileReferenceBuilder: ReferenceBuilderBase<FileReferenceBuilder>, IReferenceBuilder
     {
         private readonly IFileSystemDirectory targetRoot;

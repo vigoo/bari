@@ -11,6 +11,7 @@ namespace Bari.Core.Build
     /// Copies the contents of a given project's <c>content</c> source set to the target directory
     /// </summary>
     [ShouldNotCache]
+    [AggressiveCacheRestore]
     public class ContentBuilder: BuilderBase<ContentBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ContentBuilder));

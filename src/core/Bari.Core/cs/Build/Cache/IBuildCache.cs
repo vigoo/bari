@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build.Cache
@@ -66,7 +67,9 @@ namespace Bari.Core.Build.Cache
         /// </summary>
         /// <param name="builder">Builder key</param>
         /// <param name="targetRoot">Target file system directory</param>
+        /// <param name="aggressive">If <c>true</c>, files in the target directory won't be checked by hash before overriding them</param>
+        /// <param name="aggressiveExceptions">Exceptions to the aggresivve mode. Can be <c>null</c> if not used.</param>
         /// <returns>Returns the target root relative paths of all the restored files</returns>
-        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot);
+        ISet<TargetRelativePath> Restore(BuildKey builder, IFileSystemDirectory targetRoot, bool aggressive, Regex[] aggressiveExceptions = null);
     }
 }

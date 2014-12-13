@@ -8,6 +8,7 @@ using Bari.Core.Generic;
 namespace Bari.Core.Build
 {
     [ShouldNotCache]
+    [AggressiveCacheRestore]
     public class CopyResultBuilder : BuilderBase<CopyResultBuilder>, IEquatable<CopyResultBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ContentBuilder));

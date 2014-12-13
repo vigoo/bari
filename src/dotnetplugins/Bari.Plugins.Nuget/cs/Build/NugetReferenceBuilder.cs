@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bari.Core.Build;
-using Bari.Core.Build.Dependencies;
+using Bari.Core.Build.Cache;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.UI;
@@ -26,7 +26,8 @@ namespace Bari.Plugins.Nuget.Build
     /// </summary>
     [PersistentReference]
     [FallbackToCache]
-    public class NugetReferenceBuilder: ReferenceBuilderBase<NugetReferenceBuilder>, IReferenceBuilder, IEquatable<NugetReferenceBuilder>
+    [AggressiveCacheRestore]
+    public class NugetReferenceBuilder: ReferenceBuilderBase<NugetReferenceBuilder>, IEquatable<NugetReferenceBuilder>
     {
         private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (NugetReferenceBuilder));
 
