@@ -31,7 +31,9 @@ namespace Bari.Plugins.Csharp.Commands.Clean
         {
             foreach (var projectRoot in from module in suite.Modules
                                         from project in module.Projects.Concat(module.TestProjects)
-                                        select project.RootDirectory)
+                                        let root = project.RootDirectory
+                                        where root != null
+                                        select root)
             {
                 var csRoot = projectRoot.GetChildDirectory("cs");
                 if (csRoot != null)

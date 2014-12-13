@@ -34,6 +34,7 @@ namespace Bari.Plugins.VCpp.Commands.Clean
         {
             foreach (var project in from module in suite.Modules
                                         from project in module.Projects.Concat(module.TestProjects)
+                                        where project.RootDirectory != null
                                         select project)
             {
                 var projectRoot = project.RootDirectory;
