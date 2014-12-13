@@ -23,7 +23,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
 
             var resolution = patterns.Resolve(context.Object);
 
-            resolution.Should().Be("pattern1");
+            resolution.Result.Should().Be("pattern1");
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
 
             var resolution = patterns.Resolve(context.Object);
 
-            resolution.Should().Be("pattern2");
+            resolution.Result.Should().Be("pattern2");
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
 
             var resolution = patterns.Resolve(context.Object);
 
-            resolution.Should().BeNull();
+            resolution.Result.Should().BeNull();
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
 
             var resolution = patterns.Resolve(context.Object);
 
-            resolution.Should().BeNull();
+            resolution.Result.Should().BeNull();
         }
 
         private Mock<IPatternResolutionContext> CreateContext()
