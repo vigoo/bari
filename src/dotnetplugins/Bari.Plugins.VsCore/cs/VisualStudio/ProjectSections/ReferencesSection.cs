@@ -14,6 +14,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
     {
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly string sourceSetName;
+        private readonly IProjectPathManagement pathManagement;
         private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
@@ -22,12 +23,14 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         /// <param name="suite">Active suite</param>
         /// <param name="projectGuidManagement">Project GUID management service</param>
         /// <param name="sourceSetName">Source set name</param>
+        /// <param name="pathManagement">Project-projectfile mapping</param>
         /// <param name="targetDir">Target directory where the compiled files will be placed</param>
-        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, string sourceSetName, [TargetRoot] IFileSystemDirectory targetDir)
+        public ReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, string sourceSetName, IProjectPathManagement pathManagement, [TargetRoot] IFileSystemDirectory targetDir)
             : base(suite)
         {
             this.projectGuidManagement = projectGuidManagement;
             this.sourceSetName = sourceSetName;
+            this.pathManagement = pathManagement;
             this.targetDir = targetDir;
         }
 
@@ -56,14 +59,29 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                         referredProject.Type == ProjectType.Executable)
                     {
                         writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(referredProject));
-                        writer.WriteStartElement("Reference");
-                        writer.WriteAttributeString("Include", projectName);
-                        writer.WriteElementString("HintPath",
-                            ToProjectRelativePath(project,
-                                Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name,
-                                    referredProject.Name + ".dll"), sourceSetName));
-                        writer.WriteElementString("SpecificVersion", "False");
-                        writer.WriteEndElement();
+
+                        var projectPath = pathManagement.GetProjectFile(referredProject);
+                        if (projectPath != null)
+                        {
+                            writer.WriteStartElement("ProjectReference");
+                            writer.WriteAttributeString("Include",
+                                Suite.SuiteRoot.GetRelativePathFrom(
+                                    project.RootDirectory.GetChildDirectory(
+                                        project.RootDirectory.ChildDirectories.First()), projectPath));
+                            writer.WriteElementString("Project", projectGuidManagement.GetGuid(project).ToString("B"));
+                            writer.WriteEndElement();
+                        }
+                        else
+                        {
+                            writer.WriteStartElement("Reference");
+                            writer.WriteAttributeString("Include", projectName);
+                            writer.WriteElementString("HintPath",
+                                ToProjectRelativePath(project,
+                                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), referredProject.Module.Name,
+                                        referredProject.Name + ".dll"), sourceSetName));
+                            writer.WriteElementString("SpecificVersion", "False");
+                            writer.WriteEndElement();
+                        }
                     }
                 }
                 else

@@ -1,7 +1,9 @@
 ﻿using Bari.Core.Build;
 using Bari.Core.Commands.Clean;
+using Bari.Core.Model.Discovery;
 using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.Model.Discovery;
 using Bari.Plugins.VsCore.Tools;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
@@ -27,8 +29,11 @@ namespace Bari.Plugins.VsCore
 
             Bind<IProjectBuilderFactory>().To<VsProjectBuilderFactory>();
             Bind<IProjectPlatformManagement>().To<DefaultProjectPlatformManagement>().InSingletonScope();
+            Bind<IProjectPathManagement>().To<DefaultProjectPathManagement>().InSingletonScope();
 
             Bind<ISolutionItemProvider>().To<SuiteDefinitionSolutionItemProvider>();
+
+            Bind<ISuiteExplorer>().To<ProjectPathExplorer>();
 
             var parameters = Kernel.Get<IParameters>();
 
