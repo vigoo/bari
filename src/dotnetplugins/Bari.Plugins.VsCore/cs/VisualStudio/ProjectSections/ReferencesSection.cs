@@ -68,7 +68,8 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                                 Suite.SuiteRoot.GetRelativePathFrom(
                                     project.RootDirectory.GetChildDirectory(
                                         project.RootDirectory.ChildDirectories.First()), projectPath));
-                            writer.WriteElementString("Project", projectGuidManagement.GetGuid(project).ToString("B"));
+                            writer.WriteElementString("Project", projectGuidManagement.GetGuid(referredProject).ToString("B"));
+                            writer.WriteElementString("Name", referredProject.Name);
                             writer.WriteEndElement();
                         }
                         else
