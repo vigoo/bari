@@ -36,5 +36,13 @@ namespace Bari.Plugins.VsCore.VisualStudio
         public abstract string ProjectTypeGuid { get; }
 
         public abstract ISlnProjectBuilder CreateBuilder(Project project);
+
+        public virtual bool SupportsProjectReferences
+        { 
+            get
+            {
+                return true;
+            }
+        }
     }
 }

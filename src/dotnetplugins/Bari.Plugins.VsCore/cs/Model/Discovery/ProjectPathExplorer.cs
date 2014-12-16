@@ -13,7 +13,7 @@ namespace Bari.Plugins.VsCore.Model.Discovery
         private readonly IProjectPathManagement pathManagement;
         public ProjectPathExplorer(IEnumerable<ISlnProject> supportedSlnProjects, IProjectPathManagement pathManagement)
         {
-            this.supportedSlnProjects = supportedSlnProjects.ToList();
+            this.supportedSlnProjects = supportedSlnProjects.Where(p => p.SupportsProjectReferences).ToList();
             this.pathManagement = pathManagement;
         }
 

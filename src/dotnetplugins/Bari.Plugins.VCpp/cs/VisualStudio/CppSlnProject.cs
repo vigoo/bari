@@ -39,5 +39,13 @@ namespace Bari.Plugins.VCpp.VisualStudio
         {
             return builderFactory.CreateFsprojBuilder(project);
         }
+
+        public override bool SupportsProjectReferences
+        { 
+            get
+            {
+                return false;
+            }
+        }
     }
 }

@@ -34,5 +34,11 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// </summary>
         /// <returns></returns>
         ISlnProjectBuilder CreateBuilder(Project project);
+
+		/// <summary>
+		/// Gets whether the given VS project type can be referenced to with <c>ProjectReference</c>
+		/// </summary>
+		/// <value><c>true</c> if supports project references; otherwise, <c>false</c>.</value>
+		bool SupportsProjectReferences { get; }
     }
 }
