@@ -136,11 +136,6 @@ namespace Bari.Core.Generic
         /// <param name="target">Target file system directory</param>
         /// <param name="targetName">Name (relative path) in the target directory</param>
         void CopyFile(string name, IFileSystemDirectory target, string targetName);
-
-        /// <summary>
-        /// Starts a file system watcher for this directory and its subdirectories
-        /// </summary>
-        IFileSystemDirectoryWatcher Watch();
     }
 
     /// <summary>
@@ -360,12 +355,6 @@ namespace Bari.Core.Generic
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
             Contract.Requires(!String.IsNullOrWhiteSpace(targetName));
             Contract.Requires(target != null);
-        }
-
-        public IFileSystemDirectoryWatcher Watch()
-        {
-            Contract.Ensures(Contract.Result<IFileSystemDirectoryWatcher> () != null);
-            return null; // dummy
         }
     }
 }

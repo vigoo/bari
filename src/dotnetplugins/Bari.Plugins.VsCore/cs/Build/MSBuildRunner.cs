@@ -7,7 +7,6 @@ using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.Tools;
-using System.IO;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -17,8 +16,6 @@ namespace Bari.Plugins.VsCore.Build
     [AggressiveCacheRestore(Exceptions = new [] { @".+\.vshost\.exe$" })]
     public class MSBuildRunner: BuilderBase<MSBuildRunner>, IEquatable<MSBuildRunner>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(MSBuildRunner));
-
         private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
         private readonly IFileSystemDirectory targetRoot;
@@ -82,31 +79,18 @@ namespace Bari.Plugins.VsCore.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            var modules = new HashSet<Module>(from proj in slnBuilder.Projects select proj.Module);
-            var outputs = new HashSet<TargetRelativePath>();
-            var watcher = targetRoot.Watch();
-
-            watcher.Changed += (sender, e) =>
-            {
-                var elements = e.RelativePath.Split(Path.DirectorySeparatorChar);
-                if (elements.Length > 1)
-                {
-                    var moduleName = elements[0];
-                    if (modules.Any(m => m.Name == moduleName))
-                    {
-                        if (targetRoot.Exists(e.RelativePath))
-                        {
-                            outputs.Add(new TargetRelativePath(
-                                moduleName, 
-                                e.RelativePath.Substring(moduleName.Length).TrimStart(Path.DirectorySeparatorChar)));
-                        }
-                    }
-                }
-            };
-
             msbuild.Run(targetRoot, slnPath);
 
-            watcher.Stop();
+            // Collecting all the files in 'targetdir/modulename' directories as results
+            var modules = new HashSet<Module>(from proj in slnBuilder.Projects select proj.Module);
+            var outputs = new HashSet<TargetRelativePath>();
+            foreach (var module in modules)
+            {
+                var moduleTargetDir = targetRoot.GetChildDirectory(module.Name);
+                if (moduleTargetDir != null)
+                    foreach (var fileName in moduleTargetDir.Files)
+                        outputs.Add(new TargetRelativePath(module.Name, fileName));
+            }
 
             return outputs;
         }
