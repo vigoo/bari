@@ -246,6 +246,11 @@ namespace Bari.Core.Test.Helper
             throw new NotImplementedException();
         }
 
+        public IFileSystemDirectoryWatcher Watch()
+        {
+            throw new NotImplementedException ();
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;
