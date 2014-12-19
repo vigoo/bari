@@ -15,11 +15,8 @@ namespace Bari.Core.Generic
         {
             this.path = path;
 
-            watcher = new FileSystemWatcher(path)
-            {
-                IncludeSubdirectories = true, 
-                NotifyFilter = NotifyFilters.FileName
-            };
+            watcher = new FileSystemWatcher(path);
+            watcher.IncludeSubdirectories = true;
             watcher.Changed += OnChanged;
             watcher.Created += OnChanged;
             watcher.Deleted += OnChanged;
