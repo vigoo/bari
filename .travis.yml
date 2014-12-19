@@ -11,8 +11,8 @@ before_install:
  - sudo installer -pkg "MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg" -target /
  - mkdir _bootstrap
  - cd _bootstrap
- - wget "https://github.com/vigoo/bari/releases/download/1.0/bari-1.0.zip"
- - unzip bari-1.0.zip
+ - wget "https://github.com/vigoo/bari/releases/download/1.0-mono/bari-mono-1.0.zip"
+ - unzip bari-mono-1.0.zip
 # - mono bari.exe selfupdate
 
 
