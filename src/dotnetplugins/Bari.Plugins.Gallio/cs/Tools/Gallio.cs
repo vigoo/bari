@@ -14,7 +14,7 @@ namespace Bari.Plugins.Gallio.Tools
 
         public Gallio([TargetRoot] IFileSystemDirectory targetDir, IParameters parameters)
             : base("Gallio", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "gallio"),
-                   @"bin\Gallio.Echo.exe", new Uri("http://mb-unit.googlecode.com/files/GallioBundle-3.4.14.0.zip"), true, parameters)
+                   Path.Combine("bin", "Gallio.Echo.exe"), new Uri("http://mb-unit.googlecode.com/files/GallioBundle-3.4.14.0.zip"), true, parameters)
         {
             this.targetDir = targetDir;
         }
