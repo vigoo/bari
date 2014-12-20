@@ -26,4 +26,4 @@ $webclient.DownloadFile($url,$file)
 Write-Output "Unpacking bari"
 
 zip x $barizip -o_bootstrap
-# _bootstrap\bari selfupdate
+_bootstrap\bari selfupdate
