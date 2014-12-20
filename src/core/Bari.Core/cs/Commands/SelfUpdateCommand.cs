@@ -105,7 +105,7 @@ Example: `bari selfupdate`
 
         private IPreparedUpdate PrepareUpdate(AppUpdater updater, IExtendedFileSystem fileSystem, IPackage package)
         {
-            if (package == null || package.Id != "bari")
+            if (package == null)
                 throw new ArgumentNullException("package");
 
             if (package.Version < updater.CurrentVersion)
