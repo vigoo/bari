@@ -94,13 +94,12 @@ Example: `bari selfupdate`
 
                 output.Message("Update completed.");
                 output.Warning("You should rebuild your suites with the updated bari before using them!");
-                return true; 
             }
             else
             {
                 output.Message("No updates available.");
-                return false;
             }
+            return true;            
         }
 
         private IPreparedUpdate PrepareUpdate(AppUpdater updater, IExtendedFileSystem fileSystem, IPackage package)
