@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Bari.Core.Build.Cache;
@@ -229,6 +228,22 @@ namespace Bari.Core.Build
         public bool Contains(IBuilder builder)
         {
             return builders.Any(edge => Equals(edge.Source, builder) || Equals(edge.Target, builder));
+        }
+
+        /// <summary>
+        /// Gets all the result files under the given subdirectory of target root
+        /// </summary>
+        /// <param name="targetDir">Subdirectory of target</param>
+        /// <returns>An enumeration of target relative paths all pointing to files 
+        /// generated under the current build context to the given subdirectory or one of 
+        /// its children.</returns>
+        public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
+        {
+            var prefix = (string)targetDir;
+            if (prefix[prefix.Length - 1] != Path.DirectorySeparatorChar)
+                prefix += Path.DirectorySeparatorChar;
+
+            return partialResults.Values.SelectMany(ps => ps.Where(p => ((string)p).StartsWith(prefix)));
         }
     }
 }

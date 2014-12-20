@@ -65,6 +65,15 @@ namespace Bari.Core.Build
         /// <param name="builder">Builder to look for</param>
         /// <returns>Returns <c>true</c> if the builder is added to the context</returns>
         bool Contains(IBuilder builder);
+
+        /// <summary>
+        /// Gets all the result files under the given subdirectory of target root
+        /// </summary>
+        /// <param name="targetDir">Subdirectory of target</param>
+        /// <returns>An enumeration of target relative paths all pointing to files 
+        /// generated under the current build context to the given subdirectory or one of 
+        /// its children.</returns>
+        IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir);
     }
 
     /// <summary>
@@ -153,6 +162,14 @@ namespace Bari.Core.Build
         {
             Contract.Requires(builder != null);
             return false; // dummy
+        }
+
+        public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
+        {
+            Contract.Requires(targetDir != null);
+            Contract.Ensures(Contract.Result<IEnumerable<TargetRelativePath>>() != null);
+
+            return null; // dummy
         }
     }
 }

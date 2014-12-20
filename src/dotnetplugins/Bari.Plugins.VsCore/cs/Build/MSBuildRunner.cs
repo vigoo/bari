@@ -92,6 +92,9 @@ namespace Bari.Plugins.VsCore.Build
                         outputs.Add(new TargetRelativePath(module.Name, fileName));
             }
 
+            foreach (var module in modules)            
+                outputs.ExceptWith(context.GetAllResultsIn(new TargetRelativePath(module.Name, String.Empty)));
+
             return outputs;
         }
 

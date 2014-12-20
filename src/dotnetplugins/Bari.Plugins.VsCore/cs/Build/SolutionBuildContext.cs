@@ -132,5 +132,10 @@ namespace Bari.Plugins.VsCore.Build
 
             return baseContext.Contains(converted ?? resolved);
         }
+
+        public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
+        {
+            return baseContext.GetAllResultsIn(targetDir);
+        }
     }
 }
