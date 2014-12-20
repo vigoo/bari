@@ -78,7 +78,8 @@ namespace Bari.Core.Tools
                 if (File.Exists(defaultExe))
                     return defaultExe;
 
-                throw new InvalidOperationException("Tool not found");
+                throw new InvalidOperationException(
+                    String.Format("Tool not found at {0} or {1}", downloadedExe, defaultExe));
             }
         }
 
