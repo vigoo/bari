@@ -16,7 +16,7 @@ before_install:
 
 
 script:
- - mono _bootstrap/bari.exe -v --target release rebuild full 
- - mono _bootstrap/bari.exe -v --target release test
- - mono _bootstrap/bari.exe -v --target release pack full
+ - mono _bootstrap/bari.exe -v --target release-mono rebuild full 
+ - mono _bootstrap/bari.exe -v --target release-mono test
+ - mono _bootstrap/bari.exe -v --target release-mono pack full
 
