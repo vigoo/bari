@@ -22,7 +22,7 @@ namespace Bari.Plugins.NUnit.Tools
         public bool RunTests(IEnumerable<TargetRelativePath> testAssemblies)
         {
             List<string> ps = testAssemblies.Select(p => (string)p).ToList();
-            ps.Add("/result:test-report.xml");
+            ps.Add("-result=test-report.xml");
             return Run(targetDir, ps.ToArray());
         }
     }
