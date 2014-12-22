@@ -14,7 +14,6 @@ using Bari.Core.Commands.Test;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
-using log4net.Plugin;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Parameters;
@@ -77,6 +76,7 @@ namespace Bari.Core
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
 
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlReferenceAliasesLoader>();
+            kernel.Bind<IYamlProjectParametersLoader>().To<YamlTestsLoader>();
 
             // Command factory and enumerator
             RegisterCommandFactory(kernel);

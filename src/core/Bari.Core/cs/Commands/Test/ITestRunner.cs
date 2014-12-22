@@ -10,6 +10,11 @@ namespace Bari.Core.Commands.Test
     public interface ITestRunner
     {
         /// <summary>
+        /// Gets the name which can be used to refere to this test runner in the suite configuration
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Runs the tests for the given test projects (<see cref="TestProject"/>)
         /// </summary>
         /// <param name="projects">Test projects to be ran</param>

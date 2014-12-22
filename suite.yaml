@@ -3,6 +3,10 @@ suite:      bari
 version:    1.0.0.$BUILDNO
 contracts:  enabled
 
+test:
+  enabled-runners:
+    - nunit
+
 goals:
     - name: debug
     - name: release
@@ -158,6 +162,12 @@ modules:
             - nuget://log4net
             - alias://ninject
             - suite://core/Bari.Core            
+        - name: Bari.Plugins.NUnit
+          references:
+            - alias://common
+            - nuget://log4net
+            - alias://ninject
+            - suite://core/Bari.Core
         - name: Bari.Plugins.CodeContracts
           references:
             - alias://common

@@ -49,10 +49,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
 
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
         {
-            writer.WriteElementString("OutputPath",
-                ToProjectRelativePath(project,
-                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
-                        project.Module.Name), "fs"));
+            writer.WriteElementString("OutputPath", ToProjectRelativePath(project, GetOutputPath(targetDir, project), "fs"));
             writer.WriteElementString("IntermediateOutputPath",
                 ToProjectRelativePath(project,
                     Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),

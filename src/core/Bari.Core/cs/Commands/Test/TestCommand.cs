@@ -104,8 +104,9 @@ Example: `bari test --dump`
 
                 log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
+                var tests = suite.HasParameters("test") ? suite.GetParameters<Tests>("test") : new Tests();
                 var buildOutputs = RunWithProjects(projects, dumpMode);
-                return RunTests(projects, buildOutputs);
+                return RunTests(tests, projects, buildOutputs);
             }
             else
             {
@@ -113,14 +114,24 @@ Example: `bari test --dump`
             }
         }
 
-        private bool RunTests(IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
+        private bool RunTests(Tests tests, IEnumerable<TestProject> projects, IEnumerable<TargetRelativePath> buildOutputs)
         {
             var testProjects = projects as List<TestProject> ?? projects.ToList();
             var buildOutputPaths = buildOutputs as List<TargetRelativePath> ?? buildOutputs.ToList();
 
             return testRunners
+                .Where(testRunner => IsRunnerEnabled(tests, testRunner))
                 .Select(testRunner => testRunner.Run(testProjects, buildOutputPaths))
                 .All(result => result);
+        }
+
+        private bool IsRunnerEnabled(Tests tests, ITestRunner runner)
+        {
+            bool enabled = tests.IsRunnerEnabled(runner.Name);
+
+            log.DebugFormat("Test runner {0} is {1}", runner.Name, enabled ? "enabled" : "disabled");
+
+            return enabled;
         }
 
         private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode)

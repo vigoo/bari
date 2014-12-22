@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.IO;
+using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
@@ -47,5 +48,14 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         {
             return suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory(sourceSetName.AsString), suiteRelativePath);
         }
+        protected string GetOutputPath(IFileSystemDirectory targetDir, Project project)
+        {
+            var name = project.Module.Name;
+            if (project is TestProject)
+                name += ".tests";
+
+            return Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), name);
+        }
+
     }
 }

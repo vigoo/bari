@@ -82,20 +82,29 @@ namespace Bari.Plugins.VsCore.Build
             msbuild.Run(targetRoot, slnPath);
 
             // Collecting all the files in 'targetdir/modulename' directories as results
-            var modules = new HashSet<Module>(from proj in slnBuilder.Projects select proj.Module);
+            var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
             var outputs = new HashSet<TargetRelativePath>();
-            foreach (var module in modules)
+            foreach (var targetDir in targetDirs)
             {
-                var moduleTargetDir = targetRoot.GetChildDirectory(module.Name);
+                var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
                 if (moduleTargetDir != null)
                     foreach (var fileName in moduleTargetDir.Files)
-                        outputs.Add(new TargetRelativePath(module.Name, fileName));
+                        outputs.Add(new TargetRelativePath(targetDir, fileName));
             }
 
-            foreach (var module in modules)            
-                outputs.ExceptWith(context.GetAllResultsIn(new TargetRelativePath(module.Name, String.Empty)));
+            foreach (var targetDir in targetDirs)            
+                outputs.ExceptWith(context.GetAllResultsIn(new TargetRelativePath(targetDir, String.Empty)));
 
             return outputs;
+        }
+
+        private string GetTargetDir(Project project)
+        {
+            var name = project.Module.Name;
+            if (project is TestProject)
+                return name + ".tests";
+            else
+                return name;
         }
 
         public override bool CanRun()
