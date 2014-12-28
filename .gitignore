@@ -83,6 +83,7 @@ Bari.Plugins.CodeContracts.csproj
 Bari.Plugins.Gallio.csproj
 Bari.Plugins.InnoSetup.csproj
 Bari.Plugins.Nuget.csproj
+Bari.Plugins.NUnit.csproj
 Bari.Plugins.Csharp.Test.csproj
 Bari.Plugins.PythonScripts.csproj
 Bari.Plugins.PythonScripts.Test.csproj
