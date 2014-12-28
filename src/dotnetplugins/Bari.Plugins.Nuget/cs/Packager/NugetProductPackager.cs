@@ -29,7 +29,8 @@ namespace Bari.Plugins.Nuget.Packager
 
         public void Publish(Product product)
         {
-            throw new System.NotImplementedException();
+            var parameters = (NugetPackagerParameters)product.Packager.Parameters;
+            nuget.PublishPackage(targetRoot, product.Name, suite.Version, parameters.ApiKey);
         }
     }
 }
