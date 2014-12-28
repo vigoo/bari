@@ -107,7 +107,7 @@ namespace Bari.Plugins.Nuget.Tools
             if (localRoot != null)
             {
                 var nuPkgName = string.Format("{0}.{1}.nupkg", packageName, version);
-                Run(targetRoot, "push", nuPkgName, "-Verbosity", Verbosity, "-ApiKey", apiKey, "-NonInteractive");
+                Run(targetRoot, "push", nuPkgName, apiKey, "-NonInteractive", "-Verbosity", Verbosity);
             }
         }
 
