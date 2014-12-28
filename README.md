@@ -5,6 +5,10 @@
 
 Default: [![Build status](https://ci.appveyor.com/api/projects/status/6x2un0ef1hyg2r66/branch/master)](https://ci.appveyor.com/project/vigoo/bari/branch/master) Mono: [![Build status](https://ci.appveyor.com/api/projects/status/e36xnxe43qtjp41s/branch/master)](https://ci.appveyor.com/project/vigoo/bari-211/branch/master)
 
+<a href="https://scan.coverity.com/projects/3787">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/3787/badge.svg"/>
+</a>
 
 # Getting started #
 ## Getting bari ##
