@@ -29,5 +29,14 @@ namespace Bari.Plugins.Nuget.Tools
         /// <param name="packageName">Name of the package to be generated</param>
         /// <param name="nuspec">The package's nuspec in XML</param>
         void CreatePackage(IFileSystemDirectory targetRoot, string packageName, string nuspec);
+
+        /// <summary>
+        /// Publishes an already created NuGet package
+        /// </summary>
+        /// <param name="targetRoot">Target root directory</param>
+        /// <param name="packageName">Name of te package to be published</param>
+        /// <param name="version">Package version</param>
+        /// <param name="apiKey">NuGet API key</param>
+        void PublishPackage(IFileSystemDirectory targetRoot, string packageName, string version, string apiKey);
     }
 }

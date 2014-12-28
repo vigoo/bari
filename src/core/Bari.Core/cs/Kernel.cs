@@ -92,6 +92,7 @@ namespace Bari.Core
             RegisterCommand<TestCommand, DefaultCommandPrerequisites>(kernel, "test");
             RegisterCommand<RebuildCommand, DefaultCommandPrerequisites>(kernel, "rebuild");
             RegisterCommand<PackCommand, DefaultCommandPrerequisites>(kernel, "pack");
+            RegisterCommand<PublishCommand, DefaultCommandPrerequisites>(kernel, "publish");
             RegisterCommand<SelfUpdateCommand, SelfUpdateCommandPrerequisites>(kernel, "selfupdate");
 
             // Built-in suite explorers

@@ -26,5 +26,10 @@ namespace Bari.Plugins.Nuget.Packager
 
             nuget.CreatePackage(targetRoot, product.Name, nuspec.ToXml());
         }
+
+        public void Publish(Product product)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

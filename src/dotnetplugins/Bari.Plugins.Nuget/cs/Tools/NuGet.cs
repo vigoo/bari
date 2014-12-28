@@ -101,6 +101,16 @@ namespace Bari.Plugins.Nuget.Tools
             }
         }
 
+        public void PublishPackage(IFileSystemDirectory targetRoot, string packageName, string version, string apiKey)
+        {
+            var localRoot = targetRoot as LocalFileSystemDirectory;
+            if (localRoot != null)
+            {
+                var nuPkgName = string.Format("{0}.{1}.nupkg", packageName, version);
+                Run(targetRoot, "push", nuPkgName, "-Verbosity", Verbosity, "-ApiKey", apiKey, "-NonInteractive");
+            }
+        }
+
         private string GetRelativePath(string path, LocalFileSystemDirectory root)
         {
             return path.Substring(root.AbsolutePath.Length).TrimStart(Path.DirectorySeparatorChar);

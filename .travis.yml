@@ -19,4 +19,8 @@ script:
  - mono _bootstrap/bari.exe -v --target release-mono rebuild full 
  - mono _bootstrap/bari.exe -v --target release-mono test
  - mono _bootstrap/bari.exe -v --target release-mono pack full
+ - mono _bootstrap/bari.exe -v --target release-mono publish full
+ - mono _bootstrap/bari.exe -v --target release rebuild full
+ - mono _bootstrap/bari.exe -v --target release pack full
+ - mono _bootstrap/bari.exe -v --target release publish full
 
