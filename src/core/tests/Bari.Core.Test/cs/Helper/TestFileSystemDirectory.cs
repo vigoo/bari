@@ -94,7 +94,7 @@ namespace Bari.Core.Test.Helper
                 for (int i = 0; i < dirs.Count; i++)
                 {
                     if (i > 0)
-                        result.Append("\\");
+                        result.Append(Path.DirectorySeparatorChar);
 
                     result.Append(dirs[i].Name);
                 }

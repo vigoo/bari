@@ -5,6 +5,7 @@ using Bari.Plugins.AddonSupport.Model;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System.IO;
 
 namespace Bari.Plugins.AddonSupport.Test.Model
 {
@@ -59,7 +60,7 @@ namespace Bari.Plugins.AddonSupport.Test.Model
         public void ExePathForNonProductBuild()
         {
             targetParser.Setup(p => p.ParseTarget(It.IsAny<string>())).Returns(new FullSuiteTarget(suite));
-            data.StartupPath.Should().Be(@"TestModule\TestExe.exe");
+            data.StartupPath.Should().Be(Path.Combine("TestModule", "TestExe.exe"));
         }
 
         [Test]
@@ -73,7 +74,7 @@ namespace Bari.Plugins.AddonSupport.Test.Model
         public void ProductTargetNoExplicitStartupExe()
         {
             targetParser.Setup(p => p.ParseTarget(It.IsAny<string>())).Returns(new ProductTarget(product));
-            data.StartupPath.Should().Be(@"TestModule\TestExe.exe");
+            data.StartupPath.Should().Be(Path.Combine("TestModule", "TestExe.exe"));
         }
 
         [Test]
@@ -86,7 +87,7 @@ namespace Bari.Plugins.AddonSupport.Test.Model
             product.AddParameters("startup", new StartupModuleParameters(alternativeExe));
 
             targetParser.Setup(p => p.ParseTarget(It.IsAny<string>())).Returns(new ProductTarget(product));
-            data.StartupPath.Should().Be(@"TestModule2\AlternativeExe.exe");
+            data.StartupPath.Should().Be(Path.Combine("TestModule2", "AlternativeExe.exe"));
         }
     }
 }

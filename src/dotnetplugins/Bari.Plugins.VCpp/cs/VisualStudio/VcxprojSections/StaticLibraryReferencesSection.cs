@@ -10,19 +10,16 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
     public class StaticLibraryReferencesSection: MSBuildProjectSectionBase
     {
         private readonly IProjectGuidManagement projectGuidManagement;
-        private readonly IFileSystemDirectory targetDir;
 
         /// <summary>
         /// Initializes the class
         /// </summary>
         /// <param name="suite">Active suite</param>
         /// <param name="projectGuidManagement">Project GUID management service</param>
-        /// <param name="targetDir">Target directory where the compiled files will be placed</param>
-        public StaticLibraryReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement, [TargetRoot] IFileSystemDirectory targetDir)
+        public StaticLibraryReferencesSection(Suite suite, IProjectGuidManagement projectGuidManagement)
             : base(suite)
         {
             this.projectGuidManagement = projectGuidManagement;
-            this.targetDir = targetDir;
         }
 
         /// <summary>

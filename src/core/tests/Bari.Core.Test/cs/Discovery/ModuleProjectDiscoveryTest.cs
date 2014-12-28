@@ -4,6 +4,7 @@ using Bari.Core.Model.Discovery;
 using Bari.Core.Test.Helper;
 using FluentAssertions;
 using NUnit.Framework;
+using System.IO;
 
 namespace Bari.Core.Test.Discovery
 {
@@ -156,12 +157,12 @@ namespace Bari.Core.Test.Discovery
             var fsSet = project.GetSourceSet("fs");
 
             csSet.Files.Should().HaveCount(3);
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source1.cs"));
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source2.cs"));
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\subdir\\source3.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "source1.cs")));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "source2.cs")));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "subdir", "source3.cs")));
 
             fsSet.Files.Should().HaveCount(1);
-            fsSet.Files.Should().HaveElementAt(0, new SuiteRelativePath("src\\Module1\\Project11\\fs\\a.fs"));
+            fsSet.Files.Should().HaveElementAt(0, new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "fs", "a.fs")));
         }
 
         private static TestFileSystemDirectory CreateFsWithSources()
@@ -260,8 +261,8 @@ namespace Bari.Core.Test.Discovery
             var fsSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("fs");
             var vbSet = suite.GetModule("Module1").GetProject("Project11").GetSourceSet("vb");
 
-            fsSet.Add(new SuiteRelativePath("src\\Module1\\Project11\\fs\\b.fs"));
-            vbSet.Add(new SuiteRelativePath("src\\Module1\\Project11\\vb\\x.vb"));
+            fsSet.Add(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "fs", "b.fs")));
+            vbSet.Add(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "vb", "x.vb")));
 
             var discovery = new ModuleProjectDiscovery(fs);
             discovery.ExtendWithDiscoveries(suite);
@@ -277,16 +278,16 @@ namespace Bari.Core.Test.Discovery
             vbSet = project.GetSourceSet("vb");
 
             csSet.Files.Should().HaveCount(3);
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source1.cs"));
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\source2.cs"));
-            csSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\cs\\subdir\\source3.cs"));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "source1.cs")));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "source2.cs")));
+            csSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "cs", "subdir", "source3.cs")));
 
             fsSet.Files.Should().HaveCount(2);
-            fsSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\fs\\a.fs"));
-            fsSet.Files.Should().Contain(new SuiteRelativePath("src\\Module1\\Project11\\fs\\b.fs"));
+            fsSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "fs", "a.fs")));
+            fsSet.Files.Should().Contain(new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "fs", "b.fs")));
 
             vbSet.Files.Should().HaveCount(1);
-            vbSet.Files.Should().HaveElementAt(0, new SuiteRelativePath("src\\Module1\\Project11\\vb\\x.vb"));
+            vbSet.Files.Should().HaveElementAt(0, new SuiteRelativePath(Path.Combine("src", "Module1", "Project11", "vb", "x.vb")));
         }
     }
 }

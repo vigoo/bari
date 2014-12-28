@@ -10,8 +10,6 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
     /// </summary>
     public class ReadableSlnNameGenerator : ISlnNameGenerator
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ReadableSlnNameGenerator));
-
         private const int MaxModuleCount = 4;
 
         private readonly ISlnNameGenerator fallbackGenerator;

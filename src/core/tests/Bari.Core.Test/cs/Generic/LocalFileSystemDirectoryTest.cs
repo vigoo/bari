@@ -128,7 +128,7 @@ namespace Bari.Core.Test.Generic
                 dir2.Should().NotBeNull();
 
                 dir.GetRelativePath(dir1).Should().Be("dir1");
-                dir.GetRelativePath(dir2).Should().Be("dir1\\dir2");
+                dir.GetRelativePath(dir2).Should().Be(Path.Combine("dir1", "dir2"));
             }
         }
 
@@ -217,9 +217,9 @@ namespace Bari.Core.Test.Generic
                 });
 
                 paths.Should().HaveCount(3);
-                paths.Should().Contain(@"dir1\file.delete");
-                paths.Should().Contain(@"dir1\file.keep");
-                paths.Should().Contain(@"dir1\dir2\file.delete");
+                paths.Should().Contain(Path.Combine("dir1", "file.delete"));
+                paths.Should().Contain(Path.Combine("dir1", "file.keep"));
+                paths.Should().Contain(Path.Combine("dir1", "dir2", "file.delete"));
 
                 Directory.Exists(tmp).Should().BeTrue();
                 Directory.Exists(Path.Combine(tmp, "dir1")).Should().BeTrue();
@@ -232,14 +232,14 @@ namespace Bari.Core.Test.Generic
                 dir.Delete(p =>
                 {
                     paths.Add(p);
-                    return !p.EndsWith(".keep");
+                    return !p.EndsWith(".keep", System.StringComparison.InvariantCulture);
                 });
 
                 paths.Should().HaveCount(4);
-                paths.Should().Contain(@"dir1\file.delete");
-                paths.Should().Contain(@"dir1\file.keep");
-                paths.Should().Contain(@"dir1\dir2");
-                paths.Should().Contain(@"dir1\dir2\file.delete");
+                paths.Should().Contain(Path.Combine("dir1", "file.delete"));
+                paths.Should().Contain(Path.Combine("dir1", "file.keep"));
+                paths.Should().Contain(Path.Combine("dir1", "dir2"));
+                paths.Should().Contain(Path.Combine("dir1", "dir2", "file.delete"));
 
                 Directory.Exists(tmp).Should().BeTrue();
                 Directory.Exists(Path.Combine(tmp, "dir1")).Should().BeTrue();
@@ -256,9 +256,9 @@ namespace Bari.Core.Test.Generic
                 });
 
                 paths.Should().HaveCount(3);
-                paths.Should().Contain(@"dir1\file.keep");
-                paths.Should().Contain(@"dir1");
-                paths.Should().Contain(@"");
+                paths.Should().Contain(Path.Combine("dir1", "file.keep"));
+                paths.Should().Contain("dir1");
+                paths.Should().Contain("");
 
                 Directory.Exists(tmp).Should().BeFalse();
             }

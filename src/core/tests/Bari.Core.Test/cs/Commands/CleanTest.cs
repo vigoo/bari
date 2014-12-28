@@ -55,8 +55,8 @@ namespace Bari.Core.Test.Commands
         public void HasHelpAndDescription()
         {
             var cmd = kernel.Get<ICommand>("clean");
-            cmd.Description.Should().NotBeBlank();
-            cmd.Help.Should().NotBeBlank();
+            cmd.Description.Should().NotBeNullOrWhiteSpace();
+            cmd.Help.Should().NotBeNullOrWhiteSpace();
         }
 
         [Test]

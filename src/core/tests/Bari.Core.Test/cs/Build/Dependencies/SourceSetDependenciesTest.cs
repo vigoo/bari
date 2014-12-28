@@ -122,7 +122,7 @@ namespace Bari.Core.Test.Build.Dependencies
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Contents of file 3");
-            sourceSet.Add(new SuiteRelativePath("subdir\\file3"));
+            sourceSet.Add(new SuiteRelativePath(Path.Combine("subdir", "file3")));
 
             var fp2 = dep.CreateFingerprint();
 
@@ -137,7 +137,7 @@ namespace Bari.Core.Test.Build.Dependencies
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Contents of file 3");
-            sourceSet.Add(new SuiteRelativePath("subdir\\file3"));
+            sourceSet.Add(new SuiteRelativePath(Path.Combine("subdir", "file3")));
 
             var fp1 = dep.CreateFingerprint();
 

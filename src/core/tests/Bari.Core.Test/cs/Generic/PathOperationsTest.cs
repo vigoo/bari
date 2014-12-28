@@ -17,20 +17,26 @@ namespace Bari.Core.Test.Generic
         [Test]
         public void SingleFile()
         {
-            PathOperations.FindCommonRoot(new[] {@"a\b\c\x.y"}).Should().Be(@"a\b\c\");
+            PathOperations.FindCommonRoot(new[] { Path.Combine("a", "b", "c", "x.y") })
+                .Should().Be(Path.Combine("a", "b", "c") + Path.DirectorySeparatorChar);
         }
 
         [Test]
         public void SimpleCommonRoot()
         {
-            PathOperations.FindCommonRoot(new[] {@"a\1.txt", @"a\2.txt"}).Should().Be(@"a\");
+            PathOperations.FindCommonRoot(new[] 
+                {
+                    Path.Combine("a", "1.txt"), 
+                    Path.Combine("a", "2.txt")
+                })
+                .Should().Be("a" + Path.DirectorySeparatorChar);
         }
 
         [Test]
         public void CommonRootWithDifferentSubDirs()
         {
-            PathOperations.FindCommonRoot(new[] { @"a\b\1.txt", @"a\c\2.txt" }).Should().Be(@"a\");
-            PathOperations.FindCommonRoot(new[] { @"a\b\1.txt", @"a\c\2.txt", @"a\3.txt" }).Should().Be(@"a\");
+            PathOperations.FindCommonRoot(new[] { Path.Combine("a", "b", "1.txt"), Path.Combine("a", "c", "2.txt") }).Should().Be("a" + Path.DirectorySeparatorChar);
+            PathOperations.FindCommonRoot(new[] { Path.Combine("a", "b", "1.txt"), Path.Combine("a", "c", "2.txt"), Path.Combine("a", "3.txt") }).Should().Be("a" + Path.DirectorySeparatorChar);
         }
     }
 }

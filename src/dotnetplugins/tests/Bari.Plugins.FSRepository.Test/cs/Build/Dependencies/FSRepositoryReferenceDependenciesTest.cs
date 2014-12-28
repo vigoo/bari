@@ -31,14 +31,14 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
                 {
                     Files = new[] {"x"}
                 };
-            repository.Setup(r => r.GetDirectory("test\\x")).Returns(depRoot);
+            repository.Setup(r => r.GetDirectory(Path.Combine("test", "x"))).Returns(depRoot);
 
         }
 
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, "test\\x");
+            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
             var fp1 = dep.CreateFingerprint();
             var fp2 = dep.CreateFingerprint();
 
@@ -49,7 +49,7 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         [Test]
         public void ChangingTheSourceChangesTheFingerprint()
         {
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, "test\\x");
+            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
             var fp1 = dep.CreateFingerprint();
 
             depRoot.SetFileSize("x", 200);
@@ -69,7 +69,7 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         [Test]
         public void ConvertToProtocolAndBack()
         {
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, "test\\x");
+            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
             var fp1 = dep.CreateFingerprint();
 
             var proto = fp1.Protocol;
@@ -82,7 +82,7 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         public void SerializeAndReadBack()
         {
             var ser = new BinarySerializer();
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, "test\\x");
+            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
             var fp1 = dep.CreateFingerprint();
 
             byte[] data;

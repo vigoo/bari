@@ -16,7 +16,6 @@ namespace Bari.Plugins.VsCore.VisualStudio
     {        
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IProjectPlatformManagement projectPlatformManagement;
-        private readonly IProjectPathManagement projectPathManagement;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory slnDir;
         private readonly IList<Project> projects;
@@ -39,12 +38,10 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// <param name="getProjectSolutionReferences">Function which returns all the referenced projects which are in the same solution</param>
         /// <param name="solutionItemProviders">List of registered solution item providers</param>
         /// <param name="slnName">Solution's unique name</param>
-        /// <param name="projectPathManagement">Project project-file mapping</param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences, IEnumerable<ISolutionItemProvider> solutionItemProviders, string slnName, IProjectPathManagement projectPathManagement)
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences, IEnumerable<ISolutionItemProvider> solutionItemProviders, string slnName)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projectPlatformManagement != null);
-            Contract.Requires(projectPathManagement != null);
             Contract.Requires(projects != null);
             Contract.Requires(output != null);
             Contract.Requires(suiteRoot != null);
@@ -62,7 +59,6 @@ namespace Bari.Plugins.VsCore.VisualStudio
             this.getProjectSolutionReferences = getProjectSolutionReferences;
             this.solutionItemProviders = solutionItemProviders;
             this.slnName = slnName;
-            this.projectPathManagement = projectPathManagement;
             this.supportedSlnProjects = supportedSlnProjects;
         }
 

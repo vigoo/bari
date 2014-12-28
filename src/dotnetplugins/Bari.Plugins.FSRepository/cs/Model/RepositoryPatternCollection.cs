@@ -11,8 +11,6 @@ namespace Bari.Plugins.FSRepository.Model
     /// </summary>
     public class RepositoryPatternCollection: IProjectParameters
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (RepositoryPatternCollection));
-
         private readonly IList<RepositoryPattern> patterns = new List<RepositoryPattern>();
         private readonly IFileSystemRepositoryAccess fsAccess;
 

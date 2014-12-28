@@ -158,7 +158,7 @@ namespace Bari.Plugins.VsCore.Build
 
             using (var sln = targetDir.CreateTextFile(slnPath))
             {
-                var generator = new SlnGenerator(projectGuidManagement, projectPlatformManagement, supportedSlnProjects, projects, sln, suiteRoot, targetDir, GetInSolutionReferences, solutionItemProviders, Uid, projectPathManagement);
+                var generator = new SlnGenerator(projectGuidManagement, projectPlatformManagement, supportedSlnProjects, projects, sln, suiteRoot, targetDir, GetInSolutionReferences, solutionItemProviders, Uid);
                 generator.Generate();
             }
 
