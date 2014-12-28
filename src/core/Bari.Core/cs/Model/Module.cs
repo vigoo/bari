@@ -127,7 +127,7 @@ namespace Bari.Core.Model
             {
                 Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
                 
-                return suite.SuiteRoot.GetChildDirectory("src").GetChildDirectory(name);
+                return suite.SuiteRoot.GetChildDirectory("src", createIfMissing: true).GetChildDirectory(name, createIfMissing: true);
             }
         }
 

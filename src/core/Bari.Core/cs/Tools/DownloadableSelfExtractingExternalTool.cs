@@ -35,18 +35,20 @@ namespace Bari.Core.Tools
         {
             var tempInstaller = Path.GetTempFileName() + ".exe";
 
-            var client = new WebClient();
-            client.DownloadFile(Url, tempInstaller);
+            using (var client = new WebClient())
+            {
+                client.DownloadFile(Url, tempInstaller);
 
-            log.DebugFormat("Installing downloaded package to {0}", target);
+                log.DebugFormat("Installing downloaded package to {0}", target);
 
-            var process = System.Diagnostics.Process.Start(tempInstaller, GetInstallerArguments(target));
-            if (process == null)
-                throw new InvalidOperationException("Could not start tool installer");
+                var process = System.Diagnostics.Process.Start(tempInstaller, GetInstallerArguments(target));
+                if (process == null)
+                    throw new InvalidOperationException("Could not start tool installer");
 
-            process.WaitForExit();
+                process.WaitForExit();
 
-            log.DebugFormat("Installation completed");
+                log.DebugFormat("Installation completed");
+            }
         }
 
         /// <summary>

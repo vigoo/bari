@@ -36,16 +36,18 @@ namespace Bari.Core.Tools
         {
             var tempZip = Path.GetTempFileName();
 
-            var client = new WebClient();
-            client.DownloadFile(Url, tempZip);
-
-            log.DebugFormat("Extracting downloaded archive to {0}", target);
-            using (var zip = new ZipFile(tempZip))
+            using (var client = new WebClient())
             {
-                zip.ExtractAll(target);
-            }
+                client.DownloadFile(Url, tempZip);
 
-            log.DebugFormat("Extracting completed");
+                log.DebugFormat("Extracting downloaded archive to {0}", target);
+                using (var zip = new ZipFile(tempZip))
+                {
+                    zip.ExtractAll(target);
+                }
+
+                log.DebugFormat("Extracting completed");
+            }
         }
     }
 }

@@ -149,26 +149,29 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             IBuilder rootBuilder = projectBuilders.Select(pb => pb.AddToContext(context, projects))
                                       .Where(b => b != null).ToArray().Merge();
-            rootBuilder.AddToContext(context);
-
-            var productTarget = target as ProductTarget;
-            if (productTarget != null)
+            if (rootBuilder != null)
             {
-                rootBuilder = AddProductBuildStep(context, productTarget.Product, rootBuilder);
-            }
+                rootBuilder.AddToContext(context);
 
-            if (dumpMode)
-            {
-                using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                    context.Dump(builderGraph, rootBuilder);
-            }
-            else
-            {
-                context.Run(rootBuilder);
+                var productTarget = target as ProductTarget;
+                if (productTarget != null)
+                {
+                    rootBuilder = AddProductBuildStep(context, productTarget.Product, rootBuilder);
+                }
 
-                var outputs = context.GetResults(rootBuilder);
-                foreach (var outputPath in outputs)
-                    log.DebugFormat("Generated output for build: {0}", outputPath);
+                if (dumpMode)
+                {
+                    using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
+                        context.Dump(builderGraph, rootBuilder);
+                }
+                else
+                {
+                    context.Run(rootBuilder);
+
+                    var outputs = context.GetResults(rootBuilder);
+                    foreach (var outputPath in outputs)
+                        log.DebugFormat("Generated output for build: {0}", outputPath);
+                }
             }
 
             output.Message("Build completed.");

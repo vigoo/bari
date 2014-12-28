@@ -71,6 +71,9 @@ namespace Bari.Plugins.FSRepository.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
+            if (reference == null)
+                throw new InvalidOperationException("FS repository reference was not set on the builder");
+
             if (reference != null && resolutionContext == null)
                 ResolveReference();
 

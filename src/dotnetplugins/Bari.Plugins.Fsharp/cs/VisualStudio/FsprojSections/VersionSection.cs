@@ -28,17 +28,20 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
-            // Generating the version file (F# source code)
-            var generator = new FsharpVersionInfoGenerator(project);
-            generator.Generate(context.VersionOutput);
+            if (context.VersionOutput != null)
+            {
+                // Generating the version file (F# source code)
+                var generator = new FsharpVersionInfoGenerator(project);
+                generator.Generate(context.VersionOutput);
 
-            // Adding reference to it to the .csproj file
-            writer.WriteStartElement("ItemGroup");
-            writer.WriteStartElement("Compile");
-            writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
-            writer.WriteElementString("Link", Path.Combine("_Generated", "version.cs"));
-            writer.WriteEndElement();            
-            writer.WriteEndElement();
+                // Adding reference to it to the .csproj file
+                writer.WriteStartElement("ItemGroup");
+                writer.WriteStartElement("Compile");
+                writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
+                writer.WriteElementString("Link", Path.Combine("_Generated", "version.cs"));
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         }
 
         /// <summary>
-        /// Gets the text writer used to generate version information F# file
+        /// Gets the text writer used to generate version information C++ file
         /// </summary>
         public TextWriter VersionOutput
         {

@@ -4,6 +4,7 @@ obj
 /cache
 target
 _bootstrap
+cov-int
 
 # mstest test results
 TestResults
