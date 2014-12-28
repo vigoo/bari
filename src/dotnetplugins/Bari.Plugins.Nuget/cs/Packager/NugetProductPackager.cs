@@ -30,7 +30,7 @@ namespace Bari.Plugins.Nuget.Packager
         public void Publish(Product product)
         {
             var parameters = (NugetPackagerParameters)product.Packager.Parameters;
-            nuget.PublishPackage(targetRoot, product.Name, suite.Version, parameters.ApiKey);
+            nuget.PublishPackage(targetRoot, parameters.Id, suite.Version, parameters.ApiKey);
         }
     }
 }
