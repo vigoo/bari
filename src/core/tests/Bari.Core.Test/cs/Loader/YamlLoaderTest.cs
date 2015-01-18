@@ -732,6 +732,52 @@ goals:
         }
 
         [Test]
+        public void DefaultGoalIsOneOfDefaults()
+        {
+            const string yaml = @"---
+suite: Test suite
+
+default-goal: release
+";
+            parameters.SetupGet(p => p.Goal).Returns((string)null);
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            var suite = loader.Load(yaml);
+            suite.ActiveGoal.Name.Should().Be("release");
+        }
+
+        [Test]
+        public void DefaultGoalIsOneOfSpecified()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+
+goals:
+  - name: test-goal
+    incorporates:
+      - debug
+
+default-goal: test-goal
+";
+            parameters.SetupGet(p => p.Goal).Returns((string)null);
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            var suite = loader.Load(yaml);
+            suite.ActiveGoal.Name.Should().Be("test-goal");
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidGoalException))]
+        public void DefaultGoalIsUnknown()
+        {
+            const string yaml = @"---                   
+suite: Test suite
+default-goal: test-goal
+";
+            parameters.SetupGet(p => p.Goal).Returns((string)null);
+            var loader = kernel.Get<InMemoryYamlModelLoader>();
+            loader.Load(yaml);
+        }
+
+        [Test]
         public void ModulePostprocessorsLoaded1()
         {
             const string yaml = @"---                   

@@ -22,7 +22,7 @@ namespace Bari.Core.Model
             ignoreTargetGoal = !commandEnumerator.NeedsExplicitTargetGoal(parameters.Command);
         }
 
-        public Suite CreateSuite(ISet<Goal> goals)
+        public Suite CreateSuite(ISet<Goal> goals, Goal defaultGoal)
         {
             if (goals.Count == 0)
             {
@@ -30,8 +30,10 @@ namespace Bari.Core.Model
                 goals.Add(Suite.ReleaseGoal);
             }
 
+            var selectedGoal = targetGoal ?? defaultGoal.Name;
+
             var activeGoal =
-                goals.FirstOrDefault(g => g.Name.Equals(targetGoal, StringComparison.InvariantCultureIgnoreCase));
+                goals.FirstOrDefault(g => g.Name.Equals(selectedGoal, StringComparison.InvariantCultureIgnoreCase));
 
             if (activeGoal == null)
             {

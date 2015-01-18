@@ -14,7 +14,7 @@ namespace Bari.Console.Test
             ps.Command.Should().Be("help"); // default command
             ps.CommandParameters.Should().BeEmpty();
             ps.VerboseOutput.Should().BeFalse();
-            ps.Goal.Should().Be("debug"); // default goal
+            ps.Goal.Should().BeNull(); // default goal
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace Bari.Console.Test
             ps.Command.Should().Be("cmd"); // default command
             ps.CommandParameters.Should().BeEmpty();
             ps.VerboseOutput.Should().BeFalse();
-            ps.Goal.Should().Be("debug"); // default goal
+            ps.Goal.Should().BeNull(); // default goal
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace Bari.Console.Test
             ps.Command.Should().Be("cmd"); // default command
             ps.CommandParameters.Should().BeEquivalentTo(new[] {"1", "2", "3"});
             ps.VerboseOutput.Should().BeFalse();
-            ps.Goal.Should().Be("debug"); // default goal
+            ps.Goal.Should().BeNull(); // default goal
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Bari.Console.Test
             ps.Command.Should().Be("cmd"); // default command
             ps.CommandParameters.Should().BeEquivalentTo(new[] { "1", "2", "3" });
             ps.VerboseOutput.Should().BeTrue();
-            ps.Goal.Should().Be("debug"); // default goal
+            ps.Goal.Should().BeNull(); // default goal
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Bari.Console.Test
             ps.Command.Should().Be("cmd"); // default command
             ps.CommandParameters.Should().BeEquivalentTo(new[] { "1", "2", "3" });
             ps.VerboseOutput.Should().BeTrue();
-            ps.Goal.Should().Be("goal"); // default goal
+            ps.Goal.Should().Be("goal"); 
         }
     }
 }

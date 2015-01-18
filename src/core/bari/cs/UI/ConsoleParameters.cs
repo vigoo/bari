@@ -134,7 +134,7 @@ namespace Bari.Console.UI
                         return globalParams[i + 1];
                 }
 
-                return "debug";
+                return null;
             }
         }
 

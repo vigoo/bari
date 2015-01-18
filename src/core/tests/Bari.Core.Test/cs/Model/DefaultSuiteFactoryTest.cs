@@ -30,7 +30,7 @@ namespace Bari.Core.Test.Model
         public void AddsDefaultGoalsIfNoCustomGoalsPresent()
         {
             var factory = new DefaultSuiteFactory(parameters.Object, suiteRoot, commandEnumerator.Object);
-            var suite = factory.CreateSuite(new HashSet<Goal>());
+            var suite = factory.CreateSuite(new HashSet<Goal>(), Suite.DebugGoal);
 
             suite.Should().NotBeNull();
             suite.Goals.Should().HaveCount(2);
@@ -45,11 +45,25 @@ namespace Bari.Core.Test.Model
             var goal1 = new Goal("goal1");
             var goal2 = new Goal("goal2");
             var goal3 = new Goal("goal3");
-            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1, goal2, goal3 }));
+            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1, goal2, goal3 }), goal1);
 
             suite.Should().NotBeNull();
             suite.Goals.Should().HaveCount(3);
             suite.Goals.Should().Contain(new[] { goal1, goal2, goal3 });
+        }
+
+        [Test]
+        public void UsesDefaultGoalIfTargetNotSpecified()
+        {
+            var factory = new DefaultSuiteFactory(parameters.Object, suiteRoot, commandEnumerator.Object);
+
+            var goal1 = new Goal("goal1");
+            var goal2 = new Goal("goal2");
+            var goal3 = new Goal("goal3");
+            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1, goal2, goal3 }), goal2);
+
+            suite.Should().NotBeNull();
+            suite.ActiveGoal.Should().Be(goal2);
         }
 
         [Test]
@@ -61,7 +75,7 @@ namespace Bari.Core.Test.Model
             var factory = new DefaultSuiteFactory(parameters.Object, suiteRoot, commandEnumerator.Object);
 
             var goal1 = new Goal("goal1");
-            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }));
+            factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }), Suite.DebugGoal);
         }
 
         [Test]
@@ -72,7 +86,7 @@ namespace Bari.Core.Test.Model
             var factory = new DefaultSuiteFactory(parameters.Object, suiteRoot, commandEnumerator.Object);
 
             var goal1 = new Goal("goal1");
-            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }));
+            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }), Suite.DebugGoal);
 
             suite.ActiveGoal.Should().Be(goal1);
         }
@@ -99,7 +113,7 @@ namespace Bari.Core.Test.Model
 
             var goal1 = new Goal("goal1");
             var goal2 = new Goal("goal2");
-            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1, goal2 }));
+            var suite = factory.CreateSuite(new HashSet<Goal>(new[] { goal1, goal2 }), Suite.DebugGoal);
 
             suite.ActiveGoal.Should().Be(goal2);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
@@ -64,8 +65,9 @@ namespace Bari.Core.Model.Loader
             foreach (var pluginUri in LoadPlugins(yaml.RootNode))
                 pluginLoader.Load(pluginUri);
 
-            var goals = new HashSet<Goal>(LoadGoals(yaml.RootNode));
-            var suite = suiteFactory.CreateSuite(goals);
+            var goals = LoadGoals(yaml.RootNode);
+            var defaultGoal = LoadDefaultGoal(goals, yaml.RootNode) ?? Suite.DebugGoal;
+            var suite = suiteFactory.CreateSuite(new HashSet<Goal>(goals.Values), defaultGoal);
 
             parser.SetActiveGoal(suite.ActiveGoal);
 
@@ -147,7 +149,7 @@ namespace Bari.Core.Model.Loader
             }
         }
 
-        private IEnumerable<Goal> LoadGoals(YamlNode rootNode)
+        private IDictionary<string, Goal> LoadGoals(YamlNode rootNode)
         {
             var result = new Dictionary<string, Goal>();
             foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(rootNode, "goals"))
@@ -156,7 +158,7 @@ namespace Bari.Core.Model.Loader
                 result.Add(goal.Name, goal);
             }
 
-            return result.Values;
+            return result;
         }
 
         private Goal LoadGoal(string name, YamlNode value, IDictionary<string, Goal> loadedGoals)
@@ -184,6 +186,33 @@ namespace Bari.Core.Model.Loader
             {
                 return new Goal(name);
             }
+        }
+
+        private Goal LoadDefaultGoal(IDictionary<string, Goal> goals, YamlNode rootNode)
+        {
+            var goalName = parser.GetOptionalScalarValue(rootNode, "default-goal", null);
+            if (goalName != null)
+            {
+                if (goals.Count > 0)
+                {
+                    Goal goal;
+                    if (goals.TryGetValue(goalName, out goal))
+                        return goal;
+                    else
+                        throw new InvalidGoalException(goalName, new HashSet<Goal>(goals.Values));
+                }
+                else
+                {
+                    if (goalName == Suite.DebugGoal.Name)
+                        return Suite.DebugGoal;
+                    else if (goalName == Suite.ReleaseGoal.Name)
+                        return Suite.ReleaseGoal;
+                    else
+                        throw new InvalidGoalException(goalName, new HashSet<Goal> { Suite.DebugGoal, Suite.ReleaseGoal });
+                }
+            }
+
+            return null;
         }
 
         private void LoadParameters(Suite suite, IProjectParametersHolder target, YamlNode node)

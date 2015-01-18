@@ -94,15 +94,14 @@ namespace Bari.Core.UI
         /// </summary>
         public abstract bool VerboseOutput { get; }
 
-        public string Goal
-        {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-                return null; // dummy value
-            }
-        }
+        /// <summary>
+        /// Gets the goal name
+        /// </summary>
+        public abstract string Goal { get; }
 
+        /// <summary>
+        /// True if Mono toolchain should be used
+        /// </summary>
         public abstract bool UseMono { get; }
     }
 }
