@@ -153,7 +153,6 @@ namespace Bari.Core.Build.Cache
 
         private MemoryCacheItem GetOrCreate(BuildKey builder)
         {
-            Contract.Requires(builder != null);
             Contract.Ensures(Contract.Result<MemoryCacheItem>() != null);
 
             lock (cache)

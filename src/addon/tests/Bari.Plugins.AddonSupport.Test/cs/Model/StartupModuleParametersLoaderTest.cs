@@ -10,6 +10,7 @@ using FluentAssertions;
 using Moq;
 using Ninject;
 using NUnit.Framework;
+using System;
 
 namespace Bari.Plugins.AddonSupport.Test.Model
 {
@@ -32,8 +33,8 @@ namespace Bari.Plugins.AddonSupport.Test.Model
             kernel.Bind<IFileSystemDirectory>()
                 .ToConstant(new TestFileSystemDirectory("target"))
                 .WhenTargetHas<TargetRootAttribute>();
-            kernel.Bind<IFileSystemDirectory>()
-                .ToConstant(new TestFileSystemDirectory("cache"))
+            kernel.Bind<Lazy<IFileSystemDirectory>>()
+                .ToConstant(new Lazy<IFileSystemDirectory>(() => new TestFileSystemDirectory("cache")))
                 .WhenTargetHas<CacheRootAttribute>();
             kernel.Bind<IUserOutput>().ToConstant(testOutput);
 

@@ -12,7 +12,6 @@ namespace Bari.Core.Model.Discovery
     /// </summary>
     public class ModuleProjectDiscovery : ISuiteExplorer
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(ModuleProjectDiscovery));
         private readonly IFileSystemDirectory suiteRoot;        
 
         /// <summary>

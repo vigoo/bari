@@ -12,9 +12,10 @@ namespace Bari.Plugins.VsCore.VisualStudio
     /// </summary>
     public class DefaultProjectGuidManagement: IProjectGuidManagement
     {
-        private readonly IFileSystemDirectory cacheRoot;
+        private readonly Lazy<IFileSystemDirectory> cacheRoot;
         private readonly Suite suite;
         private readonly object sync = new object();
+        private bool isInitialized;
         private readonly IDictionary<Project, Guid> map = new Dictionary<Project, Guid>();
 
         /// <summary>
@@ -22,15 +23,13 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// </summary>
         /// <param name="cacheRoot">Cache root directory</param>
         /// <param name="suite">Active suite</param>
-        public DefaultProjectGuidManagement([CacheRoot] IFileSystemDirectory cacheRoot, Suite suite)
+        public DefaultProjectGuidManagement([CacheRoot] Lazy<IFileSystemDirectory> cacheRoot, Suite suite)
         {
             Contract.Requires(cacheRoot != null);
             Contract.Requires(suite != null);
 
             this.cacheRoot = cacheRoot;
             this.suite = suite;
-
-            InitializeFromCache();
         }        
 
         /// <summary>
@@ -42,6 +41,9 @@ namespace Bari.Plugins.VsCore.VisualStudio
         {
             lock(sync)
             {
+                if (!isInitialized)
+                    InitializeFromCache();
+
                 Guid result;
                 if (!map.TryGetValue(project, out result))
                 {
@@ -57,9 +59,9 @@ namespace Bari.Plugins.VsCore.VisualStudio
 
         private void InitializeFromCache()
         {
-            if (cacheRoot.Exists("guids"))
+            if (cacheRoot.Value.Exists("guids"))
             {
-                using (var reader = cacheRoot.ReadTextFile("guids"))
+                using (var reader = cacheRoot.Value.ReadTextFile("guids"))
                 {
                     string line = reader.ReadLine();
                     while (line != null)
@@ -73,6 +75,8 @@ namespace Bari.Plugins.VsCore.VisualStudio
                     }
                 }
             }
+
+            isInitialized = true;
         }
 
         private Project FindProject(string moduleAndProject)
@@ -85,7 +89,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
 
         private void SaveToCache()
         {
-            using (var writer = cacheRoot.CreateTextFile("guids"))
+            using (var writer = cacheRoot.Value.CreateTextFile("guids"))
             {
                 foreach (var pair in map)
                 {

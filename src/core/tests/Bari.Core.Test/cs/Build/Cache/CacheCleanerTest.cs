@@ -114,7 +114,7 @@ namespace Bari.Core.Test.Build.Cache
             var parameters = new Mock<ICleanParameters>();
             var predicates = new SoftCleanPredicates();
             var cdir = new TestFileSystemDirectory("cache");
-            var cleaner = new CacheCleaner(cdir, be.Object, () => predicates);
+            var cleaner = new CacheCleaner(new Lazy<IFileSystemDirectory>(() => cdir), be.Object, () => predicates);
 
             cdir.IsDeleted.Should().BeFalse();
             cleaner.Clean(parameters.Object);
@@ -147,7 +147,7 @@ namespace Bari.Core.Test.Build.Cache
             be.Setup(b => b.GetAllPersistentBuilders()).Returns(new[] {typeof(PersistentReference)});
 
             var predicates = new SoftCleanPredicates();
-            var cleaner = new CacheCleaner(cdir, be.Object, () => predicates);
+            var cleaner = new CacheCleaner(new Lazy<IFileSystemDirectory>(() => cdir), be.Object, () => predicates);
 
             cdir.IsDeleted.Should().BeFalse();
             ((TestFileSystemDirectory) cdir.GetChildDirectory("Bari.Core.Test.Build.Cache.NonPersistentReference_1"))

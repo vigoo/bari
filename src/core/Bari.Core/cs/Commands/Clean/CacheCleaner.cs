@@ -12,7 +12,7 @@ namespace Bari.Core.Commands.Clean
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CacheCleaner));
 
-        private readonly IFileSystemDirectory cacheDir;
+        private readonly Lazy<IFileSystemDirectory> cacheDir;
         private readonly IBuilderEnumerator builderEnumerator;
         private readonly Func<ISoftCleanPredicates> predicatesFactory;
 
@@ -22,7 +22,7 @@ namespace Bari.Core.Commands.Clean
         /// <param name="cacheDir">Directory to be deleted</param>
         /// <param name="builderEnumerator">All the registered reference builders</param>
         /// <param name="predicatesFactory">Factory for soft-clean predicate registry</param>
-        public CacheCleaner(IFileSystemDirectory cacheDir, IBuilderEnumerator builderEnumerator, Func<ISoftCleanPredicates> predicatesFactory)
+        public CacheCleaner(Lazy<IFileSystemDirectory> cacheDir, IBuilderEnumerator builderEnumerator, Func<ISoftCleanPredicates> predicatesFactory)
         {
             this.cacheDir = cacheDir;
             this.builderEnumerator = builderEnumerator;
@@ -40,13 +40,13 @@ namespace Bari.Core.Commands.Clean
                 var persistentReferenceBuilders = builderEnumerator.GetAllPersistentBuilders().ToList();
                 var persistentBuilderPrefixes = persistentReferenceBuilders.Select(b => b.FullName + "_").ToList();
 
-                foreach (var directory in cacheDir.ChildDirectories)
+                foreach (var directory in cacheDir.Value.ChildDirectories)
                 {
                     foreach (var prefix in persistentBuilderPrefixes)
                     {
                         if (!directory.StartsWith(prefix))
                         {
-                            DeleteDirectory(cacheDir.GetChildDirectory(directory), parameters);
+                            DeleteDirectory(cacheDir.Value.GetChildDirectory(directory), parameters);
                             break;
                         }
                         else
@@ -56,12 +56,12 @@ namespace Bari.Core.Commands.Clean
                     }
                 }
 
-                if (!cacheDir.ChildDirectories.Any())
-                    DeleteDirectory(cacheDir, parameters);
+                if (!cacheDir.Value.ChildDirectories.Any())
+                    DeleteDirectory(cacheDir.Value, parameters);
             }
             else
             {
-                DeleteDirectory(cacheDir, parameters);
+                DeleteDirectory(cacheDir.Value, parameters);
             }
         }
 

@@ -7,6 +7,7 @@ using Bari.Core.UI;
 using FluentAssertions;
 using NUnit.Framework;
 using Ninject;
+using System;
 
 namespace Bari.Core.Test.Commands
 {
@@ -26,7 +27,8 @@ namespace Bari.Core.Test.Commands
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas
                 <TargetRootAttribute>();
-            kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("cache")).WhenTargetHas
+            kernel.Bind<Lazy<IFileSystemDirectory>>().ToConstant(
+                new Lazy<IFileSystemDirectory>(() => new TestFileSystemDirectory("cache"))).WhenTargetHas
                 <CacheRootAttribute>();
 
             Kernel.RegisterCoreBindings(kernel);
