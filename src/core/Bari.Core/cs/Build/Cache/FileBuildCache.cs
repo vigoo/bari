@@ -24,7 +24,7 @@ namespace Bari.Core.Build.Cache
         private const string DepsFileName = ".deps";
         private const string NamesFileName = ".names";
 
-        private readonly IFileSystemDirectory cacheRoot;
+        private readonly Lazy<IFileSystemDirectory> cacheRoot;
         private readonly IProtocolSerializer protocolSerializer;
         private readonly IDictionary<BuildKey, ReaderWriterLockSlim> locks;
 
@@ -36,7 +36,7 @@ namespace Bari.Core.Build.Cache
         /// </summary>
         /// <param name="cacheRoot">Root directory where the cache will store its contents.</param>
         /// <param name="protocolSerializer">The serializer to be used for saving dependency fingerprint protocols</param>
-        public FileBuildCache([CacheRoot] IFileSystemDirectory cacheRoot, IProtocolSerializer protocolSerializer)
+        public FileBuildCache([CacheRoot] Lazy<IFileSystemDirectory> cacheRoot, IProtocolSerializer protocolSerializer)
         {
             this.cacheRoot = cacheRoot;
             this.protocolSerializer = protocolSerializer;
@@ -81,7 +81,7 @@ namespace Bari.Core.Build.Cache
             lck.EnterWriteLock();
             try
             {
-                var cacheDir = cacheRoot.GetChildDirectory(GetCacheDirectoryName(builder), createIfMissing: true);
+                var cacheDir = cacheRoot.Value.GetChildDirectory(GetCacheDirectoryName(builder), createIfMissing: true);
 
                 SaveDependencyFingerprint(fingerprint, cacheDir);
                 SaveOutputs(outputs, targetRoot, cacheDir);
@@ -108,9 +108,9 @@ namespace Bari.Core.Build.Cache
             try
             {
                 var dirName = GetCacheDirectoryName(builder);
-                if (cacheRoot.ChildDirectories.Contains(dirName))
+                if (cacheRoot.Value.ChildDirectories.Contains(dirName))
                 {
-                    var cacheDir = cacheRoot.GetChildDirectory(dirName);
+                    var cacheDir = cacheRoot.Value.GetChildDirectory(dirName);
                     if (cacheDir.Files.Contains(DepsFileName))
                     {
                         using (var depsStream = cacheDir.ReadBinaryFile(DepsFileName))
@@ -143,9 +143,9 @@ namespace Bari.Core.Build.Cache
             try
             {
                 var dirName = GetCacheDirectoryName(builder);
-                if (cacheRoot.ChildDirectories.Contains(dirName))
+                if (cacheRoot.Value.ChildDirectories.Contains(dirName))
                 {
-                    var cacheDir = cacheRoot.GetChildDirectory(dirName);
+                    var cacheDir = cacheRoot.Value.GetChildDirectory(dirName);
                     if (cacheDir.Files.Contains(DepsFileName))
                     {
                         return true;
@@ -180,9 +180,9 @@ namespace Bari.Core.Build.Cache
             try
             {
                 var dirName = GetCacheDirectoryName(builder);
-                if (cacheRoot.ChildDirectories.Contains(dirName))
+                if (cacheRoot.Value.ChildDirectories.Contains(dirName))
                 {
-                    var cacheDir = cacheRoot.GetChildDirectory(dirName);
+                    var cacheDir = cacheRoot.Value.GetChildDirectory(dirName);
                     if (cacheDir.Files.Contains(NamesFileName))
                     {
                         using (var reader = cacheDir.ReadTextFile(NamesFileName))

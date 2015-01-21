@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Bari.Core.Build;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Ninject;
+using System;
 
 namespace Bari.Core.Commands
 {
@@ -17,9 +17,9 @@ namespace Bari.Core.Commands
         private readonly ICommand cleanCommand;
         private readonly ICommand buildCommand;
         private readonly IFileSystemDirectory targetRoot;
-        private readonly IFileSystemDirectory cacheRoot;
+        private readonly Lazy<IFileSystemDirectory> cacheRoot;
 
-        public RebuildCommand([Named("clean")] ICommand cleanCommand, [Named("build")] ICommand buildCommand, [TargetRoot] IFileSystemDirectory targetRoot, [CacheRoot] IFileSystemDirectory cacheRoot)
+        public RebuildCommand([Named("clean")] ICommand cleanCommand, [Named("build")] ICommand buildCommand, [TargetRoot] IFileSystemDirectory targetRoot, [CacheRoot] Lazy<IFileSystemDirectory> cacheRoot)
         {
             this.cleanCommand = cleanCommand;
             this.buildCommand = buildCommand;
@@ -99,7 +99,7 @@ Example: `bari rebuild --soft-clean HelloWorldModule`
             var cleanSucceeded = cleanCommand.Run(suite, cleanParameters);
 
             targetRoot.Remake();
-            cacheRoot.Remake();
+            cacheRoot.Value.Remake();
 
             var buildSucceeded = buildCommand.Run(suite, buildParameters);
 
