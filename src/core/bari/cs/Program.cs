@@ -9,6 +9,7 @@ using Bari.Core.Build;
 using Bari.Core.Build.Cache;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
+using Bari.Core.Model;
 using Bari.Core.Process;
 using Bari.Core.UI;
 using Ninject;
@@ -52,7 +53,7 @@ namespace Bari.Console
             // Binding default cache
             var cacheDir = new Lazy<IFileSystemDirectory>(() => 
                 suiteRoot.GetChildDirectory("cache", createIfMissing: true)
-                         .GetChildDirectory(consoleParams.Goal, createIfMissing: true));
+                         .GetChildDirectory(root.Get<Suite>().ActiveGoal.Name, createIfMissing: true));
             root.Bind<Lazy<IFileSystemDirectory>>()
                 .ToConstant(cacheDir)
                 .WhenTargetHas<CacheRootAttribute>();
