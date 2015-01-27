@@ -86,6 +86,20 @@ namespace Bari.Plugins.Fsharp.VisualStudio
             foreach (var section in sections)
                 section.Write(writer, project, this);
 
+            writer.WriteStartElement("Choose");
+            writer.WriteStartElement("When");
+            writer.WriteAttributeString("Condition", "'$(VisualStudioVersion)' == '11.0'");
+            writer.WriteStartElement("PropertyGroup");
+            writer.WriteElementString("FSharpTargetsPath", "$(MSBuildExtensionsPath32)\\..\\Microsoft SDKs\\F#\\3.0\\Framework\\v4.0\\Microsoft.FSharp.Targets");
+            writer.WriteEndElement(); // PropertyGroup
+            writer.WriteEndElement(); // When
+            writer.WriteStartElement("Otherwise");
+            writer.WriteStartElement("PropertyGroup");
+            writer.WriteElementString("FSharpTargetsPath", "$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\FSharp\\Microsoft.FSharp.Targets");
+            writer.WriteEndElement(); // PropertyGroup
+            writer.WriteEndElement(); // Otherwise
+            writer.WriteEndElement(); // Choose
+
             writer.WriteStartElement("Import");
             writer.WriteAttributeString("Project", @"$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets");
             writer.WriteAttributeString("Condition", @"Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')");            
