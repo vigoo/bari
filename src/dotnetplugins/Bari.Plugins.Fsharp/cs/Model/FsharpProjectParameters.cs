@@ -98,6 +98,11 @@ namespace Bari.Plugins.Fsharp.Model
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
             if (OtherFlags != null)
                 writer.WriteElementString("OtherFlags", OtherFlags);
+
+            writer.WriteStartElement("MinimumVisualStudioVersion");
+            writer.WriteAttributeString("Condition", "'$(MinimumVisualStudioVersion)' == '11.0'");
+            writer.WriteString("11");
+            writer.WriteEndElement();
         }
     }
 }
