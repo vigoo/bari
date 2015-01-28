@@ -101,8 +101,8 @@ namespace Bari.Plugins.Fsharp.VisualStudio
             writer.WriteEndElement(); // Choose
 
             writer.WriteStartElement("Import");
-            writer.WriteAttributeString("Project", @"$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets");
-            writer.WriteAttributeString("Condition", @"Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')");            
+            writer.WriteAttributeString("Project", @"$(FSharpTargetsPath)");
+            writer.WriteAttributeString("Condition", @"Exists('$(FSharpTargetsPath)')");            
             writer.WriteEndElement();
 
             writer.WriteEndElement();
