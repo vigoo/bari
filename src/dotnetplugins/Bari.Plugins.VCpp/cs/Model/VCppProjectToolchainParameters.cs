@@ -5,15 +5,18 @@ namespace Bari.Plugins.VCpp.Model
 {
     public class VCppProjectToolchainParameters: IProjectParameters
     {
-        private PlatformToolSet platformToolSet = PlatformToolSet.VS2012;
-
         public PlatformToolSet PlatformToolSet { get; set; }
+
+        public VCppProjectToolchainParameters()
+        {
+            PlatformToolSet = PlatformToolSet.VS2012;
+        }
 
         public string PlatformToolSetAsString
         {
             get
             { 
-                switch (platformToolSet)
+                switch (PlatformToolSet)
                 {                                    
                     case PlatformToolSet.VS2013: 
                         return "v120";                 
