@@ -139,7 +139,9 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         {
             writer.WriteElementString("ConfigurationType", GetConfigurationType(project));
             writer.WriteElementString("UseDebugLibraries", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.DebugGoal.Name)));
-            writer.WriteElementString("PlatformToolset", "v110");
+
+            var toolChain = GetToolchain(project);
+            writer.WriteElementString("PlatformToolset", toolChain.PlatformToolSetAsString);
 
             var cliMode = GetCLIMode(project);
             if (cliMode != CppCliMode.Disabled)
@@ -181,6 +183,15 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                 : new VCppProjectCLIParameters();
 
             return cliParameters.Mode;
+        }
+
+        private VCppProjectToolchainParameters GetToolchain(Project project)
+        {
+            VCppProjectToolchainParameters toolChainParams = project.HasParameters("toolchain") 
+                ? project.GetParameters<VCppProjectToolchainParameters>("toolchain")
+                : new VCppProjectToolchainParameters();
+
+            return toolChainParams;
         }
 
         private string GetConfigurationType(Project project)

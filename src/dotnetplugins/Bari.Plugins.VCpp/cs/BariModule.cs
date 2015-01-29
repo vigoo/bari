@@ -40,6 +40,7 @@ namespace Bari.Plugins.VCpp
             Bind<IYamlProjectParametersLoader>().To<VCppMIDLParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppManifestParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppCLIParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<VCppToolchainParametersLoader>();
 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<VcxprojGenerator>(); 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<VcxprojGenerator>();
