@@ -260,6 +260,33 @@ modules:
             - alias://yaml
             - suite://core/Bari.Core
 
+    - name: vcs
+      projects:
+        - name: Bari.Plugins.Vcs.Core
+          references:
+            - gac://System
+            - nuget://log4net
+            - alias://ninject
+            - suite://core/Bari.Core
+
+        - name: Bari.Plugins.Vcs.Hg
+          references:
+            - gac://System
+            - nuget://log4net
+            - alias://ninject
+            - nuget://Mercurial.Net
+            - module://Bari.Plugins.Vcs.Core
+            - suite://core/Bari.Core
+
+        - name: Bari.Plugins.Vcs.Git
+          references:
+            - gac://System
+            - nuget://log4net
+            - alias://ninject
+            - nuget://GitSharp
+            - module://Bari.Plugins.Vcs.Core
+            - suite://core/Bari.Core
+
 products:
     - name: full
       modules:
@@ -268,6 +295,7 @@ products:
           - scripting
           - innosetup
           - addon
+          - vcs
       packager:        
         type: nuget
         param:

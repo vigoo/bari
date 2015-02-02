@@ -88,4 +88,7 @@ Bari.Plugins.NUnit.csproj
 Bari.Plugins.Csharp.Test.csproj
 Bari.Plugins.PythonScripts.csproj
 Bari.Plugins.PythonScripts.Test.csproj
+bari.Plugins.Vcs.Core.csproj
+bari.Plugins.Vcs.Hg.csproj
+bari.Plugins.Vcs.Git.csproj
 bari.Test.csproj
