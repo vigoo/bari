@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Ninject.Modules;
 
 namespace Bari.Core
 {
@@ -33,12 +35,22 @@ namespace Bari.Core
 
             if (path != null)
             {
-                Kernel.Root.Load(new[] {path});
+                Load(path);
             }
             else
             {
                 throw new InvalidReferenceException(String.Format("Referenced plugin could not be resolved: {0}", referenceUri));
             }
+        }
+
+        public void Load(string path)
+        {
+            Kernel.Root.Load(new[] {path});
+        }
+
+        public void Load(INinjectModule module)
+        {
+            Kernel.Root.Load(new[] {module});
         }
 
         private string LoadReference(Uri referenceUri)
