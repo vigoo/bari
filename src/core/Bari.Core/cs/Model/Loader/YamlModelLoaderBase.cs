@@ -22,7 +22,7 @@ namespace Bari.Core.Model.Loader
         private readonly IUserOutput output;
         private readonly YamlParser parser;
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
-        private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext = new VersioningEnvironmentVariableContext();
+        private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext;
         private readonly IPluginLoader pluginLoader;
 
         /// <summary>
@@ -32,11 +32,13 @@ namespace Bari.Core.Model.Loader
         /// <param name="parametersLoaders">Parameter loader implementations</param>
         /// <param name="output">Output interface to issue warnings</param>
         /// <param name="pluginLoader">Plugin loader interface</param>
-        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader)
+        /// <param name="environmentVariableContext">Environment variable context</param>
+        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader, IEnvironmentVariableContext environmentVariableContext)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Requires(output != null);
             Contract.Requires(pluginLoader != null);
+            Contract.Requires(environmentVariableContext != null);
             Contract.Ensures(this.suiteFactory == suiteFactory);
             Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
@@ -44,7 +46,8 @@ namespace Bari.Core.Model.Loader
             this.parametersLoaders = parametersLoaders;
             this.output = output;
             this.pluginLoader = pluginLoader;
-
+            
+            versioningEnvironmentVariableContext = new VersioningEnvironmentVariableContext(environmentVariableContext);
             parser = new YamlParser();
         }
 

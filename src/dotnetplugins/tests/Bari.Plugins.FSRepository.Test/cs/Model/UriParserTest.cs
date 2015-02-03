@@ -1,4 +1,5 @@
 ﻿using System;
+using Bari.Core.Generic;
 using Bari.Plugins.FSRepository.Model;
 using FluentAssertions;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
         public void ShortForm()
         {
             var uri = new Uri("fsrepo://dependency/version/something.dll");
-            var context = new UriBasedPatternResolutionContext(uri);
+            var context = new UriBasedPatternResolutionContext(new DefaultEnvironmentVariableContext(), uri);
 
             context.RepositoryName.Should().BeNull();
             context.DependencyName.Should().Be("dependency");
@@ -25,7 +26,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
         public void ShortFormNoVersion()
         {
             var uri = new Uri("fsrepo://dependency/something.dll");
-            var context = new UriBasedPatternResolutionContext(uri);
+            var context = new UriBasedPatternResolutionContext(new DefaultEnvironmentVariableContext(), uri);
 
             context.RepositoryName.Should().BeNull();
             context.DependencyName.Should().Be("dependency");
@@ -38,7 +39,7 @@ namespace Bari.Plugins.FSRepository.Test.Model
         public void LongForm()
         {
             var uri = new Uri("fsrepo://reponame/dependency/version/something.dll");
-            var context = new UriBasedPatternResolutionContext(uri);
+            var context = new UriBasedPatternResolutionContext(new DefaultEnvironmentVariableContext(), uri);
 
             context.RepositoryName.Should().Be("reponame");
             context.DependencyName.Should().Be("dependency");

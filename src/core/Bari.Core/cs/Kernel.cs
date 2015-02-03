@@ -11,6 +11,7 @@ using Bari.Core.Commands.Clean;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Commands.Pack;
 using Bari.Core.Commands.Test;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
@@ -74,6 +75,8 @@ namespace Bari.Core
             kernel.Bind<IModelLoader>().To<LocalYamlModelLoader>().InSingletonScope();
             kernel.Bind<IModelLoader>().To<InMemoryYamlModelLoader>().InSingletonScope();
             kernel.Bind<ISuiteLoader>().To<DefaultSuiteLoader>().InSingletonScope();
+
+            kernel.Bind<IEnvironmentVariableContext>().To<DefaultEnvironmentVariableContext>().InSingletonScope();
 
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlReferenceAliasesLoader>();
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlTestsLoader>();

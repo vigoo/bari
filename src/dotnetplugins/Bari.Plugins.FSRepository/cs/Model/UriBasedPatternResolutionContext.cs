@@ -3,20 +3,25 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Monads;
 using Bari.Core.Exceptions;
+using Bari.Core.Generic;
 
 namespace Bari.Plugins.FSRepository.Model
 {
     public class UriBasedPatternResolutionContext : IPatternResolutionContext
     {
+        private readonly IEnvironmentVariableContext environmentVariableContext;
         private readonly string repositoryName;
         private readonly string dependencyName;
         private readonly string fileName;
         private readonly string extension;
         private readonly string version;
 
-        public UriBasedPatternResolutionContext(Uri uri)
+        public UriBasedPatternResolutionContext(IEnvironmentVariableContext environmentVariableContext, Uri uri)
         {
+            Contract.Requires(environmentVariableContext != null);
             Contract.Requires(uri != null);
+
+            this.environmentVariableContext = environmentVariableContext;
 
             string host = uri.Host;
             string path = uri.AbsolutePath.TrimStart('/');
@@ -55,7 +60,17 @@ namespace Bari.Plugins.FSRepository.Model
 
         public string GetEnvironmentVariable(string name)
         {
-            return Environment.GetEnvironmentVariable(name);
+            return environmentVariableContext.GetEnvironmentVariable(name);
+        }
+
+        public void Define(string name, string value)
+        {
+            environmentVariableContext.Define(name, value);
+        }
+
+        public void Undefine(string name)
+        {
+            environmentVariableContext.Undefine(name);
         }
 
         public string RepositoryName

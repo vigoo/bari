@@ -24,18 +24,20 @@ namespace Bari.Plugins.FSRepository.Build
         private readonly IFileSystemRepositoryAccess repository;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IUserOutput output;
+        private readonly IEnvironmentVariableContext environmentVariableContext;
 
         private Reference reference;
         private string resolvedPath;
-        private IPatternResolutionContext resolutionContext;
+        private IPatternResolutionContext resolutionContext;        
 
-        public FSRepositoryReferenceBuilder(Suite suite, IFSRepositoryFingerprintFactory fingerprintFactory, IFileSystemRepositoryAccess repository, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output)
+        public FSRepositoryReferenceBuilder(Suite suite, IFSRepositoryFingerprintFactory fingerprintFactory, IFileSystemRepositoryAccess repository, [TargetRoot] IFileSystemDirectory targetRoot, IUserOutput output, IEnvironmentVariableContext environmentVariableContext)
         {
             this.suite = suite;
             this.fingerprintFactory = fingerprintFactory;
             this.repository = repository;
             this.targetRoot = targetRoot;
             this.output = output;
+            this.environmentVariableContext = environmentVariableContext;
         }
 
         /// <summary>
@@ -147,7 +149,7 @@ namespace Bari.Plugins.FSRepository.Build
         {
             var uri = reference.Uri;
             var repositories = suite.GetFSRepositories();
-            resolutionContext = new UriBasedPatternResolutionContext(uri);
+            resolutionContext = new UriBasedPatternResolutionContext(environmentVariableContext, uri);
             var resolution = repositories.Resolve(resolutionContext);
 
             resolvedPath = resolution.Result;
