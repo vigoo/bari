@@ -96,7 +96,10 @@ namespace Bari.Plugins.Nuget.Build
                 {
                     case FrameworkVersion.v20: return NugetLibraryProfile.Net2;
                     case FrameworkVersion.v30: return NugetLibraryProfile.Net3;
-                    case FrameworkVersion.v35: return NugetLibraryProfile.Net35;
+                    case FrameworkVersion.v35:
+                        return csharpParams.TargetFrameworkProfile == FrameworkProfile.Default
+                            ? NugetLibraryProfile.Net35
+                            : NugetLibraryProfile.Net35Client;
                     case FrameworkVersion.v4:
                         return csharpParams.TargetFrameworkProfile == FrameworkProfile.Default
                             ? NugetLibraryProfile.Net4

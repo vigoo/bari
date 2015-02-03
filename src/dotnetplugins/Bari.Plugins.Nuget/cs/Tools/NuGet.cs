@@ -125,6 +125,7 @@ namespace Bari.Plugins.Nuget.Tools
                         GetChild(libRoot, "net4");
             var lib40client = GetChild(libRoot, "net40-client");
             var lib35 = GetChild(libRoot, "net35");
+            var lib35client = GetChild(libRoot, "net35-client");
             var lib20 = GetChild(libRoot, "net20") ??
                         GetChild(libRoot, "20");
 
@@ -136,6 +137,8 @@ namespace Bari.Plugins.Nuget.Tools
                 result.AddRange(GetDllsIn(localRoot, lib40client));
             else if (lib35 != null && maxProfile != NugetLibraryProfile.Net35)
                 result.AddRange(GetDllsIn(localRoot, lib35));
+            else if (lib35client != null && maxProfile != NugetLibraryProfile.Net35Client)
+                result.AddRange(GetDllsIn(localRoot, lib35client));
             else if (lib20 != null && maxProfile != NugetLibraryProfile.Net2)
                 result.AddRange(GetDllsIn(localRoot, lib20));
             else
