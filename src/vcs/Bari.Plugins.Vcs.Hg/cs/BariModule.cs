@@ -1,4 +1,5 @@
-﻿using Ninject.Modules;
+﻿using Ninject;
+using Ninject.Modules;
 
 namespace Bari.Plugins.Vcs.Hg
 {
@@ -15,6 +16,13 @@ namespace Bari.Plugins.Vcs.Hg
         public override void Load()
         {
             log.Info("Vcs hg plugin loaded");
+
+            var mercurialSuite = Kernel.Get<MercurialSuite>();
+
+            if (mercurialSuite.IsAvailable)
+            {
+                mercurialSuite.AddEnvironmentVariables();
+            }
         }
     }
 }

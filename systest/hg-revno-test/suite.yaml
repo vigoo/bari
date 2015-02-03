@@ -1,0 +1,11 @@
+---
+suite:      bari systemtest hg-revno-test
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          version: 1.0.0.$HG_REVNO
+          csharp:
+            target-framework: v4.5-client

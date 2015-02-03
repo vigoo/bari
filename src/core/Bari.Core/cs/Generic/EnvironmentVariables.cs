@@ -6,7 +6,7 @@ namespace Bari.Core.Generic
 {
     public static class EnvironmentVariables
     {
-        private static readonly Regex envVarsRegex = new Regex(@"\$([a-zA-Z0-9]+)", RegexOptions.Singleline);
+        private static readonly Regex envVarsRegex = new Regex(@"\$([a-zA-Z0-9_]+)", RegexOptions.Singleline);
 
         public static bool ResolveEnvironmentVariables(IEnvironmentVariableContext context, StringBuilder resultBuilder, Action<string> failLog = null)
         {

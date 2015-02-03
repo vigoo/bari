@@ -44,6 +44,7 @@ systest/postprocessor-script-test/cache
 systest/cpp-release-test/cache
 systest/cpp-version/cache
 systest/custom-plugin-test/cache
+systest/hg-revno-test/cache
 
 # Systest generated files
 hello.vcxproj
