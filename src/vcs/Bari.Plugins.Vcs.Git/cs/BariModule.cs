@@ -1,4 +1,5 @@
-﻿using Ninject.Modules;
+﻿using Ninject;
+using Ninject.Modules;
 
 namespace Bari.Plugins.Vcs.Git
 {
@@ -15,6 +16,13 @@ namespace Bari.Plugins.Vcs.Git
         public override void Load()
         {
             log.Info("Vcs git plugin loaded");
+
+            var gitSuite = Kernel.Get<GitSuite>();
+
+            if (gitSuite.IsAvailable)
+            {
+                gitSuite.AddEnvironmentVariables();
+            }
         }
     }
 }

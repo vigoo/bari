@@ -283,8 +283,7 @@ modules:
             - gac://System
             - nuget://log4net
             - alias://ninject
-            - nuget://GitSharp
-            - module://Bari.Plugins.Vcs.Core
+            - module://Bari.Plugins.Vcs.Core            
             - suite://core/Bari.Core
 
 products:
