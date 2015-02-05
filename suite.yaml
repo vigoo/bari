@@ -1,6 +1,6 @@
 ---
 suite:      bari
-version:    1.0.0.$BUILDNO
+version:    $GIT_TAG.$GIT_REVNO
 contracts:  enabled
 
 test:
