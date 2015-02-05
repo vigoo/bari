@@ -19,9 +19,6 @@ before_install:
 
 
 script:
- - git describe
- - git describe --tags
- - git describe master
  - mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full 
  - if [ "$TARGET" == "release-mono" ]; then mono _bootstrap/bari.exe -v --target ${TARGET} test; fi
  - mono _bootstrap/bari.exe -v --target ${TARGET} pack full
