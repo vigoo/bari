@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using Bari.Core.Generic;
 
@@ -44,8 +45,15 @@ namespace Bari.Plugins.Vcs.Git
 
         private static bool IsGitAvailable()
         {
-            var output = RunGit("", "--version");
-            return output != null && output.StartsWith("git version ");
+            try
+            {
+                var output = RunGit("", "--version");
+                return output != null && output.StartsWith("git version ");
+            }
+            catch (Win32Exception)
+            {
+                return false;
+            }
         }
 
         private static string RunGit(string root, string arguments)
