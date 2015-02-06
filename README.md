@@ -15,7 +15,7 @@
 
 Bari itself is now compiled using bari, so you'll have to download the latest version as a binary package. 
 
-The [latest released version is 1.0](https://github.com/vigoo/bari/releases/tag/1.0).
+The [latest released version is 1.0.1](https://github.com/vigoo/bari/releases/tag/1.0.1).
 
 To use the latest build, install [bari from NuGet](https://www.nuget.org/packages/bari).
 
