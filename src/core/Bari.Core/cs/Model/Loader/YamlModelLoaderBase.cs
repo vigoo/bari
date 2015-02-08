@@ -418,7 +418,7 @@ namespace Bari.Core.Model.Loader
                     var loader = parametersLoaders.FirstOrDefault(l => l.Supports(ppid.AsString));
                     
                     IProjectParameters param = null;
-                    if (loader != null)
+                    if (loader != null && value != null)
                     {
                         param = loader.Load(suite, ppid.AsString, value, parser);                        
                     }
