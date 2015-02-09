@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 using Mercurial;
+using System;
 
 namespace Bari.Plugins.Vcs.Hg
 {
@@ -23,17 +24,24 @@ namespace Bari.Plugins.Vcs.Hg
         {
             get
             {
-                var localRoot = suiteRoot as LocalFileSystemDirectory;
-                if (localRoot != null)
+                try
                 {
-                    if (Client.CouldLocateClient)
+                    var localRoot = suiteRoot as LocalFileSystemDirectory;
+                    if (localRoot != null)
                     {
-                        if (Directory.Exists(Path.Combine(localRoot.AbsolutePath, ".hg")))
+                        if (Client.CouldLocateClient)
                         {
-                            log.InfoFormat("Mercurial support initialized, client version {0}", Client.GetVersion());
-                            return true;
+                            if (Directory.Exists(Path.Combine(localRoot.AbsolutePath, ".hg")))
+                            {
+                                log.InfoFormat("Mercurial support initialized, client version {0}", Client.GetVersion());
+                                return true;
+                            }
                         }
                     }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    log.WarnFormat("Could not initialize Mercurial support: {0}", ex.Message);
                 }
 
                 return false;
