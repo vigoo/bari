@@ -6,6 +6,7 @@ using Bari.Core.Build;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using QuickGraph;
+using Bari.Core.UI;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -136,6 +137,11 @@ namespace Bari.Plugins.VsCore.Build
         public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
         {
             return baseContext.GetAllResultsIn(targetDir);
+        }
+
+        public void DumpDependencies(IBuilder rootBuilder, IUserOutput output)
+        {
+            baseContext.DumpDependencies(rootBuilder, output);
         }
     }
 }

@@ -42,6 +42,16 @@ namespace Bari.Core.UI
         /// </summary>
         /// <param name="message">Error message</param>
         void Error(string message);
+
+        /// <summary>
+        /// Increases indentation
+        /// </summary>
+        void Indent();
+
+        /// <summary>
+        /// Decreases indentation
+        /// </summary>
+        void Unindent();
     }
 
     /// <summary>
@@ -97,5 +107,8 @@ namespace Bari.Core.UI
         {
             Contract.Requires(message != null);
         }
+
+        public abstract void Indent();
+        public abstract void Unindent();
     }
 }

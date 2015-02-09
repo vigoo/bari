@@ -8,6 +8,8 @@ namespace Bari.Console.UI
     /// </summary>
     public class ConsoleUserInterface: IUserOutput
     {
+        private int indent;
+
         /// <summary>
         /// Outputs a message to the user. The message can be single or multiline.
         /// 
@@ -29,6 +31,8 @@ namespace Bari.Console.UI
             bool inExample = false;
             bool inHeading = false;
             bool isEscaping = false;
+
+            System.Console.Write(IndentString);
 
             foreach (var ch in message)
             {
@@ -84,7 +88,7 @@ namespace Bari.Console.UI
         public void Describe(string target, string description)
         {
             System.Console.ForegroundColor = ConsoleColor.Gray;
-            System.Console.Write("    ");
+            System.Console.Write(IndentString + "    ");
             System.Console.ForegroundColor = ConsoleColor.Yellow;
             System.Console.Write(target);
             System.Console.ForegroundColor = ConsoleColor.Gray;
@@ -99,17 +103,19 @@ namespace Bari.Console.UI
         public void Warning(string message, string[] hints = null)
         {
             System.Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Console.WriteLine("Warning: {0}", message);
+            System.Console.WriteLine(IndentString + "Warning: {0}", message);
 
             if (hints != null && hints.Length > 0)
             {
                 System.Console.ForegroundColor = ConsoleColor.DarkYellow;
-                System.Console.WriteLine("\nHints:");
-                
+                System.Console.WriteLine("\n" + IndentString + "Hints:");
+
+                Indent();
                 foreach (var hint in hints)
                 {
-                    System.Console.WriteLine("\t- {0}", hint);
+                    System.Console.WriteLine(IndentString + "- {0}", hint);
                 }
+                Unindent();
             }
 
             System.Console.ForegroundColor = ConsoleColor.Gray;
@@ -122,8 +128,29 @@ namespace Bari.Console.UI
         public void Error(string message)
         {
             System.Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.WriteLine(message);
+            System.Console.WriteLine(IndentString + message);
             System.Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        public void Indent()
+        {
+            indent += 1;
+        }
+
+        public void Unindent()
+        {
+            if (indent == 0)
+                throw new InvalidOperationException();
+
+            indent -= 1;
+        }
+
+        private string IndentString
+        {
+            get
+            {
+                return new String(' ', indent*2);
+            }
         }
     }
 }

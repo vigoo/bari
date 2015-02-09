@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Bari.Core.Build.Dependencies.Protocol;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -87,6 +88,11 @@ namespace Bari.Core.Build.Dependencies
             {
                 get { return null; }
             }
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message("no dependencies");
         }
     }
 }

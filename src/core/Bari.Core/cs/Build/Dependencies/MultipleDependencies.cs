@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Bari.Core.UI;
+using System;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -41,6 +43,23 @@ namespace Bari.Core.Build.Dependencies
         public IDependencyFingerprint CreateFingerprint()
         {
             return new CombinedFingerprint(dependencies);
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message(String.Format("Multiple dependencies ({0} subdeps)", dependencies.Count));
+            output.Indent();
+            try 
+            {
+                foreach (var dep in dependencies)
+                {
+                    dep.Dump(output);
+                }
+            }
+            finally
+            {
+                output.Unindent();
+            }
         }
     }
 }

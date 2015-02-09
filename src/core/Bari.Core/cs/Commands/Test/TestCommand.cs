@@ -4,6 +4,7 @@ using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Commands.Test
 {
@@ -17,7 +18,8 @@ namespace Bari.Core.Commands.Test
         private readonly IBuildContextFactory buildContextFactory;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
-        private readonly IEnumerable<ITestRunner> testRunners;
+        private readonly IEnumerable<ITestRunner> testRunners;       
+        private readonly IUserOutput output;
 
         /// <summary>
         /// Gets the name of the command. This is the string which can be used on the command line interface
@@ -72,12 +74,14 @@ Example: `bari test --dump`
         /// <param name="targetRoot">Target file system directory</param>
         /// <param name="projectBuilders">Available project builders</param>
         /// <param name="testRunners">Available test runners</param>
-        public TestCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners)
+        /// <param name="output">Output interface for the dependency dump functionality</param>
+        public TestCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners, IUserOutput output)
         {
             this.buildContextFactory = buildContextFactory;
             this.targetRoot = targetRoot;
             this.projectBuilders = projectBuilders;
             this.testRunners = testRunners;
+            this.output = output;
         }
 
         /// <summary>
@@ -89,11 +93,15 @@ Example: `bari test --dump`
         {
             int effectiveLength = parameters.Length;
             bool dumpMode = false;
+            bool dumpDepsMode = false;
 
             if (effectiveLength > 0)
+            {
                 dumpMode = parameters[effectiveLength - 1] == "--dump";
+                dumpDepsMode = parameters[effectiveLength - 1] == "--dump-deps";
+            }
 
-            if (dumpMode)
+            if (dumpMode || dumpDepsMode)
                 effectiveLength--;
 
             if (effectiveLength == 0)
@@ -105,7 +113,7 @@ Example: `bari test --dump`
                 log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
                 var tests = suite.HasParameters("test") ? suite.GetParameters<Tests>("test") : new Tests();
-                var buildOutputs = RunWithProjects(projects, dumpMode);
+                var buildOutputs = RunWithProjects(projects, dumpMode, dumpDepsMode);
                 return RunTests(tests, projects, buildOutputs);
             }
             else
@@ -134,7 +142,7 @@ Example: `bari test --dump`
             return enabled;
         }
 
-        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode)
+        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode, bool dumpDepsMode)
         {
             var context = buildContextFactory.CreateBuildContext();
 
@@ -145,6 +153,12 @@ Example: `bari test --dump`
             {
                 using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
                     context.Dump(builderGraph, rootBuilder);
+
+                return new TargetRelativePath[0];
+            } 
+            else if (dumpDepsMode)
+            {
+                context.DumpDependencies(rootBuilder, output);
 
                 return new TargetRelativePath[0];
             }

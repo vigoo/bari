@@ -3,6 +3,7 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Plugins.FSRepository.Model;
+using Bari.Core.UI;
 
 namespace Bari.Plugins.FSRepository.Build.Dependencies
 {
@@ -47,6 +48,11 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
             {
                 return fingerprintFactory.CreateFSRepositoryFingerprint(repository, path);
             }
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message(string.Format("FS repo: `{0}`", path));
         }
     }
 }

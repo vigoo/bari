@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
+using Bari.Core.UI;
+using System;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -28,6 +30,20 @@ namespace Bari.Core.Build.Dependencies
         public IDependencyFingerprint CreateFingerprint()
         {
             return subtask.Dependencies.CreateFingerprint();
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message(String.Format("Subtask {0}", subtask));
+            output.Indent();
+            try 
+            {
+                subtask.Dependencies.Dump(output);
+            }
+            finally
+            {
+                output.Unindent();
+            }
         }
     }
 }

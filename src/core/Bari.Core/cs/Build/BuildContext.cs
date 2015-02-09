@@ -9,6 +9,7 @@ using QuickGraph;
 using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
 using Bari.Core.Build.Statistics;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build
 {
@@ -218,6 +219,16 @@ namespace Bari.Core.Build
                 writer.Rankdir = "RL";
                 writer.WriteGraph(graph.Edges);
             }
+        }
+
+        ///<summary>
+        ///Dumps the dependencies of the builder
+        ///</summary>
+        ///<param name="rootBuilder">The root builder</param>
+        ///<param name="output">Output to dump information to</param>
+        public void DumpDependencies(IBuilder rootBuilder, IUserOutput output)
+        {
+            rootBuilder.Dependencies.Dump(output);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Generic;
 using QuickGraph;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build
 {
@@ -58,6 +59,13 @@ namespace Bari.Core.Build
         /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
         void Dump(Stream builderGraphStream, IBuilder rootBuilder);
+
+        /// <summary>
+        /// Dumps the dependencies of the builder
+        /// </summary>
+        /// <param name="rootBuilder">The root builder</param>
+        /// <param name="output">Output to dump information to</param>
+        void DumpDependencies(IBuilder rootBuilder, IUserOutput output);
 
         /// <summary>
         /// Checks whether the given builder was already added to the context
@@ -151,6 +159,17 @@ namespace Bari.Core.Build
         public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
         {
             Contract.Requires(builderGraphStream != null);
+        }
+
+        ///<summary>
+        ///Dumps the dependencies of the builder
+        ///</summary>
+        ///<param name="rootBuilder">The root builder</param>
+        ///<param name="output">Output to dump information to</param>
+        public void DumpDependencies(IBuilder rootBuilder, IUserOutput output)
+        {
+            Contract.Requires(rootBuilder != null);
+            Contract.Requires(output != null);
         }
 
         /// <summary>

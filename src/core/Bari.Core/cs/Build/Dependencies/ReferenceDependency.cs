@@ -1,4 +1,5 @@
 ﻿using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -26,6 +27,11 @@ namespace Bari.Core.Build.Dependencies
         public IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(reference, new[] { "Uri" });
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message("Reference {0}", reference.Uri);
         }
     }
 }

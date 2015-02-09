@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -30,6 +31,23 @@ namespace Bari.Core.Build.Dependencies
         public IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(project, properties);
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message("Project {0}.{1}'s properties:", project.Module.Name, project.Name);
+            output.Indent();
+            try
+            {
+                foreach (var prop in properties)
+                {
+                    output.Message(prop);
+                }
+            }
+            finally
+            {
+                output.Unindent();
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using Bari.Core.Model;
+using Bari.Core.UI;
+using System.Linq;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -33,6 +35,11 @@ namespace Bari.Core.Build.Dependencies
         public IDependencyFingerprint CreateFingerprint()
         {
             return fingerprintFactory.CreateSourceSetFingerprint(sourceSet.Files, exclusions, fullDependency: false);
+        }
+
+        public void Dump(IUserOutput output)
+        {
+            output.Message(String.Format("Source set structure *{0}* ({1} files)", sourceSet.Type, sourceSet.Files.Count()));
         }
     }
 }

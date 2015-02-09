@@ -76,5 +76,13 @@ namespace Bari.Core.Test.Helper
         {
             errors.Add(message);
         }
+
+        public void Indent()
+        {
+        }
+
+        public void Unindent()
+        {
+        }
     }
 }

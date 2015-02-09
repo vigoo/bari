@@ -1,4 +1,6 @@
-﻿namespace Bari.Core.Build
+﻿using Bari.Core.UI;
+
+namespace Bari.Core.Build
 {
     /// <summary>
     /// Represents a set of dependencies for a <see cref="IBuilder"/>
@@ -11,5 +13,10 @@
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
         IDependencyFingerprint CreateFingerprint();
+
+        /// <summary>
+        /// Dumps debug information about this dependency to the output
+        /// </summary>
+        void Dump(IUserOutput output);
     }
 }
