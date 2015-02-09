@@ -1,5 +1,10 @@
 language: objective-c
 
+branches:
+  except:
+    - site-src
+    - gh-pages
+
 env:
  global:
   - EnableNuGetPackageRestore=true 
