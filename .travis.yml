@@ -13,7 +13,7 @@ env:
  matrix:
   - TARGET=release-mono
   - TARGET=release
- 
+
 before_install:
  - wget "http://download.mono-project.com/archive/${MONO_VERSION}/macos-10-x86/MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg"
  - sudo installer -pkg "MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg" -target /
@@ -24,8 +24,6 @@ before_install:
 
 
 script:
- - mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full 
- - if [ "$TARGET" == "release-mono" ]; then mono _bootstrap/bari.exe -v --target ${TARGET} test; fi
+ - mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full
  - mono _bootstrap/bari.exe -v --target ${TARGET} pack full
- - mono _bootstrap/bari.exe -v --target ${TARGET} publish full
-
+ - if [ "$TARGET" == "release-mono" ]; then mono _bootstrap/bari.exe -v --target ${TARGET} test && mono _bootstrap/bari.exe -v --target ${TARGET} publish full; else mono _bootstrap/bari.exe -v --target ${TARGET} publish full; fi
