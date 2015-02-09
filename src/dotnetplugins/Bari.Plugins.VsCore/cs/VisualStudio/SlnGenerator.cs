@@ -81,9 +81,13 @@ namespace Bari.Plugins.VsCore.VisualStudio
 
             if (testProjects.Count > 0)
             {
-                output.WriteLine("Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"Tests\", \"Tests\", \"{0}\"", testProjectNode);
+                output.WriteLine("Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"_Tests\", \"_Tests\", \"{0}\"", testProjectNode);
                 output.WriteLine("EndProject");
             }
+
+            var modules = new HashSet<Module>(projects.Select(prj => prj.Module));
+            foreach (var module in modules)
+                GenerateModuleNode(module);
 
             foreach (var project in projects)
                 if (project != startupProject)
@@ -111,15 +115,35 @@ namespace Bari.Plugins.VsCore.VisualStudio
                 string projectGuid = projectGuidManagement.GetGuid(testProject).ToString("B").ToUpperInvariant();
                 output.WriteLine("\t\t{0} = {1}", projectGuid, testProjectNode);
             }
+
+            GenerateNestedProjects(testProjects);
+
             output.WriteLine("\tEndGlobalSection");
 
             output.WriteLine("EndGlobal");
         }
 
+        private void GenerateNestedProjects(HashSet<TestProject> testProjects)
+        {
+            foreach (var project in projects)
+            {
+                if (!testProjects.Contains(project))
+                {
+                    var slnProject = supportedSlnProjects.FirstOrDefault(prj => prj.SupportsProject(project));
+                    if (slnProject != null)
+                    {
+                        string projectGuid = projectGuidManagement.GetGuid(project).ToString("B").ToUpperInvariant();
+                        string moduleGuid = projectGuidManagement.GetGuid(project.Module).ToString("B").ToUpperInvariant();
+                        output.WriteLine("\t\t{0} = {1}", projectGuid, moduleGuid);
+                    }
+                }
+            }
+        }
+
         private void GenerateSolutionItems(string solutionItemsNode)
         {
             output.WriteLine(
-                "Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"Solution Items\", \"Solution Items\", \"{0}\"",
+                "Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"_Solution Items\", \"_Solution Items\", \"{0}\"",
                 solutionItemsNode);
             output.WriteLine("\tProjectSection(SolutionItems) = preProject");
 
@@ -132,6 +156,13 @@ namespace Bari.Plugins.VsCore.VisualStudio
             }
 
             output.WriteLine("\tEndProjectSection");
+            output.WriteLine("EndProject");
+        }
+
+        private void GenerateModuleNode(Module module)
+        {
+            var guid = projectGuidManagement.GetGuid(module).ToString("B").ToUpperInvariant();
+            output.WriteLine("Project(\"{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}\") = \"{1}\", \"{1}\", \"{0}\"", guid, module.Name);
             output.WriteLine("EndProject");
         }
 
