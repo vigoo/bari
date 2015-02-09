@@ -104,11 +104,15 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         {
             int effectiveLength = parameters.Length;
             bool dumpMode = false;
+            bool dumpDepsMode = false;
 
             if (effectiveLength > 0)
+            {
                 dumpMode = parameters[effectiveLength - 1] == "--dump";
+                dumpDepsMode = parameters[effectiveLength - 1] == "--dump-deps";
+            }
 
-            if (dumpMode)
+            if (dumpMode || dumpDepsMode)
                 effectiveLength--;
 
             if (effectiveLength < 2)
@@ -123,7 +127,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 {
                     lastTargetStr = targetStr;
                     var target = targetParser.ParseTarget(targetStr);
-                    RunWithProjects(target, dumpMode);
+                    RunWithProjects(target, dumpMode, dumpDepsMode);
 
                     return true;
                 }
@@ -139,7 +143,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
         }
 
-        private void RunWithProjects(CommandTarget target, bool dumpMode)
+        private void RunWithProjects(CommandTarget target, bool dumpMode, bool dumpDepsMode)
         {
             log.InfoFormat("Building...");
 
@@ -163,6 +167,10 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 {
                     using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
                         context.Dump(builderGraph, rootBuilder);
+                }
+                else if (dumpDepsMode)
+                {
+                    context.DumpDependencies(rootBuilder, output);
                 }
                 else
                 {
