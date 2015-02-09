@@ -2,6 +2,7 @@
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Test.Helper;
+using Bari.Core.UI;
 using FluentAssertions;
 using NUnit.Framework;
 using Ninject;
@@ -23,6 +24,7 @@ namespace Bari.Core.Test.Commands
                 <SuiteRootAttribute>();
             kernel.Bind<IFileSystemDirectory>().ToConstant(new TestFileSystemDirectory("target")).WhenTargetHas
                 <TargetRootAttribute>();
+            kernel.Bind<IUserOutput>().ToConstant(new TestUserOutput());
 
             suite = kernel.Get<Suite>();
             suite.Name = "test suite";
