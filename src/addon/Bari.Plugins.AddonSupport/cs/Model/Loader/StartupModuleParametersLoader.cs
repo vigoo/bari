@@ -21,7 +21,7 @@ namespace Bari.Plugins.AddonSupport.Model.Loader
 
         protected override StartupModuleParameters CreateNewParameters(Suite suite)
         {
-            return new StartupModuleParameters();
+               return new StartupModuleParameters();
         }
 
         public override IProjectParameters Load(Suite suite, string name, YamlNode value, YamlParser parser)

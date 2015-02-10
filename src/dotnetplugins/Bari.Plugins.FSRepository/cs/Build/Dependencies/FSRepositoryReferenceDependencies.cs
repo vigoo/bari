@@ -10,7 +10,7 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
     /// <summary>
     /// Represents dependency on a file in a file system repository
     /// </summary>
-    public class FSRepositoryReferenceDependencies: IDependencies
+    public class FSRepositoryReferenceDependencies: DependenciesBase
     {
         private readonly IFSRepositoryFingerprintFactory fingerprintFactory;
         private readonly IFileSystemRepositoryAccess repository;
@@ -34,7 +34,7 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             if (Path.GetFileName(path) == "*.*")
             {
@@ -50,7 +50,7 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies
             }
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(string.Format("FS repo: `{0}`", path));
         }

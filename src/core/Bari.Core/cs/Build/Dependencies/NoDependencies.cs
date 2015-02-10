@@ -7,14 +7,14 @@ namespace Bari.Core.Build.Dependencies
     /// <summary>
     /// A dependency implementation representing no dependency
     /// </summary>
-    public sealed class NoDependencies: IDependencies
+    public sealed class NoDependencies: DependenciesBase
     {
         /// <summary>
         /// Creates fingerprint of the dependencies represented by this object, which can later be compared
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return NoDependencyFingerprint.Instance;
         }
@@ -90,7 +90,7 @@ namespace Bari.Core.Build.Dependencies
             }
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message("no dependencies");
         }

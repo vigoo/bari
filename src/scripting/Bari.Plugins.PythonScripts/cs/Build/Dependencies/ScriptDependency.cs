@@ -6,7 +6,7 @@ using System;
 
 namespace Bari.Plugins.PythonScripts.Build.Dependencies
 {
-    public class ScriptDependency : IDependencies
+    public class ScriptDependency : DependenciesBase
     {
         private readonly IScript buildScript;
 
@@ -15,12 +15,12 @@ namespace Bari.Plugins.PythonScripts.Build.Dependencies
              this.buildScript = buildScript;
          }
 
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(buildScript, new[] { "Source"});
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(String.Format("Script source `{0}`", buildScript.Name));
         }

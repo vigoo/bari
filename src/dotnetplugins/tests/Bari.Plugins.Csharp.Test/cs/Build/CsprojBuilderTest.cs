@@ -128,12 +128,12 @@ namespace Bari.Plugins.Csharp.Test.Build
             project.AddReference(new Reference(new Uri("test://ref1"), ReferenceType.Build));
             builder.AddToContext(context.Object);
 
-            var fp0 = builder.Dependencies.CreateFingerprint();
+            var fp0 = builder.Dependencies.Fingerprint;
 
             project.AddReference(new Reference(new Uri("test://ref2"), ReferenceType.Build));
             builder.AddToContext(context.Object);
 
-            var fp1 = builder.Dependencies.CreateFingerprint();
+            var fp1 = builder.Dependencies.Fingerprint;
 
             fp0.Should().NotBe(fp1);
         }

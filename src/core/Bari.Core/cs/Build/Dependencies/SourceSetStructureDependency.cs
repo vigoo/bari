@@ -8,7 +8,7 @@ namespace Bari.Core.Build.Dependencies
     /// <summary>
     /// Represents dependency on the items of a <see cref="SourceSet"/>, but not on the source files' content
     /// </summary>
-    public class SourceSetStructureDependency : IDependencies
+    public class SourceSetStructureDependency : DependenciesBase
     {
         private readonly ISourceSetFingerprintFactory fingerprintFactory;
         private readonly ISourceSet sourceSet;
@@ -32,12 +32,12 @@ namespace Bari.Core.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return fingerprintFactory.CreateSourceSetFingerprint(sourceSet.Files, exclusions, fullDependency: false);
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(String.Format("Source set structure *{0}* ({1} files)", sourceSet.Type, sourceSet.Files.Count()));
         }

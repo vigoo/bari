@@ -33,7 +33,7 @@ namespace Bari.Core.Build.Dependencies
             Contract.Ensures(fingerprints.Count > 1);
 
             fingerprints = new HashSet<IDependencyFingerprint>(
-                deps.Select(dep => dep.CreateFingerprint()));
+                deps.Select(dep => dep.Fingerprint));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Bari.Core.Build.Dependencies
         {
             fingerprints = new HashSet<IDependencyFingerprint>();
             var noDeps = new NoDependencies();
-            var noDepsFp = noDeps.CreateFingerprint();
+            var noDepsFp = noDeps.Fingerprint;
 
             foreach (var childProtocol in proto.Items)
             {

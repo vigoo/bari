@@ -12,7 +12,7 @@ namespace Bari.Core.Build
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        IDependencyFingerprint CreateFingerprint();
+        IDependencyFingerprint Fingerprint { get; }
 
         /// <summary>
         /// Dumps debug information about this dependency to the output

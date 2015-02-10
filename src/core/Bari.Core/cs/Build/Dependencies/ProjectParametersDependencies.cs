@@ -7,7 +7,7 @@ using System;
 
 namespace Bari.Core.Build.Dependencies
 {
-    public abstract class ProjectParametersDependencies : IDependencies
+    public abstract class ProjectParametersDependencies : DependenciesBase
     {
         private readonly Project project;
         private readonly string blockName;
@@ -20,7 +20,7 @@ namespace Bari.Core.Build.Dependencies
             parameters = project.GetParameters<IProjectParameters>(name);
         }
 
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(
                 parameters,
@@ -38,7 +38,7 @@ namespace Bari.Core.Build.Dependencies
             }
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(String.Format("Project {0}.{1}'s parameter block {2}", project.Module.Name, project.Name, blockName));
         }

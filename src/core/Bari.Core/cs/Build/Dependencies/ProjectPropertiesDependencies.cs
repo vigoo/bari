@@ -7,7 +7,7 @@ namespace Bari.Core.Build.Dependencies
     /// <summary>
     /// Represents dependency on one or more properties of a <see cref="Project"/>
     /// </summary>
-    public class ProjectPropertiesDependencies: IDependencies
+    public class ProjectPropertiesDependencies: DependenciesBase
     {
         private readonly Project project;
         private readonly ISet<string> properties;
@@ -28,12 +28,12 @@ namespace Bari.Core.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(project, properties);
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message("Project {0}.{1}'s properties:", project.Module.Name, project.Name);
             output.Indent();

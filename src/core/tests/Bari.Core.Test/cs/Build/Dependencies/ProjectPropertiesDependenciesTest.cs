@@ -25,9 +25,10 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var dep = new ProjectPropertiesDependencies(project, "Type");
-            var fp1 = dep.CreateFingerprint();
-            var fp2 = dep.CreateFingerprint();
+            var dep1 = new ProjectPropertiesDependencies(project, "Type");
+            var dep2 = new ProjectPropertiesDependencies(project, "Type");
+            var fp1 = dep1.Fingerprint;
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
@@ -36,12 +37,13 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ChangingThePropertyChangesTheFingerprint()
         {
-            var dep = new ProjectPropertiesDependencies(project, "Type");
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new ProjectPropertiesDependencies(project, "Type");
+            var fp1 = dep1.Fingerprint;
 
             project.Type = ProjectType.Executable;
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new ProjectPropertiesDependencies(project, "Type");
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -50,7 +52,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void ConvertToProtocolAndBack()
         {
             var dep = new ProjectPropertiesDependencies(project, "Type");
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             var proto = fp1.Protocol;
             var fp2 = proto.CreateFingerprint();
@@ -63,7 +65,7 @@ namespace Bari.Core.Test.Build.Dependencies
         {
             var ser = new BinarySerializer();
             var dep = new ProjectPropertiesDependencies(project, "Type");
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             byte[] data;
             using (var ms = new MemoryStream())

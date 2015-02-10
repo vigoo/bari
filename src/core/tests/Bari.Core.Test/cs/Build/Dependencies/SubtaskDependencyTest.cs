@@ -19,10 +19,10 @@ namespace Bari.Core.Test.Build.Dependencies
             var subtaskDep = new SubtaskDependency(referencedBuilder.Object);
 
             referencedBuilder.Setup(b => b.Dependencies).Returns(referencedDep.Object);
-            referencedDep.Setup(d => d.CreateFingerprint()).Returns(fingerprint.Object);
+            referencedDep.SetupGet(d => d.Fingerprint).Returns(fingerprint.Object);
 
-            var fp1 = referencedBuilder.Object.Dependencies.CreateFingerprint();
-            var fp2 = subtaskDep.CreateFingerprint();
+            var fp1 = referencedBuilder.Object.Dependencies.Fingerprint;
+            var fp2 = subtaskDep.Fingerprint;
 
             fp1.Should().Be(fp2);
         }

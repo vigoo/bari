@@ -33,7 +33,7 @@ namespace Bari.Core.Test.Build.Cache
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
-            realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
+            realBuilderDeps.Setup(dep => dep.Fingerprint).Returns(initialFingerprint.Object);
             
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
             realBuilder.Setup(b => b.Uid).Returns("");
@@ -77,7 +77,7 @@ namespace Bari.Core.Test.Build.Cache
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
-            realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
+            realBuilderDeps.Setup(dep => dep.Fingerprint).Returns(initialFingerprint.Object);
 
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
             realBuilder.Setup(b => b.Uid).Returns("");
@@ -103,7 +103,7 @@ namespace Bari.Core.Test.Build.Cache
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
-            realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
+            realBuilderDeps.Setup(dep => dep.Fingerprint).Returns(initialFingerprint.Object);
 
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
             realBuilder.Setup(b => b.Uid).Returns("");
@@ -136,7 +136,7 @@ namespace Bari.Core.Test.Build.Cache
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
-            realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
+            realBuilderDeps.Setup(dep => dep.Fingerprint).Returns(initialFingerprint.Object);
 
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
             realBuilder.Setup(b => b.BuilderType).Returns(typeof (IBuilder));
@@ -178,7 +178,7 @@ namespace Bari.Core.Test.Build.Cache
             var cache = new Mock<IBuildCache>();
             var targetDir = new TestFileSystemDirectory("target");
 
-            realBuilderDeps.Setup(dep => dep.CreateFingerprint()).Returns(initialFingerprint.Object);
+            realBuilderDeps.Setup(dep => dep.Fingerprint).Returns(initialFingerprint.Object);
 
             realBuilder.Setup(b => b.Dependencies).Returns(realBuilderDeps.Object);
             realBuilder.Setup(b => b.Uid).Returns("");

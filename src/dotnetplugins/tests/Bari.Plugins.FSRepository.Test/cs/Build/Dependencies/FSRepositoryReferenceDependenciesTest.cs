@@ -38,9 +38,10 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
-            var fp1 = dep.CreateFingerprint();
-            var fp2 = dep.CreateFingerprint();
+            var dep1 = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
+            var dep2 = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
+            var fp1 = dep1.Fingerprint;
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
@@ -49,17 +50,19 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         [Test]
         public void ChangingTheSourceChangesTheFingerprint()
         {
-            var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
+            var fp1 = dep1.Fingerprint;
 
             depRoot.SetFileSize("x", 200);
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
+            var fp2 = dep2.Fingerprint;
 
             depRoot.SetFileSize("x", 11); // default
             depRoot.SetDate("x", DateTime.Now);
 
-            var fp3 = dep.CreateFingerprint();
+            var dep3 = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
+            var fp3 = dep3.Fingerprint;
 
             fp1.Should().NotBe(fp2);
             fp1.Should().NotBe(fp3);
@@ -70,7 +73,7 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         public void ConvertToProtocolAndBack()
         {
             var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             var proto = fp1.Protocol;
             var fp2 = proto.CreateFingerprint();
@@ -83,7 +86,7 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         {
             var ser = new BinarySerializer();
             var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             byte[] data;
             using (var ms = new MemoryStream())

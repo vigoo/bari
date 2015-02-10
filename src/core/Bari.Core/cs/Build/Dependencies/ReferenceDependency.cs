@@ -6,7 +6,7 @@ namespace Bari.Core.Build.Dependencies
     /// <summary>
     /// Dependency on a project reference's uri
     /// </summary>
-    public class ReferenceDependency: IDependencies
+    public class ReferenceDependency: DependenciesBase
     {
         private readonly Reference reference;
 
@@ -24,12 +24,12 @@ namespace Bari.Core.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return new ObjectPropertiesFingerprint(reference, new[] { "Uri" });
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message("Reference {0}", reference.Uri);
         }

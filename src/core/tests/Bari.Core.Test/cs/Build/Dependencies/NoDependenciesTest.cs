@@ -13,8 +13,8 @@ namespace Bari.Core.Test.Build.Dependencies
             var dep1 = new NoDependencies();
             var dep2 = new NoDependencies();
 
-            var fp1 = dep1.CreateFingerprint();
-            var fp2 = dep2.CreateFingerprint();
+            var fp1 = dep1.Fingerprint;
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
@@ -25,7 +25,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void HasNoProtocol()
         {
             var dep = new NoDependencies();
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             var proto = fp1.Protocol;
             proto.Should().BeNull();

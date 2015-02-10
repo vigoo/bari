@@ -67,10 +67,11 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var combined = CreateDependencyObject();
+            var combined1 = CreateDependencyObject();
+            var combined2 = CreateDependencyObject();
 
-            var fp1 = combined.CreateFingerprint();
-            var fp2 = combined.CreateFingerprint();
+            var fp1 = combined1.Fingerprint;
+            var fp2 = combined2.Fingerprint;
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
@@ -90,7 +91,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void ConvertToProtocolAndBack()
         {
             var dep = CreateDependencyObject();
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             var proto = fp1.Protocol;
             var fp2 = proto.CreateFingerprint();
@@ -103,7 +104,7 @@ namespace Bari.Core.Test.Build.Dependencies
         {
             var ser = new BinarySerializer();
             var dep = CreateDependencyObject();
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             byte[] data;
             using (var ms = new MemoryStream())

@@ -7,7 +7,7 @@ namespace Bari.Core.Build.Dependencies
     /// <summary>
     /// Represents dependency on another builder (<see cref="IBuilder"/>)
     /// </summary>
-    public class SubtaskDependency: IDependencies
+    public class SubtaskDependency: DependenciesBase
     {
         private readonly IBuilder subtask;
 
@@ -27,12 +27,12 @@ namespace Bari.Core.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
-            return subtask.Dependencies.CreateFingerprint();
+            return subtask.Dependencies.Fingerprint;
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(String.Format("Subtask {0}", subtask));
             output.Indent();

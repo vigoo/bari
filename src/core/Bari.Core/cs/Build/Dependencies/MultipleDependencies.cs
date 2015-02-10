@@ -9,7 +9,7 @@ namespace Bari.Core.Build.Dependencies
     /// Represents a set of builder dependencies, where each individual dependency
     /// has to be met.
     /// </summary>
-    public class MultipleDependencies: IDependencies
+    public class MultipleDependencies: DependenciesBase
     {
         private readonly ISet<IDependencies> dependencies;
 
@@ -40,12 +40,12 @@ namespace Bari.Core.Build.Dependencies
         /// to other fingerprints.
         /// </summary>
         /// <returns>Returns the fingerprint of the dependent item's current state.</returns>
-        public IDependencyFingerprint CreateFingerprint()
+        protected override IDependencyFingerprint CreateFingerprint()
         {
             return new CombinedFingerprint(dependencies);
         }
 
-        public void Dump(IUserOutput output)
+        public override void Dump(IUserOutput output)
         {
             output.Message(String.Format("Multiple dependencies ({0} subdeps)", dependencies.Count));
             output.Indent();

@@ -91,7 +91,7 @@ namespace Bari.Core.Build.Cache
                 {
                     try
                     {
-                        var currentFingerprint = wrappedBuilder.Dependencies.CreateFingerprint();
+                        var currentFingerprint = wrappedBuilder.Dependencies.Fingerprint;
 
                         if (cache.Contains(buildKey, currentFingerprint))
                         {

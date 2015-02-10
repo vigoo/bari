@@ -59,9 +59,10 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void CreatesSameFingerprintForSameState()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
-            var fp2 = dep.CreateFingerprint();
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp1 = dep1.Fingerprint;
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().Be(fp2);
             fp2.Should().Be(fp1);
@@ -70,13 +71,14 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void RemovingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp1 = dep1.Fingerprint;
 
             File.Delete(Path.Combine(tmp, "file1"));
             sourceSet.Remove(new SuiteRelativePath("file1"));
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -84,14 +86,15 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void AddingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp1 = dep1.Fingerprint;
 
             using (var writer = rootDir.CreateTextFile("file3"))
                 writer.WriteLine("Contents of file 3");
             sourceSet.Add(new SuiteRelativePath("file3"));
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -99,8 +102,8 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ModifyingFileChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp1 = dep1.Fingerprint;
 
             using (var writer = File.CreateText(Path.Combine(tmp, "file2")))
             {
@@ -108,7 +111,8 @@ namespace Bari.Core.Test.Build.Dependencies
                 writer.Flush();
             }
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -116,15 +120,16 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void AddingFileToSubdirectoryChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp1 = dep1.Fingerprint;
 
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Contents of file 3");
             sourceSet.Add(new SuiteRelativePath(Path.Combine("subdir", "file3")));
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -132,19 +137,20 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void ModifyingFileInSubdirectoryChangesFingerprint()
         {
-            var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var dep1 = new SourceSetDependencies(fingerprintFactory, sourceSet);
             
             Directory.CreateDirectory(Path.Combine(tmp, "subdir"));
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Contents of file 3");
             sourceSet.Add(new SuiteRelativePath(Path.Combine("subdir", "file3")));
 
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep1.Fingerprint;
 
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Modified contents of file 3");
 
-            var fp2 = dep.CreateFingerprint();
+            var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
+            var fp2 = dep2.Fingerprint;
 
             fp1.Should().NotBe(fp2);
         }
@@ -153,7 +159,7 @@ namespace Bari.Core.Test.Build.Dependencies
         public void ConvertToProtocolAndBack()
         {
             var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             var proto = fp1.Protocol;
             var fp2 = proto.CreateFingerprint();
@@ -166,7 +172,7 @@ namespace Bari.Core.Test.Build.Dependencies
         {
             var ser = new BinarySerializer();
             var dep = new SourceSetDependencies(fingerprintFactory, sourceSet);
-            var fp1 = dep.CreateFingerprint();
+            var fp1 = dep.Fingerprint;
 
             byte[] data;
             using (var ms = new MemoryStream())
