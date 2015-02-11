@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
+using Bari.Core.Model.Validator;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
@@ -24,6 +25,7 @@ namespace Bari.Core.Model.Loader
         private readonly ReferenceLoader referenceLoader = new ReferenceLoader();
         private readonly IEnvironmentVariableContext versioningEnvironmentVariableContext;
         private readonly IPluginLoader pluginLoader;
+        private readonly ISuiteValidator validator;
 
         /// <summary>
         /// Initializes the yaml loader
@@ -33,12 +35,14 @@ namespace Bari.Core.Model.Loader
         /// <param name="output">Output interface to issue warnings</param>
         /// <param name="pluginLoader">Plugin loader interface</param>
         /// <param name="environmentVariableContext">Environment variable context</param>
-        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader, IEnvironmentVariableContext environmentVariableContext)
+        /// <param name="validator">Suite validator interface</param>
+        protected YamlModelLoaderBase(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader, IEnvironmentVariableContext environmentVariableContext, ISuiteValidator validator)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Requires(output != null);
             Contract.Requires(pluginLoader != null);
             Contract.Requires(environmentVariableContext != null);
+            Contract.Requires(validator != null);
             Contract.Ensures(this.suiteFactory == suiteFactory);
             Contract.Ensures(this.parametersLoaders == parametersLoaders);
 
@@ -46,7 +50,8 @@ namespace Bari.Core.Model.Loader
             this.parametersLoaders = parametersLoaders;
             this.output = output;
             this.pluginLoader = pluginLoader;
-            
+            this.validator = validator;
+
             versioningEnvironmentVariableContext = new VersioningEnvironmentVariableContext(environmentVariableContext);
             parser = new YamlParser();
         }
@@ -60,7 +65,7 @@ namespace Bari.Core.Model.Loader
         protected Suite LoadYaml(YamlDocument yaml)
         {
             Contract.Requires(yaml != null);
-            Contract.Requires(yaml.RootNode != null);
+            Contract.Requires(yaml.RootNode != null);            
             Contract.Ensures(Contract.Result<Suite>() != null);
 
             log.Debug("Processing YAML document...");
@@ -96,6 +101,8 @@ namespace Bari.Core.Model.Loader
 
             LoadParameters(suite, suite, yaml.RootNode);
             LoadSourceSetIgnoreLists(suite.SourceSetIgnoreLists, yaml.RootNode);
+
+            validator.Validate(suite);
 
             log.Debug("Finished processing YAML document.");
             return suite;

@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
+using Bari.Core.Model.Validator;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 
@@ -23,13 +24,15 @@ namespace Bari.Core.Model.Loader
         /// <param name="output">Output interface to issue warnings</param>
         /// <param name="pluginLoader">Plugin loader interface</param>
         /// <param name="environmentVariableContext">Environment variable context</param>
-        public LocalYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader, IEnvironmentVariableContext environmentVariableContext)
-            : base(suiteFactory, parametersLoaders, output, pluginLoader, environmentVariableContext)
+        /// <param name="suiteValidator">Suite validator interface</param>
+        public LocalYamlModelLoader(ISuiteFactory suiteFactory, IEnumerable<IYamlProjectParametersLoader> parametersLoaders, IUserOutput output, IPluginLoader pluginLoader, IEnvironmentVariableContext environmentVariableContext, ISuiteValidator suiteValidator)
+            : base(suiteFactory, parametersLoaders, output, pluginLoader, environmentVariableContext, suiteValidator)
         {
             Contract.Requires(suiteFactory != null);
             Contract.Requires(output != null);
             Contract.Requires(pluginLoader != null);
             Contract.Requires(environmentVariableContext != null);
+            Contract.Requires(suiteValidator!= null);
         }
 
         /// <summary>

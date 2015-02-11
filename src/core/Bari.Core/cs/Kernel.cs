@@ -15,6 +15,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
+using Bari.Core.Model.Validator;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Parameters;
@@ -80,6 +81,8 @@ namespace Bari.Core
 
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlReferenceAliasesLoader>();
             kernel.Bind<IYamlProjectParametersLoader>().To<YamlTestsLoader>();
+
+            kernel.Bind<ISuiteValidator>().To<DefaultSuiteValidator>();
 
             // Command factory and enumerator
             RegisterCommandFactory(kernel);
