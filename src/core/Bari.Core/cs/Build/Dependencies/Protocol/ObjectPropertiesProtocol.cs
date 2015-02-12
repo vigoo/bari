@@ -22,5 +22,29 @@ namespace Bari.Core.Build.Dependencies.Protocol
         {
             return new ObjectPropertiesFingerprint(this);
         }
+
+        public void Load(IProtocolDeserializerContext context)
+        {
+            int count = context.ReadInt();
+            Values = new Dictionary<string, object>();
+
+            for (int i = 0; i < count; i++)
+            {
+                string key = context.ReadString();
+                object value = context.ReadPrimitive();
+
+                Values.Add(key, value);
+            }
+        }
+
+        public void Save(IProtocolSerializerContext context)
+        {
+            context.Write(Values.Count);
+            foreach (var pair in Values)
+            {
+                context.Write(pair.Key);
+                context.WritePrimitive(pair.Value);
+            }
+        }
     }
 }

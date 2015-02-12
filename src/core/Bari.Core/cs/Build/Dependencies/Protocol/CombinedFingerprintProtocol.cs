@@ -22,5 +22,26 @@ namespace Bari.Core.Build.Dependencies.Protocol
         {
             return new CombinedFingerprint(this);
         }
+
+        public void Load(IProtocolDeserializerContext context)
+        {
+            int count = context.ReadInt();
+
+            Items = new HashSet<IDependencyFingerprintProtocol>();
+            for (int i = 0; i < count; i++)
+            {
+                var item = context.ReadProtocol();
+                Items.Add(item);
+            }
+        }
+
+        public void Save(IProtocolSerializerContext context)
+        {
+            context.Write(Items.Count);
+            foreach (var item in Items)
+            {
+                context.Write(item);
+            }
+        }
     }
 }

@@ -30,5 +30,19 @@ namespace Bari.Plugins.FSRepository.Build.Dependencies.Protocol
         {
             return new FSRepositoryFingerprint(this);
         }
+
+        public void Load(IProtocolDeserializerContext context)
+        {
+            Path = context.ReadString();
+            LastModified = context.ReadDateTime();
+            LastSize = context.ReadLong();
+        }
+
+        public void Save(IProtocolSerializerContext context)
+        {
+            context.Write(Path);
+            context.Write(LastModified);
+            context.Write(LastSize);
+        }
     }
 }

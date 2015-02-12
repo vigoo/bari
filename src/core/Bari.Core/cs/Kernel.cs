@@ -105,7 +105,13 @@ namespace Bari.Core
             kernel.Bind<ISuiteExplorer>().To<ModuleProjectDiscovery>();
 
             // Default serializer
+            var protocolRegistry = new DependencyFingerprintProtocolRegistry();
+            kernel.Bind<IDependencyFingerprintProtocolRegistry>().ToConstant(protocolRegistry).InSingletonScope();
             kernel.Bind<IProtocolSerializer>().To<BinarySerializer>();
+
+            protocolRegistry.Register<CombinedFingerprintProtocol>();
+            protocolRegistry.Register<ObjectPropertiesProtocol>();
+            protocolRegistry.Register<SourceSetFingerprintProtocol>();
 
 			// Builder statistics
 			kernel.Bind<IBuilderStatistics>().To<DefaultBuilderStatistics>();

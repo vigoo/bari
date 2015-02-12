@@ -44,5 +44,40 @@ namespace Bari.Core.Build.Dependencies.Protocol
         {
             return new SourceSetFingerprint(this);
         }
+
+        public void Load(IProtocolDeserializerContext context)
+        {
+            FullDependency = context.ReadBool();
+            int count = context.ReadInt();
+
+            Files = new Dictionary<string, FileFingerprint>();
+            for (int i = 0; i < count; i++)
+            {
+                var name = context.ReadString();
+                var date = context.ReadDateTime();
+                var size = context.ReadLong();
+
+                var fileFingerprint = new FileFingerprint 
+                {
+                    LastSize = size,
+                    LastModifiedDate = date
+                };
+                Files.Add(name, fileFingerprint);
+            }
+        }
+
+
+        public void Save(IProtocolSerializerContext context)
+        {
+            context.Write(FullDependency);
+            context.Write(Files.Count);
+            foreach (var pair in Files)
+            {
+                context.Write(pair.Key);
+                context.Write(pair.Value.LastModifiedDate);
+                context.Write(pair.Value.LastSize);
+            }
+        }
+
     }
 }
