@@ -9,6 +9,7 @@ modules:
       projects:
         - name: comserver
           type: library
+          toolchain: VS2012
           cpp-compiler:
             defines:
               - WIN32

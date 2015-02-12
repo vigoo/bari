@@ -54,15 +54,22 @@ namespace Bari.Core.Build.Dependencies.Protocol
             for (int i = 0; i < count; i++)
             {
                 var name = context.ReadString();
-                var date = context.ReadDateTime();
-                var size = context.ReadLong();
-
-                var fileFingerprint = new FileFingerprint 
+                if (FullDependency)
                 {
-                    LastSize = size,
-                    LastModifiedDate = date
-                };
-                Files.Add(name, fileFingerprint);
+                    var date = context.ReadDateTime();
+                    var size = context.ReadLong();
+
+                    var fileFingerprint = new FileFingerprint
+                    {
+                        LastSize = size,
+                        LastModifiedDate = date
+                    };
+                    Files.Add(name, fileFingerprint);
+                }
+                else
+                {
+                    Files.Add(name, new FileFingerprint());
+                }
             }
         }
 
@@ -74,8 +81,11 @@ namespace Bari.Core.Build.Dependencies.Protocol
             foreach (var pair in Files)
             {
                 context.Write(pair.Key);
-                context.Write(pair.Value.LastModifiedDate);
-                context.Write(pair.Value.LastSize);
+                if (FullDependency)
+                {
+                    context.Write(pair.Value.LastModifiedDate);
+                    context.Write(pair.Value.LastSize);
+                }
             }
         }
 

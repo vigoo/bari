@@ -8,6 +8,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         int ReadInt();
         long ReadLong();
         string ReadString();
+        Uri ReadUri();
         double ReadDouble();
         DateTime ReadDateTime();
         TimeSpan ReadTimeSpan();

@@ -9,6 +9,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         void Write(bool value);
         void Write(double value);
         void Write(string value);
+        void Write(Uri value);
         void Write(DateTime value);
         void Write(TimeSpan value);
         void Write(IDependencyFingerprintProtocol protocol);

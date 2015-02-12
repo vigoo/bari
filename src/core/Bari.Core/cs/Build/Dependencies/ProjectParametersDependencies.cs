@@ -33,7 +33,7 @@ namespace Bari.Core.Build.Dependencies
             {
                 return parameters
                     .GetType()
-                    .GetProperties(BindingFlags.Public)
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Select(pi => pi.Name);
             }
         }

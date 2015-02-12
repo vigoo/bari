@@ -9,10 +9,14 @@ namespace Bari.Core.Build.Dependencies.Protocol
         ProtocolLong,
         ProtocolDouble,
         ProtocolString,
+        ProtocolUri,
         ProtocolDateTime,
         ProtocolTimeSpan,
         ProtocolEnum,
-        ProtocolNullable
+        ProtocolNullable,
+        ProtocolArray,
+        ProtocolDict,
+        ProtocolNull
     }
 }
 
