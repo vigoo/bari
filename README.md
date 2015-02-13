@@ -1,6 +1,6 @@
 [bari](http://vigoo.github.io/bari/)
 ====
-
+ 
 [Bari](http://vigoo.github.io/bari/) is an advanced build management tool for .NET projects.
 
 [![Build Status](https://travis-ci.org/vigoo/bari.svg?branch=master)](https://travis-ci.org/vigoo/bari)
