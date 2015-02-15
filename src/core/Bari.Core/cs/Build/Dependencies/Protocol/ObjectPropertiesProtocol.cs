@@ -43,7 +43,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
             foreach (var pair in Values)
             {
                 context.Write(pair.Key);
-                context.WritePrimitive(pair.Value);
+                context.WritePrimitive(pair.Value, pair.Value.GetType());
             }
         }
     }

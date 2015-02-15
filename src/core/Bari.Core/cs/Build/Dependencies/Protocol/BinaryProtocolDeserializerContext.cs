@@ -48,7 +48,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
         public DateTime ReadDateTime()
         {
-            return DateTime.FromFileTimeUtc(reader.ReadInt64());
+            return DateTime.FromFileTime(reader.ReadInt64());
         }
 
         public TimeSpan ReadTimeSpan()
@@ -72,9 +72,56 @@ namespace Bari.Core.Build.Dependencies.Protocol
             }
         }
 
+        private Tuple<ProtocolPrimitiveValue, Type> ReadType()
+        {
+            var primitiveType = (ProtocolPrimitiveValue)ReadInt();
+
+            switch (primitiveType)
+            {
+                case ProtocolPrimitiveValue.ProtocolBool:
+                    return Tuple.Create(primitiveType, typeof (bool));
+                case ProtocolPrimitiveValue.ProtocolInt:
+                    return Tuple.Create(primitiveType, typeof (int));
+                case ProtocolPrimitiveValue.ProtocolLong:
+                    return Tuple.Create(primitiveType, typeof (long));
+                case ProtocolPrimitiveValue.ProtocolDouble:
+                    return Tuple.Create(primitiveType, typeof (double));
+                case ProtocolPrimitiveValue.ProtocolString:
+                    return Tuple.Create(primitiveType, typeof (string));
+                case ProtocolPrimitiveValue.ProtocolUri:
+                    return Tuple.Create(primitiveType, typeof (Uri));
+                case ProtocolPrimitiveValue.ProtocolDateTime:
+                    return Tuple.Create(primitiveType, typeof (DateTime));
+                case ProtocolPrimitiveValue.ProtocolTimeSpan:
+                    return Tuple.Create(primitiveType, typeof (TimeSpan));
+                case ProtocolPrimitiveValue.ProtocolEnum:
+                    var typeName = ReadString();
+                    return Tuple.Create(primitiveType, Type.GetType(typeName));
+                case ProtocolPrimitiveValue.ProtocolRegisteredEnum:
+                    var typeId = ReadInt();
+                    return Tuple.Create(primitiveType, registry.GetEnumType(typeId));
+                case ProtocolPrimitiveValue.ProtocolNullable:
+                    var inner = ReadType();
+                    return Tuple.Create(primitiveType, typeof (Nullable<>).MakeGenericType(inner.Item2));
+                case ProtocolPrimitiveValue.ProtocolArray:
+                    var elemType = ReadType();
+                    return Tuple.Create(primitiveType, elemType.Item2.MakeArrayType());
+                case ProtocolPrimitiveValue.ProtocolDict:
+                    var keyType = ReadType();
+                    var valType = ReadType();
+                    return Tuple.Create(primitiveType,
+                        typeof (Dictionary<,>).MakeGenericType(keyType.Item2, valType.Item2));
+                case ProtocolPrimitiveValue.ProtocolNull:
+                    return Tuple.Create(primitiveType, typeof (object));
+                default:
+                    throw new ArgumentOutOfRangeException("primitiveType");
+            }
+        }
+
         public object ReadPrimitive()
         {
             var primitiveType = (ProtocolPrimitiveValue)ReadInt();
+         
             switch (primitiveType)
             {
                 case ProtocolPrimitiveValue.ProtocolNull:
@@ -99,12 +146,19 @@ namespace Bari.Core.Build.Dependencies.Protocol
                     return ReadPrimitive();
                 case ProtocolPrimitiveValue.ProtocolEnum:
                 {
-                    var typeName = ReadString();
+                    var fullName = ReadString();
                     var value = ReadInt();
-                    return Enum.ToObject(Type.GetType(typeName), value);
+                    return Enum.ToObject(Type.GetType(fullName), value);
+                }                    
+                case ProtocolPrimitiveValue.ProtocolRegisteredEnum:
+                {
+                    var typeId = ReadInt();
+                    var value = ReadInt();
+                    return registry.CreateEnum(typeId, value);
                 }
                 case ProtocolPrimitiveValue.ProtocolArray:
                 {
+                    var elemType = ReadType();
                     var count = ReadInt();
                     if (count > 0)
                     {
@@ -112,21 +166,23 @@ namespace Bari.Core.Build.Dependencies.Protocol
                         for (int i = 0; i < count; i++)
                             items.Add(ReadPrimitive());
 
-                        var result = Array.CreateInstance(items[0].GetType(), count);
-                        items.CopyTo((object[]) result);
+                        var result = Array.CreateInstance(elemType.Item2, count);
+                        items.ToArray().CopyTo(result, 0);
                         return result;
                     }
                     else
                     {
-                        return new object[0];
+                        return Array.CreateInstance(elemType.Item2, 0);
                     }
                 }
                 case ProtocolPrimitiveValue.ProtocolDict:
                 {
-                    var fullName = ReadString();
+                    var keyType = ReadType();
+                    var valueType = ReadType();
+                    var dictType = typeof (Dictionary<,>).MakeGenericType(keyType.Item2, valueType.Item2);
                     var count = ReadInt();
 
-                    var dict = (IDictionary)Activator.CreateInstance(Type.GetType(fullName));
+                    var dict = (IDictionary)Activator.CreateInstance(dictType);
 
                     for (int i = 0; i < count; i++)
                     {

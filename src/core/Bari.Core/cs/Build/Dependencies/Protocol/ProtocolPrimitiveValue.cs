@@ -13,6 +13,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         ProtocolDateTime,
         ProtocolTimeSpan,
         ProtocolEnum,
+        ProtocolRegisteredEnum,
         ProtocolNullable,
         ProtocolArray,
         ProtocolDict,

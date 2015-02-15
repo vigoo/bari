@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Bari.Core.Build.Dependencies.Protocol
@@ -48,7 +47,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
         public void Write(DateTime value)
         {
-            writer.Write(value.ToFileTimeUtc());
+            writer.Write(value.ToFileTime());
         }
 
         public void Write(TimeSpan value)
@@ -69,13 +68,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
                 writer.Write(false);
             }
         }
-
-        public void WritePrimitive(object value)
-        {
-            WritePrimitive(value, value != null ? value.GetType() : null);
-        }
-
-        private void WritePrimitive(object value, Type valueType)
+        public void WritePrimitive(object value, Type valueType)
         {
             if (value == null)
             {
@@ -125,12 +118,15 @@ namespace Bari.Core.Build.Dependencies.Protocol
             {
                 writer.Write((int) ProtocolPrimitiveValue.ProtocolDict);
                 var dict = (IDictionary) value;
-                writer.Write(valueType.FullName);
+                var keyType = valueType.GetGenericArguments()[0];
+                var valType = valueType.GetGenericArguments()[1];
+                WriteType(keyType);
+                WriteType(valType);
                 writer.Write(dict.Count);
                 foreach (DictionaryEntry pair in dict)
                 {
-                    WritePrimitive(pair.Key);
-                    WritePrimitive(pair.Value);
+                    WritePrimitive(pair.Key, keyType);
+                    WritePrimitive(pair.Value, valType);
                 }
             }
             else
@@ -145,20 +141,111 @@ namespace Bari.Core.Build.Dependencies.Protocol
                 {
                     var arr = (Array) value;
                     writer.Write((int)ProtocolPrimitiveValue.ProtocolArray);
+                    WriteType(valueType.GetElementType());                    
+
                     writer.Write(arr.Length);
                     foreach (object item in arr)
                         WritePrimitive(item, valueType.GetElementType());
                 }
                 else if (valueType.IsEnum)
                 {
-                    writer.Write((int)ProtocolPrimitiveValue.ProtocolEnum);
-                    writer.Write(valueType.FullName);
-                    writer.Write((int)value);                    
+                    WriteEnum(value, valueType);
                 }
                 else
                 {
                     throw new InvalidOperationException("Unsupported primitive type: " + valueType.FullName);
                 }
+            }
+        }
+
+        private void WriteType(Type type)
+        {
+            if (type == typeof(int))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolInt);
+            }
+            else if (type == typeof(bool))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolBool);
+            }
+            else if (type == typeof(string))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolString);
+            }
+            else if (type == typeof(long))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolLong);
+            }
+            else if (type == typeof(double))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolDouble);
+            }
+            else if (type == typeof(DateTime))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolDateTime);
+            }
+            else if (type == typeof(TimeSpan))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolTimeSpan);
+            }
+            else if (type == typeof(Uri))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolUri);
+            }
+            else if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolDict);
+                WriteType(type.GetGenericArguments()[0]);
+                WriteType(type.GetGenericArguments()[1]);
+            }
+            else
+            {
+                var nt = Nullable.GetUnderlyingType(type);
+                if (nt != null)
+                {
+                    writer.Write((int)ProtocolPrimitiveValue.ProtocolNullable);
+                    WriteType(nt);
+                }
+                else if (type.IsArray)
+                {
+                    writer.Write((int)ProtocolPrimitiveValue.ProtocolArray);
+                    WriteType(type.GetElementType());
+                }
+                else if (type.IsEnum)
+                {
+                    var enumTypeId = registry.GetEnumId(type);
+                    if (enumTypeId.HasValue)
+                    {
+                        writer.Write((int)ProtocolPrimitiveValue.ProtocolRegisteredEnum);
+                        writer.Write(enumTypeId.Value);
+                    }
+                    else
+                    {
+                        writer.Write((int)ProtocolPrimitiveValue.ProtocolEnum);
+                        writer.Write(type.AssemblyQualifiedName);
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unsupported primitive type: " + type.FullName);
+                }
+            }
+        }
+
+        private void WriteEnum(object value, Type valueType)
+        {
+            var enumTypeId = registry.GetEnumId(valueType);
+            if (enumTypeId.HasValue)
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolRegisteredEnum);
+                writer.Write(enumTypeId.Value);
+                writer.Write((int)value);
+            }
+            else
+            {
+                writer.Write((int) ProtocolPrimitiveValue.ProtocolEnum);
+                writer.Write(valueType.AssemblyQualifiedName);
+                writer.Write((int) value);
             }
         }
     }

@@ -8,9 +8,12 @@ namespace Bari.Core.Build.Dependencies.Protocol
     {
         private class ModuleTypeRegistry
         {
-            private short lastId = 0;
+            private short lastId;
+            private short lastEnumId;
             private readonly IDictionary<short, Type> typesPerId = new Dictionary<short, Type>();
             private readonly IDictionary<Type, short> idsPerType = new Dictionary<Type, short>();
+            private readonly IDictionary<short, Tuple<Func<object, int>, Func<int, object>, Type>> enumsPerId = new Dictionary<short, Tuple<Func<object, int>, Func<int, object>, Type>>();
+            private readonly IDictionary<Type, short> idsPerEnum = new Dictionary<Type, short>();
 
             public void Add(Type t)
             {
@@ -34,11 +37,41 @@ namespace Bari.Core.Build.Dependencies.Protocol
                     return idsPerType[t];
                 }
             }
+
+            public void AddEnum<T>(Type t, Func<T, int> encode, Func<int, T> decode)
+            {
+                short id = lastEnumId++;
+                enumsPerId.Add(id, Tuple.Create<Func<object, int>, Func<int, object>, Type>(
+                    obj => encode((T)obj), 
+                    val => decode(val),
+                    t));
+                idsPerEnum.Add(t, id);
+            }
+
+            public short GetEnumId(Type enumType)
+            {
+                return idsPerEnum[enumType];
+            }
+
+            public Func<int, object> GetEnumDecoder(short enumTypeId)
+            {
+                return enumsPerId[enumTypeId].Item2;
+            }
+
+            public Type GetEnumType(short enumTypeId)
+            {
+                return enumsPerId[enumTypeId].Item3;
+            }
+
+            public bool HasEnum(Type type)
+            {
+                return idsPerEnum.ContainsKey(type);
+            }
         }
 
         private readonly IDictionary<Assembly, short> assemblyIds = new Dictionary<Assembly, short>();
         private readonly IDictionary<short, ModuleTypeRegistry> moduleRegistries = new Dictionary<short, ModuleTypeRegistry>();
-        private short lastAssemblyId = 0;
+        private short lastAssemblyId;
 
         public void Register<T>() where T : IDependencyFingerprintProtocol
         {
@@ -66,6 +99,51 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
             Type t = moduleRegistries[assemblyId][moduleTypeId];
             return (IDependencyFingerprintProtocol)Activator.CreateInstance(t);
+        }
+
+        public void RegisterEnum<T>(Func<T, int> encode, Func<int, T> decode) where T : struct
+        {
+            var t = typeof(T);
+            var assembly = t.Assembly;
+            var registry = GetOrCreateRegistry(assembly);
+            registry.AddEnum(t, encode, decode);
+        }
+
+        public int? GetEnumId(object value)
+        {
+            var t = value.GetType();
+            var assembly = t.Assembly;
+
+            short assemblyId;
+            if (assemblyIds.TryGetValue(assembly, out assemblyId))
+            {
+                var moduleRegistry = moduleRegistries[assemblyId];
+
+                if (moduleRegistry.HasEnum(t))
+                {
+                    var enumTypeId = moduleRegistry.GetEnumId(t);
+                    return ((int) (assemblyId) << 16) | ((int) enumTypeId);
+                }
+            }
+             
+            return null;
+        }
+
+        public object CreateEnum(int typeId, int value)
+        {
+            short assemblyId = (short)((typeId & 0xFFFF0000) >> 16);
+            short enumTypeId = (short)(typeId & 0x0000FFFF);
+
+            var decoder = moduleRegistries[assemblyId].GetEnumDecoder(enumTypeId);
+            return decoder(value);
+        }
+
+        public Type GetEnumType(int typeId)
+        {
+            short assemblyId = (short)((typeId & 0xFFFF0000) >> 16);
+            short enumTypeId = (short)(typeId & 0x0000FFFF);
+
+            return moduleRegistries[assemblyId].GetEnumType(enumTypeId);
         }
 
         private ModuleTypeRegistry GetOrCreateRegistry(Assembly assembly)

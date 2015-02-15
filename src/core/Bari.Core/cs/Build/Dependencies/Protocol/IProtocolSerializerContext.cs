@@ -13,7 +13,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         void Write(DateTime value);
         void Write(TimeSpan value);
         void Write(IDependencyFingerprintProtocol protocol);
-        void WritePrimitive(object value);
+        void WritePrimitive(object value, Type valueType);
     }
 }
 
