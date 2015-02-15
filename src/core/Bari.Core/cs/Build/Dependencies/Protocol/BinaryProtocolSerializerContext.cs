@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Bari.Core.Build.Dependencies.Protocol
@@ -47,7 +48,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
         public void Write(DateTime value)
         {
-            writer.Write(value.ToFileTime());
+            writer.Write(value.ToBinary());
         }
 
         public void Write(TimeSpan value)
@@ -114,7 +115,8 @@ namespace Bari.Core.Build.Dependencies.Protocol
                 writer.Write((int) ProtocolPrimitiveValue.ProtocolUri);
                 Write((Uri) value);
             }
-            else if (typeof(IDictionary).IsAssignableFrom(valueType))
+            else if (typeof(IDictionary).IsAssignableFrom(valueType) ||
+                     valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
             {
                 writer.Write((int) ProtocolPrimitiveValue.ProtocolDict);
                 var dict = (IDictionary) value;

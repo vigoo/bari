@@ -12,7 +12,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
             private short lastEnumId;
             private readonly IDictionary<short, Type> typesPerId = new Dictionary<short, Type>();
             private readonly IDictionary<Type, short> idsPerType = new Dictionary<Type, short>();
-            private readonly IDictionary<short, Tuple<Func<object, int>, Func<int, object>, Type>> enumsPerId = new Dictionary<short, Tuple<Func<object, int>, Func<int, object>, Type>>();
+            private readonly IDictionary<short, Tuple<Func<int, object>, Type>> enumsPerId = new Dictionary<short, Tuple<Func<int, object>, Type>>();
             private readonly IDictionary<Type, short> idsPerEnum = new Dictionary<Type, short>();
 
             public void Add(Type t)
@@ -38,11 +38,10 @@ namespace Bari.Core.Build.Dependencies.Protocol
                 }
             }
 
-            public void AddEnum<T>(Type t, Func<T, int> encode, Func<int, T> decode)
+            public void AddEnum<T>(Type t, Func<int, T> decode)
             {
                 short id = lastEnumId++;
-                enumsPerId.Add(id, Tuple.Create<Func<object, int>, Func<int, object>, Type>(
-                    obj => encode((T)obj), 
+                enumsPerId.Add(id, Tuple.Create<Func<int, object>, Type>(
                     val => decode(val),
                     t));
                 idsPerEnum.Add(t, id);
@@ -55,12 +54,12 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
             public Func<int, object> GetEnumDecoder(short enumTypeId)
             {
-                return enumsPerId[enumTypeId].Item2;
+                return enumsPerId[enumTypeId].Item1;
             }
 
             public Type GetEnumType(short enumTypeId)
             {
-                return enumsPerId[enumTypeId].Item3;
+                return enumsPerId[enumTypeId].Item2;
             }
 
             public bool HasEnum(Type type)
@@ -101,12 +100,12 @@ namespace Bari.Core.Build.Dependencies.Protocol
             return (IDependencyFingerprintProtocol)Activator.CreateInstance(t);
         }
 
-        public void RegisterEnum<T>(Func<T, int> encode, Func<int, T> decode) where T : struct
+        public void RegisterEnum<T>(Func<int, T> decode) where T : struct
         {
             var t = typeof(T);
             var assembly = t.Assembly;
             var registry = GetOrCreateRegistry(assembly);
-            registry.AddEnum(t, encode, decode);
+            registry.AddEnum(t, decode);
         }
 
         public int? GetEnumId(object value)

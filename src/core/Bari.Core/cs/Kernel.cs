@@ -113,6 +113,8 @@ namespace Bari.Core
             protocolRegistry.Register<ObjectPropertiesProtocol>();
             protocolRegistry.Register<SourceSetFingerprintProtocol>();
 
+            protocolRegistry.RegisterEnum(i => (ProjectType) i);
+
 			// Builder statistics
 			kernel.Bind<IBuilderStatistics>().To<DefaultBuilderStatistics>();
 			kernel.Bind<IMonitoredBuilderFactory>().ToFactory();

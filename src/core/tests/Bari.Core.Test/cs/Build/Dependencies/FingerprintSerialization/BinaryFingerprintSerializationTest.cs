@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Bari.Core.Build;
@@ -270,6 +269,8 @@ namespace Bari.Core.Test.Build.Dependencies.FingerprintSerialization
 
             TestPrimitive(dict, (a, b) => Assert.IsTrue(a.SequenceEqual(b)));
             TestPrimitive(new Dictionary<string, int>(), (a, b) => Assert.IsTrue(a.SequenceEqual(b)));
+            TestPrimitive((IDictionary<int, string>)dict, (a, b) => Assert.IsTrue(a.SequenceEqual(b)));
+            TestPrimitive((IDictionary<string, int>)(new Dictionary<string, int>()), (a, b) => Assert.IsTrue(a.SequenceEqual(b)));
         }
 
         public enum Enum1 { V1, V2, V3 }
@@ -300,9 +301,9 @@ namespace Bari.Core.Test.Build.Dependencies.FingerprintSerialization
 
         private void RegisterEnums()
         {
-            protocolRegistry.RegisterEnum<Enum1>(e => (int)e, i => (Enum1)i);
-            protocolRegistry.RegisterEnum<Enum2>(e => (int)e, i => (Enum2)i);
-            protocolRegistry.RegisterEnum<Enum3>(e => (int)e, i => (Enum3)i);
+            protocolRegistry.RegisterEnum(i => (Enum1)i);
+            protocolRegistry.RegisterEnum(i => (Enum2)i);
+            protocolRegistry.RegisterEnum(i => (Enum3)i);
         }
 
         [Test]

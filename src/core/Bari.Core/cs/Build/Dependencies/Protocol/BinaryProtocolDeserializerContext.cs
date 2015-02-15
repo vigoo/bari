@@ -48,7 +48,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
         public DateTime ReadDateTime()
         {
-            return DateTime.FromFileTime(reader.ReadInt64());
+            return DateTime.FromBinary(reader.ReadInt64());
         }
 
         public TimeSpan ReadTimeSpan()

@@ -11,7 +11,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
         IDependencyFingerprintProtocol Create(int typeId);
         
-        void RegisterEnum<T>(Func<T, int> encode, Func<int, T> decode)
+        void RegisterEnum<T>(Func<int, T> decode)
             where T: struct;
 
         int? GetEnumId(object value);
