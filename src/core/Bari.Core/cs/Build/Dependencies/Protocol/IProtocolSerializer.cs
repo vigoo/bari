@@ -15,7 +15,8 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <typeparam name="T">Type of the result object</typeparam>
         /// <param name="stream">Stream containing binary serialized object data</param>
         /// <returns>Returns the object casted to type <c>T</c></returns>
-        T Deserialize<T>(Stream stream);
+        T Deserialize<T>(Stream stream)
+            where T: IDependencyFingerprintProtocol;
 
         /// <summary>
         /// Serializes an object to a stream
@@ -23,7 +24,8 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <typeparam name="T">Type of the object to be serialized</typeparam>
         /// <param name="stream">Stream where object data will be put</param>
         /// <param name="obj">Object to be serialized</param>
-        void Serialize<T>(Stream stream, T obj);
+        void Serialize<T>(Stream stream, T obj)
+            where T: IDependencyFingerprintProtocol;
     }
 
     /// <summary>
@@ -39,6 +41,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <param name="stream">Stream containing binary serialized object data</param>
         /// <returns>Returns the object casted to type <c>T</c></returns>
         public T Deserialize<T>(Stream stream)
+            where T: IDependencyFingerprintProtocol
         {
             Contract.Requires(stream != null);
             Contract.Requires(!stream.CanSeek || stream.Length > 0);
@@ -54,6 +57,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <param name="stream">Stream where object data will be put</param>
         /// <param name="obj">Object to be serialized</param>
         public void Serialize<T>(Stream stream, T obj)
+            where T: IDependencyFingerprintProtocol
         {
             Contract.Requires(stream != null);
             Contract.Requires(obj != null);            

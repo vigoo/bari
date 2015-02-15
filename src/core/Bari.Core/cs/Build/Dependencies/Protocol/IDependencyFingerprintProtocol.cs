@@ -13,6 +13,9 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// </summary>
         /// <returns>Returns a fingerprint object which would save the same protocol as this one.</returns>
         IDependencyFingerprint CreateFingerprint();
+
+        void Load(IProtocolDeserializerContext context);
+        void Save(IProtocolSerializerContext context);
     }
 
     /// <summary>
@@ -29,6 +32,16 @@ namespace Bari.Core.Build.Dependencies.Protocol
         {
             Contract.Ensures(Contract.Result<IDependencyFingerprint>() != null);
             return null; // dummy value
+        }
+
+        public void Load(IProtocolDeserializerContext context)
+        {
+            Contract.Requires(context != null);
+        }
+
+        public void Save(IProtocolSerializerContext context)
+        {
+            Contract.Requires(context != null);
         }
     }
 }

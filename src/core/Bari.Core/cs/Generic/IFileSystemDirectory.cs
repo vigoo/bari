@@ -311,7 +311,6 @@ namespace Bari.Core.Generic
         public void DeleteFile(string name)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(name));
-            Contract.Requires(Files.Contains(name));
         }
 
         /// <summary>

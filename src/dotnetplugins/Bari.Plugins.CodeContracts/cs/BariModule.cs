@@ -1,8 +1,11 @@
-﻿using Bari.Core.Model.Loader;
+﻿using Bari.Core.Build.Dependencies.Protocol;
+using Bari.Core.Model.Loader;
+using Bari.Plugins.CodeContracts.Model;
 using Bari.Plugins.CodeContracts.Model.Loader;
 using Bari.Plugins.CodeContracts.VisualStudio.CsprojSections;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
+using Ninject;
 using Ninject.Modules;
 
 namespace Bari.Plugins.CodeContracts
@@ -23,6 +26,11 @@ namespace Bari.Plugins.CodeContracts
 
             Bind<IMSBuildProjectSection>().To<CodeContractsSection>().WhenInjectedInto<CsprojGenerator>();
             Bind<IYamlProjectParametersLoader>().To<YamlContractsParametersLoader>();
+
+            var protocolRegistry = Kernel.Get<IDependencyFingerprintProtocolRegistry>();
+            protocolRegistry.RegisterEnum(i => (ContractAssemblyMode) i);
+            protocolRegistry.RegisterEnum(i => (ContractCheckingLevel)i);
+            protocolRegistry.RegisterEnum(i => (ContractReferenceMode)i);
         }
     }
 }

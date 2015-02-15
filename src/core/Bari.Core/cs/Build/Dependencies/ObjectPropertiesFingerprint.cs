@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Monads;
 using System.Text;
 using Bari.Core.Build.Dependencies.Protocol;
 
@@ -14,7 +14,7 @@ namespace Bari.Core.Build.Dependencies
     /// </summary>
     public class ObjectPropertiesFingerprint: IDependencyFingerprint, IEquatable<ObjectPropertiesFingerprint>
     {
-        private readonly IDictionary<string, object> values;
+        private readonly IDictionary<string, Tuple<object, Type>> values;
 
         /// <summary>
         /// Constructs the fingerprint by getting the actual property values of an object
@@ -28,12 +28,12 @@ namespace Bari.Core.Build.Dependencies
             Contract.Requires(properties != null);
 
             var T = obj.GetType();
-            values = new Dictionary<string, object>();
+            values = new Dictionary<string, Tuple<object, Type>>();
             foreach (var propertyName in properties)
             {
                 var propertyInfo = T.GetProperty(propertyName);
                 var value = propertyInfo.GetValue(obj, index: null);
-                values.Add(propertyName, value);
+                values.Add(propertyName, Tuple.Create(value, propertyInfo.PropertyType));
             }
         }
 
@@ -95,7 +95,52 @@ namespace Bari.Core.Build.Dependencies
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return values.SequenceEqual(other.values);
+            if (values.Count == other.values.Count)
+            {
+                return values.All(pair => PropertyEquals(other.values[pair.Key].Item1, pair.Value.Item1));
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool PropertyEquals(object a, object b)
+        {
+            if (a == null && b == null) return true;
+            if ((a == null) || (b == null)) return false;
+            if (ReferenceEquals(a, b)) return true;
+
+            if (a is string && b is string)
+            {
+                return (string) a == (string) b;
+            }
+            else if (a is IEnumerable && b is IEnumerable)
+            {
+                var ae = ((IEnumerable) a).GetEnumerator();
+                var be = ((IEnumerable) b).GetEnumerator();
+
+                bool aNext;
+                do
+                {
+                    aNext = ae.MoveNext();
+                    bool bNext = be.MoveNext();
+                    if (aNext != bNext)
+                        return false;
+
+                    if (aNext)
+                    {
+                        if (!Equals(ae.Current, be.Current))
+                            return false;
+                    }
+                } while (aNext);
+
+                return true;
+            }
+            else
+            {
+                return Equals(a, b);
+            }
         }
 
         /// <summary>
@@ -135,8 +180,30 @@ namespace Bari.Core.Build.Dependencies
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return values.Aggregate(
-                11, (a, pair) => a ^ pair.Key.GetHashCode() ^ pair.Value.Return(x => x.GetHashCode(), 17));
+            var result = 11;
+            foreach (var pair in values)
+            {
+                var v = pair.Value.Item1;
+
+                result ^= pair.GetHashCode();
+                if (v == null)
+                    result ^= 17;
+                else if (v is IEnumerable)
+                {
+                    foreach (var subv in ((IEnumerable) v))
+                    {
+                        if (subv == null)
+                            result ^= 17;
+                        else
+                            result ^= subv.GetHashCode();
+                    }
+                }
+                else
+                {
+                    result ^= v.GetHashCode();
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -162,7 +229,7 @@ namespace Bari.Core.Build.Dependencies
             sb.AppendLine("{");
             foreach (var pair in values)
             {
-                sb.AppendFormat("\t{0}: {1}\n", pair.Key, pair.Value);
+                sb.AppendFormat("\t{0}: {1}\n", pair.Key, pair.Value.Item1);
             }
             sb.AppendLine("}");
 

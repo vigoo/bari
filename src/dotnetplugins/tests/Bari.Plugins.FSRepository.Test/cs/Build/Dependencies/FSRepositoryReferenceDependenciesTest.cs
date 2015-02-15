@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using Ninject;
 using Ninject.Extensions.Factory;
+using Bari.Plugins.FSRepository.Build.Dependencies.Protocol;
 
 namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
 {
@@ -84,7 +85,10 @@ namespace Bari.Plugins.FSRepository.Test.Build.Dependencies
         [Test]
         public void SerializeAndReadBack()
         {
-            var ser = new BinarySerializer();
+            var registry = new DependencyFingerprintProtocolRegistry();
+            registry.Register<FSRepositoryFingerprintProtocol>();
+
+            var ser = new BinarySerializer(registry);            
             var dep = new FSRepositoryReferenceDependencies(kernel.Get<IFSRepositoryFingerprintFactory>(), repository.Object, Path.Combine("test", "x"));
             var fp1 = dep.Fingerprint;
 

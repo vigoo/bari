@@ -6,6 +6,9 @@ using Bari.Plugins.FSRepository.Model;
 using Bari.Plugins.FSRepository.Model.Loader;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
+using Ninject;
+using Bari.Core.Build.Dependencies.Protocol;
+using Bari.Plugins.FSRepository.Build.Dependencies.Protocol;
 
 namespace Bari.Plugins.FSRepository
 {
@@ -27,6 +30,9 @@ namespace Bari.Plugins.FSRepository
             Bind<IReferenceBuilder>().To<FSRepositoryReferenceBuilder>().Named("fsrepo");
             Bind<IYamlProjectParametersLoader>().To<YamlRepositoryPatternCollectionLoader>();
             Bind<IFSRepositoryFingerprintFactory>().ToFactory();
+
+            var protocolRegistry = Kernel.Get<IDependencyFingerprintProtocolRegistry>();
+            protocolRegistry.Register<FSRepositoryFingerprintProtocol>();
         }
     }
 }

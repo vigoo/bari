@@ -102,7 +102,11 @@ namespace Bari.Core.Test.Build.Dependencies
         [Test]
         public void SerializeAndReadBack()
         {
-            var ser = new BinarySerializer();
+            var registry = new DependencyFingerprintProtocolRegistry();
+            registry.Register<CombinedFingerprintProtocol>();
+            registry.Register<SourceSetFingerprintProtocol>();
+
+            var ser = new BinarySerializer(registry);
             var dep = CreateDependencyObject();
             var fp1 = dep.Fingerprint;
 
