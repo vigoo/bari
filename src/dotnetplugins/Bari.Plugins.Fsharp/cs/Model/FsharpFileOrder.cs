@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Model;
 
 namespace Bari.Plugins.Fsharp.Model
@@ -7,9 +8,9 @@ namespace Bari.Plugins.Fsharp.Model
     {
         private readonly IList<string> orderedFiles;
 
-        public IEnumerable<string> OrderedFiles
+        public string[] OrderedFiles
         {
-            get { return orderedFiles; }
+            get { return orderedFiles.ToArray(); }
         }
 
         public FsharpFileOrder()
