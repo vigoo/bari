@@ -10,3 +10,5 @@ modules:
             - gac://mscorlib            
             - gac://System
             - gac://FSharp.Core
+          order:
+            - main.fs
