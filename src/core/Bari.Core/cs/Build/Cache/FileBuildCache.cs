@@ -114,11 +114,22 @@ namespace Bari.Core.Build.Cache
                     if (cacheDir.Files.Contains(DepsFileName))
                     {
                         using (var depsStream = cacheDir.ReadBinaryFile(DepsFileName))
+                        using (var memStream = new MemoryStream())                            
                         {
-                            var fpType = fingerprint.GetType();
-                            var storedFp = Activator.CreateInstance(fpType, protocolSerializer, depsStream);
+                            fingerprint.Save(protocolSerializer, memStream);
 
-                            return fingerprint.Equals(storedFp);                 
+                            if (depsStream.Length != memStream.Length)
+                                return false;
+
+                            var buf1 = memStream.ToArray();
+                            var buf2 = new byte[depsStream.Length];
+                            depsStream.Read(buf2, 0, (int) depsStream.Length);
+
+                            for (int i = 0; i < buf1.Length; i++)
+                                if (buf1[i] != buf2[i])
+                                    return false;
+
+                            return true;
                         }
                     }
                 }
