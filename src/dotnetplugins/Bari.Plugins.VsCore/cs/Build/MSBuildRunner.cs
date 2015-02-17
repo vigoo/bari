@@ -6,7 +6,9 @@ using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.Tools;
+using Bari.Plugins.VsCore.Tools.Versions;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -26,15 +28,16 @@ namespace Bari.Plugins.VsCore.Build
         /// </summary>
         /// <param name="slnBuilder">Sub task building the solution file, used as a dependency</param>
         /// <param name="slnPath">Path of the generated solution file</param>
+        /// <param name="version">MSBuild version to use</param>
         /// <param name="targetRoot">Target directory</param>
-        /// <param name="msbuild">The MSBuild implementation to use</param>
-        public MSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath,
-                             [TargetRoot] IFileSystemDirectory targetRoot, IMSBuild msbuild)
+        /// <param name="msbuildFactory">Factory to get the MSBuild implementation to use</param>
+        public MSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath, MSBuildVersion version,
+                             [TargetRoot] IFileSystemDirectory targetRoot, IMSBuildFactory msbuildFactory)
         {
             this.slnBuilder = slnBuilder;
             this.slnPath = slnPath;
             this.targetRoot = targetRoot;
-            this.msbuild = msbuild;
+            msbuild = msbuildFactory.CreateMSBuild(version);
         }
 
         /// <summary>

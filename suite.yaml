@@ -109,6 +109,7 @@ modules:
             - gac://System.Xml
             - nuget://log4net
             - alias://ninject
+            - alias://yaml
             - nuget://QuickGraph
             - suite://core/Bari.Core          
         - name: Bari.Plugins.Csharp

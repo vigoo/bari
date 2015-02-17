@@ -5,6 +5,7 @@ using Bari.Core.Build;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -13,6 +14,7 @@ namespace Bari.Plugins.VsCore.Build
     /// </summary>
     public class VsProjectBuilderFactory: IProjectBuilderFactory
     {
+        private readonly Suite suite;
         private readonly ISlnBuilderFactory slnBuilderFactory;
         private readonly IMSBuildRunnerFactory msBuildRunnerFactory;
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
@@ -22,14 +24,16 @@ namespace Bari.Plugins.VsCore.Build
         /// <summary>
         /// Constructs the project builder factory
         /// </summary>
+        /// <param name="suite">The active suite</param>
         /// <param name="slnBuilderFactory">Interface for creating new SLN builders</param>
         /// <param name="msBuildRunnerFactory">Interface to create new MSBuild runners</param>
         /// <param name="referenceBuilderFactory">Interface to create new reference builders</param>
         /// <param name="targetRoot">Target root directory</param>
         /// <param name="postProcessorFactories">List of registered post processor factories</param>
-        public VsProjectBuilderFactory(ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory, IReferenceBuilderFactory referenceBuilderFactory, 
+        public VsProjectBuilderFactory(Suite suite, ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory, IReferenceBuilderFactory referenceBuilderFactory, 
             [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IPostProcessorFactory> postProcessorFactories)
         {
+            this.suite = suite;
             this.slnBuilderFactory = slnBuilderFactory;
             this.msBuildRunnerFactory = msBuildRunnerFactory;
             this.referenceBuilderFactory = referenceBuilderFactory;
@@ -130,8 +134,16 @@ namespace Bari.Plugins.VsCore.Build
         private MSBuildRunner BuildSolution(IBuildContext context, SlnBuilder slnBuilder)
         {
             // Building the solution
-            var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(slnBuilder,
-                new TargetRelativePath(String.Empty, slnBuilder.Uid + ".sln"));
+            MSBuildParameters msbuildParams;
+            if (suite.HasParameters("msbuild"))
+                msbuildParams = suite.GetParameters<MSBuildParameters>("msbuild");
+            else            
+                msbuildParams = new MSBuildParameters();
+
+            var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(
+                slnBuilder,
+                new TargetRelativePath(String.Empty, slnBuilder.Uid + ".sln"), 
+                msbuildParams.Version);
             msbuild.AddToContext(context);
             return msbuild;
         }

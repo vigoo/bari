@@ -2,11 +2,14 @@
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Model.Discovery;
+using Bari.Core.Model.Loader;
 using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
 using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.Model.Discovery;
+using Bari.Plugins.VsCore.Model.Loader;
 using Bari.Plugins.VsCore.Tools;
+using Bari.Plugins.VsCore.Tools.Versions;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Ninject;
@@ -40,10 +43,12 @@ namespace Bari.Plugins.VsCore
             var parameters = Kernel.Get<IParameters>();
 
             if (parameters.UseMono)
-                Bind<IMSBuild>().To<XBuild>();
+                Bind<IMSBuildFactory>().To<XBuildFactory>().InSingletonScope();
             else
-                Bind<IMSBuild>().To<MSBuild>();
+                Bind<IMSBuildFactory>().To<MSBuildFactory>().InSingletonScope();
             Bind<IMSBuildRunnerFactory>().ToFactory();
+
+            Bind<IYamlProjectParametersLoader>().To<MSBuildParametersLoader>();
 
             // Extending soft-clean behavior
             var predicates = Kernel.Get<ISoftCleanPredicates>();
@@ -57,6 +62,7 @@ namespace Bari.Plugins.VsCore
             protocolRegistry.RegisterEnum(i => (FrameworkProfile)i);
             protocolRegistry.RegisterEnum(i => (FrameworkVersion)i);
             protocolRegistry.RegisterEnum(i => (WarningLevel)i);
+            protocolRegistry.RegisterEnum(i => (MSBuildVersion) i);
         }
     }
 }

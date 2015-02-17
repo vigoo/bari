@@ -10,7 +10,7 @@ namespace Bari.Plugins.VsCore.Tools
     /// <summary>
     /// Default MSBuild implementation, running the MSBuild command line tool in a separate process
     /// </summary>
-    public class MSBuild: ManuallyInstallableExternalTool, IMSBuild
+    public abstract class MSBuild: ManuallyInstallableExternalTool, IMSBuild
     {
         private readonly IParameters parameters;
 
@@ -18,9 +18,9 @@ namespace Bari.Plugins.VsCore.Tools
         /// Constructs the MSBuild runner
         /// </summary>
         /// <param name="parameters">User defined parameters for bari</param>
-        public MSBuild(IParameters parameters)
-            : base("msbuild40", 
-                   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework\v4.0.30319\"), 
+        /// <param name="path">Path to MSBuild.exe</param>
+        protected MSBuild(IParameters parameters, string path)
+            : base("msbuild", path, 
                    "MSBuild.exe", new Uri("http://www.microsoft.com/en-us/download/details.aspx?id=17851"), false, parameters)
         {
             this.parameters = parameters;

@@ -1,4 +1,5 @@
 ﻿using Bari.Core.Generic;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.VsCore.Build
 {
@@ -7,6 +8,6 @@ namespace Bari.Plugins.VsCore.Build
     /// </summary>
     public interface IMSBuildRunnerFactory
     {
-        MSBuildRunner CreateMSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath);
+        MSBuildRunner CreateMSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath, MSBuildVersion version);
     }
 }
