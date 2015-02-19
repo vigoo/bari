@@ -16,6 +16,11 @@ namespace Bari.Core.Model
             get { return Module.RootDirectory.GetChildDirectory("tests").GetChildDirectory(Name); }
         }
 
+        public override string RelativeTargetPath
+        {
+            get { return Module.Name + ".tests"; }
+        }
+
         /// <summary>
         /// Gets or sets the root directory of the project's sources
         /// </summary>

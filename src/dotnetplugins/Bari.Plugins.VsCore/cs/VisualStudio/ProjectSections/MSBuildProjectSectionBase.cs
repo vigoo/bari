@@ -50,11 +50,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
         }
         protected string GetOutputPath(IFileSystemDirectory targetDir, Project project)
         {
-            var name = project.Module.Name;
-            if (project is TestProject)
-                name += ".tests";
-
-            return Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), name);
+            return Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), project.RelativeTargetPath);
         }
 
     }

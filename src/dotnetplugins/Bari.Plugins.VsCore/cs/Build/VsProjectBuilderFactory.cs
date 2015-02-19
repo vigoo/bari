@@ -158,7 +158,7 @@ namespace Bari.Plugins.VsCore.Build
 
         private IBuilder CreateRuntimeReferenceDeployment(IBuildContext context, Project project, IReferenceBuilder refBuilder)
         {
-            var copy = new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true));
+            var copy = new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.RelativeTargetPath, createIfMissing: true));
             context.AddBuilder(copy, new[] { refBuilder });
             return copy;
         }

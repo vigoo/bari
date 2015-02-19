@@ -134,7 +134,7 @@ namespace Bari.Core.Model
         /// <summary>
         /// Gets the relative path to the target directory where this post processable item is compiled to
         /// </summary>
-        public string RelativeTargetPath
+        public virtual string RelativeTargetPath
         {
             get { return module.Name; }
         }
