@@ -10,6 +10,7 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.VsCore.Commands
 {
@@ -121,7 +122,15 @@ If called without any module or product name, it adds *every module* to the gene
             {
                 lastTargetStr = targetStr;
                 var target = targetParser.ParseTarget(targetStr);
-                Run(target, openSolution);
+
+                MSBuildParameters msbuildParams;
+                if (suite.HasParameters("msbuild"))
+                    msbuildParams = suite.GetParameters<MSBuildParameters>("msbuild");
+                else
+                    msbuildParams = new MSBuildParameters();
+
+
+                Run(target, msbuildParams.Version, openSolution);
 
                 return true;
             }
@@ -131,15 +140,15 @@ If called without any module or product name, it adds *every module* to the gene
             }
         }
 
-        private void Run(CommandTarget target, bool openSolution)
+        private void Run(CommandTarget target, MSBuildVersion msBuildVersion, bool openSolution)
         {
-            Run(target.Projects.Concat(target.TestProjects), openSolution);
+            Run(target.Projects.Concat(target.TestProjects), msBuildVersion, openSolution);
         }
 
-        private void Run(IEnumerable<Project> projects, bool openSolution)
+        private void Run(IEnumerable<Project> projects, MSBuildVersion msBuildVersion, bool openSolution)
         {
             var buildContext = buildContextFactory.CreateBuildContext();
-            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects);
+            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects, msBuildVersion);
             slnBuilder.AddToContext(buildContext);
 
             buildContext.Run(slnBuilder);

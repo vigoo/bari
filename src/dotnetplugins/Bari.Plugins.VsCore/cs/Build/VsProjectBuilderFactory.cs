@@ -150,8 +150,14 @@ namespace Bari.Plugins.VsCore.Build
 
         private SlnBuilder GenerateSolutionFile(IBuildContext context, IEnumerable<Project> prjs)
         {
+            MSBuildParameters msbuildParams;
+            if (suite.HasParameters("msbuild"))
+                msbuildParams = suite.GetParameters<MSBuildParameters>("msbuild");
+            else
+                msbuildParams = new MSBuildParameters();
+
             // Generating the solution file
-            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(prjs);
+            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(prjs, msbuildParams.Version);
             slnBuilder.AddToContext(context);
             return slnBuilder;
         }

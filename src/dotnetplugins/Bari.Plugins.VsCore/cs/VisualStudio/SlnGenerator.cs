@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 
 namespace Bari.Plugins.VsCore.VisualStudio
@@ -20,6 +21,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
         private readonly IFileSystemDirectory slnDir;
         private readonly IList<Project> projects;
         private readonly IEnumerable<ISlnProject> supportedSlnProjects;
+        private readonly MSBuildVersion msBuildVersion;
         private readonly Func<Project, IEnumerable<Project>> getProjectSolutionReferences;
         private readonly IEnumerable<ISolutionItemProvider> solutionItemProviders;
         private readonly TextWriter output;
@@ -32,13 +34,14 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// <param name="projectPlatformManagement">For getting project's default platform name</param>
         /// <param name="supportedSlnProjects">All the supported SLN project implementations</param>
         /// <param name="projects">The set of projects to be added to the solution</param>
+        /// <param name="msBuildVersion">Current MSBuild version</param>
         /// <param name="output">Text writer to write the solution file</param>
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="slnDir">Directory where the sln is being generated </param>
         /// <param name="getProjectSolutionReferences">Function which returns all the referenced projects which are in the same solution</param>
         /// <param name="solutionItemProviders">List of registered solution item providers</param>
         /// <param name="slnName">Solution's unique name</param>
-        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences, IEnumerable<ISolutionItemProvider> solutionItemProviders, string slnName)
+        public SlnGenerator(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, MSBuildVersion msBuildVersion, TextWriter output, IFileSystemDirectory suiteRoot, IFileSystemDirectory slnDir, Func<Project, IEnumerable<Project>> getProjectSolutionReferences, IEnumerable<ISolutionItemProvider> solutionItemProviders, string slnName)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projectPlatformManagement != null);
@@ -60,6 +63,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
             this.solutionItemProviders = solutionItemProviders;
             this.slnName = slnName;
             this.supportedSlnProjects = supportedSlnProjects;
+            this.msBuildVersion = msBuildVersion;
         }
 
         /// <summary>
@@ -70,8 +74,7 @@ namespace Bari.Plugins.VsCore.VisualStudio
             const string testProjectNode = "{6181E5C5-1B34-46C3-9917-0E6779125067}";
             const string solutionItemsNode = "{9163c076-18a2-46f8-a018-d225f8020b4f}";
 
-            output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
-            output.WriteLine("# Visual Studio 2012");
+            GenerateVersionHeader();            
 
             var testProjects = new HashSet<TestProject>(projects.OfType<TestProject>());
             var startupProject = projects.FirstOrDefault(project => project.Type == ProjectType.Executable);
@@ -121,6 +124,21 @@ namespace Bari.Plugins.VsCore.VisualStudio
             output.WriteLine("\tEndGlobalSection");
 
             output.WriteLine("EndGlobal");
+        }
+
+        private void GenerateVersionHeader()
+        {
+            switch (msBuildVersion)
+            {
+                case MSBuildVersion.VS2013:
+                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 13.00");
+                    output.WriteLine("# Visual Studio 2013");
+                    break;
+                default:
+                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                    output.WriteLine("# Visual Studio 2012");
+                    break;
+            }            
         }
 
         private void GenerateNestedProjects(HashSet<TestProject> testProjects)

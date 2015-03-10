@@ -6,6 +6,7 @@ using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Bari.Plugins.VsCore.VisualStudio.SolutionName;
@@ -27,6 +28,7 @@ namespace Bari.Plugins.VsCore.Build
         private readonly IList<Project> projects;
         private readonly ISlnNameGenerator slnNameGenerator;
         private readonly IEnumerable<ISlnProject> supportedSlnProjects;
+        private readonly MSBuildVersion msBuildVersion;
         private ISet<ISlnProjectBuilder> projectBuilders;
         private IDependencies projectDependencies;
 
@@ -37,13 +39,14 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="projectPlatformManagement">Interface for getting default project configuration names</param>
         /// <param name="supportedSlnProjects">Supported project types</param>
         /// <param name="projects">The projects to be included to the solution</param>
+        /// <param name="msBuildVersion">MSBuild version to use</param>
         /// <param name="suiteRoot">Suite's root directory </param>
         /// <param name="targetDir">The target directory where the sln file should be put</param>
         /// <param name="slnNameGenerator">Name generator implementation for the sln file </param>
         /// <param name="inSolutionReferenceBuilderFactory">Interface to create new in-solution reference builder instances</param>
         /// <param name="solutionItemProviders">List of registered solution item providers</param>
         /// <param name="projectPathManagement">Project-project path mapping</param>
-        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, ISlnNameGenerator slnNameGenerator, IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory, IEnumerable<ISolutionItemProvider> solutionItemProviders, IProjectPathManagement projectPathManagement)
+        public SlnBuilder(IProjectGuidManagement projectGuidManagement, IProjectPlatformManagement projectPlatformManagement, IEnumerable<ISlnProject> supportedSlnProjects, IEnumerable<Project> projects, MSBuildVersion msBuildVersion, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetDir, ISlnNameGenerator slnNameGenerator, IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory, IEnumerable<ISolutionItemProvider> solutionItemProviders, IProjectPathManagement projectPathManagement)
         {
             Contract.Requires(projectGuidManagement != null);
             Contract.Requires(projectPlatformManagement != null);
@@ -60,6 +63,7 @@ namespace Bari.Plugins.VsCore.Build
             this.supportedSlnProjects = supportedSlnProjects;
             this.suiteRoot = suiteRoot;
             this.projects = projects.ToList();
+            this.msBuildVersion = msBuildVersion;
             this.targetDir = targetDir;
             this.slnNameGenerator = slnNameGenerator;
             this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
@@ -158,7 +162,7 @@ namespace Bari.Plugins.VsCore.Build
 
             using (var sln = targetDir.CreateTextFile(slnPath))
             {
-                var generator = new SlnGenerator(projectGuidManagement, projectPlatformManagement, supportedSlnProjects, projects, sln, suiteRoot, targetDir, GetInSolutionReferences, solutionItemProviders, Uid);
+                var generator = new SlnGenerator(projectGuidManagement, projectPlatformManagement, supportedSlnProjects, projects, msBuildVersion, sln, suiteRoot, targetDir, GetInSolutionReferences, solutionItemProviders, Uid);
                 generator.Generate();
             }
 
