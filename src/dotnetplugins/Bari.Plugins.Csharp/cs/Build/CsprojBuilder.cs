@@ -186,8 +186,16 @@ namespace Bari.Plugins.Csharp.Build
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this).OfType<IReferenceBuilder>().Where(r => r.Reference.Type == ReferenceType.Build))
                 {
-                    var builderResults = context.GetResults(refBuilder);
-                    references.UnionWith(builderResults);
+                    try
+                    {
+                        var builderResults = context.GetResults(refBuilder);
+                        references.UnionWith(builderResults);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        log.ErrorFormat("Failed to get results of reference {0}: {1}", refBuilder, ex.Message);
+                        throw;
+                    }
                 }
 
                 generator.Generate(project, references, csproj, csversion, csversionPath);

@@ -10,9 +10,9 @@ using Bari.Core.UI;
 
 namespace Bari.Plugins.VsCore.Build
 {
-    public class SolutionBuildContext: IBuildContext
+    public class SolutionBuildContext : IBuildContext
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SolutionBuildContext));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(SolutionBuildContext));
 
         private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
         private readonly IBuildContext baseContext;
@@ -28,30 +28,15 @@ namespace Bari.Plugins.VsCore.Build
 
         private IBuilder ConvertBuilder(IBuilder builder)
         {
-            var moduleReferenceBuilder = builder as ModuleReferenceBuilder;
-            if (moduleReferenceBuilder != null)
+            var suiteReferenceBuilder = builder as SuiteReferenceBuilder;
+            if (suiteReferenceBuilder != null)
             {
-                if (moduleReferenceBuilder.Reference.Type == ReferenceType.Build &&
-                    solutionBuilder.Projects.Contains(moduleReferenceBuilder.ReferencedProject))
+                if (suiteReferenceBuilder.Reference.Type == ReferenceType.Build &&
+                    solutionBuilder.Projects.Contains(suiteReferenceBuilder.ReferencedProject))
                 {
-                    log.DebugFormat("Transforming module reference builder {0}", moduleReferenceBuilder);
+                    log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
 
-                    return ConvertToInSolutionReference(moduleReferenceBuilder, moduleReferenceBuilder.ReferencedProject);
-                    
-                }
-            }
-            else
-            {
-                var suiteReferenceBuilder = builder as SuiteReferenceBuilder;
-                if (suiteReferenceBuilder != null)
-                {
-                    if (suiteReferenceBuilder.Reference.Type == ReferenceType.Build &&
-                        solutionBuilder.Projects.Contains(suiteReferenceBuilder.ReferencedProject))
-                    {
-                        log.DebugFormat("Transforming module reference builder {0}", suiteReferenceBuilder);
-
-                        return ConvertToInSolutionReference(suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);
-                    }
+                    return ConvertToInSolutionReference(suiteReferenceBuilder, suiteReferenceBuilder.ReferencedProject);
                 }
             }
 
@@ -60,7 +45,7 @@ namespace Bari.Plugins.VsCore.Build
 
         public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
         {
-            IBuilder finalBuilder = ConvertBuilder(builder);            
+            IBuilder finalBuilder = ConvertBuilder(builder);
             IEnumerable<IBuilder> finalPrerequisites = null;
             if (finalBuilder != null)
                 finalPrerequisites = new IBuilder[0];

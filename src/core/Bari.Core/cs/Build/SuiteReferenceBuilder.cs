@@ -18,12 +18,16 @@ namespace Bari.Core.Build
     /// 
     /// <example>suite://ModuleName/ProjectName</example>
     /// means the project called <c>ProjectName</c> in the given module.
+    /// 
+    /// <example>module://ProjectName</example>
+    /// means the project called <c>ProjectName</c> in the referring project's module.
     /// </para>
     /// </summary>
     [AggressiveCacheRestore]
-    public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IReferenceBuilder, IEquatable<SuiteReferenceBuilder>, IEquatable<ModuleReferenceBuilder>
+    public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
         private readonly Suite suite;
+        private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private Reference reference;
         private ISet<IBuilder> subtasks;
@@ -36,19 +40,50 @@ namespace Bari.Core.Build
         {
             get
             {
-                if (referencedProject != null)
-                {
-                    var moduleName = reference.Uri.Host;
-                    var projectName = reference.Uri.AbsolutePath.TrimStart('/');
-
-                    if (suite.HasModule(moduleName))
-                    {
-                        var module = suite.GetModule(moduleName);
-                        referencedProject = module.GetProjectOrTestProject(projectName);
-                    }                 
-                }
-
+                CalculateReferencedProject();
                 return referencedProject;
+            }
+        }
+
+        private void CalculateReferencedProject()
+        {
+            if (referencedProject == null)
+            {
+                switch (reference.Uri.Scheme)
+                {
+                    case "suite":
+                        {
+                            var moduleName = reference.Uri.Host;
+                            var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+
+                            if (suite.HasModule(moduleName))
+                            {
+                                var module = suite.GetModule(moduleName);
+                                referencedProject = module.GetProjectOrTestProject(projectName);
+
+                                if (referencedProject == null)
+                                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", moduleName, projectName));
+                            }
+                            else
+                            {
+                                throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
+                            }
+
+                            break;
+                        }
+                    case "module":
+                        {
+                            string projectName = reference.Uri.Host;
+                            referencedProject = module.GetProjectOrTestProject(projectName);
+
+                            if (referencedProject == null)
+                                throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name, projectName));
+
+                            break;
+                        }
+                    default:
+                        throw new InvalidOperationException("Unsupported suite reference type: " + reference.Uri.Scheme);
+                }
             }
         }
 
@@ -57,9 +92,10 @@ namespace Bari.Core.Build
         /// </summary>
         /// <param name="suite">The suite being built </param>
         /// <param name="projectBuilders">Project builders available</param>
-        public SuiteReferenceBuilder(Suite suite, IEnumerable<IProjectBuilderFactory> projectBuilders)
+        public SuiteReferenceBuilder(Project project, IEnumerable<IProjectBuilderFactory> projectBuilders)
         {
-            this.suite = suite;
+            module = project.Module;
+            suite = project.Module.Suite;
             this.projectBuilders = projectBuilders;
         }
 
@@ -76,7 +112,18 @@ namespace Bari.Core.Build
         /// </summary>
         public override string Uid
         {
-            get { return reference.Uri.Host + "." + Reference.Uri.AbsolutePath.TrimStart('/'); }
+            get
+            {
+                switch (reference.Uri.Scheme)
+                {
+                    case "suite":
+                        return reference.Uri.Host + "." + Reference.Uri.AbsolutePath.TrimStart('/');
+                    case "module":
+                        return module.Name + "." + Reference.Uri.Host;
+                    default:
+                        throw new InvalidOperationException("Unsupported suite reference type: " + reference.Uri.Scheme);
+                }
+            }
         }
 
         /// <summary>
@@ -87,35 +134,16 @@ namespace Bari.Core.Build
         /// <param name="context">The current build context</param>
         public override void AddToContext(IBuildContext context)
         {
-            var moduleName = reference.Uri.Host;
-            var projectName = reference.Uri.AbsolutePath.TrimStart('/');
+            CalculateReferencedProject();
 
-            if (suite.HasModule(moduleName))
+            if (!context.Contains(this))
             {
-                var module = suite.GetModule(moduleName);
-                referencedProject = module.GetProjectOrTestProject(projectName);
-
-                if (!context.Contains(this))
-                {
-                    if (referencedProject != null)
-                    {
-                        subtasks = new HashSet<IBuilder>();
-                        context.AddBuilder(this, SubtaskGenerator(context));
-                    }
-                    else
-                    {
-                        throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}",
-                            moduleName, projectName));
-                    }
-                }
-                else
-                {
-                    subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
-                }
+                subtasks = new HashSet<IBuilder>();
+                context.AddBuilder(this, SubtaskGenerator(context));
             }
             else
             {
-                throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
+                subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
             }
         }
 
@@ -160,10 +188,17 @@ namespace Bari.Core.Build
         public override Reference Reference
         {
             get { return reference; }
-            set { reference = value; }
+            set
+            {
+                if (reference != value)
+                {
+                    reference = value;
+                    referencedProject = null;
+                }
+            }
         }
 
-        
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
@@ -176,17 +211,11 @@ namespace Bari.Core.Build
             return string.Format("[{0}]", reference.Uri);
         }
 
-        public bool Equals(ModuleReferenceBuilder other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return other.ReferencedProject == ReferencedProject;
-        }
-
         public bool Equals(SuiteReferenceBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(reference, other.reference);
+            if (ReferenceEquals(this, other)) return true;            
+            return Equals(ReferencedProject, other.ReferencedProject);
         }
 
         public override bool Equals(object obj)
@@ -195,15 +224,7 @@ namespace Bari.Core.Build
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
 
-            var modRef = obj as ModuleReferenceBuilder;
-            var suiteRef = obj as SuiteReferenceBuilder;
-
-            if (modRef != null)
-                return Equals(modRef);
-            else if (suiteRef != null)
-                return Equals(suiteRef);
-            else
-                return false;
+            return Equals((SuiteReferenceBuilder) obj);
         }
 
         public override int GetHashCode()
@@ -212,11 +233,7 @@ namespace Bari.Core.Build
             {
                 if (reference != null)
                 {
-                    var moduleName = reference.Uri.Host.ToLowerInvariant();
-                    var projectName = reference.Uri.AbsolutePath.TrimStart('/').ToLowerInvariant();
-
-                    return ((moduleName != null ? moduleName.GetHashCode() : 0)*397) ^
-                           (projectName != null ? projectName.GetHashCode() : 0);
+                    return ReferencedProject.GetHashCode() ^ 19983;
                 }
                 else
                 {

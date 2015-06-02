@@ -124,8 +124,8 @@ namespace Bari.Core
             kernel.Bind<IBuildContextFactory>().ToFactory();
 
             // Builders 
-            kernel.Bind<IReferenceBuilder>().To<ModuleReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");
+            kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("module");
             kernel.Bind<IReferenceBuilder>().To<AliasReferenceBuilder>().Named("alias");
             kernel.Bind<IReferenceBuilder>().To<FileReferenceBuilder>().Named("file");
 
