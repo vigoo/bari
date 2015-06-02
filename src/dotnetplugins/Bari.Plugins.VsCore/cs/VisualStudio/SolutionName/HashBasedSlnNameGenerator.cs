@@ -11,8 +11,6 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
     /// </summary>
     public class HashBasedSlnNameGenerator: ISlnNameGenerator
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (HashBasedSlnNameGenerator));
-
         /// <summary>
         /// Generates a file name for a VS solution file which will contain the given set of projects.
         /// </summary>
@@ -26,7 +24,6 @@ namespace Bari.Plugins.VsCore.VisualStudio.SolutionName
                                    let fullName = module + "." + project.Name
                                    select fullName));
 
-            log.DebugFormat("Using hash based sln name: {0}", result);
             return result;
         }
     }
