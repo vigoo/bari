@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Bari.Core.Model
 {
@@ -7,7 +8,7 @@ namespace Bari.Core.Model
     /// </summary>
     public class ReferenceAliases: IProjectParameters
     {
-        private readonly IDictionary<string, ReferenceAlias> aliases = new Dictionary<string, ReferenceAlias>();
+        private readonly IDictionary<string, ReferenceAlias> aliases = new Dictionary<string, ReferenceAlias>(StringComparer.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// Gets the list of registered alias names
