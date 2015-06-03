@@ -1,0 +1,27 @@
+---
+suite:      bari systemtest multi-solution-test2
+
+modules:
+    - name: Mod1
+      projects:
+        - name: Proj11
+          type: executable
+          references:
+            - suite://Mod2/Proj21
+            - suite://Mod2/Proj22
+        - name: Proj12
+
+    - name: Mod2
+      projects:
+         - name: Proj21
+           references:
+            - module://Proj22
+            - suite://Mod1/Proj12
+         - name: Proj22
+
+products:
+    - name: all
+      modules:
+        - Mod1
+        - Mod2
+

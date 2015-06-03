@@ -164,19 +164,47 @@ Function MultiSolutionTest
     Write-Host "..multi-solution-test.." -NoNewline
 
     Push-Location -Path "suite-ref-test"
-    Clean "multi-solution-test1"
-    BuildProduct "multi-solution-test1" "all"
-    $res1 = (InternalCheckExe "multi-solution-test1" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+    Clean "multi-solution-test1.1"
+    BuildProduct "multi-solution-test1.1" "all"
+    $res1 = (InternalCheckExe "multi-solution-test1.1" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
 
     Get-ChildItem "target" | Remove-Item -Recurse -Force 
 
-    BuildProduct "multi-solution-test2" "HelloWorld"
-    $res2 = (InternalCheckExe "multi-solution-test2" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+    BuildProduct "multi-solution-test1.2" "HelloWorld"
+    $res2 = (InternalCheckExe "multi-solution-test1.2" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
 
     Get-ChildItem "target" | Remove-Item -Recurse -Force 
 
-    BuildProduct "multi-solution-test3" "all"
-    $res3 = (InternalCheckExe "multi-solution-test3" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+    BuildProduct "multi-solution-test1.3" "all"
+    $res3 = (InternalCheckExe "multi-solution-test1.3" "target\HelloWorld\HelloWorld.exe" 10 "TEST")
+
+    Pop-Location
+
+    if ($res1 -and $res2 -and $res3)
+    {
+        Write-Host "OK"
+    }
+}
+
+
+Function MultiSolutionTest2
+{
+    Write-Host "..multi-solution-test2.." -NoNewline
+
+    Push-Location -Path "multi-solution-test2"
+    Clean "multi-solution-test2.1"
+    BuildProduct "multi-solution-test2.1" "all"
+    $res1 = (InternalCheckExe "multi-solution-test2.1" "target\Mod1\Proj11.exe" 10 "1234")
+
+    Get-ChildItem "target" | Remove-Item -Recurse -Force 
+
+    BuildProduct "multi-solution-test2.2" "Mod1"
+    $res2 = (InternalCheckExe "multi-solution-test2.2" "target\Mod1\Proj11.exe" 10 "1234")
+
+    Get-ChildItem "target" | Remove-Item -Recurse -Force 
+
+    BuildProduct "multi-solution-test2.3" "all"
+    $res3 = (InternalCheckExe "multi-solution-test2.3" "target\Mod1\Proj11.exe" 10 "1234")
 
     Pop-Location
 
@@ -189,25 +217,26 @@ Function MultiSolutionTest
 Write-Host "Executing system tests for bari..."
 Initialize
 
-SimpleExeBuild "single-cs-exe" "target\HelloWorld\HelloWorld.exe" 11 "Test executable running"
-SimpleExeBuild "single-fs-exe" "target\Module\Exe1.exe" 12 "Test F# executable running"
-SimpleExeBuild "single-cpp-exe" "target\Module1\hello.exe" 13 "Test C++ executable running"
-SimpleExeBuild "module-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-SimpleExeBuild "module-ref-test-withrt" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-SimpleExeBuild "suite-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
-SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
-ContentTest
-SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
-SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
-SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
-SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
-SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
-SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
-X86X64Test
-SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
-ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
-CppReleaseTest
-SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
-SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
-MultiSolutionTest
+# SimpleExeBuild "single-cs-exe" "target\HelloWorld\HelloWorld.exe" 11 "Test executable running"
+# SimpleExeBuild "single-fs-exe" "target\Module\Exe1.exe" 12 "Test F# executable running"
+# SimpleExeBuild "single-cpp-exe" "target\Module1\hello.exe" 13 "Test C++ executable running"
+# SimpleExeBuild "module-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+# SimpleExeBuild "module-ref-test-withrt" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+# SimpleExeBuild "suite-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+# SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
+# SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
+# ContentTest
+# SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
+# SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
+# SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+# SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
+# SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
+# SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
+# X86X64Test
+# SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
+# ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
+# CppReleaseTest
+# SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
+# SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+# MultiSolutionTest
+MultiSolutionTest2

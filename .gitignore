@@ -46,6 +46,8 @@ systest/cpp-release-test/cache
 systest/cpp-version/cache
 systest/custom-plugin-test/cache
 systest/hg-revno-test/cache
+systest/multi-solution-test2/cache
+
 
 # Systest generated files
 hello.vcxproj
@@ -63,6 +65,10 @@ dlldata.c
 comclient.csproj
 staticlib.vcxproj
 resource.aps
+Proj11.csproj
+Proj12.csproj
+Proj21.csproj
+Proj22.csproj
 
 # Systest results
 systest/logs
