@@ -12,7 +12,7 @@ namespace Bari.Core.Build
     /// </summary>
     [ShouldNotCache]
     [AggressiveCacheRestore]
-    public class ContentBuilder: BuilderBase<ContentBuilder>
+    public class ContentBuilder: BuilderBase<ContentBuilder>, IEquatable<ContentBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ContentBuilder));
 
@@ -77,6 +77,36 @@ namespace Bari.Core.Build
         public override string ToString()
         {
             return String.Format("[{0}.{1}/content]", project.Module.Name, project.Name);
+        }
+
+        public bool Equals(ContentBuilder other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(project, other.project);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ContentBuilder) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (project != null ? project.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(ContentBuilder left, ContentBuilder right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ContentBuilder left, ContentBuilder right)
+        {
+            return !Equals(left, right);
         }
     }
 }
