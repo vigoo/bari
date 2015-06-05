@@ -217,26 +217,26 @@ Function MultiSolutionTest2
 Write-Host "Executing system tests for bari..."
 Initialize
 
-# SimpleExeBuild "single-cs-exe" "target\HelloWorld\HelloWorld.exe" 11 "Test executable running"
-# SimpleExeBuild "single-fs-exe" "target\Module\Exe1.exe" 12 "Test F# executable running"
-# SimpleExeBuild "single-cpp-exe" "target\Module1\hello.exe" 13 "Test C++ executable running"
-# SimpleExeBuild "module-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-# SimpleExeBuild "module-ref-test-withrt" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-# SimpleExeBuild "suite-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
-# SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
-# SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
-# ContentTest
-# SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
-# SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
-# SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
-# SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
-# SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
-# SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
-# X86X64Test
-# SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
-# ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
-# CppReleaseTest
-# SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
-# SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
-# MultiSolutionTest
+SimpleExeBuild "single-cs-exe" "target\HelloWorld\HelloWorld.exe" 11 "Test executable running"
+SimpleExeBuild "single-fs-exe" "target\Module\Exe1.exe" 12 "Test F# executable running"
+SimpleExeBuild "single-cpp-exe" "target\Module1\hello.exe" 13 "Test C++ executable running"
+SimpleExeBuild "module-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+SimpleExeBuild "module-ref-test-withrt" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+SimpleExeBuild "suite-ref-test" "target\HelloWorld\HelloWorld.exe" 10 "TEST"
+SimpleExeBuild "fsrepo-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
+SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acquired"
+ContentTest
+SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
+SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
+SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
+SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
+SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
+X86X64Test
+SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
+ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
+CppReleaseTest
+SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
+SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+MultiSolutionTest
 MultiSolutionTest2

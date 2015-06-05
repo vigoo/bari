@@ -149,11 +149,9 @@ namespace Bari.Core.Build
 
         private IEnumerable<IBuilder> SubtaskGenerator(IBuildContext context)
         {
-            var moduleProjects = referencedProject.Module.Projects.ToList();
-
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, moduleProjects);
+                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
                 if (builder != null)
                 {
                     subtasks.Add(builder);

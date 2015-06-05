@@ -75,6 +75,13 @@ namespace Bari.Core.Build
         bool Contains(IBuilder builder);
 
         /// <summary>
+        /// Gets the registered effective builder instance for a given builder at the given context
+        /// </summary>
+        /// <param name="builder">Builder to resolve</param>
+        /// <returns>Returns the builer itself or its transformed form</returns>
+        IBuilder GetEffectiveBuilder(IBuilder builder);
+
+        /// <summary>
         /// Gets all the result files under the given subdirectory of target root
         /// </summary>
         /// <param name="targetDir">Subdirectory of target</param>
@@ -82,6 +89,11 @@ namespace Bari.Core.Build
         /// generated under the current build context to the given subdirectory or one of 
         /// its children.</returns>
         IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir);
+
+        /// <summary>
+        /// Gets the root context instance
+        /// </summary>
+        IBuildContext RootContext { get; }
     }
 
     /// <summary>
@@ -183,12 +195,32 @@ namespace Bari.Core.Build
             return false; // dummy
         }
 
+        /// <summary>
+        /// Gets the registered effective builder instance for a given builder at the given context
+        /// </summary>
+        /// <param name="builder">Builder to resolve</param>
+        /// <returns>Returns the builer itself or its transformed form</returns>
+        public IBuilder GetEffectiveBuilder(IBuilder builder)
+        {
+            Contract.Ensures(Contract.Result<IBuilder>() != null);
+            return null; // dummy
+        }
+
         public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
         {
             Contract.Requires(targetDir != null);
             Contract.Ensures(Contract.Result<IEnumerable<TargetRelativePath>>() != null);
 
             return null; // dummy
+        }
+
+        public IBuildContext RootContext
+        {
+            get 
+            { 
+                Contract.Ensures(Contract.Result<IBuildContext>() != null);
+                return null; // dummy
+            }
         }
     }
 }

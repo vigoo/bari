@@ -119,9 +119,19 @@ namespace Bari.Plugins.VsCore.Build
             return baseContext.Contains(converted ?? resolved);
         }
 
+        public IBuilder GetEffectiveBuilder(IBuilder builder)
+        {
+            return baseContext.GetEffectiveBuilder(ResolveBuilder(builder));
+        }
+
         public IEnumerable<TargetRelativePath> GetAllResultsIn(TargetRelativePath targetDir)
         {
             return baseContext.GetAllResultsIn(targetDir);
+        }
+
+        public IBuildContext RootContext
+        {
+            get { return baseContext; }
         }
 
         public void DumpDependencies(IBuilder rootBuilder, IUserOutput output)

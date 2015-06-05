@@ -240,6 +240,19 @@ namespace Bari.Core.Build
         {
             return builders.Any(edge => Equals(edge.Source, builder) || Equals(edge.Target, builder));
         }
+        
+        /// <summary>
+        /// Gets the registered effective builder instance for a given builder at the given context
+        /// </summary>
+        /// <param name="builder">Builder to resolve</param>
+        /// <returns>Returns the builer itself or its transformed form</returns>
+        public IBuilder GetEffectiveBuilder(IBuilder builder)
+        {
+            if (Contains(builder))
+                return builder;
+            else
+                throw new ArgumentOutOfRangeException("builder", "Builder is not added to context");
+        }
 
         /// <summary>
         /// Gets all the result files under the given subdirectory of target root
@@ -255,6 +268,14 @@ namespace Bari.Core.Build
                 prefix += Path.DirectorySeparatorChar;
 
             return partialResults.Values.SelectMany(ps => ps.Where(p => ((string)p).StartsWith(prefix)));
+        }
+
+        /// <summary>
+        /// Gets the root context instance
+        /// </summary>
+        public IBuildContext RootContext
+        {
+            get { return this; }
         }
     }
 }

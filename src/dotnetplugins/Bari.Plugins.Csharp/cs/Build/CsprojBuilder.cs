@@ -29,7 +29,8 @@ namespace Bari.Plugins.Csharp.Build
         private readonly Suite suite;
         private readonly IFileSystemDirectory targetDir;
         private readonly CsprojGenerator generator;
-        private ISet<IBuilder> referenceBuilders;
+        private IList<IReferenceBuilder> referenceBuilders;
+        private IList<IBuilder> effectiveReferenceBuilders;
 
         /// <summary>
         /// Gets the project this builder is working on
@@ -85,7 +86,11 @@ namespace Bari.Plugins.Csharp.Build
                 CsharpParametersDependencies.Add(project, deps);
 
                 if (referenceBuilders != null)
-                    deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
+                {
+                    deps.AddRange(
+                        referenceBuilders.Select(
+                            (refBuilder, idx) => CreateReferenceDependency(refBuilder, effectiveReferenceBuilders[idx])));
+                }
 
                 return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
             }
@@ -115,11 +120,12 @@ namespace Bari.Plugins.Csharp.Build
             }
         }
 
-        private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder)
+        private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder, IBuilder effectiveRefBuilder)
         {
             return new MultipleDependencies(
                 new SubtaskDependency(refBuilder),
-                new ReferenceDependency(refBuilder.Reference));
+                new ReferenceDependency(refBuilder.Reference),
+                new BuilderUidDependency(effectiveRefBuilder));
         }
 
         /// <summary>
@@ -142,11 +148,14 @@ namespace Bari.Plugins.Csharp.Build
             {
                 log.DebugFormat("Creating reference builders for {0}", project.Name);
 
-                referenceBuilders = new HashSet<IBuilder>(
-                    project.References.Where(r => r.Type == ReferenceType.Build).Select(CreateReferenceBuilder));
+                referenceBuilders = project.References.Where(r => r.Type == ReferenceType.Build).Select(CreateReferenceBuilder).ToList();
 
+                effectiveReferenceBuilders = new List<IBuilder>();
                 foreach (var refBuilder in referenceBuilders)
+                {
                     refBuilder.AddToContext(context);
+                    effectiveReferenceBuilders.Add(context.GetEffectiveBuilder(refBuilder));
+                }
 
                 context.AddBuilder(this, referenceBuilders);
 
@@ -154,12 +163,12 @@ namespace Bari.Plugins.Csharp.Build
             }
             else
             {
-                referenceBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+                referenceBuilders = context.GetDependencies(this).OfType<IReferenceBuilder>().ToList();
             }
         }
 
 
-        private IBuilder CreateReferenceBuilder(Reference reference)
+        private IReferenceBuilder CreateReferenceBuilder(Reference reference)
         {
             var builder = referenceBuilderFactory.CreateReferenceBuilder(reference, project);
             if (builder != null)

@@ -116,7 +116,7 @@ namespace Bari.Plugins.VsCore.Build
         {
             if (!context.Contains(this))
             {
-                var solutionBuildContext = new SolutionBuildContext(inSolutionReferenceBuilderFactory, context, this);
+                var solutionBuildContext = new SolutionBuildContext(inSolutionReferenceBuilderFactory, context.RootContext, this);
 
                 projectBuilders = new HashSet<ISlnProjectBuilder>(
                     from project in projects
