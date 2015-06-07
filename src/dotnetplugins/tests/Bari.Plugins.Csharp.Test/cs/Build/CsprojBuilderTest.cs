@@ -123,6 +123,7 @@ namespace Bari.Plugins.Csharp.Test.Build
             kernel.Bind<IReferenceBuilder>().To<RefBuilder>().Named("test");
 
             var context = new Mock<IBuildContext>();
+            context.Setup(c => c.GetEffectiveBuilder(It.IsAny<IBuilder>())).Returns<IBuilder>(b => b);
             
             var builder = kernel.Get<CsprojBuilder>();
             project.AddReference(new Reference(new Uri("test://ref1"), ReferenceType.Build));

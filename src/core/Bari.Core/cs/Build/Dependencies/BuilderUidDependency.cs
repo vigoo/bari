@@ -1,4 +1,5 @@
-﻿using Bari.Core.UI;
+﻿using System.Diagnostics.Contracts;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build.Dependencies
 {
@@ -12,6 +13,8 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="builder">Builder to depend on</param>
         public BuilderUidDependency(IBuilder builder)
         {
+            Contract.Requires(builder != null);
+
             this.builder = builder;
         }
 
