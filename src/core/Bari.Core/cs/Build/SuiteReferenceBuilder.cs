@@ -45,58 +45,63 @@ namespace Bari.Core.Build
             }
         }
 
-        private void CalculateReferencedProject()
-        {
-            if (referencedProject == null)
-            {
-                switch (reference.Uri.Scheme)
-                {
-                    case "suite":
-                        {
-                            var moduleName = reference.Uri.Host;
-                            var projectName = reference.Uri.AbsolutePath.TrimStart('/');
-
-                            if (suite.HasModule(moduleName))
-                            {
-                                var module = suite.GetModule(moduleName);
-                                referencedProject = module.GetProjectOrTestProject(projectName);
-
-                                if (referencedProject == null)
-                                    throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", moduleName, projectName));
-                            }
-                            else
-                            {
-                                throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
-                            }
-
-                            break;
-                        }
-                    case "module":
-                        {
-                            string projectName = reference.Uri.Host;
-                            referencedProject = module.GetProjectOrTestProject(projectName);
-
-                            if (referencedProject == null)
-                                throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name, projectName));
-
-                            break;
-                        }
-                    default:
-                        throw new InvalidOperationException("Unsupported suite reference type: " + reference.Uri.Scheme);
-                }
-            }
-        }
-
         /// <summary>
         /// Constructs the reference builder
         /// </summary>
-        /// <param name="suite">The suite being built </param>
+        /// <param name="project">The project using this reference</param>
         /// <param name="projectBuilders">Project builders available</param>
         public SuiteReferenceBuilder(Project project, IEnumerable<IProjectBuilderFactory> projectBuilders)
         {
             module = project.Module;
             suite = project.Module.Suite;
             this.projectBuilders = projectBuilders;
+        }
+
+        private static Project CalculateReferencedProject(Suite suite, Module module, Reference r)
+        {
+            switch (r.Uri.Scheme)
+            {
+                case "suite":
+                    {
+                        var moduleName = r.Uri.Host;
+                        var projectName = r.Uri.AbsolutePath.TrimStart('/');
+
+                        if (suite.HasModule(moduleName))
+                        {
+                            module = suite.GetModule(moduleName);
+                            var result = module.GetProjectOrTestProject(projectName);
+
+                            if (result == null)
+                                throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", moduleName, projectName));
+
+                            return result;
+                        }
+                        else
+                        {
+                            throw new InvalidReferenceException(string.Format("Suite has no module called {0}", moduleName));
+                        }
+                    }
+                case "module":
+                    {
+                        string projectName = r.Uri.Host;
+                        var result = module.GetProjectOrTestProject(projectName);
+
+                        if (result == null)
+                            throw new InvalidReferenceException(string.Format("Module {0} has no project called {1}", module.Name, projectName));
+
+                        return result;
+                    }
+                default:
+                    throw new InvalidOperationException("Unsupported suite reference type: " + r.Uri.Scheme);
+            }
+        }
+
+        private void CalculateReferencedProject()
+        {
+            if (referencedProject == null)
+            {
+                referencedProject = CalculateReferencedProject(suite, module, reference);
+            }
         }
 
         /// <summary>
@@ -149,9 +154,13 @@ namespace Bari.Core.Build
 
         private IEnumerable<IBuilder> SubtaskGenerator(IBuildContext context)
         {
+            bool isTestProject = referencedProject is TestProject;
+            var targetModule = referencedProject.Module;
+            var allModuleProjects = isTestProject ? targetModule.Projects.Concat(module.TestProjects).ToList() : targetModule.Projects;
+
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                var builder = projectBuilder.AddToContext(context, allModuleProjects);
                 if (builder != null)
                 {
                     subtasks.Add(builder);
@@ -159,7 +168,7 @@ namespace Bari.Core.Build
                 }
             }
         }
-
+        
         /// <summary>
         /// Runs this builder
         /// </summary>

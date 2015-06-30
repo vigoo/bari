@@ -121,11 +121,13 @@ namespace Bari.Core.Build
                 else
                 {
                     log.ErrorFormat("Build graph has cycle");
+                    result.Clear();
                 }
             }
             else
             {
                 log.DebugFormat("Build cancelled by graph transformation");
+                result.Clear();
             }
 
             return result;
@@ -154,8 +156,26 @@ namespace Bari.Core.Build
         }
 
         private bool HasCycles(IVertexListGraph<IBuilder, EquatableEdge<IBuilder>> graph)
-        {
-            return !graph.IsDirectedAcyclicGraph();
+        {            
+            var dfs = new DepthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            Boolean isDag = true;
+            EdgeAction<IBuilder, EquatableEdge<IBuilder>> onBackEdge = edge =>
+            {
+                isDag = false;
+                log.DebugFormat("Back edge: {0} -> {1}", edge.Source, edge.Target);
+            };
+
+            try
+            {
+                dfs.BackEdge += onBackEdge;
+                dfs.Compute();
+            }
+            finally
+            {
+                dfs.BackEdge -= onBackEdge;
+            }
+
+            return !isDag;
         }
 
         private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)

@@ -174,11 +174,18 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 }
                 else
                 {
-                    context.Run(rootBuilder);
+                    var result = context.Run(rootBuilder);
 
-                    var outputs = context.GetResults(rootBuilder);
-                    foreach (var outputPath in outputs)
-                        log.DebugFormat("Generated output for build: {0}", outputPath);
+                    if (result.Count > 0)
+                    {
+                        var outputs = context.GetResults(rootBuilder);
+                        foreach (var outputPath in outputs)
+                            log.DebugFormat("Generated output for build: {0}", outputPath);
+                    }
+                    else
+                    {
+                        log.Warn("Build produced no results");
+                    }
                 }
             }
 

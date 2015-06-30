@@ -164,8 +164,16 @@ Example: `bari test --dump`
             }
             else 
             {
-                context.Run(rootBuilder);
-                return context.GetResults(rootBuilder);
+                var result = context.Run(rootBuilder);
+                if (result.Count != 0)
+                {
+                    return context.GetResults(rootBuilder);
+                }
+                else
+                {
+                    log.WarnFormat("No tests to run");
+                    return new TargetRelativePath[0];
+                }                
             }        
         }
     }

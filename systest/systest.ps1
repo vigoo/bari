@@ -239,4 +239,4 @@ CppReleaseTest
 SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
 SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
 MultiSolutionTest
-MultiSolutionTest2
+# MultiSolutionTest2
