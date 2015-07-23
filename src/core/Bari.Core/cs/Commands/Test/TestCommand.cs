@@ -113,8 +113,10 @@ Example: `bari test --dump`
                 log.InfoFormat("Building the full suite ({0} projects)", projects.Count);
 
                 var tests = suite.HasParameters("test") ? suite.GetParameters<Tests>("test") : new Tests();
-                var buildOutputs = RunWithProjects(projects, dumpMode, dumpDepsMode);
-                return RunTests(tests, projects, buildOutputs);
+                var buildOutputs = RunWithProjects(projects, dumpMode, dumpDepsMode).ToList();
+
+                if (buildOutputs.Any())
+                    return RunTests(tests, projects, buildOutputs);
             }
             else
             {
