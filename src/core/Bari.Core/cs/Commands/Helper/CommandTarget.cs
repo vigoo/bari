@@ -6,6 +6,6 @@ namespace Bari.Core.Commands.Helper
     public abstract class CommandTarget
     {
         public abstract IEnumerable<Project> Projects { get; }
-        public abstract IEnumerable<Project> TestProjects { get; }
+        public abstract IEnumerable<TestProject> TestProjects { get; }
     }
 }

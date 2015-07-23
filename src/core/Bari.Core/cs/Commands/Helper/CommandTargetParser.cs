@@ -42,6 +42,8 @@ namespace Bari.Core.Commands.Helper
                             string projectName = target.Substring(module.Name.Length + 1);
                             if (module.HasProject(projectName))
                                 matches.Add(module.GetProject(projectName));
+                            else if (module.HasTestProject(projectName))
+                                matches.Add(module.GetTestProject(projectName));
                         }
                     }
 

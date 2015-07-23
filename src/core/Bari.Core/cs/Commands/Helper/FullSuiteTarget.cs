@@ -23,7 +23,7 @@ namespace Bari.Core.Commands.Helper
             }
         }
 
-        public override IEnumerable<Project> TestProjects
+        public override IEnumerable<TestProject> TestProjects
         {
             get
             {

@@ -23,14 +23,15 @@ namespace Bari.Core.Commands.Helper
             }
         }
 
-        public override IEnumerable<Project> TestProjects
+        public override IEnumerable<TestProject> TestProjects
         {
             get
             {
-                if (project is TestProject)
-                    return new[] { project };
+                var testProject = project as TestProject;
+                if (testProject != null)
+                    return new[] { testProject };
                 else
-                    return new Project[0];
+                    return new TestProject[0];
             }
         }
     }

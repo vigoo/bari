@@ -17,7 +17,7 @@ namespace Bari.Core.Commands.Helper
             get { return module.Projects; }
         }
 
-        public override IEnumerable<Project> TestProjects
+        public override IEnumerable<TestProject> TestProjects
         {
             get { return module.TestProjects; }
         }
