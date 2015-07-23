@@ -26,6 +26,9 @@ namespace Bari.Core.Build
     [AggressiveCacheRestore]
     public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SuiteReferenceBuilder));
+
+        private readonly Project project;
         private readonly Suite suite;
         private readonly Module module;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -52,6 +55,7 @@ namespace Bari.Core.Build
         /// <param name="projectBuilders">Project builders available</param>
         public SuiteReferenceBuilder(Project project, IEnumerable<IProjectBuilderFactory> projectBuilders)
         {
+            this.project = project;
             module = project.Module;
             suite = project.Module.Suite;
             this.projectBuilders = projectBuilders;
@@ -144,7 +148,11 @@ namespace Bari.Core.Build
             if (!context.Contains(this))
             {
                 subtasks = new HashSet<IBuilder>();
-                context.AddBuilder(this, SubtaskGenerator(context));
+                GenerateSubtasks(context);
+
+                log.DebugFormat("Project {0}'s reference to {1} adds the following subtasks: {2}", project, referencedProject, String.Join(", ", subtasks));
+
+                context.AddBuilder(this, subtasks);
             }
             else
             {
@@ -152,19 +160,14 @@ namespace Bari.Core.Build
             }
         }
 
-        private IEnumerable<IBuilder> SubtaskGenerator(IBuildContext context)
-        {
-            bool isTestProject = referencedProject is TestProject;
-            var targetModule = referencedProject.Module;
-            var allModuleProjects = isTestProject ? targetModule.Projects.Concat(module.TestProjects).ToList() : targetModule.Projects;
-
+        private void GenerateSubtasks(IBuildContext context)
+        {            
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, allModuleProjects);
+                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
                 if (builder != null)
                 {
                     subtasks.Add(builder);
-                    yield return builder;
                 }
             }
         }
