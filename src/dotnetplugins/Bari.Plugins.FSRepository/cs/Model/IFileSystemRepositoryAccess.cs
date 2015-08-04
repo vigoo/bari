@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Bari.Core.Generic;
 
 namespace Bari.Plugins.FSRepository.Model
@@ -6,6 +7,7 @@ namespace Bari.Plugins.FSRepository.Model
     /// <summary>
     /// Interface for accessing the file system repository
     /// </summary>
+    [ContractClass(typeof(IFileSystemRepositoryAccessContracts))]
     public interface IFileSystemRepositoryAccess
     {
         /// <summary>
@@ -36,5 +38,22 @@ namespace Bari.Plugins.FSRepository.Model
         /// <param name="path">Directory path</param>
         /// <returns>Returns the files in the given directory, all prefixed with the directory path</returns>
         IEnumerable<string> ListFiles(string path);
+    }
+
+    [ContractClassFor(typeof (IFileSystemRepositoryAccess))]
+    abstract class IFileSystemRepositoryAccessContracts : IFileSystemRepositoryAccess
+    {
+        public abstract bool Exists(string path);
+
+        public IFileSystemDirectory GetDirectory(string path)
+        {
+            Contract.Ensures(Contract.Result<IFileSystemDirectory>() != null);
+
+            return null; // dummy
+        }
+
+        public abstract void Copy(string path, IFileSystemDirectory targetDir, string targetFileName);
+
+        public abstract IEnumerable<string> ListFiles(string path);
     }
 }
