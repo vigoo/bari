@@ -209,7 +209,6 @@ namespace Bari.Plugins.VCpp.Model
                 writer.WriteElementString("KeyFile", KeyFile);
             writer.WriteElementString("LargeAddressAware", XmlConvert.ToString(LargeAddressAware));
             writer.WriteElementString("LinkDLL", XmlConvert.ToString(LinkDLL));
-            writer.WriteElementString("LinkIncremental", XmlConvert.ToString(LinkIncremental));
             writer.WriteElementString("MapExports", XmlConvert.ToString(MapExports));
             if (!string.IsNullOrWhiteSpace(MapFileName))
                 writer.WriteElementString("MapFileName", MapFileName);

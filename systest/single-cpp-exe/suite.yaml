@@ -8,4 +8,6 @@ modules:
           type: executable
           cpp-linker:
             subsystem: Console
+          cpp-compiler:
+            warnings-as-error: yes
 

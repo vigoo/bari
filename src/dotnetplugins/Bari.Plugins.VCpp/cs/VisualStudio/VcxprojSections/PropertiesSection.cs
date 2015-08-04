@@ -241,15 +241,21 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private void WriteLinkerParameters(XmlWriter writer, Project project)
         {
-            VCppProjectLinkerParameters compilerParameters = project.HasParameters("cpp-linker")
-                                                                   ? project.GetParameters<VCppProjectLinkerParameters>("cpp-linker")
-                                                                   : new VCppProjectLinkerParameters(Suite);
+            var compilerParameters = GetLinkerParameters(project);
 
             compilerParameters.FillProjectSpecificMissingInfo(project);
 
             writer.WriteStartElement("Link");
             compilerParameters.ToVcxprojProperties(writer);
             writer.WriteEndElement();
+        }
+
+        private VCppProjectLinkerParameters GetLinkerParameters(Project project)
+        {
+            VCppProjectLinkerParameters compilerParameters = project.HasParameters("cpp-linker")
+                ? project.GetParameters<VCppProjectLinkerParameters>("cpp-linker")
+                : new VCppProjectLinkerParameters(Suite);
+            return compilerParameters;
         }
 
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
@@ -260,8 +266,10 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                                       ToProjectRelativePath(project, Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name, project.Name), "cpp") + Path.DirectorySeparatorChar);
 
             var manifestParameters = GetManifestParameters(project);
+            var linkerParameters = GetLinkerParameters(project);
             writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.EmbedManifest));
             writer.WriteElementString("GenerateManifest", XmlConvert.ToString(manifestParameters.GenerateManifest));
+            writer.WriteElementString("LinkIncremental", XmlConvert.ToString(linkerParameters.LinkIncremental));
         }
     }
 }

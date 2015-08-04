@@ -464,7 +464,7 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("StringPooling", XmlConvert.ToString(StringPooling));
             if (StructMemberAlignment.HasValue)
                 writer.WriteElementString("StructMemberAlignment", StructMemberAlignment.Value.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("AllWarningsAsError", XmlConvert.ToString(AllWarningsAsError));
+            writer.WriteElementString("TreatWarningAsError", XmlConvert.ToString(AllWarningsAsError));
             WriteStringArray(writer, "SpecificWarningsAsError", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture)).ToArray());
             writer.WriteElementString("TreatWCharTAsBuiltInType", XmlConvert.ToString(TreatWCharTAsBuiltInType));
             writer.WriteElementString("UndefineAllPreprocessorDefinitions", XmlConvert.ToString(UndefineAllPreprocessorDefinitions));
