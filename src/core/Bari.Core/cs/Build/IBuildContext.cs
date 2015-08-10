@@ -18,10 +18,7 @@ namespace Bari.Core.Build
         /// Adds a new builder to be executed to the context
         /// </summary>
         /// <param name="builder">The builder to be executed</param>
-        /// <param name="prerequisites">Builder's prerequisites. The prerequisites must be added
-        /// separately with the <see cref="AddBuilder"/> method, listing them here only changes the
-        /// order in which they are executed.</param>
-        void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites);
+        void AddBuilder(IBuilder builder);
 
         /// <summary>
         /// Adds a new graph transformation which will be executed before the builders
@@ -105,14 +102,10 @@ namespace Bari.Core.Build
         /// <summary>
         /// Adds a new builder to be executed to the context
         /// </summary>
-        /// <param name="builder">The builder to be executed</param>
-        /// <param name="prerequisites">Builder's prerequisites. The prerequisites must be added
-        /// separately with the <see cref="IBuildContext.AddBuilder"/> method, listing them here only changes the
-        /// order in which they are executed.</param>
-        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        /// <param name="builder">The builder to be executed</param>        
+        public void AddBuilder(IBuilder builder)
         {
             Contract.Requires(builder != null);
-            Contract.Requires(prerequisites != null);
         }
 
         /// <summary>

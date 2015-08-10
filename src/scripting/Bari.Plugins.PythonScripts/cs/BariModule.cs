@@ -1,8 +1,12 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Model.Discovery;
 using Bari.Plugins.PythonScripts.Build;
+using Bari.Plugins.PythonScripts.Build.BuilderStore;
 using Bari.Plugins.PythonScripts.Model.Discovery;
 using Bari.Plugins.PythonScripts.Scripting;
+using Ninject;
+using Ninject.Extensions.Factory;
 using Ninject.Modules;
 
 namespace Bari.Plugins.PythonScripts
@@ -27,6 +31,13 @@ namespace Bari.Plugins.PythonScripts
             Bind<IPostProcessorFactory>().To<PythonScriptedPostProcessorFactory>();
             Bind<IProjectBuildScriptRunner>().To<ProjectBuildScriptRunner>();
             Bind<IPostProcessorScriptRunner>().To<PostProcessorScriptRunner>();
+
+            Bind<IPythonScriptedBuilderFactory>().ToFactory();
+
+            var store = Kernel.Get<IBuilderStore>();
+            var pythonScriptedBuilderFactory = Kernel.Get<IPythonScriptedBuilderFactory>();
+            Rebind<IPythonScriptedBuilderFactory>()
+                .ToConstant(new StoredPythonScriptedBuilderFactory(pythonScriptedBuilderFactory, store));
         }
     }
 }

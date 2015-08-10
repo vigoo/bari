@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bari.Core;
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
@@ -70,13 +71,11 @@ namespace Bari.Plugins.Csharp.Test.Build
             }
 
             /// <summary>
-            /// Prepares a builder to be ran in a given build context.
-            /// 
-            /// <para>This is the place where a builder can add additional dependencies.</para>
+            /// Get the builders to be executed before this builder
             /// </summary>
-            /// <param name="context">The current build context</param>
-            public void AddToContext(IBuildContext context)
+            public IEnumerable<IBuilder> Prerequisites
             {
+                get { return new IBuilder[0]; }
             }
 
             /// <summary>
@@ -125,16 +124,17 @@ namespace Bari.Plugins.Csharp.Test.Build
             var context = new Mock<IBuildContext>();
             context.Setup(c => c.GetEffectiveBuilder(It.IsAny<IBuilder>())).Returns<IBuilder>(b => b);
             
-            var builder = kernel.Get<CsprojBuilder>();
+            var builder1 = kernel.Get<CsprojBuilder>();
             project.AddReference(new Reference(new Uri("test://ref1"), ReferenceType.Build));
-            builder.AddToContext(context.Object);
+            var prereqs1 = builder1.Prerequisites.ToList(); // enforce lazy eval
 
-            var fp0 = builder.Dependencies.Fingerprint;
+            var fp0 = builder1.Dependencies.Fingerprint;
 
             project.AddReference(new Reference(new Uri("test://ref2"), ReferenceType.Build));
-            builder.AddToContext(context.Object);
+            var builder2 = kernel.Get<CsprojBuilder>();
+            var prereqs2 = builder2.Prerequisites.ToList(); // enforce lazy eval
 
-            var fp1 = builder.Dependencies.Fingerprint;
+            var fp1 = builder2.Dependencies.Fingerprint;
 
             fp0.Should().NotBe(fp1);
         }

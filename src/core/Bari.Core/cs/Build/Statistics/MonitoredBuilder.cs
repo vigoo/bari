@@ -1,5 +1,4 @@
 ﻿using System;
-using Bari.Core.Build;
 using System.Collections.Generic;
 using Bari.Core.Generic;
 using System.Diagnostics;
@@ -17,11 +16,6 @@ namespace Bari.Core.Build.Statistics
 		{
 			this.wrappedBuilder = wrappedBuilder;
 			this.statistics = statistics;
-		}
-
-		public void AddToContext(IBuildContext context)
-		{
-			wrappedBuilder.AddToContext(context);
 		}
 
 		public ISet<TargetRelativePath> Run(IBuildContext context)
@@ -51,7 +45,12 @@ namespace Bari.Core.Build.Statistics
 			}
 		}
 
-		public string Uid 
+	    public IEnumerable<IBuilder> Prerequisites
+	    {
+	        get { return wrappedBuilder.Prerequisites; }
+	    }
+
+	    public string Uid 
 		{
 			get 
 			{

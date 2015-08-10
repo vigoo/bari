@@ -18,11 +18,9 @@ namespace Bari.Plugins.VsCore.Build
     /// </summary>
     public class SlnBuilder : BuilderBase<SlnBuilder>, IEquatable<SlnBuilder>
     {
-        private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
         private readonly IEnumerable<ISolutionItemProvider> solutionItemProviders;
         private readonly IProjectGuidManagement projectGuidManagement;
         private readonly IProjectPlatformManagement projectPlatformManagement;
-        private readonly IProjectPathManagement projectPathManagement;
         private readonly IFileSystemDirectory targetDir;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IList<Project> projects;
@@ -66,9 +64,7 @@ namespace Bari.Plugins.VsCore.Build
             this.msBuildVersion = msBuildVersion;
             this.targetDir = targetDir;
             this.slnNameGenerator = slnNameGenerator;
-            this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
             this.solutionItemProviders = solutionItemProviders;
-            this.projectPathManagement = projectPathManagement;
             this.projectPlatformManagement = projectPlatformManagement;
         }
 
@@ -107,43 +103,34 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            if (!context.Contains(this))
+            get
             {
-                var solutionBuildContext = new SolutionBuildContext(inSolutionReferenceBuilderFactory, context.RootContext, this);
+                if (projectBuilders == null)
+                {
+                    projectBuilders = new HashSet<ISlnProjectBuilder>(
+                        from project in projects
+                        select CreateProjectBuilder(project)
+                        into builder
+                        where builder != null
+                        select builder
+                        );
+                    projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IBuilder>(projectBuilders));
+                }
 
-                projectBuilders = new HashSet<ISlnProjectBuilder>(
-                    from project in projects
-                    select CreateProjectBuilder(solutionBuildContext, project)
-                    into builder
-                    where builder != null
-                    select builder
-                    );
-
-                solutionBuildContext.AddBuilder(this, projectBuilders);
+                return projectBuilders;
             }
-            else
-            {
-                projectBuilders = new HashSet<ISlnProjectBuilder>(context.GetDependencies(this).Cast<ISlnProjectBuilder>());
-            }
-
-            projectDependencies = MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IBuilder>(projectBuilders));
         }
-
-        private ISlnProjectBuilder CreateProjectBuilder(IBuildContext context, Project project)
+        
+        private ISlnProjectBuilder CreateProjectBuilder(Project project)
         {
             var slnProject = supportedSlnProjects.FirstOrDefault(prj => prj.SupportsProject(project));
             if (slnProject != null)
             {
-                var projectBuilder = slnProject.CreateBuilder(project);
-                projectBuilder.AddToContext(context);
-                return projectBuilder;
+                return slnProject.CreateBuilder(project);
             }
             else
             {

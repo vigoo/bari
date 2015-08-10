@@ -1,5 +1,4 @@
-﻿using Bari.Core.Build;
-using Bari.Core.Model;
+﻿using Bari.Core.Model;
 using Bari.Plugins.VsCore.Build;
 
 namespace Bari.Plugins.VsCore.VisualStudio

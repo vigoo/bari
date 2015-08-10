@@ -43,19 +43,10 @@ namespace Bari.Plugins.VsCore.Build
             return null;
         }
 
-        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        public void AddBuilder(IBuilder builder)
         {
-            IBuilder finalBuilder = ConvertBuilder(builder);
-            IEnumerable<IBuilder> finalPrerequisites = null;
-            if (finalBuilder != null)
-                finalPrerequisites = new IBuilder[0];
-            else
-                finalBuilder = builder;
-
-            if (finalPrerequisites == null)
-                finalPrerequisites = prerequisites.Select(ResolveBuilder);
-
-            baseContext.AddBuilder(finalBuilder, finalPrerequisites);
+            var finalBuilder = ConvertBuilder(builder) ?? builder;
+            baseContext.AddBuilder(finalBuilder);
         }
 
         private IBuilder ConvertToInSolutionReference(IReferenceBuilder referenceBuilder, Project referencedProject)

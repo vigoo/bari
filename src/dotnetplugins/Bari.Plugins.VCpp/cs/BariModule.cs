@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Bari.Core.Build.BuilderStore;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
 using Bari.Core.Model.Loader;
 using Bari.Plugins.VCpp.Build;
+using Bari.Plugins.VCpp.Build.BuilderStore;
 using Bari.Plugins.VCpp.Commands.Clean;
 using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VCpp.Model.Loader;
@@ -47,7 +48,7 @@ namespace Bari.Plugins.VCpp
 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<VcxprojGenerator>();
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<VcxprojGenerator>();
-            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<VcxprojGenerator>().WithConstructorArgument("sourceSetName", "cpp"); ; ;
+            Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<VcxprojGenerator>().WithConstructorArgument("sourceSetName", "cpp");
             Bind<IMSBuildProjectSection>().To<StaticLibraryReferencesSection>().WhenInjectedInto<VcxprojGenerator>();
 
             var oldPlatformManagement = Kernel.Get<IProjectPlatformManagement>();
@@ -81,6 +82,11 @@ namespace Bari.Plugins.VCpp
             protocolRegistry.RegisterEnum(i => (RuntimeLibraryType)i);
             protocolRegistry.RegisterEnum(i => (UACExecutionLevel)i);
             protocolRegistry.RegisterEnum(i => (UseOfATL)i);
+
+            var store = Kernel.Get<IBuilderStore>();
+            var vxprojBuilderFactory = Kernel.Get<IVcxprojBuilderFactory>();
+            Rebind<IVcxprojBuilderFactory>().ToConstant(
+                new StoredVcxprojBuilderFactory(vxprojBuilderFactory, store));
         }
     }
 }

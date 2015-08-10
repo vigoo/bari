@@ -15,6 +15,7 @@ namespace Bari.Plugins.VsCore.Build
     public class VsProjectBuilderFactory: IProjectBuilderFactory
     {
         private readonly Suite suite;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
         private readonly ISlnBuilderFactory slnBuilderFactory;
         private readonly IMSBuildRunnerFactory msBuildRunnerFactory;
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
@@ -42,33 +43,28 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         /// <summary>
-        /// Adds the builders (<see cref="IBuilder"/>) to the given build context which process
+        /// Creates a builder (<see cref="IBuilder"/>) which process
         /// the given set of projects (<see cref="Project"/>)
         /// </summary>
-        /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
+        public IBuilder Create(IEnumerable<Project> projects)
         {
             var prjs = projects.ToArray();
 
-            var slnBuilder = GenerateSolutionFile(context, prjs);
-            var msbuild = BuildSolution(context, slnBuilder);
+            var slnBuilder = GenerateSolutionFile(prjs);
+            var msbuild = BuildSolution(slnBuilder);
             
-            var additionalSteps = new List<IBuilder>();
+            var copyRuntimeDeps = CopyRuntimeDependencies(prjs);
+            var result = MergeSteps(copyRuntimeDeps.ToList(), msbuild);
 
-            CopyRuntimeDependencies(context, prjs, additionalSteps);
-            var result = MergeSteps(context, additionalSteps, msbuild);
-
-            return RunPostProcessors(context, prjs, result);
+            return RunPostProcessors(prjs, result);
         }
 
-        private static IBuilder MergeSteps(IBuildContext context, List<IBuilder> additionalSteps, MSBuildRunner msbuild)
+        private IBuilder MergeSteps(IList<IBuilder> additionalSteps, MSBuildRunner msbuild)
         {
             if (additionalSteps.Count > 0)
             {
-                var merger = new MergingBuilder(additionalSteps.Concat(new[] {msbuild}));
-                merger.AddToContext(context);
-                return merger;
+                return coreBuilderFactory.CreateMergingBuilder(additionalSteps.Concat(new[] {msbuild}));
             }
             else
             {
@@ -76,7 +72,7 @@ namespace Bari.Plugins.VsCore.Build
             }
         }
 
-        private IBuilder RunPostProcessors(IBuildContext context, Project[] prjs, IBuilder input)
+        private IBuilder RunPostProcessors(Project[] prjs, IBuilder input)
         {
             var modules = prjs.Select(p => p.Module).Distinct().ToList();
             var postProcessableItems = prjs.Concat(modules.Cast<IPostProcessorsHolder>()).ToList();
@@ -92,7 +88,6 @@ namespace Bari.Plugins.VsCore.Build
                         factories.Select(f => f.CreatePostProcessorFor(ppHolder, pp, new [] { input })).FirstOrDefault(p => p != null);
                     if (postProcessor != null)
                     {
-                        postProcessor.AddToContext(context);
                         resultBuilders.Add(postProcessor);
                     }
                 }
@@ -104,13 +99,11 @@ namespace Bari.Plugins.VsCore.Build
             }
             else
             {
-                var merger = new MergingBuilder(resultBuilders.Concat(new[] {input}));
-                merger.AddToContext(context);
-                return merger;
+                return coreBuilderFactory.CreateMergingBuilder(resultBuilders.Concat(new[] {input}));
             }
         }
 
-        private void CopyRuntimeDependencies(IBuildContext context, IEnumerable<Project> prjs, List<IBuilder> additionalSteps)
+        private IEnumerable<IBuilder> CopyRuntimeDependencies(IEnumerable<Project> prjs)
         {
             foreach (var project in prjs)
             {
@@ -120,18 +113,14 @@ namespace Bari.Plugins.VsCore.Build
 
                     if (refBuilder.IsEffective)
                     {
-                        refBuilder.AddToContext(context);
-
-                        var refDeploy = CreateRuntimeReferenceDeployment(context, project, refBuilder);
-                        refDeploy.AddToContext(context);
-
-                        additionalSteps.Add(refDeploy);
+                        var refDeploy = CreateRuntimeReferenceDeployment(project, refBuilder);
+                        yield return refDeploy;
                     }
                 }
             }
         }
 
-        private MSBuildRunner BuildSolution(IBuildContext context, SlnBuilder slnBuilder)
+        private MSBuildRunner BuildSolution(SlnBuilder slnBuilder)
         {
             // Building the solution
             MSBuildParameters msbuildParams;
@@ -144,11 +133,10 @@ namespace Bari.Plugins.VsCore.Build
                 slnBuilder,
                 new TargetRelativePath(String.Empty, slnBuilder.Uid + ".sln"), 
                 msbuildParams.Version);
-            msbuild.AddToContext(context);
             return msbuild;
         }
 
-        private SlnBuilder GenerateSolutionFile(IBuildContext context, IEnumerable<Project> prjs)
+        private SlnBuilder GenerateSolutionFile(IEnumerable<Project> prjs)
         {
             MSBuildParameters msbuildParams;
             if (suite.HasParameters("msbuild"))
@@ -157,16 +145,12 @@ namespace Bari.Plugins.VsCore.Build
                 msbuildParams = new MSBuildParameters();
 
             // Generating the solution file
-            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(prjs, msbuildParams.Version);
-            slnBuilder.AddToContext(context);
-            return slnBuilder;
+            return slnBuilderFactory.CreateSlnBuilder(prjs, msbuildParams.Version);
         }
 
-        private IBuilder CreateRuntimeReferenceDeployment(IBuildContext context, Project project, IReferenceBuilder refBuilder)
+        private IBuilder CreateRuntimeReferenceDeployment(Project project, IReferenceBuilder refBuilder)
         {
-            var copy = new CopyResultBuilder(refBuilder, targetRoot,  targetRoot.GetChildDirectory(project.RelativeTargetPath, createIfMissing: true));
-            context.AddBuilder(copy, new[] { refBuilder });
-            return copy;
+            return coreBuilderFactory.CreateCopyResultBuilder(refBuilder, targetRoot.GetChildDirectory(project.RelativeTargetPath, createIfMissing: true));
         }
 
         private IReferenceBuilder CreateReferenceBuilder(Project project, Reference reference)

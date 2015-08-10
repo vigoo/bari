@@ -149,8 +149,8 @@ If called without any module or product name, it adds *every module* to the gene
         {
             var buildContext = buildContextFactory.CreateBuildContext();
             var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects, msBuildVersion);
-            slnBuilder.AddToContext(buildContext);
 
+            buildContext.AddBuilder(slnBuilder);
             buildContext.Run(slnBuilder);
 
             if (openSolution)

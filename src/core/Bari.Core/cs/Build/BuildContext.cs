@@ -51,16 +51,19 @@ namespace Bari.Core.Build
         /// Adds a new builder to be executed to the context
         /// </summary>
         /// <param name="builder">The builder to be executed</param>
-        /// <param name="prerequisites">Builder's prerequisites. The prerequisites must be added
-        /// separately with the <see cref="IBuildContext.AddBuilder"/> method, listing them here only changes the
-        /// order in which they are executed.</param>
-        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        public void AddBuilder(IBuilder builder)
         {
-            builders.Add(new EquatableEdge<IBuilder>(builder, builder));
-
-            foreach (var prerequisite in prerequisites)
+            if (!Contains(builder))
             {
-                builders.Add(new EquatableEdge<IBuilder>(prerequisite, builder));
+                var prereqs = builder.Prerequisites.ToList();
+
+                builders.Add(new EquatableEdge<IBuilder>(builder, builder));
+
+                foreach (var prerequisite in prereqs)
+                {
+                    AddBuilder(prerequisite);
+                    builders.Add(new EquatableEdge<IBuilder>(prerequisite, builder));
+                }
             }
         }
 

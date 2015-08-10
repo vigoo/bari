@@ -132,28 +132,20 @@ namespace Bari.Plugins.VCpp.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            if (!context.Contains(this))
+            get
             {
-                referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+                if (referenceBuilders == null)
+                {
+                    referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+                }
 
-                foreach (var refBuilder in referenceBuilders)
-                    refBuilder.AddToContext(context);
-
-                context.AddBuilder(this, referenceBuilders);
-            }
-            else
-            {
-                referenceBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+                return referenceBuilders;
             }
         }
-
 
         private IBuilder CreateReferenceBuilder(Reference reference)
         {

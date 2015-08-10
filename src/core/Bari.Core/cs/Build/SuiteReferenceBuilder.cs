@@ -113,7 +113,11 @@ namespace Bari.Core.Build
         /// </summary>
         public override IDependencies Dependencies
         {
-            get { return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks); }
+            get
+            {
+                EnsureSubtasksAvailable();
+                return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks);
+            }
         }
 
         /// <summary>
@@ -136,38 +140,38 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            CalculateReferencedProject();
-
-            if (!context.Contains(this))
+            get
             {
-                subtasks = new HashSet<IBuilder>();
-                GenerateSubtasks(context);
-
-                log.DebugFormat("Project {0}'s reference to {1} adds the following subtasks: {2}", project, referencedProject, String.Join(", ", subtasks));
-
-                context.AddBuilder(this, subtasks);
-            }
-            else
-            {
-                subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
+                EnsureSubtasksAvailable();
+                return subtasks;
             }
         }
 
-        private void GenerateSubtasks(IBuildContext context)
+        private void EnsureSubtasksAvailable()
+        {
+            if (subtasks == null)
+            {
+                CalculateReferencedProject();
+
+                subtasks = new HashSet<IBuilder>(GenerateSubtasks());
+
+                log.DebugFormat("Project {0}'s reference to {1} adds the following subtasks: {2}", project, referencedProject,
+                    String.Join(", ", subtasks));
+            }
+        }
+
+        private IEnumerable<IBuilder> GenerateSubtasks()
         {            
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                var builder = projectBuilder.Create(new[] { referencedProject });
                 if (builder != null)
                 {
-                    subtasks.Add(builder);
+                    yield return builder;
                 }
             }
         }

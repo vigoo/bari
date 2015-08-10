@@ -52,15 +52,9 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             get { return string.Format("pp/{0}/{1}", target, script.Name); }
         }
 
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            context.AddBuilder(this, dependencies);
+            get { return dependencies; }
         }
 
         /// <summary>

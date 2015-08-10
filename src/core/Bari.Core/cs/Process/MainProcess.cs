@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.IO;
 using System.Reflection;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Commands;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -27,6 +28,7 @@ namespace Bari.Core.Process
         private readonly ICommandFactory commandFactory;
         private readonly ExplorerRunner explorer;
         private readonly IBindingRoot binding;
+        private readonly IBuilderStore builderStore;
 
         /// <summary>
         /// Initializes the main bari process
@@ -37,7 +39,8 @@ namespace Bari.Core.Process
         /// <param name="commandFactory">Factory for command objects</param>
         /// <param name="explorer">Suite explorer runner</param>
         /// <param name="binding">Interface to bind new dependencies</param>
-        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, ICommandFactory commandFactory, ExplorerRunner explorer, IBindingRoot binding)
+        /// <param name="builderStore">Builder store, only for debug dump</param>
+        public MainProcess(IUserOutput output, IParameters parameters, ISuiteLoader loader, ICommandFactory commandFactory, ExplorerRunner explorer, IBindingRoot binding, IBuilderStore builderStore)
         {
             Contract.Requires(output != null);
             Contract.Requires(parameters != null);
@@ -51,6 +54,7 @@ namespace Bari.Core.Process
             this.commandFactory = commandFactory;
             this.explorer = explorer;
             this.binding = binding;
+            this.builderStore = builderStore;
         }
 
         /// <summary>
@@ -80,7 +84,17 @@ namespace Bari.Core.Process
             if (cmd != null)
             {
                 binding.Bind<ICommand>().ToConstant(cmd).WhenTargetHas<CurrentAttribute>();
-                return cmd.Run(suite, parameters.CommandParameters);
+
+                try
+                {
+                    return cmd.Run(suite, parameters.CommandParameters);
+                }
+                finally
+                {
+#if DEBUG
+                    builderStore.DumpStats(output);
+#endif
+                }
             }
             else
             {

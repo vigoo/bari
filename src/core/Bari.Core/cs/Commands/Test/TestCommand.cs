@@ -18,6 +18,7 @@ namespace Bari.Core.Commands.Test
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(TestCommand));
 
         private readonly IBuildContextFactory buildContextFactory;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
         private readonly IFileSystemDirectory targetRoot;
         private readonly ICommandTargetParser targetParser;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
@@ -85,7 +86,9 @@ Example: `bari test --dump`
         /// <param name="projectBuilders">Available project builders</param>
         /// <param name="testRunners">Available test runners</param>
         /// <param name="output">Output interface for the dependency dump functionality</param>
-        public TestCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners, IUserOutput output, ICommandTargetParser targetParser)
+        /// <param name="targetParser">User-given target string parser</param>
+        /// <param name="coreBuilderFactory">Factory for core builder types</param>
+        public TestCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IProjectBuilderFactory> projectBuilders, IEnumerable<ITestRunner> testRunners, IUserOutput output, ICommandTargetParser targetParser, ICoreBuilderFactory coreBuilderFactory)
         {
             this.buildContextFactory = buildContextFactory;
             this.targetRoot = targetRoot;
@@ -93,6 +96,7 @@ Example: `bari test --dump`
             this.testRunners = testRunners;
             this.output = output;
             this.targetParser = targetParser;
+            this.coreBuilderFactory = coreBuilderFactory;
         }
 
         /// <summary>
@@ -173,8 +177,10 @@ Example: `bari test --dump`
         {
             var context = buildContextFactory.CreateBuildContext();
 
-            IBuilder rootBuilder = projectBuilders.Select(pb => pb.AddToContext(context, projects))
-                                                  .Where(b => b != null).ToArray().Merge();
+            IBuilder rootBuilder = coreBuilderFactory.Merge(
+                projectBuilders
+                    .Select(pb => pb.Create(projects))
+                    .Where(b => b != null).ToArray());
 
             if (dumpMode)
             {

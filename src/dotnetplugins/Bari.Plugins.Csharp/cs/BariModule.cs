@@ -1,10 +1,11 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Model.Loader;
 using Bari.Plugins.Csharp.Build;
-using Bari.Plugins.Csharp.Commands;
+using Bari.Plugins.Csharp.Build.BuilderStore;
 using Bari.Plugins.Csharp.Commands.Clean;
 using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.Csharp.Model.Loader;
@@ -12,7 +13,6 @@ using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
 using Bari.Plugins.VsCore.Build;
 using Bari.Plugins.VsCore.Commands;
-using Bari.Plugins.VsCore.Tools;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 using Bari.Plugins.VsCore.VisualStudio.SolutionName;
@@ -41,7 +41,6 @@ namespace Bari.Plugins.Csharp
             Bind<ICleanExtension>().To<CsprojCleaner>();
 
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
-            Bind<ISlnBuilderFactory>().ToFactory();
             Bind<ICsprojBuilderFactory>().ToFactory();
 
             Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
@@ -65,6 +64,11 @@ namespace Bari.Plugins.Csharp
 
             var protocolRegistry = Kernel.Get<IDependencyFingerprintProtocolRegistry>();
             protocolRegistry.RegisterEnum(i => (CsharpLanguageVersion)i);
+
+            var store = Kernel.Get<IBuilderStore>();
+            var csprojBuilderFactory = Kernel.Get<ICsprojBuilderFactory>();
+            Rebind<ICsprojBuilderFactory>().ToConstant(
+                new StoredCsprojBuilderFactory(csprojBuilderFactory, store));
         }
     }
 }

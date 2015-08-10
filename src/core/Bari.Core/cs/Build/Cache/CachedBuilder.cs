@@ -31,6 +31,11 @@ namespace Bari.Core.Build.Cache
             get { return wrappedBuilder.Dependencies; }
         }
 
+        public IEnumerable<IBuilder> Prerequisites
+        {
+            get { return wrappedBuilder.Prerequisites; }
+        }
+
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
@@ -62,17 +67,6 @@ namespace Bari.Core.Build.Cache
             agressiveModeExceptions = agressiveAttribute != null
                 ? agressiveAttribute.ExceptionExpressions
                 : new Regex[0];
-        }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            wrappedBuilder.AddToContext(context);
         }
 
         /// <summary>
