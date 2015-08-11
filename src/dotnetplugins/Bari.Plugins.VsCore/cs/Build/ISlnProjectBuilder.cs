@@ -11,5 +11,7 @@ namespace Bari.Plugins.VsCore.Build
         /// Gets the builder's full source code dependencies
         /// </summary>
          IDependencies FullSourceDependencies { get; }
+
+        void ReplaceReferenceBuilder(IReferenceBuilder original, IReferenceBuilder replacement);
     }
 }

@@ -52,8 +52,11 @@ namespace Bari.Plugins.VsCore
 
             Bind<IYamlProjectParametersLoader>().To<MSBuildParametersLoader>();
 
+            Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
+            Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
+
             var buildContextFactory = Kernel.Get<IBuildContextFactory>();
-            Rebind<IBuildContextFactory>().ToConstant(new OptimizingBuildContextFactory(buildContextFactory)).InSingletonScope();
+            Rebind<IBuildContextFactory>().ToConstant(new OptimizingBuildContextFactory(buildContextFactory, Kernel.Get<IInSolutionReferenceBuilderFactory>())).InSingletonScope();
 
             // Extending soft-clean behavior
             var predicates = Kernel.Get<ISoftCleanPredicates>();

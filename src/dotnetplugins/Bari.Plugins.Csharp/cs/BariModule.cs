@@ -43,9 +43,6 @@ namespace Bari.Plugins.Csharp
             Bind<IProjectGuidManagement>().To<DefaultProjectGuidManagement>().InSingletonScope();
             Bind<ICsprojBuilderFactory>().ToFactory();
 
-            Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
-            Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
-
             Bind<ISlnProject>().To<CsharpSlnProject>();
 
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<CsprojGenerator>(); 

@@ -158,6 +158,18 @@ namespace Bari.Plugins.VCpp.Build
                 throw new InvalidReferenceTypeException(reference.Uri.Scheme);
         }
 
+        public void ReplaceReferenceBuilder(IReferenceBuilder original, IReferenceBuilder replacement)
+        {
+            if (referenceBuilders != null)
+            {
+                if (referenceBuilders.Contains(original))
+                {
+                    referenceBuilders.Remove(original);
+                    referenceBuilders.Add(replacement);
+                }
+            }
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>

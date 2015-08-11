@@ -10,6 +10,7 @@ using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
 using Bari.Core.Build.Statistics;
 using Bari.Core.UI;
+using QuickGraph.Algorithms.Observers;
 
 namespace Bari.Core.Build
 {
@@ -62,7 +63,7 @@ namespace Bari.Core.Build
                 foreach (var prerequisite in prereqs)
                 {
                     AddBuilder(prerequisite);
-                    builders.Add(new EquatableEdge<IBuilder>(prerequisite, builder));
+                    builders.Add(new EquatableEdge<IBuilder>(builder, prerequisite));
                 }
             }
         }
@@ -101,7 +102,7 @@ namespace Bari.Core.Build
 
                 if (!HasCycles(graph))
                 {
-                    var sortedBuilders = graph.TopologicalSort().ToList();
+                    var sortedBuilders = graph.TopologicalSort().Reverse().ToList();
 
                     log.DebugFormat("Build order:\n {0}\n", String.Join("\n ", sortedBuilders));
 
@@ -184,9 +185,13 @@ namespace Bari.Core.Build
         private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
         {
             var bfs = new BreadthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            var toKeep = new HashSet<EquatableEdge<IBuilder>>();
+            var buildersToKeep = new HashSet<IBuilder>();
+            bfs.TreeEdge += e => toKeep.Add(e);
+            bfs.DiscoverVertex += b => buildersToKeep.Add(b);
             bfs.Compute(rootBuilder);
-            var toKeep = new HashSet<IBuilder>(bfs.VisitedGraph.Vertices);
-            graph.RemoveVertexIf(v => !toKeep.Contains(v));
+            graph.RemoveEdgeIf(edge => !toKeep.Contains(edge));
+            graph.RemoveVertexIf(vertex => !buildersToKeep.Contains(vertex));
         }
 
         private bool RunTransformations()
@@ -218,8 +223,8 @@ namespace Bari.Core.Build
         public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
         {
             return from edge in builders
-                   where Equals(edge.Target, builder) && !Equals(edge.Source, builder)
-                   select edge.Source;
+                            where Equals(edge.Source, builder) && !Equals(edge.Target, builder)
+                            select edge.Target;
         }
 
         /// <summary>

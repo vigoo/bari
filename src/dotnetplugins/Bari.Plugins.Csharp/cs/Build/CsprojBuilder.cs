@@ -205,6 +205,18 @@ namespace Bari.Plugins.Csharp.Build
                     });
         }
 
+        public void ReplaceReferenceBuilder(IReferenceBuilder original, IReferenceBuilder replacement)
+        {
+            if (referenceBuilders != null)
+            {
+                if (referenceBuilders.Contains(original))
+                {
+                    referenceBuilders.Remove(original);
+                    referenceBuilders.Add(replacement);
+                }
+            }
+        }
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
