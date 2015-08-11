@@ -8,6 +8,6 @@ modules:
       projects:
         - name: HelloWorld
           type: executable
-          references:           
-            - module://Dep      
+          references:
+            - module://Dep
         - name: Dep

@@ -284,8 +284,15 @@ modules:
             - gac://System
             - nuget://log4net
             - alias://ninject
-            - module://Bari.Plugins.Vcs.Core            
+            - module://Bari.Plugins.Vcs.Core
             - suite://core/Bari.Core
+
+    - name: systests
+      projects:
+        - name: systests
+          type: executable
+          references:
+            - gac://System
 
 products:
     - name: full
@@ -296,13 +303,14 @@ products:
           - innosetup
           - addon
           - vcs
-      packager:        
+          - systests
+      packager:
         type: nuget
         param:
           when not mono:
             id: bari
             description: Bari is an advanced build manager for .NET
-          when mono:          
+          when mono:
             id: bari-mono
             description: Bari is an advanced build manager for .NET (Mono version)
           author: Daniel Vigovszky
