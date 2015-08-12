@@ -4,11 +4,13 @@ print 'Target dir:' + targetDir
 
 genExe = get_tool("fsrepo://MessageGenerator/*.*", "MessageGenerator.exe")
 
-cmd = genExe + ' "' + targetDir+'\\generated.txt" "Hello world\n"'
+cmd = genExe + ' "' + targetDir+os.path.sep+'generated.txt" "Hello_world\n"'
+
+if is_mono:
+    cmd  = 'mono ' + cmd
+
+
 print cmd
 os.system(cmd)
-
-# with open(targetDir+'\\generated.txt', "w") as f:
-# f.write('Hello world\n')
 
 results = ['generated.txt']

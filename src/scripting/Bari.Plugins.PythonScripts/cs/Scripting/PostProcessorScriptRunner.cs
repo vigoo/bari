@@ -16,11 +16,13 @@ namespace Bari.Plugins.PythonScripts.Scripting
     public class PostProcessorScriptRunner : ScriptRunnerBase, IPostProcessorScriptRunner
     {
         private readonly IUserOutput output;
+        private readonly IParameters parameters;
 
-        public PostProcessorScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory, IUserOutput output) :
+        public PostProcessorScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory, IUserOutput output, IParameters parameters) :
             base(targetRoot, referenceBuilderFactory, buildContextFactory)
         {
             this.output = output;
+            this.parameters = parameters;
         }
 
         public ISet<TargetRelativePath> Run(IPostProcessorsHolder target, PostProcessDefinition definition, IPostProcessorScript postProcessorScript)
@@ -32,6 +34,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             {
                 var scope = runtime.CreateScope();
                 AddGetToolToScope(scope);
+                scope.SetVariable("is_mono", parameters.UseMono);
 
                 var targetDir = TargetRoot.GetChildDirectory(target.RelativeTargetPath, createIfMissing: true);
                 var localTargetDir = targetDir as LocalFileSystemDirectory;

@@ -3,7 +3,7 @@ suite:      bari systemtest module-ref-test-withrt
 
 fs-repositories:
     - fsrepo\%NAME\%FILENAME.%VERSION.%EXT
-
+    - fsrepo/%NAME/%FILENAME.%VERSION.%EXT
 
 modules:
     - name: HelloWorld

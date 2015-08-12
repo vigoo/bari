@@ -26,8 +26,8 @@ namespace systests
                 () => SimpleExeBuild("alias-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 9, "Dependency acquired\n"),
                 () => ContentTest(),
                 () => SimpleExeBuild("runtime-ref-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 0, ""),
-                () => SimpleExeBuild("script-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Hello base!!!\n\nHello world!!!\n"),
-                () => ExeProductBuild("postprocessor-script-test", "main", Path.Combine("target", "main", "HelloWorld.exe"), 11, "Hello world\n!!!\n"),
+                () => SimpleExeBuild("script-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Hello_base!!!\n\nHello_world!!!\n\n"),
+                () => ExeProductBuild("postprocessor-script-test", "main", Path.Combine("target", "main", "HelloWorld.exe"), 11, "Hello_world!!!\n\n"),
                 () => MultiSolutionTest()
             }.Concat(isRunningOnMono ? new Action[0] : new Action[] {
                 () => SimpleExeBuild("embedded-resources-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Hello world!\nWPF hello world WPF!"),

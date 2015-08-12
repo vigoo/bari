@@ -11,8 +11,11 @@ for file in sourceSet:
 	name = basename(file)
 
 	with open(file, "r") as f:
-		msg="Hello " + f.read()		
-		cmd = genExe + ' "' + targetDir+'\\'+name+'.txt" "' + msg + '"'
+		msg="Hello_" + f.read()
+
+		cmd = genExe + ' "' + targetDir+os.path.sep+name+'.txt" "' + msg + '"'
+                if is_mono:
+                        cmd = 'mono ' + cmd
 		print cmd
 		os.system(cmd)
 
