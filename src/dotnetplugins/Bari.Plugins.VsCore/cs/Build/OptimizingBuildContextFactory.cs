@@ -12,19 +12,23 @@ namespace Bari.Plugins.VsCore.Build
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (OptimizingBuildContextFactory));
 
         private readonly IBuildContextFactory originalFactory;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
         private readonly IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory;
+        private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
 
-        public OptimizingBuildContextFactory(IBuildContextFactory originalFactory, IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory)
+        public OptimizingBuildContextFactory(IBuildContextFactory originalFactory, ICoreBuilderFactory coreBuilderFactory, IInSolutionReferenceBuilderFactory inSolutionReferenceBuilderFactory, IEnumerable<IProjectBuilderFactory> projectBuilders)
         {
             this.originalFactory = originalFactory;
+            this.coreBuilderFactory = coreBuilderFactory;
             this.inSolutionReferenceBuilderFactory = inSolutionReferenceBuilderFactory;
+            this.projectBuilders = projectBuilders;
         }
 
         public IBuildContext CreateBuildContext()
         {
             var buildContext = originalFactory.CreateBuildContext();
-            buildContext.AddTransformation(CutRedundantSolutionBuilds);
             buildContext.AddTransformation(MergeSolutionBuilds);
+            buildContext.AddTransformation(CutRedundantSolutionBuilds);
             return buildContext;
         }
 
@@ -180,12 +184,90 @@ namespace Bari.Plugins.VsCore.Build
                 bool covered = module.Projects.All(projects.Contains);
 
                 if (covered)
+                {
                     log.DebugFormat("Merging project builders of module {0} into a single solution", module.Name);
+
+                    // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
+                    var mergedRoot = CreateMergedBuild(graph, module.Projects);
+
+                    // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
+                    RerouteEdgesTargeting(
+                        graph,
+                        new HashSet<IBuilder>(patterns.Values
+                            .Where(p => p.ProjectBuilders.Any(pb => pb.Project.Module == module))
+                            .Select(p => p.MsbuildRunner)),
+                        mergedRoot);
+                        
+                }
                 if (testsCovered)
+                {
                     log.DebugFormat("Merging test project builders of module {0} into a single solution", module.Name);
+
+                    // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
+                    var mergedRoot = CreateMergedBuild(graph, module.TestProjects);
+
+                    // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
+                    RerouteEdgesTargeting(
+                        graph,
+                        new HashSet<IBuilder>(patterns.Values
+                            .Where(p => p.ProjectBuilders.Any(pb => pb.Project.Module == module))
+                            .Select(p => p.MsbuildRunner)),
+                        mergedRoot);
+
+                }
             }
 
             return true;
+        }
+
+        private IBuilder CreateMergedBuild(ISet<EquatableEdge<IBuilder>> graph, IEnumerable<Project> projects)
+        {
+            IBuilder rootBuilder = coreBuilderFactory.Merge(
+                projectBuilders
+                .Select(pb => pb.Create(projects))
+                .Where(b => b != null).ToArray());
+
+            AddNewBranch(graph, rootBuilder);
+
+            return rootBuilder;
+        }
+
+        void AddNewBranch(ISet<EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
+        {
+            log.DebugFormat("Adding new branch: {0}", rootBuilder);
+            graph.Add(new EquatableEdge<IBuilder>(rootBuilder, rootBuilder));
+            foreach (var prereq in rootBuilder.Prerequisites)
+            {
+                var newEdge = new EquatableEdge<IBuilder>(rootBuilder, prereq);
+
+                if (!graph.Contains(newEdge))
+                {
+                    log.DebugFormat("-> Adding new edge: {0}", newEdge);
+                    graph.Add(newEdge);
+                    AddNewBranch(graph, prereq);
+                }
+            }
+        }
+
+        private void RerouteEdgesTargeting(ISet<EquatableEdge<IBuilder>> graph, ISet<IBuilder> originalTargets, IBuilder replacementTarget)
+        {
+            var edgesToRemove = new HashSet<EquatableEdge<IBuilder>>();
+            var edgesToAdd = new HashSet<EquatableEdge<IBuilder>>();
+            foreach (var edge in graph)
+            {
+                if (originalTargets.Contains(edge.Target) && edge.Target != edge.Source && edge.Target != replacementTarget)
+                {
+                    log.DebugFormat("-> Removing edge {0}", edge);
+                    edgesToRemove.Add(edge);
+
+                    var newEdge = new EquatableEdge<IBuilder>(edge.Source, replacementTarget);
+                    log.DebugFormat("-> Replacing with {0}", newEdge);
+                    edgesToAdd.Add(newEdge);
+                }
+            }
+
+            graph.ExceptWith(edgesToRemove);
+            graph.UnionWith(edgesToAdd);
         }
     }
 }

@@ -16,6 +16,7 @@ using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
+using System.Collections.Generic;
 
 namespace Bari.Plugins.VsCore
 {
@@ -56,7 +57,14 @@ namespace Bari.Plugins.VsCore
             Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
 
             var buildContextFactory = Kernel.Get<IBuildContextFactory>();
-            Rebind<IBuildContextFactory>().ToConstant(new OptimizingBuildContextFactory(buildContextFactory, Kernel.Get<IInSolutionReferenceBuilderFactory>())).InSingletonScope();
+            Rebind<IBuildContextFactory>().ToConstant(
+                new OptimizingBuildContextFactory(
+                    buildContextFactory, 
+                    Kernel.Get<ICoreBuilderFactory>(),
+                    Kernel.Get<IInSolutionReferenceBuilderFactory>(),
+                    Kernel.GetAll<IProjectBuilderFactory>()
+                )
+            ).InSingletonScope();
 
             // Extending soft-clean behavior
             var predicates = Kernel.Get<ISoftCleanPredicates>();
