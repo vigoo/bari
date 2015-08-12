@@ -183,11 +183,12 @@ namespace Bari.Core.Build
         }
 
         private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
-        {
+        {            
             var bfs = new BreadthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
             var toKeep = new HashSet<EquatableEdge<IBuilder>>();
             var buildersToKeep = new HashSet<IBuilder>();
             bfs.TreeEdge += e => toKeep.Add(e);
+            bfs.NonTreeEdge += e => toKeep.Add(e);
             bfs.DiscoverVertex += b => buildersToKeep.Add(b);
             bfs.Compute(rootBuilder);
             graph.RemoveEdgeIf(edge => !toKeep.Contains(edge));
