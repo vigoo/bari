@@ -10,11 +10,11 @@ test:
 goals:
     - name: debug
     - name: release
-    - name: debug-mono    
+    - name: debug-mono
       incorporates:
           - debug
           - mono
-    - name: release-mono    
+    - name: release-mono
       incorporates:
           - release
           - mono
@@ -49,7 +49,7 @@ aliases:
 modules:
     - name: core
       projects:
-        - name: Bari.Core         
+        - name: Bari.Core
           references:
             - alias://common
             - alias://ninject
@@ -64,11 +64,11 @@ modules:
             when mono:
               defines:
                 - MONO
-                - when debug:                
+                - when debug:
                   - DEBUG
-            when not mono:              
-              defines: 
-                - when debug:                
+            when not mono:
+              defines:
+                - when debug:
                   - DEBUG
 
         - name: bari
@@ -103,7 +103,7 @@ modules:
             root-namespace: Bari.Console.Test
     - name: dotnetplugins
       projects:
-        - name: Bari.Plugins.VsCore 
+        - name: Bari.Plugins.VsCore
           references:
             - gac://System
             - gac://System.Xml
@@ -111,7 +111,7 @@ modules:
             - alias://ninject
             - alias://yaml
             - nuget://QuickGraph
-            - suite://core/Bari.Core          
+            - suite://core/Bari.Core
         - name: Bari.Plugins.Csharp
           references:
             - alias://common
@@ -137,7 +137,7 @@ modules:
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
-            - module://Bari.Plugins.VsCore            
+            - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.Nuget
           references:
             - alias://common
@@ -151,18 +151,18 @@ modules:
           references:
             - gac://Microsoft.CSharp
             - gac://System
-            - gac://System.Core            
+            - gac://System.Core
             - nuget://log4net
             - alias://ninject
             - nuget://Monads
             - alias://yaml
-            - suite://core/Bari.Core            
+            - suite://core/Bari.Core
         - name: Bari.Plugins.Gallio
           references:
             - alias://common
             - nuget://log4net
             - alias://ninject
-            - suite://core/Bari.Core            
+            - suite://core/Bari.Core
         - name: Bari.Plugins.NUnit
           references:
             - alias://common
@@ -183,11 +183,11 @@ modules:
           references:
             - alias://common
             - alias://testing
-            - alias://ninject            
+            - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
-            - module://Bari.Plugins.Csharp                        
+            - module://Bari.Plugins.Csharp
             - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.VCpp.Test
           references:
@@ -197,17 +197,17 @@ modules:
             - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
-            - module://Bari.Plugins.VCpp                        
-            - module://Bari.Plugins.VsCore            
+            - module://Bari.Plugins.VCpp
+            - module://Bari.Plugins.VsCore
         - name: Bari.Plugins.FSRepository.Test
           references:
-            - alias://common           
+            - alias://common
             - alias://testing
-            - alias://ninject            
+            - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
-            - module://Bari.Plugins.FSRepository                        
+            - module://Bari.Plugins.FSRepository
     - name: scripting
       projects:
         - name: Bari.Plugins.PythonScripts
@@ -218,13 +218,13 @@ modules:
             - { uri: 'nuget://IronPython.StdLib', type: Runtime }
             - nuget://log4net
             - alias://ninject
-            - suite://core/Bari.Core 
+            - suite://core/Bari.Core
       tests:
         - name: Bari.Plugins.PythonScripts.Test
           references:
             - alias://common
             - alias://testing
-            - alias://ninject            
+            - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
@@ -245,11 +245,11 @@ modules:
           references:
             - alias://common
             - alias://testing
-            - alias://ninject            
+            - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
             - suite://core/Bari.Core.Test
-            - module://Bari.Plugins.AddonSupport            
+            - module://Bari.Plugins.AddonSupport
 
     - name: innosetup
       projects:
@@ -303,7 +303,6 @@ products:
           - innosetup
           - addon
           - vcs
-          - systests
       packager:
         type: nuget
         param:
@@ -320,3 +319,6 @@ products:
           package-as-tool: true
           api-key: '66ce0c39-a35e-4015-be4f-c4ded3772bfd'
 
+    - name: systest
+      modules:
+          - systests
