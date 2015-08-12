@@ -31,8 +31,9 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="referenceBuilderFactory">Interface to create new reference builders</param>
         /// <param name="targetRoot">Target root directory</param>
         /// <param name="postProcessorFactories">List of registered post processor factories</param>
+        /// <param name="coreBuilderFactory">Factory to create core builder instances</param>
         public VsProjectBuilderFactory(Suite suite, ISlnBuilderFactory slnBuilderFactory, IMSBuildRunnerFactory msBuildRunnerFactory, IReferenceBuilderFactory referenceBuilderFactory, 
-            [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IPostProcessorFactory> postProcessorFactories)
+            [TargetRoot] IFileSystemDirectory targetRoot, IEnumerable<IPostProcessorFactory> postProcessorFactories, ICoreBuilderFactory coreBuilderFactory)
         {
             this.suite = suite;
             this.slnBuilderFactory = slnBuilderFactory;
@@ -40,6 +41,7 @@ namespace Bari.Plugins.VsCore.Build
             this.referenceBuilderFactory = referenceBuilderFactory;
             this.targetRoot = targetRoot;
             this.postProcessorFactories = postProcessorFactories;
+            this.coreBuilderFactory = coreBuilderFactory;
         }
 
         /// <summary>
