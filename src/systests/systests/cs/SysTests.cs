@@ -19,7 +19,6 @@ namespace systests
             {
                 () => Initialize(),
                 () => SimpleExeBuild("single-cs-exe", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Test executable running\n"),
-                () => SimpleExeBuild("single-fs-exe", Path.Combine("target", "Module", "Exe1.exe"), 12, "Test F# executable running\n"),
                 () => SimpleExeBuild("module-ref-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),
                 () => SimpleExeBuild("module-ref-test-withrt", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),
                 () => SimpleExeBuild("suite-ref-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),
@@ -42,6 +41,8 @@ namespace systests
                 () => CppReleaseTest(),
                 () => SimpleExeBuild("custom-plugin-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Hello base!!!\n\nHello world!!!\n"),
                 // TODO: custom-plugin-test for mono
+                () => SimpleExeBuild("single-fs-exe", Path.Combine("target", "Module", "Exe1.exe"), 12, "Test F# executable running\n"),
+                // TODO: F# support with mono
             }).ToArray());
         }
 
