@@ -95,7 +95,7 @@ namespace Bari.Plugins.VsCore.Build
         }
 
 
-        void ReplaceWithInSolutionReference(ISet<EquatableEdge<IBuilder>> graph, HashSet<ISlnProjectBuilder> childProjectBuilders, SuiteReferenceBuilder dep)
+        void ReplaceWithInSolutionReference(ISet<EquatableEdge<IBuilder>> graph, IEnumerable<ISlnProjectBuilder> childProjectBuilders, SuiteReferenceBuilder dep)
         {
             var inSolutionRef = inSolutionReferenceBuilderFactory.CreateInSolutionReferenceBuilder(dep.ReferencedProject);
             inSolutionRef.Reference = dep.Reference;
@@ -121,6 +121,7 @@ namespace Bari.Plugins.VsCore.Build
             private readonly MSBuildRunner msbuildRunner;
             private readonly SlnBuilder slnBuilder;
             private readonly ISet<ISlnProjectBuilder> projectBuilders = new HashSet<ISlnProjectBuilder>();
+            private readonly ISet<Project> projects = new HashSet<Project>();
 
             public SolutionBuildPattern(MSBuildRunner msbuildRunner, SlnBuilder slnBuilder)
             {
@@ -141,6 +142,11 @@ namespace Bari.Plugins.VsCore.Build
             public ISet<ISlnProjectBuilder> ProjectBuilders
             {
                 get { return projectBuilders; }
+            }
+
+            public ISet<Project> Projects
+            {
+                get { return projects; }
             }
         }
 
@@ -163,7 +169,9 @@ namespace Bari.Plugins.VsCore.Build
                     SolutionBuildPattern pattern;
                     if (patterns.TryGetValue((SlnBuilder)edge.Source, out pattern))
                     {
-                        pattern.ProjectBuilders.Add((ISlnProjectBuilder) edge.Target);
+                        var targetBuilder = (ISlnProjectBuilder) edge.Target;
+                        pattern.ProjectBuilders.Add(targetBuilder);
+                        pattern.Projects.Add(targetBuilder.Project);
                     }
                 }
             }
@@ -191,13 +199,24 @@ namespace Bari.Plugins.VsCore.Build
                 {
                     log.DebugFormat("Merging project builders of module {0} into a single solution", module.Name);
 
-                    // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                    var mergedRoot = CreateMergedBuild(graph, module.Projects);
+                    var existingPattern = patterns.Values.FirstOrDefault(
+                        p => module.Projects.All(p.Projects.Contains));
+                    IBuilder mergedRoot;
+                    if (existingPattern == null)
+                    {
+                        // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
+                        mergedRoot = CreateMergedBuild(graph, module.Projects);
+                    }
+                    else
+                    {
+                        mergedRoot = existingPattern.MsbuildRunner;
+                    }
 
                     // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
                     RerouteEdgesTargeting(
                         graph,
                         new HashSet<IBuilder>(patterns.Values
+                            .Where(p => p.MsbuildRunner != mergedRoot)
                             .Where(p => p.ProjectBuilders.All(pb => pb.Project.Module == module))
                             .Select(p => p.MsbuildRunner)),
                         mergedRoot);
