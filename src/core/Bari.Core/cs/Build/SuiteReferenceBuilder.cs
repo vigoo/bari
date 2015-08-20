@@ -26,7 +26,7 @@ namespace Bari.Core.Build
     [AggressiveCacheRestore]
     public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SuiteReferenceBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(SuiteReferenceBuilder));
 
         private readonly Project project;
         private readonly Suite suite;
@@ -165,7 +165,7 @@ namespace Bari.Core.Build
         }
 
         private IEnumerable<IBuilder> GenerateSubtasks()
-        {            
+        {
             foreach (var projectBuilder in projectBuilders)
             {
                 var builder = projectBuilder.Create(new[] { referencedProject });
@@ -175,7 +175,27 @@ namespace Bari.Core.Build
                 }
             }
         }
-        
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (subtasks != null)
+            {
+                subtasks.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (subtasks != null)
+            {
+                subtasks.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>
@@ -228,7 +248,7 @@ namespace Bari.Core.Build
         public bool Equals(SuiteReferenceBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;            
+            if (ReferenceEquals(this, other)) return true;
             return Equals(ReferencedProject, other.ReferencedProject);
         }
 
@@ -238,7 +258,7 @@ namespace Bari.Core.Build
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
 
-            return Equals((SuiteReferenceBuilder) obj);
+            return Equals((SuiteReferenceBuilder)obj);
         }
 
         public override int GetHashCode()

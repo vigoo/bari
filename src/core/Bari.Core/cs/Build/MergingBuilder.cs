@@ -11,7 +11,7 @@ namespace Bari.Core.Build
     [AggressiveCacheRestore]
     public class MergingBuilder : BuilderBase<MergingBuilder>, IEquatable<MergingBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MergingBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(MergingBuilder));
         private readonly ISet<IBuilder> sourceBuilders;
 
         // Debug ID used only in ToString to help debugging
@@ -53,6 +53,27 @@ namespace Bari.Core.Build
         {
             get { return sourceBuilders; }
         }
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (sourceBuilders != null)
+            {
+                sourceBuilders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (sourceBuilders != null)
+            {
+                sourceBuilders.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
 
         /// <summary>
         /// Runs this builder

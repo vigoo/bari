@@ -69,6 +69,18 @@ namespace Bari.Plugins.VsCore.Build
             get { return new[] {slnBuilder}; }
         }
 
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (target != slnBuilder)
+                throw new Exception(String.Format("Unexpected override of msbuild runner's source from {0} to {1}", slnBuilder, target));
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (target == slnBuilder)
+                throw new Exception(String.Format("Unexpected removal of msbuild runner's source: {0}", slnBuilder));
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>

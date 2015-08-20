@@ -3,14 +3,13 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Model;
 using QuickGraph;
-using YamlDotNet.RepresentationModel.Serialization;
 
 
 namespace Bari.Plugins.VsCore.Build
 {
-    public class OptimizingBuildContextFactory: IBuildContextFactory
+    public class OptimizingBuildContextFactory : IBuildContextFactory
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (OptimizingBuildContextFactory));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(OptimizingBuildContextFactory));
 
         private readonly IBuildContextFactory originalFactory;
         private readonly ICoreBuilderFactory coreBuilderFactory;
@@ -38,9 +37,9 @@ namespace Bari.Plugins.VsCore.Build
             log.Debug("### Cutting redundant solution builds");
 
             var slnBuilders = new HashSet<SlnBuilder>(graph.Select(edge => edge.Target).OfType<SlnBuilder>());
-            var msbuildMap = graph
+            var rootBuilderMap = graph
                 .Where(edge => edge.Source is MSBuildRunner && slnBuilders.Contains(edge.Target))
-                .ToDictionary(edge => (SlnBuilder) edge.Target, edge => (MSBuildRunner) edge.Source);
+                .ToDictionary(edge => (SlnBuilder)edge.Target, edge => FindSolutionRootBuilder(graph, edge));
 
             if (slnBuilders.Any())
             {
@@ -66,9 +65,8 @@ namespace Bari.Plugins.VsCore.Build
                                 // All edges from dep must be removed and a single new edge to the MSBuild runner belonging to this `slnBuilder` added
                                 RemoveEdgesWhereSourceIs(graph, dep);
 
-                                var newEdge = new EquatableEdge<IBuilder>(dep, msbuildMap[slnBuilder]);
-                                log.DebugFormat("-> adding edge {0}", newEdge);
-                                graph.Add(newEdge);
+                                var newEdge = new EquatableEdge<IBuilder>(dep, rootBuilderMap[slnBuilder]);
+                                AddEdge(graph, newEdge);
                             }
                         }
                     }
@@ -78,24 +76,21 @@ namespace Bari.Plugins.VsCore.Build
             return true;
         }
 
-        void RemoveEdgesWhereTargetIs(ISet<EquatableEdge<IBuilder>> graph, IBuilder target)
-        {            
-            var toRemove = graph.Where(edge => edge.Target == target).ToList();
+        private static IBuilder FindSolutionRootBuilder(IEnumerable<EquatableEdge<IBuilder>> graph, EquatableEdge<IBuilder> edge)
+        {
+            var msbuild = (MSBuildRunner)edge.Source;
+            var mergeParentEdge = graph.FirstOrDefault(e => e.Target == msbuild && e.Source is MergingBuilder);
+            var result = mergeParentEdge != null ? mergeParentEdge.Source : msbuild;
 
-            foreach (var edge in toRemove)
-                log.DebugFormat("-> removing edge: {0}", edge);
+            log.DebugFormat("Found solution root builder for {0}: {1}", edge.Target, result);
 
-            graph.ExceptWith(toRemove);
+            return result;
         }
 
         void RemoveEdgesWhereSourceIs(ISet<EquatableEdge<IBuilder>> graph, IBuilder source)
-        {            
-            var toRemove = graph.Where(edge => edge.Source == source).ToList();
-
-            foreach (var edge in toRemove)
-                log.DebugFormat("-> removing edge: {0}", edge);
-
-            graph.ExceptWith(toRemove);
+        {
+            var toRemove = new HashSet<EquatableEdge<IBuilder>>(graph.Where(edge => edge.Source == source));
+            RemoveEdges(graph, toRemove);
         }
 
 
@@ -106,19 +101,36 @@ namespace Bari.Plugins.VsCore.Build
 
             foreach (var builder in childProjectBuilders)
             {
-                builder.ReplaceReferenceBuilder(dep, inSolutionRef);
+                builder.RemovePrerequisite(dep);
 
-                var edgesToModify = graph.Where(edge => edge.Source == builder && edge.Target == dep).ToList();
-                graph.ExceptWith(edgesToModify);
+                var edgesToModify = new HashSet<EquatableEdge<IBuilder>>(graph.Where(edge => edge.Source == builder && edge.Target == dep));
+                RemoveEdges(graph, edgesToModify);
 
                 foreach (var edge in edgesToModify)
                 {
                     var newEdge = new EquatableEdge<IBuilder>(edge.Source, inSolutionRef);
-                    log.DebugFormat("-> adding edge {0}", newEdge);
-                    graph.Add(newEdge);
+                    AddEdge(graph, newEdge);
                 }
             }
         }
+
+        private static void AddEdge(ISet<EquatableEdge<IBuilder>> graph, EquatableEdge<IBuilder> newEdge)
+        {
+            log.DebugFormat("-> adding edge {0}", newEdge);
+            newEdge.Source.AddPrerequisite(newEdge.Target);
+            graph.Add(newEdge);
+        }
+
+        private static void RemoveEdges(ISet<EquatableEdge<IBuilder>> graph, ISet<EquatableEdge<IBuilder>> edges)
+        {
+            foreach (var edge in edges)
+            {
+                log.DebugFormat("-> removing edge {0}", edge);
+                edge.Source.RemovePrerequisite(edge.Target);
+            }
+            graph.ExceptWith(edges);
+        }
+
 
         private class SolutionBuildPattern
         {
@@ -163,8 +175,8 @@ namespace Bari.Plugins.VsCore.Build
                 graph
                     .Where(edge => edge.Source is MSBuildRunner && edge.Target is SlnBuilder)
                     .ToDictionary(
-                        edge => (SlnBuilder) edge.Target,
-                        edge => new SolutionBuildPattern((MSBuildRunner) edge.Source, (SlnBuilder) edge.Target));
+                        edge => (SlnBuilder)edge.Target,
+                        edge => new SolutionBuildPattern((MSBuildRunner)edge.Source, (SlnBuilder)edge.Target));
 
             foreach (var edge in graph)
             {
@@ -173,7 +185,7 @@ namespace Bari.Plugins.VsCore.Build
                     SolutionBuildPattern pattern;
                     if (patterns.TryGetValue((SlnBuilder)edge.Source, out pattern))
                     {
-                        var targetBuilder = (ISlnProjectBuilder) edge.Target;
+                        var targetBuilder = (ISlnProjectBuilder)edge.Target;
                         pattern.ProjectBuilders.Add(targetBuilder);
                         pattern.Projects.Add(targetBuilder.Project);
                     }
@@ -224,14 +236,23 @@ namespace Bari.Plugins.VsCore.Build
                             .Where(p => p.ProjectBuilders.All(pb => pb.Project.Module == module))
                             .Select(p => p.MsbuildRunner)),
                         mergedRoot);
-                        
+
                 }
                 if (testsCovered)
                 {
                     log.DebugFormat("Merging test project builders of module {0} into a single solution", module.Name);
 
-                    // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                    var mergedRoot = CreateMergedBuild(graph, module.TestProjects);
+                    var existingPattern = patterns.Values.FirstOrDefault(p => module.Projects.All(p.Projects.Contains));
+                    IBuilder mergedRoot;
+                    if (existingPattern == null)
+                    {
+                        // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
+                        mergedRoot = CreateMergedBuild(graph, module.TestProjects);
+                    }
+                    else
+                    {
+                        mergedRoot = existingPattern.MsbuildRunner;
+                    }
 
                     // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
                     RerouteEdgesTargeting(
@@ -261,7 +282,7 @@ namespace Bari.Plugins.VsCore.Build
 
         void AddNewBranch(ISet<EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
         {
-            log.DebugFormat("Adding new branch: {0}", rootBuilder);
+            log.DebugFormat("Adding new node: {0}", rootBuilder);
             graph.Add(new EquatableEdge<IBuilder>(rootBuilder, rootBuilder));
             foreach (var prereq in rootBuilder.Prerequisites)
             {
@@ -269,8 +290,7 @@ namespace Bari.Plugins.VsCore.Build
 
                 if (!graph.Contains(newEdge))
                 {
-                    log.DebugFormat("-> Adding new edge: {0}", newEdge);
-                    graph.Add(newEdge);
+                    AddEdge(graph, newEdge);
                     AddNewBranch(graph, prereq);
                 }
             }
@@ -286,17 +306,16 @@ namespace Bari.Plugins.VsCore.Build
             {
                 if (originalTargets.Contains(edge.Target) && edge.Target != edge.Source && edge.Target != replacementTarget)
                 {
-                    log.DebugFormat(" -> Removing edge {0}", edge);
                     edgesToRemove.Add(edge);
 
                     var newEdge = new EquatableEdge<IBuilder>(edge.Source, replacementTarget);
-                    log.DebugFormat(" -> Replacing with {0}", newEdge);
                     edgesToAdd.Add(newEdge);
                 }
             }
 
-            graph.ExceptWith(edgesToRemove);
-            graph.UnionWith(edgesToAdd);
+            RemoveEdges(graph, edgesToRemove);
+            foreach (var edge in edgesToAdd)
+                AddEdge(graph, edge);
         }
     }
 }

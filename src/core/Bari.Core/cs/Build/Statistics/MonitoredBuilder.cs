@@ -66,7 +66,17 @@ namespace Bari.Core.Build.Statistics
 			}
 		}
 
-		public Type MonitoredType
+	    public void AddPrerequisite(IBuilder target)
+	    {
+	        wrappedBuilder.AddPrerequisite(target);
+	    }
+
+	    public void RemovePrerequisite(IBuilder target)
+	    {
+	        wrappedBuilder.RemovePrerequisite(target);
+	    }
+
+	    public Type MonitoredType
 		{
 			get
 			{

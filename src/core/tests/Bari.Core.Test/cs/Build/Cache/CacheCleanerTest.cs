@@ -45,6 +45,16 @@ namespace Bari.Core.Test.Build.Cache
             get { return typeof(NonPersistentReference); }
         }
 
+        public void AddPrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
+        }
+
         public Reference Reference
         {
             get { throw new System.NotImplementedException(); }
@@ -88,6 +98,16 @@ namespace Bari.Core.Test.Build.Cache
         public Type BuilderType
         {
             get { return typeof (PersistentReference); }
+        }
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
         }
 
         public Reference Reference

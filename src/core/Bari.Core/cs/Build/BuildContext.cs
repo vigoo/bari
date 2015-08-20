@@ -231,7 +231,7 @@ namespace Bari.Core.Build
             if (partialResults.TryGetValue(builder, out builderResult))
                 return builderResult;
             else
-                throw new InvalidOperationException("Builder has not ran in this context");
+                throw new InvalidOperationException(String.Format("Builder {0} has not ran in this context", builder));
         }
 
         /// <summary>

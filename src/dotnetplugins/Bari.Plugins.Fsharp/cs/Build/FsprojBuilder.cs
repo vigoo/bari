@@ -143,16 +143,27 @@ namespace Bari.Plugins.Fsharp.Build
                 throw new InvalidReferenceTypeException(reference.Uri.Scheme);
         }
 
-        public void ReplaceReferenceBuilder(IReferenceBuilder original, IReferenceBuilder replacement)
+        public override void AddPrerequisite(IBuilder target)
         {
             if (referenceBuilders != null)
             {
-                if (referenceBuilders.Contains(original))
+                referenceBuilders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (referenceBuilders != null)
+            {
+                if (referenceBuilders.Contains(target))
                 {
-                    referenceBuilders.Remove(original);
-                    referenceBuilders.Add(replacement);
+                    referenceBuilders.Remove(target);
                 }
             }
+
+            base.RemovePrerequisite(target);
         }
 
         /// <summary>

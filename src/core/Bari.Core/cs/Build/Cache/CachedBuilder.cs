@@ -170,6 +170,16 @@ namespace Bari.Core.Build.Cache
 			}
 		}
 
+        public void AddPrerequisite(IBuilder target)
+        {
+            wrappedBuilder.AddPrerequisite(target);
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            wrappedBuilder.RemovePrerequisite(target);
+        }
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

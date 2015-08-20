@@ -87,6 +87,27 @@ namespace Bari.Core.Build
             }
         }
 
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (buildersReady)
+            {
+                builders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (buildersReady)
+            {
+                builders.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
+
         /// <summary>
         /// Runs this builder
         /// </summary>

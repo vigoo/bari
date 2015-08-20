@@ -57,6 +57,27 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
             get { return dependencies; }
         }
 
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (dependencies != null)
+            {
+                dependencies.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (dependencies != null)
+            {
+                dependencies.Remove(target);                
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
+
         /// <summary>
         /// Runs this builder
         /// </summary>

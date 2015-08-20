@@ -98,6 +98,16 @@ namespace Bari.Plugins.Csharp.Test.Build
                 get { return typeof (RefBuilder); }
             }
 
+            public void AddPrerequisite(IBuilder target)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RemovePrerequisite(IBuilder target)
+            {
+                throw new NotImplementedException();
+            }
+
             /// <summary>
             /// Gets or sets the reference to be resolved
             /// </summary>

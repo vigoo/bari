@@ -45,6 +45,9 @@ namespace Bari.Core.Build
 		/// </summary>
 		/// <value>The type of the builder.</value>
 		Type BuilderType { get; }
+
+        void AddPrerequisite(IBuilder target);
+        void RemovePrerequisite(IBuilder target);
     }
 
     /// <summary>
@@ -109,5 +112,15 @@ namespace Bari.Core.Build
 				return null; // dummy
 			}
 		}
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            Contract.Requires(target != null);
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            Contract.Requires(target != null);
+        }
     }
 }

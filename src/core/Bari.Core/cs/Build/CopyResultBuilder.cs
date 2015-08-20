@@ -50,7 +50,19 @@ namespace Bari.Core.Build
         {
             get { return new[] {sourceBuilder}; }
         }
-        
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (target != sourceBuilder)
+                throw new Exception(String.Format("Unexpected override of copy result builder's source from {0} to {1}", sourceBuilder, target));
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (target == sourceBuilder)
+                throw new Exception(String.Format("Unexpected removal of copy result builder's source: {0}", sourceBuilder));
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>

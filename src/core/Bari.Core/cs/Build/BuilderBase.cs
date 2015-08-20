@@ -51,5 +51,13 @@ namespace Bari.Core.Build
         /// </summary>
         /// <value>The type of the builder.</value>
         public virtual Type BuilderType { get { return typeof (TBuilder); }}
+
+        public virtual void AddPrerequisite(IBuilder target)
+        {
+        }
+
+        public virtual void RemovePrerequisite(IBuilder target)
+        {
+        }
     }
 }
