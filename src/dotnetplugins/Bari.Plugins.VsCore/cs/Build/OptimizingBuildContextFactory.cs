@@ -3,6 +3,7 @@ using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Model;
 using QuickGraph;
+using YamlDotNet.RepresentationModel.Serialization;
 
 
 namespace Bari.Plugins.VsCore.Build
@@ -37,6 +38,9 @@ namespace Bari.Plugins.VsCore.Build
             log.Debug("### Cutting redundant solution builds");
 
             var slnBuilders = new HashSet<SlnBuilder>(graph.Select(edge => edge.Target).OfType<SlnBuilder>());
+            var msbuildMap = graph
+                .Where(edge => edge.Source is MSBuildRunner && slnBuilders.Contains(edge.Target))
+                .ToDictionary(edge => (SlnBuilder) edge.Target, edge => (MSBuildRunner) edge.Source);
 
             if (slnBuilders.Any())
             {
@@ -59,10 +63,10 @@ namespace Bari.Plugins.VsCore.Build
                                 // new in solution reference builder (both in the builder and in the graph)
                                 ReplaceWithInSolutionReference(graph, childProjectBuilders, dep);
 
-                                // All edges from dep must be removed and a single new edge to `slnBuilder` added
+                                // All edges from dep must be removed and a single new edge to the MSBuild runner belonging to this `slnBuilder` added
                                 RemoveEdgesWhereSourceIs(graph, dep);
 
-                                var newEdge = new EquatableEdge<IBuilder>(dep, slnBuilder);
+                                var newEdge = new EquatableEdge<IBuilder>(dep, msbuildMap[slnBuilder]);
                                 log.DebugFormat("-> adding edge {0}", newEdge);
                                 graph.Add(newEdge);
                             }
