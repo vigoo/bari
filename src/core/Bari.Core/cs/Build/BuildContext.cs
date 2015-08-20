@@ -10,7 +10,6 @@ using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Search;
 using Bari.Core.Build.Statistics;
 using Bari.Core.UI;
-using QuickGraph.Algorithms.Observers;
 
 namespace Bari.Core.Build
 {
@@ -195,9 +194,28 @@ namespace Bari.Core.Build
             graph.RemoveVertexIf(vertex => !buildersToKeep.Contains(vertex));
         }
 
-        private bool RunTransformations()
+        private bool RunTransformations(Func<string, Stream> builderGraphStreamFactory = null)
         {
-            bool cancel = graphTransformations.Any(graphTransformation => !graphTransformation(builders));
+            bool cancel = false;
+            int i = 0;
+            foreach (Func<ISet<EquatableEdge<IBuilder>>, bool> graphTransformation in graphTransformations)
+            {
+                if (!graphTransformation(builders))
+                {
+                    cancel = true;
+                    break;
+                }
+
+                if (builderGraphStreamFactory != null)
+                {
+                    using (var stepStream = builderGraphStreamFactory("step" + i++))
+                    {
+                        var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+                        graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+                        DumpGraph(stepStream, graph);
+                    }
+                }
+            }
             return cancel;
         }
 
@@ -231,11 +249,16 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
-        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        /// <param name="builderGraphStreamFactory">Stream factory to open named streams where the builder graphs will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
-        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
+        public void Dump(Func<string, Stream> builderGraphStreamFactory, IBuilder rootBuilder)
         {
-            RunTransformations();
+            var originalGraph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+            originalGraph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+            using (var originalStream = builderGraphStreamFactory("original"))
+                DumpGraph(originalStream, originalGraph);
+
+            RunTransformations(builderGraphStreamFactory);
 
             var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
             graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
@@ -243,7 +266,13 @@ namespace Bari.Core.Build
             if (rootBuilder != null)
                 RemoveIrrelevantBranches(graph, rootBuilder);
 
-            using (var writer = new DotWriter(builderGraphStream))
+            using (var finalStream = builderGraphStreamFactory("final"))
+                DumpGraph(finalStream, graph);
+        }
+
+        private static void DumpGraph(Stream finalStream, AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph)
+        {
+            using (var writer = new DotWriter(finalStream))
             {
                 writer.Rankdir = "RL";
                 writer.WriteGraph(graph.Edges);

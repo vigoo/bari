@@ -53,9 +53,9 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
-        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        /// <param name="builderGraphStreamFactory">Stream factory to open named streams where the builder graphs will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
-        void Dump(Stream builderGraphStream, IBuilder rootBuilder);
+        void Dump(Func<string, Stream> builderGraphStreamFactory, IBuilder rootBuilder);
 
         /// <summary>
         /// Dumps the dependencies of the builder
@@ -159,11 +159,11 @@ namespace Bari.Core.Build
         /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
-        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        /// <param name="builderGraphStreamFactory">Stream factory to open named streams where the builder graphs will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
-        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
+        public void Dump(Func<string, Stream> builderGraphStreamFactory, IBuilder rootBuilder)
         {
-            Contract.Requires(builderGraphStream != null);
+            Contract.Requires(builderGraphStreamFactory != null);
         }
 
         ///<summary>

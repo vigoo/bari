@@ -34,6 +34,8 @@ namespace Bari.Plugins.VsCore.Build
 
         private bool CutRedundantSolutionBuilds(ISet<EquatableEdge<IBuilder>> graph)
         {
+            log.Debug("### Cutting redundant solution builds");
+
             var slnBuilders = new HashSet<SlnBuilder>(graph.Select(edge => edge.Target).OfType<SlnBuilder>());
 
             if (slnBuilders.Any())
@@ -144,6 +146,8 @@ namespace Bari.Plugins.VsCore.Build
 
         private bool MergeSolutionBuilds(ISet<EquatableEdge<IBuilder>> graph)
         {
+            log.Debug("### Merging solution builds");
+
             // Searching for [MSBuildRunner] -> [SlnBuilder] -> [ISlnProjectBuilder*] patterns
             var patterns =
                 graph
@@ -180,8 +184,8 @@ namespace Bari.Plugins.VsCore.Build
             // Creating merge plan
             foreach (var module in modules)
             {
-                bool testsCovered = module.TestProjects.All(projects.Contains);
-                bool covered = module.Projects.All(projects.Contains);
+                bool testsCovered = module.TestProjects.Any() && module.TestProjects.All(projects.Contains);
+                bool covered = module.Projects.Any() && module.Projects.All(projects.Contains);
 
                 if (covered)
                 {
@@ -194,7 +198,7 @@ namespace Bari.Plugins.VsCore.Build
                     RerouteEdgesTargeting(
                         graph,
                         new HashSet<IBuilder>(patterns.Values
-                            .Where(p => p.ProjectBuilders.Any(pb => pb.Project.Module == module))
+                            .Where(p => p.ProjectBuilders.All(pb => pb.Project.Module == module))
                             .Select(p => p.MsbuildRunner)),
                         mergedRoot);
                         
@@ -251,17 +255,19 @@ namespace Bari.Plugins.VsCore.Build
 
         private void RerouteEdgesTargeting(ISet<EquatableEdge<IBuilder>> graph, ISet<IBuilder> originalTargets, IBuilder replacementTarget)
         {
+            log.DebugFormat("-> Rerouting edges targeting {0} to {1}", string.Join(", ", originalTargets), replacementTarget);
+
             var edgesToRemove = new HashSet<EquatableEdge<IBuilder>>();
             var edgesToAdd = new HashSet<EquatableEdge<IBuilder>>();
             foreach (var edge in graph)
             {
                 if (originalTargets.Contains(edge.Target) && edge.Target != edge.Source && edge.Target != replacementTarget)
                 {
-                    log.DebugFormat("-> Removing edge {0}", edge);
+                    log.DebugFormat(" -> Removing edge {0}", edge);
                     edgesToRemove.Add(edge);
 
                     var newEdge = new EquatableEdge<IBuilder>(edge.Source, replacementTarget);
-                    log.DebugFormat("-> Replacing with {0}", newEdge);
+                    log.DebugFormat(" -> Replacing with {0}", newEdge);
                     edgesToAdd.Add(newEdge);
                 }
             }

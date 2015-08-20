@@ -184,8 +184,7 @@ Example: `bari test --dump`
 
             if (dumpMode)
             {
-                using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                    context.Dump(builderGraph, rootBuilder);
+                context.Dump(name => targetRoot.CreateBinaryFile("builders." + name + ".dot"), rootBuilder);
 
                 return new TargetRelativePath[0];
             } 

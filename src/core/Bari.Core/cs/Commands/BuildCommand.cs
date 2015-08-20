@@ -173,8 +173,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
                 if (dumpMode)
                 {
-                    using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                        context.Dump(builderGraph, rootBuilder);
+                    context.Dump(name => targetRoot.CreateBinaryFile("builders." + name + ".dot"), rootBuilder);
                 }
                 else if (dumpDepsMode)
                 {

@@ -22,7 +22,6 @@ using Ninject.Extensions.Factory;
 using Ninject.Parameters;
 using Ninject.Syntax;
 using Bari.Core.Build.Statistics;
-using QuickGraph.Algorithms.Observers;
 
 namespace Bari.Core
 {
@@ -160,8 +159,10 @@ namespace Bari.Core
             kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));            
         }
 
-        public static void InitializeBuilderStore(IKernel kernel)
-        {            
+        public static void InitializeBuilderStore()
+        {
+            var kernel = Root;
+
             var store = kernel.Get<IBuilderStore>();
             var referenceBuilderFactory = kernel.Get<IReferenceBuilderFactory>();
             kernel.Rebind<IReferenceBuilderFactory>()

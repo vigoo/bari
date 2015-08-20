@@ -97,9 +97,9 @@ namespace Bari.Plugins.VsCore.Build
                 return builder;
         }
 
-        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
+        public void Dump(Func<string, Stream> builderGraphStreamFactory, IBuilder rootBuilder)
         {
-            baseContext.Dump(builderGraphStream, rootBuilder);
+            baseContext.Dump(builderGraphStreamFactory, rootBuilder);
         }
 
         public bool Contains(IBuilder builder)
