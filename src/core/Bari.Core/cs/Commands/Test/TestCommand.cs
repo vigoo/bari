@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -177,10 +178,13 @@ Example: `bari test --dump`
         {
             var context = buildContextFactory.CreateBuildContext();
 
+            var prjs = projects.ToList();
+
             IBuilder rootBuilder = coreBuilderFactory.Merge(
                 projectBuilders
-                    .Select(pb => pb.Create(projects))
-                    .Where(b => b != null).ToArray());
+                    .Select(pb => pb.Create(prjs))
+                    .Where(b => b != null).ToArray(),
+                new ProjectBuilderTag(prjs));
 
             if (dumpMode)
             {

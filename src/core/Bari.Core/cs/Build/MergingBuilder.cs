@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
@@ -13,13 +14,20 @@ namespace Bari.Core.Build
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(MergingBuilder));
         private readonly ISet<IBuilder> sourceBuilders;
+        private readonly IMergingBuilderTag tag;
 
         // Debug ID used only in ToString to help debugging
         private static int lastDebugId = 0;
         private readonly int debugId = lastDebugId++;
 
-        public MergingBuilder(IEnumerable<IBuilder> sourceBuilders)
+        public IMergingBuilderTag Tag
         {
+            get { return tag; }
+        }
+
+        public MergingBuilder(IEnumerable<IBuilder> sourceBuilders, IMergingBuilderTag tag)
+        {
+            this.tag = tag;
             this.sourceBuilders = new HashSet<IBuilder>(sourceBuilders);
         }
 

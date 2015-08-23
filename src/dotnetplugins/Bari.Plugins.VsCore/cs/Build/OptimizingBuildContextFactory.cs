@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Model;
 using QuickGraph;
 
@@ -76,15 +78,32 @@ namespace Bari.Plugins.VsCore.Build
             return true;
         }
 
-        private static IBuilder FindSolutionRootBuilder(IEnumerable<EquatableEdge<IBuilder>> graph, EquatableEdge<IBuilder> edge)
+        private static IBuilder FindSolutionRootBuilder(ISet<EquatableEdge<IBuilder>> graph, EquatableEdge<IBuilder> edge)
         {
             var msbuild = (MSBuildRunner)edge.Source;
-            var mergeParentEdge = graph.FirstOrDefault(e => e.Target == msbuild && e.Source is MergingBuilder);
-            var result = mergeParentEdge != null ? mergeParentEdge.Source : msbuild;
+            IBuilder result = FollowMergingSources(graph, msbuild);            
 
             log.DebugFormat("Found solution root builder for {0}: {1}", edge.Target, result);
 
             return result;
+        }
+
+        private static IBuilder FollowMergingSources(ISet<EquatableEdge<IBuilder>> graph, IBuilder target)
+        {
+            var mergeParentEdge = graph.FirstOrDefault(e => e.Target != e.Source && e.Target == target && e.Source is MergingBuilder && !HasDifferentMergingTag(e.Source, e.Target));
+            return mergeParentEdge != null ? FollowMergingSources(graph, mergeParentEdge.Source) : target;
+        }
+
+        private static bool HasDifferentMergingTag(IBuilder a, IBuilder b)
+        {
+            if (a is MergingBuilder && b is MergingBuilder)
+            {
+                return !((MergingBuilder) a).Tag.Equals(((MergingBuilder) b).Tag);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         void RemoveEdgesWhereSourceIs(ISet<EquatableEdge<IBuilder>> graph, IBuilder source)
@@ -136,18 +155,26 @@ namespace Bari.Plugins.VsCore.Build
         {
             private readonly MSBuildRunner msbuildRunner;
             private readonly SlnBuilder slnBuilder;
+            private readonly Lazy<IBuilder> root; 
             private readonly ISet<ISlnProjectBuilder> projectBuilders = new HashSet<ISlnProjectBuilder>();
             private readonly ISet<Project> projects = new HashSet<Project>();
 
-            public SolutionBuildPattern(MSBuildRunner msbuildRunner, SlnBuilder slnBuilder)
+            public SolutionBuildPattern(ISet<EquatableEdge<IBuilder>> graph, MSBuildRunner msbuildRunner, SlnBuilder slnBuilder)
             {
                 this.msbuildRunner = msbuildRunner;
                 this.slnBuilder = slnBuilder;
+
+                root = new Lazy<IBuilder>(() => FollowMergingSources(graph, msbuildRunner));
             }
 
             public MSBuildRunner MsbuildRunner
             {
                 get { return msbuildRunner; }
+            }
+
+            public IBuilder Root
+            {
+                get { return root.Value; }
             }
 
             public SlnBuilder SlnBuilder
@@ -176,7 +203,7 @@ namespace Bari.Plugins.VsCore.Build
                     .Where(edge => edge.Source is MSBuildRunner && edge.Target is SlnBuilder)
                     .ToDictionary(
                         edge => (SlnBuilder)edge.Target,
-                        edge => new SolutionBuildPattern((MSBuildRunner)edge.Source, (SlnBuilder)edge.Target));
+                        edge => new SolutionBuildPattern(graph, (MSBuildRunner)edge.Source, (SlnBuilder)edge.Target));
 
             foreach (var edge in graph)
             {
@@ -225,16 +252,16 @@ namespace Bari.Plugins.VsCore.Build
                     }
                     else
                     {
-                        mergedRoot = existingPattern.MsbuildRunner;
+                        mergedRoot = existingPattern.Root;
                     }
 
                     // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
                     RerouteEdgesTargeting(
                         graph,
                         new HashSet<IBuilder>(patterns.Values
-                            .Where(p => p.MsbuildRunner != mergedRoot)
+                            .Where(p => p.Root != mergedRoot)
                             .Where(p => p.ProjectBuilders.All(pb => pb.Project.Module == module))
-                            .Select(p => p.MsbuildRunner)),
+                            .Select(p => p.Root)),
                         mergedRoot);
 
                 }
@@ -251,15 +278,16 @@ namespace Bari.Plugins.VsCore.Build
                     }
                     else
                     {
-                        mergedRoot = existingPattern.MsbuildRunner;
+                        mergedRoot = existingPattern.Root;
                     }
 
                     // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
                     RerouteEdgesTargeting(
                         graph,
                         new HashSet<IBuilder>(patterns.Values
+                            .Where(p => p.Root != mergedRoot)
                             .Where(p => p.ProjectBuilders.Any(pb => pb.Project.Module == module))
-                            .Select(p => p.MsbuildRunner)),
+                            .Select(p => p.Root)),
                         mergedRoot);
 
                 }
@@ -270,10 +298,13 @@ namespace Bari.Plugins.VsCore.Build
 
         private IBuilder CreateMergedBuild(ISet<EquatableEdge<IBuilder>> graph, IEnumerable<Project> projects)
         {
+            var prjs = projects.ToList();
+
             IBuilder rootBuilder = coreBuilderFactory.Merge(
                 projectBuilders
-                .Select(pb => pb.Create(projects))
-                .Where(b => b != null).ToArray());
+                    .Select(pb => pb.Create(prjs))
+                    .Where(b => b != null).ToArray(),
+                new ProjectBuilderTag(prjs));
 
             AddNewBranch(graph, rootBuilder);
 

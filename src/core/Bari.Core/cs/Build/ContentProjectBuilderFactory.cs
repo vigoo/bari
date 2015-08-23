@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Model;
 
 namespace Bari.Core.Build
@@ -24,10 +25,12 @@ namespace Bari.Core.Build
         /// <param name="projects">Projects to be built</param>
         public IBuilder Create(IEnumerable<Project> projects)
         {
-            IBuilder[] builders = projects.Where(prj => prj.HasNonEmptySourceSet("content"))
-                                          .Select(prj => (IBuilder)coreBuilderFactory.CreateContentBuilder(prj)).ToArray();
+            var prjs = projects.ToList();
+            IBuilder[] builders = prjs
+                .Where(prj => prj.HasNonEmptySourceSet("content"))
+                .Select(prj => (IBuilder) coreBuilderFactory.CreateContentBuilder(prj)).ToArray();
 
-            return coreBuilderFactory.Merge(builders);
+            return coreBuilderFactory.Merge(builders, new ProjectBuilderTag(prjs));
         }
     }
 }

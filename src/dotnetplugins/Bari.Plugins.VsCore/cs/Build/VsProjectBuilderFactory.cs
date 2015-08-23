@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
@@ -57,16 +58,16 @@ namespace Bari.Plugins.VsCore.Build
             var msbuild = BuildSolution(slnBuilder);
             
             var copyRuntimeDeps = CopyRuntimeDependencies(prjs);
-            var result = MergeSteps(copyRuntimeDeps.ToList(), msbuild);
+            var result = MergeSteps(copyRuntimeDeps.ToList(), msbuild, prjs);
 
-            return RunPostProcessors(prjs, result);
+            return RunPostProcessors(prjs, result, projects);
         }
 
-        private IBuilder MergeSteps(IList<IBuilder> additionalSteps, MSBuildRunner msbuild)
+        private IBuilder MergeSteps(IList<IBuilder> additionalSteps, MSBuildRunner msbuild, IEnumerable<Project> projects)
         {
             if (additionalSteps.Count > 0)
             {
-                return coreBuilderFactory.CreateMergingBuilder(additionalSteps.Concat(new[] {msbuild}));
+                return coreBuilderFactory.CreateMergingBuilder(additionalSteps.Concat(new[] {msbuild}), new ProjectBuilderTag(projects));
             }
             else
             {
@@ -74,7 +75,7 @@ namespace Bari.Plugins.VsCore.Build
             }
         }
 
-        private IBuilder RunPostProcessors(Project[] prjs, IBuilder input)
+        private IBuilder RunPostProcessors(Project[] prjs, IBuilder input, IEnumerable<Project> projects)
         {
             var modules = prjs.Select(p => p.Module).Distinct().ToList();
             var postProcessableItems = prjs.Concat(modules.Cast<IPostProcessorsHolder>()).ToList();
@@ -101,7 +102,7 @@ namespace Bari.Plugins.VsCore.Build
             }
             else
             {
-                return coreBuilderFactory.CreateMergingBuilder(resultBuilders.Concat(new[] {input}));
+                return coreBuilderFactory.CreateMergingBuilder(resultBuilders.Concat(new[] {input}), new ProjectBuilderTag(projects));
             }
         }
 

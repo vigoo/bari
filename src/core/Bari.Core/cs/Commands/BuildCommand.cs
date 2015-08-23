@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -159,7 +160,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             IBuilder rootBuilder = coreBuilderFactory.Merge(
                 projectBuilders
                     .Select(pb => pb.Create(projects))
-                    .Where(b => b != null).ToArray());
+                    .Where(b => b != null).ToArray(),
+                new ProjectBuilderTag(projects));
 
             if (rootBuilder != null)
             {
@@ -226,7 +228,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             if (resultBuilders.Any())
             {
-                var merger = coreBuilderFactory.CreateMergingBuilder(resultBuilders);
+                var merger = coreBuilderFactory.CreateMergingBuilder(resultBuilders, new NoTag());
                 context.AddBuilder(merger);
                 return merger;
             }

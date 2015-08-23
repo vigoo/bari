@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Model;
 using Bari.Plugins.PythonScripts.Model;
 
@@ -30,8 +32,9 @@ namespace Bari.Plugins.PythonScripts.Build
         public IBuilder Create(IEnumerable<Project> projects)
         {
             var builders = new List<IBuilder>();
+            var prjs = projects.ToList();
 
-            foreach (var project in projects)
+            foreach (var project in prjs)
             {
                 foreach (var sourceSet in project.SourceSets)
                 {
@@ -43,7 +46,7 @@ namespace Bari.Plugins.PythonScripts.Build
                 }
             }
 
-            return coreBuilderFactory.Merge(builders.ToArray());
+            return coreBuilderFactory.Merge(builders.ToArray(), new ProjectBuilderTag(prjs));
         }
     }
 }

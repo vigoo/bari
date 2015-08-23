@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 
@@ -21,9 +22,9 @@ namespace Bari.Core.Build.BuilderStore
             return store.Add(builder);
         }
 
-        public MergingBuilder CreateMergingBuilder(IEnumerable<IBuilder> sourceBuilders)
+        public MergingBuilder CreateMergingBuilder(IEnumerable<IBuilder> sourceBuilders, IMergingBuilderTag tag)
         {
-            var builder = baseImpl.CreateMergingBuilder(sourceBuilders);
+            var builder = baseImpl.CreateMergingBuilder(sourceBuilders, tag);
             return store.Add(builder);
         }
 
