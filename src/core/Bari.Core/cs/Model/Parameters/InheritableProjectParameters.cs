@@ -31,15 +31,38 @@ namespace Bari.Core.Model.Parameters
             return (IPropertyValue) Activator.CreateInstance(typeof (PropertyValue<>).MakeGenericType(typeof (T)), value);
         }
 
-        protected bool IsSpecified(string name)
+        public bool IsSpecified(string name)
         {            
             var value = GetPropertyValue(name);
             return value.IsSpecified || (parent != null && parent.IsSpecified(name));
         }
 
-        protected T Get<T>(string name)
+        protected T? GetAsNullable<T>(string name)
+            where T : struct
         {
-            defs.TypeCheck(name, typeof(T));
+            if (IsSpecified(name))
+                return Get<T>(name);
+            else
+                return null;
+        }
+
+        protected void SetAsNullable<T>(string name, T? value)
+            where T : struct
+        {
+            if (value == null)
+                Clear(name);
+            else
+                Set(name, (T)value);
+        }
+
+        public T Get<T>(string name)
+        {
+            return (T) GetDynamic(name, typeof (T));
+        }
+
+        public object GetDynamic(string name, Type t)
+        {
+            defs.TypeCheck(name, t);
 
             var value = GetPropertyValue(name);
             if (!value.IsSpecified && parent != null)
@@ -47,8 +70,8 @@ namespace Bari.Core.Model.Parameters
 
             if (!value.IsSpecified)
                 throw new InvalidOperationException("Property value is not specified: " + name);
-            
-            return (T) value.Value;
+
+            return value.Value;
         }
 
         protected void Set<T>(string name, T value)

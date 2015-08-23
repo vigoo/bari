@@ -10,88 +10,274 @@ using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Csharp.Model
 {
-    public class CsharpProjectParameters: IProjectParameters
+    public class CsharpProjectParametersDef : ProjectParametersPropertyDefs
     {
-        public uint? BaseAddress { get; set; }
-        public bool Checked { get; set; }
-        public string CodePage { get; set; }
-        public DebugLevel Debug { get; set; }
-        public string[] Defines { get; set; }
-        public bool DelaySign { get; set; }
-        public string DocOutput { get; set; }
-        public uint? FileAlign { get; set; }
-        public bool HighEntropyVirtualAddressSpace { get; set; }
-        public string KeyContainer { get; set; }
-        public string KeyFile { get; set; }
-        public CsharpLanguageVersion LanguageVersion { get; set; }
-        public string MainClass { get; set; }
-        public bool NoStdLib { get; set; }
-        public int[] SuppressedWarnings { get; set; }
-        public bool NoWin32Manifest { get; set; }
-        public bool Optimize { get; set; }
-        public CLRPlatform Platform { get; set; }
-        public string PreferredUILang { get; set; }
-        public string SubsystemVersion { get; set; }
-        public bool Unsafe { get; set; }
-        public WarningLevel WarningLevel { get; set; }
-        public bool AllWarningsAsError { get; set; }
-        public int[] SpecificWarningsAsError { get; set; }
-        public string RootNamespace { get; set; }
-        public string ApplicationIcon { get; set; }
-        public FrameworkVersion TargetFrameworkVersion { get; set; }
-        public FrameworkProfile TargetFrameworkProfile { get; set; }
-
-        public CsharpProjectParameters(Suite suite)
+        public CsharpProjectParametersDef()
         {
-            BaseAddress = null;
-            Checked = false;
-            CodePage = null;            
-            DelaySign = false;
-            DocOutput = null;
-            FileAlign = null;
-            HighEntropyVirtualAddressSpace = false;
-            KeyContainer = null;
-            KeyFile = null;
-            LanguageVersion = CsharpLanguageVersion.Default;
-            MainClass = null;
-            NoStdLib = false;
-            SuppressedWarnings = null;
-            NoWin32Manifest = false;
-            
-            if (suite.ActiveGoal.Has("x86"))
-                Platform = CLRPlatform.x86;
-            else if (suite.ActiveGoal.Has("x64"))
-                Platform = CLRPlatform.x64;
-            else
-                Platform = CLRPlatform.AnyCPU;
+            Define<uint>("BaseAddress");
+            Define<bool>("Checked");
+            Define<string>("CodePage");
+            Define<DebugLevel>("Debug");
+            Define<string[]>("Defines");
+            Define<bool>("DelaySign");
+            Define<string>("DocOutput");
+            Define<uint>("FileAlign");
+            Define<bool>("HighEntropyVirtualAddressSpace");
+            Define<string>("KeyContainer");
+            Define<string>("KeyFile");
+            Define<CsharpLanguageVersion>("LanguageVersion");
+            Define<string>("MainClass");
+            Define<bool>("NoStdLib");
+            Define<int[]>("SuppressedWarnings");
+            Define<bool>("NoWin32Manifest");
+            Define<bool>("Optimize");
+            Define<CLRPlatform>("Platform");
+            Define<string>("PreferredUILang");            
+            Define<string>("SubsystemVersion");
+            Define<bool>("Unsafe");
+            Define<WarningLevel>("WarningLevel");
+            Define<bool>("AllWarningsAsError");
+            Define<int[]>("SpecificWarningsAsError");
+            Define<string>("RootNamespace");
+            Define<string>("ApplicationIcon");
+            Define<FrameworkVersion>("TargetFrameworkVersion");
+            Define<FrameworkProfile>("TargetFrameworkProfile");
+        }
+    }
 
-            PreferredUILang = null;
-            SubsystemVersion = null;
-            Unsafe = false;
-            WarningLevel = WarningLevel.All;
-            AllWarningsAsError = false;
-            SpecificWarningsAsError = null;
+    public class CsharpProjectParameters: InheritableProjectParameters<CsharpProjectParametersDef>
+    {
+        private readonly Suite suite;
 
-            if (suite.ActiveGoal.Has(Suite.DebugGoal.Name))
-            {
-                Debug = DebugLevel.Full;
-                Optimize = false;
-                Defines = new[] { "DEBUG" };
-            }
-            else if (suite.ActiveGoal.Has(Suite.ReleaseGoal.Name))
-            {
-                Debug = DebugLevel.None;
-                Optimize = true;
-                Defines = new string[0];
-            }
+        public uint? BaseAddress
+        {
+            get { return GetAsNullable<uint>("BaseAddress"); }
+            set { SetAsNullable("BaseAddress", value); }
+        }
 
-            TargetFrameworkVersion = FrameworkVersion.v4;
-            TargetFrameworkProfile = FrameworkProfile.Default;
+        public bool Checked
+        {
+            get { return Get<bool>("Checked"); }
+            set { Set("Checked", value); }
+        }
+
+        public bool IsCheckedSpecified { get { return IsSpecified("Checked"); } }
+
+        public string CodePage
+        {
+            get { return Get<string>("CodePage"); }
+            set { Set("CodePage", value); }
+        }
+
+        public bool IsCodePageSpecified { get { return IsSpecified("CodePage"); } }
+
+        public DebugLevel Debug
+        {
+            get { return Get<DebugLevel>("Debug"); }
+            set { Set("Debug", value); }
+        }
+
+        public bool IsDebugSpecified { get { return IsSpecified("Debug"); } }
+
+        public string[] Defines
+        {
+            get { return Get<string[]>("Defines"); }
+            set { Set("Defines", value); }
+        }
+
+        public bool AreDefinesSpecified { get { return IsSpecified("Defines"); } }
+
+        public bool DelaySign
+        {
+            get { return Get<bool>("DelaySign"); }
+            set { Set("DelaySign", value); }
+        }
+
+        public bool IsDelaySignSpecified { get { return IsSpecified("DelaySign"); } }
+
+        public string DocOutput
+        {
+            get { return Get<string>("DocOutput"); }
+            set { Set("DocOutput", value); }
+        }
+
+        public bool IsDocOutputSpecified { get { return IsSpecified("DocOutput"); } }
+
+        public uint? FileAlign
+        {
+            get { return GetAsNullable<uint>("FileAlign"); }
+            set { SetAsNullable("FileAlign", value); }
+        }
+
+        public bool HighEntropyVirtualAddressSpace
+        {
+            get { return Get<bool>("HighEntropyVirtualAddressSpace"); }
+            set { Set("HighEntropyVirtualAddressSpace", value); }
+        }
+
+        public bool IsHighEntropyVirtualAddressSpaceSpecified { get { return IsSpecified("HighEntropyVirtualAddressSpace"); } }
+
+        public string KeyContainer
+        {
+            get { return Get<string>("KeyContainer"); }
+            set { Set("KeyContainer", value); }
+        }
+
+        public bool IsKeyContainerSpecified { get { return IsSpecified("KeyContainer"); } }
+
+        public string KeyFile
+        {
+            get { return Get<string>("KeyFile"); }
+            set { Set("KeyFile", value); }
+        }
+
+        public bool IsKeyFileSpecified { get { return IsSpecified("KeyFile"); } }
+
+        public CsharpLanguageVersion LanguageVersion
+        {
+            get { return Get<CsharpLanguageVersion>("LanguageVersion"); }
+            set { Set("LanguageVersion", value); }
+        }
+
+        public bool IsLanguageVersionSpecified { get { return IsSpecified("LanguageVersion"); } }
+
+        public string MainClass
+        {
+            get { return Get<string>("MainClass"); }
+            set { Set("MainClass", value); }
+        }
+
+        public bool IsMainClassSpecified { get { return IsSpecified("MainClass"); } }
+
+        public bool NoStdLib
+        {
+            get { return Get<bool>("NoStdLib"); }
+            set { Set("NoStdLib", value); }
+        }
+
+        public bool IsNoStdLibSpecified { get { return IsSpecified("NoStdLib"); } }
+
+        public int[] SuppressedWarnings
+        {
+            get { return Get<int[]>("SuppressedWarnings"); }
+            set { Set("SuppressedWarnings", value); }
+        }
+
+        public bool AreSuppressedWarningsSpecified { get { return IsSpecified("SuppressedWarnings"); } }
+
+        public bool NoWin32Manifest
+        {
+            get { return Get<bool>("NoWin32Manifest"); }
+            set { Set("NoWin32Manifest", value); }
+        }
+
+        public bool IsNoWin32ManifestSpecified { get { return IsSpecified("NoWin32Manifest"); } }
+
+        public bool Optimize
+        {
+            get { return Get<bool>("Optimize"); }
+            set { Set("Optimize", value); }
+        }
+
+        public bool IsOptimizeSpecified { get { return IsSpecified("Optimize"); } }
+
+        public CLRPlatform Platform
+        {
+            get { return Get<CLRPlatform>("Platform"); }
+            set { Set("Platform", value); }
+        }
+
+        public bool IsPlatformSpecified { get { return IsSpecified("Platform"); } }
+
+        public string PreferredUILang
+        {
+            get { return Get<string>("PreferredUILang"); }
+            set { Set("PreferredUILang", value); }
+        }
+
+        public bool IsPreferredUILangSpecified { get { return IsSpecified("PreferredUILang"); } }
+
+        public string SubsystemVersion
+        {
+            get { return Get<string>("SubsystemVersion"); }
+            set { Set("SubsystemVersion", value); }
+        }
+
+        public bool IsSubsystemVersionSpecified { get { return IsSpecified("SubsystemVersion"); } }
+
+        public bool Unsafe
+        {
+            get { return Get<bool>("Unsafe"); }
+            set { Set("Unsafe", value); }
+        }
+
+        public bool IsUnsafeSpecified { get { return IsSpecified("Unsafe"); } }
+
+        public WarningLevel WarningLevel
+        {
+            get { return Get<WarningLevel>("WarningLevel"); }
+            set { Set("WarningLevel", value); }
+        }
+
+        public bool IsWarningLevelSpecified { get { return IsSpecified("WarningLevel"); } }
+
+        public bool AllWarningsAsError
+        {
+            get { return Get<bool>("AllWarningsAsError"); }
+            set { Set("AllWarningsAsError", value); }
+        }
+
+        public bool IsAllWarningsAsErrorSpecified { get { return IsSpecified("AllWarningsAsError"); } }
+
+        public int[] SpecificWarningsAsError
+        {
+            get { return Get<int[]>("SpecificWarningsAsError"); }
+            set { Set("SpecificWarningsAsError", value); }
+        }
+
+        public bool AreSpecificWarningsAsErrorSpecified { get { return IsSpecified("SpecificWarningsAsError"); } }
+
+        public string RootNamespace
+        {
+            get { return Get<string>("RootNamespace"); }
+            set { Set("RootNamespace", value); }
+        }
+
+        public bool IsRootNamespaceSpecified { get { return IsSpecified("RootNamespace"); } }
+
+        public string ApplicationIcon
+        {
+            get { return Get<string>("ApplicationIcon"); }
+            set { Set("ApplicationIcon", value); }
+        }
+
+        public bool IsApplicationIconSpecified { get { return IsSpecified("ApplicationIcon"); } }
+
+        public FrameworkVersion TargetFrameworkVersion
+        {
+            get { return Get<FrameworkVersion>("TargetFrameworkVersion"); }
+            set { Set("TargetFrameworkVersion", value); }
+        }
+
+        public bool IsTargetFrameworkVersionSpecified { get { return IsSpecified("TargetFrameworkVersion"); } }
+
+        public FrameworkProfile TargetFrameworkProfile
+        {
+            get { return Get<FrameworkProfile>("TargetFrameworkProfile"); }
+            set { Set("TargetFrameworkProfile", value); }
+        }
+
+        public bool IsTargetFrameworkProfileSpecified { get { return IsSpecified("TargetFrameworkProfile"); } }
+
+        public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
+            : base(parent)
+        {
+            this.suite = suite;
         }
 
         public void FillProjectSpecificMissingInfo(Project project)
         {
-            if (RootNamespace == null)
+            if (!IsRootNamespaceSpecified)
                 RootNamespace = project.Name;
 
             if (project.HasNonEmptySourceSet("resources"))
@@ -110,48 +296,102 @@ namespace Bari.Plugins.Csharp.Model
         {
             if (BaseAddress.HasValue)
                 writer.WriteElementString("BaseAddress", "0x"+BaseAddress.Value.ToString("X", CultureInfo.InvariantCulture));
-            writer.WriteElementString("CheckForOverflowUnderflow", XmlConvert.ToString(Checked));
-            if (CodePage != null)
+            
+            writer.WriteElementString("CheckForOverflowUnderflow", XmlConvert.ToString(IsCheckedSpecified && Checked));
+            
+            if (IsCodePageSpecified)
                 writer.WriteElementString("CodePage", CodePage);
-            writer.WriteElementString("DebugType", Debug.ToString().ToLowerInvariant());
-            if (Defines != null)
-                writer.WriteElementString("DefineConstants", string.Join(";", Defines));
-            writer.WriteElementString("DelaySign", XmlConvert.ToString(DelaySign));
-            if (DocOutput != null)
+
+            DebugLevel debug;
+            if (IsDebugSpecified)
+                debug = Debug;
+            else if (suite.ActiveGoal.Has(Suite.DebugGoal.Name))
+                debug = DebugLevel.Full;
+            else
+                debug = DebugLevel.None;
+            writer.WriteElementString("DebugType", debug.ToString().ToLowerInvariant());
+
+            string[] defines;
+            if (AreDefinesSpecified)
+                defines = Defines;
+            else if (suite.ActiveGoal.Has(Suite.DebugGoal.Name))
+                defines = new[] {"DEBUG"};
+            else
+                defines = new string[0];
+            writer.WriteElementString("DefineConstants", string.Join(";", defines));
+
+            writer.WriteElementString("DelaySign", XmlConvert.ToString(IsDelaySignSpecified && DelaySign));
+
+            if (IsDocOutputSpecified)
                 writer.WriteElementString("DocumentationFile", DocOutput);
+
             if (FileAlign.HasValue)
                 writer.WriteElementString("FileAlignment", XmlConvert.ToString(FileAlign.Value));
-            writer.WriteElementString("HighEntropyVA", XmlConvert.ToString(HighEntropyVirtualAddressSpace));
-            if (KeyContainer != null)
+
+            writer.WriteElementString("HighEntropyVA", XmlConvert.ToString(IsHighEntropyVirtualAddressSpaceSpecified && HighEntropyVirtualAddressSpace));
+
+            if (IsKeyContainerSpecified)
                 writer.WriteElementString("KeyContainerName", KeyContainer);
-            if (KeyFile != null)
+
+            if (IsKeyFileSpecified)
                 writer.WriteElementString("KeyOriginatorFile", KeyFile);
-            writer.WriteElementString("LangVersion", ToParameter(LanguageVersion));
-            if (MainClass != null)
+
+            writer.WriteElementString("LangVersion", ToParameter(IsLanguageVersionSpecified ? LanguageVersion : CsharpLanguageVersion.Default));
+
+            if (IsMainClassSpecified)
                 writer.WriteElementString("StartupObject", MainClass);
-            if (NoStdLib)
+
+            if (IsNoStdLibSpecified && NoStdLib)
                 writer.WriteElementString("NoCompilerStandardLib", XmlConvert.ToString(NoStdLib));
-            if (SuppressedWarnings != null)
-                writer.WriteElementString("NoWarn", 
-                    String.Join(";", SuppressedWarnings.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
-            writer.WriteElementString("NoWin32Manifest", XmlConvert.ToString(NoWin32Manifest));
-            writer.WriteElementString("Optimize", XmlConvert.ToString(Optimize));
-            writer.WriteElementString("PlatformTarget", Platform.ToString().ToLowerInvariant());
-            if (PreferredUILang != null)
+
+            if (AreSuppressedWarningsSpecified)
+                writer.WriteElementString("NoWarn", String.Join(";", SuppressedWarnings.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
+
+            writer.WriteElementString("NoWin32Manifest", XmlConvert.ToString(IsNoWin32ManifestSpecified && NoWin32Manifest));
+
+            bool optimize = IsOptimizeSpecified ? Optimize : suite.ActiveGoal.Has(Suite.ReleaseGoal.Name);
+            writer.WriteElementString("Optimize", XmlConvert.ToString(optimize));
+
+            CLRPlatform platform;
+            if (IsPlatformSpecified)
+                platform = Platform;
+            else if (suite.ActiveGoal.Has("x86"))
+                platform = CLRPlatform.x86;
+            else if (suite.ActiveGoal.Has("x64"))
+                platform = CLRPlatform.x64;
+            else
+                platform = CLRPlatform.AnyCPU;
+            writer.WriteElementString("PlatformTarget", platform.ToString().ToLowerInvariant());
+
+            if (IsPreferredUILangSpecified)
                 writer.WriteElementString("PreferredUILang", PreferredUILang);
-            if (SubsystemVersion != null)
+
+            if (IsSubsystemVersionSpecified)
                 writer.WriteElementString("SubsystemVersion", SubsystemVersion);
-            writer.WriteElementString("AllowUnsafeBlocks", XmlConvert.ToString(Unsafe));
-            writer.WriteElementString("WarningLevel", XmlConvert.ToString((int)WarningLevel));
-            writer.WriteElementString("TreatWarningsAsErrors", XmlConvert.ToString(AllWarningsAsError));
-            if (SpecificWarningsAsError != null)
+
+            writer.WriteElementString("AllowUnsafeBlocks", XmlConvert.ToString(IsUnsafeSpecified && Unsafe));
+
+            WarningLevel warningLevel = IsWarningLevelSpecified ? WarningLevel : WarningLevel.All;            
+            writer.WriteElementString("WarningLevel", XmlConvert.ToString((int)warningLevel));
+
+            writer.WriteElementString("TreatWarningsAsErrors", XmlConvert.ToString(IsAllWarningsAsErrorSpecified && AllWarningsAsError));
+
+            if (AreSpecificWarningsAsErrorSpecified)
                 writer.WriteElementString("WarningsAsErrors",
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
-            if (RootNamespace != null)
+            
+            if (IsRootNamespaceSpecified)
                 writer.WriteElementString("RootNamespace", RootNamespace);
 
-            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(TargetFrameworkVersion));
-            writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(TargetFrameworkProfile));
+            var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
+                ? TargetFrameworkVersion
+                : FrameworkVersion.v4;
+            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+
+            var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
+                ? TargetFrameworkProfile
+                : FrameworkProfile.Default;
+            writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(targetFrameworkProfile));
         }
 
         private string ToFrameworkProfile(FrameworkProfile targetFrameworkProfile)

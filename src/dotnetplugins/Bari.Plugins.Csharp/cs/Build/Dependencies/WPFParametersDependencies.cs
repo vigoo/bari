@@ -2,10 +2,11 @@
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Model;
 
 namespace Bari.Plugins.Csharp.Build.Dependencies
 {
-    public class WPFParametersDependencies : ProjectParametersDependencies
+    public class WPFParametersDependencies : InheritableProjectParametersDependencies<WPFParametersDef>
     {
         WPFParametersDependencies(Project project) : base(project, "wpf")
         {

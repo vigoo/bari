@@ -2,10 +2,11 @@
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Model;
 
 namespace Bari.Plugins.Csharp.Build.Dependencies
 {
-    public class CsharpParametersDependencies: ProjectParametersDependencies
+    public class CsharpParametersDependencies : InheritableProjectParametersDependencies<CsharpProjectParametersDef>
     {
         CsharpParametersDependencies(Project project) : base(project, "csharp")
         {            
