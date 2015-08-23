@@ -26,7 +26,7 @@ namespace Bari.Core.Build
     [AggressiveCacheRestore]
     public class SuiteReferenceBuilder : ReferenceBuilderBase<SuiteReferenceBuilder>, IEquatable<SuiteReferenceBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (SuiteReferenceBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(SuiteReferenceBuilder));
 
         private readonly Project project;
         private readonly Suite suite;
@@ -113,7 +113,11 @@ namespace Bari.Core.Build
         /// </summary>
         public override IDependencies Dependencies
         {
-            get { return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks); }
+            get
+            {
+                EnsureSubtasksAvailable();
+                return MultipleDependenciesHelper.CreateMultipleDependencies(subtasks);
+            }
         }
 
         /// <summary>
@@ -136,42 +140,62 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            CalculateReferencedProject();
-
-            if (!context.Contains(this))
+            get
             {
-                subtasks = new HashSet<IBuilder>();
-                GenerateSubtasks(context);
-
-                log.DebugFormat("Project {0}'s reference to {1} adds the following subtasks: {2}", project, referencedProject, String.Join(", ", subtasks));
-
-                context.AddBuilder(this, subtasks);
-            }
-            else
-            {
-                subtasks = new HashSet<IBuilder>(context.GetDependencies(this));
+                EnsureSubtasksAvailable();
+                return subtasks;
             }
         }
 
-        private void GenerateSubtasks(IBuildContext context)
-        {            
+        private void EnsureSubtasksAvailable()
+        {
+            if (subtasks == null)
+            {
+                CalculateReferencedProject();
+
+                subtasks = new HashSet<IBuilder>(GenerateSubtasks());
+
+                log.DebugFormat("Project {0}'s reference to {1} adds the following subtasks: {2}", project, referencedProject,
+                    String.Join(", ", subtasks));
+            }
+        }
+
+        private IEnumerable<IBuilder> GenerateSubtasks()
+        {
             foreach (var projectBuilder in projectBuilders)
             {
-                var builder = projectBuilder.AddToContext(context, new[] { referencedProject });
+                var builder = projectBuilder.Create(new[] { referencedProject });
                 if (builder != null)
                 {
-                    subtasks.Add(builder);
+                    yield return builder;
                 }
             }
         }
-        
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (subtasks != null)
+            {
+                subtasks.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (subtasks != null)
+            {
+                subtasks.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
         /// <summary>
         /// Runs this builder
         /// </summary>
@@ -224,7 +248,7 @@ namespace Bari.Core.Build
         public bool Equals(SuiteReferenceBuilder other)
         {
             if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;            
+            if (ReferenceEquals(this, other)) return true;
             return Equals(ReferencedProject, other.ReferencedProject);
         }
 
@@ -234,7 +258,7 @@ namespace Bari.Core.Build
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
 
-            return Equals((SuiteReferenceBuilder) obj);
+            return Equals((SuiteReferenceBuilder)obj);
         }
 
         public override int GetHashCode()

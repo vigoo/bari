@@ -20,14 +20,14 @@ namespace Bari.Core.Test.Build.Cache
             get { throw new System.NotImplementedException(); }
         }
 
+        public IEnumerable<IBuilder> Prerequisites
+        {
+            get { return new IBuilder[0]; }
+        }
+
         public string Uid
         {
             get { throw new System.NotImplementedException(); }
-        }
-
-        public void AddToContext(IBuildContext context)
-        {
-            throw new System.NotImplementedException();
         }
 
         public ISet<TargetRelativePath> Run(IBuildContext context)
@@ -43,6 +43,16 @@ namespace Bari.Core.Test.Build.Cache
         public Type BuilderType
         {
             get { return typeof(NonPersistentReference); }
+        }
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
         }
 
         public Reference Reference
@@ -70,9 +80,9 @@ namespace Bari.Core.Test.Build.Cache
             get { throw new System.NotImplementedException(); }
         }
 
-        public void AddToContext(IBuildContext context)
+        public IEnumerable<IBuilder> Prerequisites
         {
-            throw new System.NotImplementedException();
+            get { return new IBuilder[0]; }
         }
 
         public ISet<TargetRelativePath> Run(IBuildContext context)
@@ -88,6 +98,16 @@ namespace Bari.Core.Test.Build.Cache
         public Type BuilderType
         {
             get { return typeof (PersistentReference); }
+        }
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            throw new NotImplementedException();
         }
 
         public Reference Reference

@@ -3,11 +3,12 @@ suite:      bari systemtest alias-test
 
 fs-repositories:
     - ..\fsrepo-test\fsrepo\%NAME\%FILENAME.%VERSION.%EXT
+    - ../fsrepo-test/fsrepo/%NAME/%FILENAME.%VERSION.%EXT
 
 aliases:
     test:
         - gac://System
-        - fsrepo://testdep/0.5/dep.dll        
+        - fsrepo://testdep/0.5/dep.dll
 
 modules:
     - name: HelloWorld
@@ -16,4 +17,3 @@ modules:
           type: executable
           references:
               - alias://test
-          

@@ -11,12 +11,11 @@ namespace Bari.Core.Build
     public interface IProjectBuilderFactory
     {
         /// <summary>
-        /// Adds the builders (<see cref="IBuilder"/>) to the given build context which process
+        /// Creates a builder (<see cref="IBuilder"/>) which process
         /// the given set of projects (<see cref="Project"/>)
         /// </summary>
-        /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects);
+        IBuilder Create(IEnumerable<Project> projects);
     }
 
     /// <summary>
@@ -26,14 +25,12 @@ namespace Bari.Core.Build
     abstract class IProjectBuilderFactoryContracts: IProjectBuilderFactory
     {
         /// <summary>
-        /// Adds the builders (<see cref="IBuilder"/>) to the given build context which process
+        /// Creates a builder (<see cref="IBuilder"/>) which process
         /// the given set of projects (<see cref="Project"/>)
         /// </summary>
-        /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
+        public IBuilder Create(IEnumerable<Project> projects)
         {
-            Contract.Requires(context != null);
             Contract.Requires(projects != null);
 
             return null; // dummy value

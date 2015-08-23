@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Bari.Core.Build.Dependencies;
-using Bari.Core.Generic;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Model;
 
 namespace Bari.Core.Build
@@ -12,32 +11,26 @@ namespace Bari.Core.Build
     /// </summary>
     public class ContentProjectBuilderFactory: IProjectBuilderFactory
     {
-        private readonly ISourceSetFingerprintFactory fingerprintFactory;
-        private readonly IFileSystemDirectory targetRoot;
-        private readonly IFileSystemDirectory suiteRoot;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
 
-        public ContentProjectBuilderFactory(ISourceSetFingerprintFactory fingerprintFactory, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot)
+        public ContentProjectBuilderFactory(ICoreBuilderFactory coreBuilderFactory)
         {
-            this.fingerprintFactory = fingerprintFactory;
-            this.suiteRoot = suiteRoot;
-            this.targetRoot = targetRoot;
+            this.coreBuilderFactory = coreBuilderFactory;
         }
 
         /// <summary>
-        /// Adds the builders (<see cref="IBuilder"/>) to the given build context which process
+        /// Creates a builder (<see cref="IBuilder"/>) which process
         /// the given set of projects (<see cref="Project"/>)
         /// </summary>
-        /// <param name="context">Current build context</param>
         /// <param name="projects">Projects to be built</param>
-        public IBuilder AddToContext(IBuildContext context, IEnumerable<Project> projects)
+        public IBuilder Create(IEnumerable<Project> projects)
         {
-            IBuilder[] builders = projects.Where(prj => prj.HasNonEmptySourceSet("content"))
-                                          .Select(prj => (IBuilder)new ContentBuilder(prj, fingerprintFactory, suiteRoot, targetRoot)).ToArray();
+            var prjs = projects.ToList();
+            IBuilder[] builders = prjs
+                .Where(prj => prj.HasNonEmptySourceSet("content"))
+                .Select(prj => (IBuilder) coreBuilderFactory.CreateContentBuilder(prj)).ToArray();
 
-            var merged = builders.Merge();
-            if (merged != null)
-                merged.AddToContext(context);
-            return merged;
+            return coreBuilderFactory.Merge(builders, new ProjectBuilderTag(prjs));
         }
     }
 }

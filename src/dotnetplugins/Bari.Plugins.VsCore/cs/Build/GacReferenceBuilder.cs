@@ -40,18 +40,7 @@ namespace Bari.Plugins.VsCore.Build
         {
             get { return reference.Uri.Host; }
         }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
-        {           
-            context.AddBuilder(this, new IBuilder[0]);
-        }
-
+        
         /// <summary>
         /// Runs this builder
         /// </summary>

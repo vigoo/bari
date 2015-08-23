@@ -18,18 +18,15 @@ namespace Bari.Core.Build
         IDependencies Dependencies { get; }
 
         /// <summary>
+        /// Get the builders to be executed before this builder
+        /// </summary>
+        IEnumerable<IBuilder> Prerequisites { get; }
+
+        /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
         string Uid { get; }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        void AddToContext(IBuildContext context);
-
+        
         /// <summary>
         /// Runs this builder
         /// </summary>
@@ -48,6 +45,9 @@ namespace Bari.Core.Build
 		/// </summary>
 		/// <value>The type of the builder.</value>
 		Type BuilderType { get; }
+
+        void AddPrerequisite(IBuilder target);
+        void RemovePrerequisite(IBuilder target);
     }
 
     /// <summary>
@@ -68,6 +68,15 @@ namespace Bari.Core.Build
             }
         }
 
+        public IEnumerable<IBuilder> Prerequisites
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<IBuilder>>() != null);
+                return null; // dummy value
+            }
+        }
+
         public string Uid
         {
             get
@@ -75,17 +84,6 @@ namespace Bari.Core.Build
                 Contract.Ensures(Contract.Result<string>() != null);
                 return null; // dummy value 
             }
-        }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public void AddToContext(IBuildContext context)
-        {
-            Contract.Requires(context != null);
         }
 
         /// <summary>
@@ -114,5 +112,15 @@ namespace Bari.Core.Build
 				return null; // dummy
 			}
 		}
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            Contract.Requires(target != null);
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            Contract.Requires(target != null);
+        }
     }
 }

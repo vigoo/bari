@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Generic;
 
 namespace Bari.Core.Build
@@ -11,15 +12,22 @@ namespace Bari.Core.Build
     [AggressiveCacheRestore]
     public class MergingBuilder : BuilderBase<MergingBuilder>, IEquatable<MergingBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MergingBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(MergingBuilder));
         private readonly ISet<IBuilder> sourceBuilders;
+        private readonly IMergingBuilderTag tag;
 
         // Debug ID used only in ToString to help debugging
         private static int lastDebugId = 0;
         private readonly int debugId = lastDebugId++;
 
-        public MergingBuilder(IEnumerable<IBuilder> sourceBuilders)
+        public IMergingBuilderTag Tag
         {
+            get { return tag; }
+        }
+
+        public MergingBuilder(IEnumerable<IBuilder> sourceBuilders, IMergingBuilderTag tag)
+        {
+            this.tag = tag;
             this.sourceBuilders = new HashSet<IBuilder>(sourceBuilders);
         }
 
@@ -47,18 +55,33 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            foreach (var builder in sourceBuilders)
-                builder.AddToContext(context);
-
-            context.AddBuilder(this, sourceBuilders);
+            get { return sourceBuilders; }
         }
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (sourceBuilders != null)
+            {
+                sourceBuilders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (sourceBuilders != null)
+            {
+                sourceBuilders.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
 
         /// <summary>
         /// Runs this builder

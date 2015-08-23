@@ -22,6 +22,7 @@ namespace Bari.Core.Build
         private readonly IList<IBuilder> builders = new List<IBuilder>();
         private Reference reference;
         private ReferenceAlias alias;
+        private bool buildersReady;
 
         public AliasReferenceBuilder(Suite suite, Project project, IReferenceBuilderFactory referenceBuilderFactory)
         {
@@ -62,36 +63,50 @@ namespace Bari.Core.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            builders.Clear();
-
-            if (alias != null && !context.Contains(this))
-            {                
-                foreach (var childRef in alias.References)
+            get
+            {
+                if (!buildersReady && alias != null)
                 {
-                    if (childRef.Type == reference.Type)
+                    foreach (var childRef in alias.References)
                     {
-                        var builder = referenceBuilderFactory.CreateReferenceBuilder(childRef, project);
-                        builder.AddToContext(context);
-
-                        builders.Add(builder);
+                        if (childRef.Type == reference.Type)
+                        {
+                            var builder = referenceBuilderFactory.CreateReferenceBuilder(childRef, project);
+                            builders.Add(builder);
+                        }
                     }
+
+                    buildersReady = true;
                 }
 
-                context.AddBuilder(this, builders);
-            }
-            else
-            {
-                foreach (var dep in context.GetDependencies(this))
-                    builders.Add(dep);
+                return builders;
             }
         }
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (buildersReady)
+            {
+                builders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (buildersReady)
+            {
+                builders.Remove(target);
+            }
+
+            base.RemovePrerequisite(target);
+        }
+
 
         /// <summary>
         /// Runs this builder
@@ -119,14 +134,20 @@ namespace Bari.Core.Build
             get { return reference; }
             set
             {
-                reference = value;
-                if (reference != null)
+                if (reference != value)
                 {
-                    if (suite.HasParameters("aliases"))
+                    reference = value;
+                    if (reference != null)
                     {
-                        var aliases = suite.GetParameters<ReferenceAliases>("aliases");
-                        alias = aliases.Get(reference.Uri.Host);
+                        if (suite.HasParameters("aliases"))
+                        {
+                            var aliases = suite.GetParameters<ReferenceAliases>("aliases");
+                            alias = aliases.Get(reference.Uri.Host);
+                        }
                     }
+
+                    builders.Clear();
+                    buildersReady = false;
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Build.Dependencies.Protocol;
@@ -115,6 +116,9 @@ namespace Bari.Core
 
             protocolRegistry.RegisterEnum(i => (ProjectType) i);
 
+            // Builder store
+            kernel.Bind<IBuilderStore>().To<BuilderStore>().InSingletonScope();
+
 			// Builder statistics
 			kernel.Bind<IBuilderStatistics>().To<DefaultBuilderStatistics>();
 			kernel.Bind<IMonitoredBuilderFactory>().ToFactory();
@@ -130,6 +134,7 @@ namespace Bari.Core
             kernel.Bind<IReferenceBuilder>().To<FileReferenceBuilder>().Named("file");
 
             // Builder factories
+            kernel.Bind<ICoreBuilderFactory>().ToFactory();
             kernel.Bind<ICachedBuilderFactory>().ToFactory();
             kernel.Bind<IReferenceBuilderFactory>().ToFactory(() => new ReferenceBuilderInstanceProvider());
 
@@ -152,6 +157,20 @@ namespace Bari.Core
         {
             kernel.Bind<ICommandFactory>().ToFactory(() => new CommandInstanceProvider());
             kernel.Bind<ICommandEnumerator>().ToConstant(new CommandEnumerator(kernel));            
+        }
+
+        public static void InitializeBuilderStore()
+        {
+            var kernel = Root;
+
+            var store = kernel.Get<IBuilderStore>();
+            var referenceBuilderFactory = kernel.Get<IReferenceBuilderFactory>();
+            kernel.Rebind<IReferenceBuilderFactory>()
+                .ToConstant(new StoredReferenceBuilderFactory(referenceBuilderFactory, store));
+
+            var coreBuilderFactory = kernel.Get<ICoreBuilderFactory>();
+            kernel.Rebind<ICoreBuilderFactory>()
+                .ToConstant(new StoredCoreBuilderFactory(coreBuilderFactory, store));
         }
 
         class CommandInstanceProvider : StandardInstanceProvider

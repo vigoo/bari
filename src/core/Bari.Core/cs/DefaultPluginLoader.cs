@@ -59,7 +59,7 @@ namespace Bari.Core
                 referenceBuilderFactory.CreateReferenceBuilder(new Reference(referenceUri, ReferenceType.Build), dummyProject);
 
             var buildContext = buildContextFactory.CreateBuildContext();
-            buildContext.AddBuilder(referenceBuilder, new IBuilder[0]);
+            buildContext.AddBuilder(referenceBuilder);
             var files = buildContext.Run(referenceBuilder);
             var file = files.FirstOrDefault(f => Path.GetExtension(f).ToLowerInvariant() == ".dll");
             var localTargetRoot = (LocalFileSystemDirectory) targetRoot;

@@ -64,6 +64,9 @@ namespace Bari.Console
             foreach (var module in GetOrderedModuleList(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Bari.Plugins.*.dll"))
                 pluginLoader.Load(module);
 
+            // Initializing builder store
+            Kernel.InitializeBuilderStore();
+
             // Initializing the cache cleaner
             root.Bind<ICleanExtension>().ToConstant(new CacheCleaner(cacheDir, root.Get<IBuilderEnumerator>(), () => root.Get<ISoftCleanPredicates>()));
 

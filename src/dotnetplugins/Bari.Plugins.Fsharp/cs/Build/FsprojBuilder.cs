@@ -117,28 +117,20 @@ namespace Bari.Plugins.Fsharp.Build
         }
 
         /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
+        /// Get the builders to be executed before this builder
         /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            if (!context.Contains(this))
+            get
             {
-                referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+                if (referenceBuilders == null)
+                {
+                    referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+                }
 
-                foreach (var refBuilder in referenceBuilders)
-                    refBuilder.AddToContext(context);
-
-                context.AddBuilder(this, referenceBuilders);
-            }
-            else
-            {
-                referenceBuilders = new HashSet<IBuilder>(context.GetDependencies(this));
+                return referenceBuilders;
             }
         }
-
 
         private IBuilder CreateReferenceBuilder(Reference reference)
         {
@@ -149,6 +141,29 @@ namespace Bari.Plugins.Fsharp.Build
             }
             else
                 throw new InvalidReferenceTypeException(reference.Uri.Scheme);
+        }
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (referenceBuilders != null)
+            {
+                referenceBuilders.Add(target);
+            }
+
+            base.AddPrerequisite(target);
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (referenceBuilders != null)
+            {
+                if (referenceBuilders.Contains(target))
+                {
+                    referenceBuilders.Remove(target);
+                }
+            }
+
+            base.RemovePrerequisite(target);
         }
 
         /// <summary>

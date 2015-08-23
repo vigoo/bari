@@ -18,20 +18,17 @@ namespace Bari.Core.Build
         public virtual IDependencies Dependencies { get { return new NoDependencies(); }}
 
         /// <summary>
+        /// Get the builders to be executed before this builder
+        /// </summary>
+        public virtual IEnumerable<IBuilder> Prerequisites
+        {
+            get { return new IBuilder[0]; }
+        }
+
+        /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
         public abstract string Uid { get; }
-
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public virtual void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
 
         /// <summary>
         /// Runs this builder
@@ -54,5 +51,13 @@ namespace Bari.Core.Build
         /// </summary>
         /// <value>The type of the builder.</value>
         public virtual Type BuilderType { get { return typeof (TBuilder); }}
+
+        public virtual void AddPrerequisite(IBuilder target)
+        {
+        }
+
+        public virtual void RemovePrerequisite(IBuilder target)
+        {
+        }
     }
 }

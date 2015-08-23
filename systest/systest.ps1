@@ -228,13 +228,13 @@ SimpleExeBuild "alias-test" "target\HelloWorld\HelloWorld.exe" 9 "Dependency acq
 ContentTest
 SimpleExeBuild "runtime-ref-test" "target\HelloWorld\HelloWorld.exe" 0 ""
 SimpleExeBuild "regfree-com-server" "target\client\comclient.exe" 0 "Hello world"
-SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"
+SimpleExeBuild "script-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello_base!!!`n`nHello_world!!!`n"
 SimpleExeBuild "mixed-cpp-cli" "target\Module1\hello.exe" 11 "Hello world"
 SimpleExeBuild "static-lib-test" "target\test\hello.exe" 10 "Hello world!"
 SimpleExeBuild "cpp-rc-support" "target\Module1\hello.exe" 13 "Test C++ executable running"
 X86X64Test
 SimpleExeBuild "embedded-resources-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello world!`nWPF hello world WPF!"
-ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello world`n!!!`n"
+ExeProductBuild "postprocessor-script-test" "main" "target\main\HelloWorld.exe" 11 "Hello_world`n!!!`n"
 CppReleaseTest
 SimpleExeBuild "cpp-version" "target\Module1\hello.exe" 11 "1.2.3.4`n1.2.3.4"
 SimpleExeBuild "custom-plugin-test" "target\HelloWorld\HelloWorld.exe" 11 "Hello base!!!`n`nHello world!!!`n"

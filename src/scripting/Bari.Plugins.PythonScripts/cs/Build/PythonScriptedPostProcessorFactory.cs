@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Bari.Core.Build;
 using Bari.Core.Model;
-using Bari.Plugins.PythonScripts.Build.PostProcessors;
 using Bari.Plugins.PythonScripts.Model;
-using Bari.Plugins.PythonScripts.Scripting;
 
 namespace Bari.Plugins.PythonScripts.Build
 {
     public class PythonScriptedPostProcessorFactory: IPostProcessorFactory
     {
         private readonly PostProcessorScriptMappings scriptMappings;
-        private readonly IPostProcessorScriptRunner scriptRunner;
+        private readonly IPythonScriptedBuilderFactory builderFactory;
 
-        public PythonScriptedPostProcessorFactory(Suite suite, IPostProcessorScriptRunner scriptRunner)
+        public PythonScriptedPostProcessorFactory(Suite suite, IPythonScriptedBuilderFactory builderFactory)
         {
-            this.scriptRunner = scriptRunner;
+            this.builderFactory = builderFactory;
+
             if (suite.HasParameters("post-processor-scripts"))
                 scriptMappings = suite.GetParameters<PostProcessorScriptMappings>("post-processor-scripts");
             else
@@ -27,7 +25,7 @@ namespace Bari.Plugins.PythonScripts.Build
             if (scriptMappings.HasScriptFor(definition.PostProcessorId))
             {
                 var script = scriptMappings.GetScriptFor(definition.PostProcessorId);
-                var postProcessor = new PythonScriptedPostProcessor(script, holder, definition, dependencies, scriptRunner);
+                var postProcessor = builderFactory.CreatePythonScriptedPostProcessor(script, holder, definition, dependencies);
                 return postProcessor;
             }
             else

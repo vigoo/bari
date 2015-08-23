@@ -3,6 +3,7 @@ suite:      bari systemtest fsrepo-test
 
 fs-repositories:
     - fsrepo\%NAME\%FILENAME.%VERSION.%EXT
+    - fsrepo/%NAME/%FILENAME.%VERSION.%EXT
 
 modules:
     - name: HelloWorld
@@ -11,4 +12,3 @@ modules:
           type: executable
           references:
               - fsrepo://testdep/0.5/dep.dll
-          

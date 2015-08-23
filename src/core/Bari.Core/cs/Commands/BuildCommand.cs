@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
@@ -19,6 +20,7 @@ namespace Bari.Core.Commands
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(BuildCommand));
 
         private readonly IBuildContextFactory buildContextFactory;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private readonly ICommandTargetParser targetParser;
@@ -85,7 +87,10 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         /// <param name="projectBuilders">The set of registered project builder factories</param>
         /// <param name="targetRoot">Build target root directory </param>
         /// <param name="targetParser">Command target parser implementation to be used</param>
-        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser, IUserOutput output, IEnumerable<IPostProcessorFactory> postProcessorFactories)
+        /// <param name="output">Output interface</param>
+        /// <param name="postProcessorFactories">Factory for post processors</param>
+        /// <param name="coreBuilderFactory">Factory for core builders</param>
+        public BuildCommand(IBuildContextFactory buildContextFactory, IEnumerable<IProjectBuilderFactory> projectBuilders, [TargetRoot] IFileSystemDirectory targetRoot, ICommandTargetParser targetParser, IUserOutput output, IEnumerable<IPostProcessorFactory> postProcessorFactories, ICoreBuilderFactory coreBuilderFactory)
         {
             this.buildContextFactory = buildContextFactory;
             this.projectBuilders = projectBuilders;
@@ -93,6 +98,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             this.targetParser = targetParser;
             this.output = output;
             this.postProcessorFactories = postProcessorFactories;
+            this.coreBuilderFactory = coreBuilderFactory;
         }
 
         /// <summary>
@@ -151,11 +157,15 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             var projects = target.Projects.ToList();
 
-            IBuilder rootBuilder = projectBuilders.Select(pb => pb.AddToContext(context, projects))
-                                      .Where(b => b != null).ToArray().Merge();
+            IBuilder rootBuilder = coreBuilderFactory.Merge(
+                projectBuilders
+                    .Select(pb => pb.Create(projects))
+                    .Where(b => b != null).ToArray(),
+                new ProjectBuilderTag(projects));
+
             if (rootBuilder != null)
             {
-                rootBuilder.AddToContext(context);
+                context.AddBuilder(rootBuilder);
 
                 var productTarget = target as ProductTarget;
                 if (productTarget != null)
@@ -165,8 +175,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
                 if (dumpMode)
                 {
-                    using (var builderGraph = targetRoot.CreateBinaryFile("builders.dot"))
-                        context.Dump(builderGraph, rootBuilder);
+                    context.Dump(name => targetRoot.CreateBinaryFile("builders." + name + ".dot"), rootBuilder);
                 }
                 else if (dumpDepsMode)
                 {
@@ -196,8 +205,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
         {
             var productOutput = targetRoot.GetChildDirectory(product.Name, createIfMissing: true);
 
-            var copyResultsStep = new CopyResultBuilder(rootBuilder, targetRoot, productOutput);
-            copyResultsStep.AddToContext(context);
+            var copyResultsStep = coreBuilderFactory.CreateCopyResultBuilder(rootBuilder, productOutput);
+            context.AddBuilder(copyResultsStep);
 
             var resultBuilders = new List<IPostProcessor>();
 
@@ -207,12 +216,11 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
                 foreach (var pp in product.PostProcessors)
                 {
-                    var postProcessor =
-                        factories.Select(f => f.CreatePostProcessorFor(product, pp, new[] { copyResultsStep }))
+                    var postProcessor = factories
+                            .Select(f => f.CreatePostProcessorFor(product, pp, new[] { copyResultsStep }))
                             .FirstOrDefault(p => p != null);
                     if (postProcessor != null)
                     {
-                        postProcessor.AddToContext(context);
                         resultBuilders.Add(postProcessor);
                     }
                 }
@@ -220,8 +228,8 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             if (resultBuilders.Any())
             {
-                var merger = new MergingBuilder(resultBuilders);
-                merger.AddToContext(context);
+                var merger = coreBuilderFactory.CreateMergingBuilder(resultBuilders, new NoTag());
+                context.AddBuilder(merger);
                 return merger;
             }
             else

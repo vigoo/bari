@@ -64,15 +64,21 @@ namespace Bari.Plugins.VsCore.Build
             get { return slnBuilder.Uid; }
         }
 
-        /// <summary>
-        /// Prepares a builder to be ran in a given build context.
-        /// 
-        /// <para>This is the place where a builder can add additional dependencies.</para>
-        /// </summary>
-        /// <param name="context">The current build context</param>
-        public override void AddToContext(IBuildContext context)
+        public override IEnumerable<IBuilder> Prerequisites
         {
-            context.AddBuilder(this, new[] { slnBuilder });
+            get { return new[] {slnBuilder}; }
+        }
+
+        public override void AddPrerequisite(IBuilder target)
+        {
+            if (target != slnBuilder)
+                throw new Exception(String.Format("Unexpected override of msbuild runner's source from {0} to {1}", slnBuilder, target));
+        }
+
+        public override void RemovePrerequisite(IBuilder target)
+        {
+            if (target == slnBuilder)
+                throw new Exception(String.Format("Unexpected removal of msbuild runner's source: {0}", slnBuilder));
         }
 
         /// <summary>

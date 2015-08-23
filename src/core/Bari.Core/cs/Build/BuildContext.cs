@@ -51,16 +51,19 @@ namespace Bari.Core.Build
         /// Adds a new builder to be executed to the context
         /// </summary>
         /// <param name="builder">The builder to be executed</param>
-        /// <param name="prerequisites">Builder's prerequisites. The prerequisites must be added
-        /// separately with the <see cref="IBuildContext.AddBuilder"/> method, listing them here only changes the
-        /// order in which they are executed.</param>
-        public void AddBuilder(IBuilder builder, IEnumerable<IBuilder> prerequisites)
+        public void AddBuilder(IBuilder builder)
         {
-            builders.Add(new EquatableEdge<IBuilder>(builder, builder));
-
-            foreach (var prerequisite in prerequisites)
+            if (!Contains(builder))
             {
-                builders.Add(new EquatableEdge<IBuilder>(prerequisite, builder));
+                var prereqs = builder.Prerequisites.ToList();
+
+                builders.Add(new EquatableEdge<IBuilder>(builder, builder));
+
+                foreach (var prerequisite in prereqs)
+                {
+                    AddBuilder(prerequisite);
+                    builders.Add(new EquatableEdge<IBuilder>(builder, prerequisite));
+                }
             }
         }
 
@@ -98,7 +101,7 @@ namespace Bari.Core.Build
 
                 if (!HasCycles(graph))
                 {
-                    var sortedBuilders = graph.TopologicalSort().ToList();
+                    var sortedBuilders = graph.TopologicalSort().Reverse().ToList();
 
                     log.DebugFormat("Build order:\n {0}\n", String.Join("\n ", sortedBuilders));
 
@@ -179,16 +182,40 @@ namespace Bari.Core.Build
         }
 
         private void RemoveIrrelevantBranches(AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph, IBuilder rootBuilder)
-        {
+        {            
             var bfs = new BreadthFirstSearchAlgorithm<IBuilder, EquatableEdge<IBuilder>>(graph);
+            var toKeep = new HashSet<EquatableEdge<IBuilder>>();
+            var buildersToKeep = new HashSet<IBuilder>();
+            bfs.TreeEdge += e => toKeep.Add(e);
+            bfs.NonTreeEdge += e => toKeep.Add(e);
+            bfs.DiscoverVertex += b => buildersToKeep.Add(b);
             bfs.Compute(rootBuilder);
-            var toKeep = new HashSet<IBuilder>(bfs.VisitedGraph.Vertices);
-            graph.RemoveVertexIf(v => !toKeep.Contains(v));
+            graph.RemoveEdgeIf(edge => !toKeep.Contains(edge));
+            graph.RemoveVertexIf(vertex => !buildersToKeep.Contains(vertex));
         }
 
-        private bool RunTransformations()
+        private bool RunTransformations(Func<string, Stream> builderGraphStreamFactory = null)
         {
-            bool cancel = graphTransformations.Any(graphTransformation => !graphTransformation(builders));
+            bool cancel = false;
+            int i = 0;
+            foreach (Func<ISet<EquatableEdge<IBuilder>>, bool> graphTransformation in graphTransformations)
+            {
+                if (!graphTransformation(builders))
+                {
+                    cancel = true;
+                    break;
+                }
+
+                if (builderGraphStreamFactory != null)
+                {
+                    using (var stepStream = builderGraphStreamFactory("step" + i++))
+                    {
+                        var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+                        graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+                        DumpGraph(stepStream, graph);
+                    }
+                }
+            }
             return cancel;
         }
 
@@ -204,7 +231,7 @@ namespace Bari.Core.Build
             if (partialResults.TryGetValue(builder, out builderResult))
                 return builderResult;
             else
-                throw new InvalidOperationException("Builder has not ran in this context");
+                throw new InvalidOperationException(String.Format("Builder {0} has not ran in this context", builder));
         }
 
         /// <summary>
@@ -215,18 +242,23 @@ namespace Bari.Core.Build
         public IEnumerable<IBuilder> GetDependencies(IBuilder builder)
         {
             return from edge in builders
-                   where Equals(edge.Target, builder) && !Equals(edge.Source, builder)
-                   select edge.Source;
+                            where Equals(edge.Source, builder) && !Equals(edge.Target, builder)
+                            select edge.Target;
         }
 
         /// <summary>
         /// Dumps the build context to dot files
         /// </summary>
-        /// <param name="builderGraphStream">Stream where the builder graph will be dumped</param>
+        /// <param name="builderGraphStreamFactory">Stream factory to open named streams where the builder graphs will be dumped</param>
         /// <param name="rootBuilder">The root builder</param>
-        public void Dump(Stream builderGraphStream, IBuilder rootBuilder)
+        public void Dump(Func<string, Stream> builderGraphStreamFactory, IBuilder rootBuilder)
         {
-            RunTransformations();
+            var originalGraph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
+            originalGraph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
+            using (var originalStream = builderGraphStreamFactory("original"))
+                DumpGraph(originalStream, originalGraph);
+
+            RunTransformations(builderGraphStreamFactory);
 
             var graph = builders.ToAdjacencyGraph<IBuilder, EquatableEdge<IBuilder>>();
             graph.RemoveEdgeIf(edge => edge.IsSelfEdge<IBuilder, EquatableEdge<IBuilder>>());
@@ -234,7 +266,13 @@ namespace Bari.Core.Build
             if (rootBuilder != null)
                 RemoveIrrelevantBranches(graph, rootBuilder);
 
-            using (var writer = new DotWriter(builderGraphStream))
+            using (var finalStream = builderGraphStreamFactory("final"))
+                DumpGraph(finalStream, graph);
+        }
+
+        private static void DumpGraph(Stream finalStream, AdjacencyGraph<IBuilder, EquatableEdge<IBuilder>> graph)
+        {
+            using (var writer = new DotWriter(finalStream))
             {
                 writer.Rankdir = "RL";
                 writer.WriteGraph(graph.Edges);

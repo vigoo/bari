@@ -16,11 +16,13 @@ namespace Bari.Plugins.PythonScripts.Scripting
     public class ProjectBuildScriptRunner : ScriptRunnerBase, IProjectBuildScriptRunner
     {
         private readonly IUserOutput output;
+        private readonly IParameters parameters;
 
-        public ProjectBuildScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory, IUserOutput output)
+        public ProjectBuildScriptRunner([TargetRoot] IFileSystemDirectory targetRoot, IReferenceBuilderFactory referenceBuilderFactory, IBuildContextFactory buildContextFactory, IUserOutput output, IParameters parameters)
             : base(targetRoot, referenceBuilderFactory, buildContextFactory)
         {
             this.output = output;
+            this.parameters = parameters;
         }
 
         /// <summary>
@@ -55,6 +57,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             {
                 var scope = runtime.CreateScope();
 
+                scope.SetVariable("is_mono", parameters.UseMono);
                 scope.SetVariable("project", project);
                 scope.SetVariable("sourceSet",
                                   project.GetSourceSet(buildScript.SourceSetName)

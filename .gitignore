@@ -100,3 +100,4 @@ bari.Plugins.Vcs.Core.csproj
 bari.Plugins.Vcs.Hg.csproj
 bari.Plugins.Vcs.Git.csproj
 bari.Test.csproj
+systests.csproj

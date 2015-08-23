@@ -1,5 +1,4 @@
-﻿using Bari.Core.Build;
-using Bari.Core.Generic;
+﻿using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build;
 using Bari.Plugins.VsCore.Build;

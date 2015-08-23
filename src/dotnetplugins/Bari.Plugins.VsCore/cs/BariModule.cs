@@ -1,20 +1,22 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Model.Discovery;
 using Bari.Core.Model.Loader;
 using Bari.Core.UI;
 using Bari.Plugins.VsCore.Build;
+using Bari.Plugins.VsCore.Build.BuilderStore;
 using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.Model.Discovery;
 using Bari.Plugins.VsCore.Model.Loader;
-using Bari.Plugins.VsCore.Tools;
 using Bari.Plugins.VsCore.Tools.Versions;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
 using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
+using System.Collections.Generic;
 
 namespace Bari.Plugins.VsCore
 {
@@ -37,6 +39,7 @@ namespace Bari.Plugins.VsCore
             Bind<IProjectPathManagement>().To<DefaultProjectPathManagement>().InSingletonScope();
 
             Bind<ISolutionItemProvider>().To<SuiteDefinitionSolutionItemProvider>();
+            Bind<ISlnBuilderFactory>().ToFactory();
 
             Bind<ISuiteExplorer>().To<ProjectPathExplorer>();
 
@@ -49,6 +52,19 @@ namespace Bari.Plugins.VsCore
             Bind<IMSBuildRunnerFactory>().ToFactory();
 
             Bind<IYamlProjectParametersLoader>().To<MSBuildParametersLoader>();
+
+            Bind<IReferenceBuilder>().To<GacReferenceBuilder>().Named("gac");
+            Bind<IInSolutionReferenceBuilderFactory>().ToFactory();
+
+            var buildContextFactory = Kernel.Get<IBuildContextFactory>();
+            Rebind<IBuildContextFactory>().ToConstant(
+                new OptimizingBuildContextFactory(
+                    buildContextFactory, 
+                    Kernel.Get<ICoreBuilderFactory>(),
+                    Kernel.Get<IInSolutionReferenceBuilderFactory>(),
+                    Kernel.GetAll<IProjectBuilderFactory>()
+                )
+            ).InSingletonScope();
 
             // Extending soft-clean behavior
             var predicates = Kernel.Get<ISoftCleanPredicates>();
@@ -63,6 +79,16 @@ namespace Bari.Plugins.VsCore
             protocolRegistry.RegisterEnum(i => (FrameworkVersion)i);
             protocolRegistry.RegisterEnum(i => (WarningLevel)i);
             protocolRegistry.RegisterEnum(i => (MSBuildVersion) i);
+
+            // Stored sln builder
+            var store = Kernel.Get<IBuilderStore>();
+
+            var slnBuilderFactory = Kernel.Get<ISlnBuilderFactory>();
+            Rebind<ISlnBuilderFactory>().ToConstant(
+                new StoredSlnBuilderFactory(slnBuilderFactory, store));
+            var msbuildRunnerFactory = Kernel.Get<IMSBuildRunnerFactory>();
+            Rebind<IMSBuildRunnerFactory>().ToConstant(
+                new StoredMSBuildRunnerFactory(msbuildRunnerFactory, store));
         }
     }
 }

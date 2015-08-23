@@ -11,7 +11,7 @@ namespace Bari.Core.Build
 {
     [FallbackToCache]
     [AggressiveCacheRestore]
-    public class FileReferenceBuilder: ReferenceBuilderBase<FileReferenceBuilder>, IReferenceBuilder
+    public class FileReferenceBuilder: ReferenceBuilderBase<FileReferenceBuilder>
     {
         private readonly IFileSystemDirectory targetRoot;
         private readonly IUserOutput output;
