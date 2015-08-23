@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Generic;
+using Bari.Core.Model.Parameters;
 using Bari.Core.UI;
 
 namespace Bari.Core.Model

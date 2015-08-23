@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 using Bari.Core.UI;
 using System;
 

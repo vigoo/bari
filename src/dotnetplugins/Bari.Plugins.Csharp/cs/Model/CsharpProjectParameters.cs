@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Csharp.Model

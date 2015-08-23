@@ -1,4 +1,4 @@
-﻿namespace Bari.Core.Model
+﻿namespace Bari.Core.Model.Parameters
 {    
     public interface IPackagerParameters: IProjectParameters
     {         

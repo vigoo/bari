@@ -1,5 +1,6 @@
 ﻿using System;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.VCpp.Model
 {

@@ -1,4 +1,5 @@
 ﻿using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.VsCore.Model
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.Model.Parameters;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;
 

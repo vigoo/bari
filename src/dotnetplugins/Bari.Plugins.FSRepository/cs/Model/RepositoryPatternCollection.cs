@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Text;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.FSRepository.Model
 {

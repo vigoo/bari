@@ -1,9 +1,21 @@
-﻿using Bari.Core.Model;
+﻿using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.Csharp.Model
 {
-    public class WPFParameters : IProjectParameters
+    public class WPFParametersDef : ProjectParametersPropertyDefs
     {
-         public string ApplicationDefinition { get; set; }
+        public WPFParametersDef()
+        {
+            Define<string>("ApplicationDefinition");
+        }
+    }
+
+    public class WPFParameters : InheritableProjectParameters<WPFParametersDef>
+    {
+         public string ApplicationDefinition 
+         {
+             get { return Get<string>("ApplicationDefinition"); }
+             set { Set("ApplicationDefinition", value); }
+         }
     }
 }

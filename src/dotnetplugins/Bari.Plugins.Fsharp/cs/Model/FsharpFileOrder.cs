@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.Fsharp.Model
 {
