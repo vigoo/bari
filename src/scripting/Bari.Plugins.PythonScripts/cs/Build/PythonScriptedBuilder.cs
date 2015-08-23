@@ -18,23 +18,15 @@ namespace Bari.Plugins.PythonScripts.Build
     {
         private readonly Project project;
         private readonly IBuildScript buildScript;
-        private readonly ISourceSetFingerprintFactory fingerprintFactory;
         private readonly IProjectBuildScriptRunner scriptRunner;
+        private readonly IDependencies dependencies;
 
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
         public override IDependencies Dependencies
         {
-            get
-            {
-                return MultipleDependenciesHelper.CreateMultipleDependencies(
-                    new HashSet<IDependencies>(new IDependencies[]
-                        {
-                            new SourceSetDependencies(fingerprintFactory, project.GetSourceSet(buildScript.SourceSetName)),
-                            new ScriptDependency(buildScript)
-                        }));
-            }
+            get { return dependencies; }
         }
 
         /// <summary>
@@ -59,8 +51,14 @@ namespace Bari.Plugins.PythonScripts.Build
         {
             this.project = project;
             this.buildScript = buildScript;
-            this.fingerprintFactory = fingerprintFactory;
             this.scriptRunner = scriptRunner;
+
+            dependencies = MultipleDependenciesHelper.CreateMultipleDependencies(
+                new HashSet<IDependencies>(new IDependencies[]
+                {
+                    new SourceSetDependencies(fingerprintFactory, project.GetSourceSet(buildScript.SourceSetName)),
+                    new ScriptDependency(buildScript)
+                }));
         }
 
         public override string ToString()

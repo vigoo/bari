@@ -29,6 +29,8 @@ namespace Bari.Plugins.VCpp.Build
         private readonly IFileSystemDirectory targetDir;
         private readonly VcxprojGenerator generator;
         private ISet<IBuilder> referenceBuilders;
+        private IDependencies dependencies;
+        private IDependencies fullSourceDependencies;
 
         /// <summary>
         /// Gets the project this builder is working on
@@ -63,34 +65,41 @@ namespace Bari.Plugins.VCpp.Build
         /// </summary>
         public override IDependencies Dependencies
         {
-            get
+            get 
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("cpp"))
-                {
-                    var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
-                        project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
-
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(filteredSourceSet,
-                                                                                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
-                                                                                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
-                }
-
-                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
-
-                VCppATLParametersDependencies.Add(project, deps);
-                VCppCLIParametersDependencies.Add(project, deps);
-                VCppCompilerParametersDependencies.Add(project, deps);
-                VCppLinkerParametersDependencies.Add(project, deps);
-                VCppManifestParametersDependencies.Add(project, deps);
-                VCppMIDLParametersDependencies.Add(project, deps);
-
-                if (referenceBuilders != null)
-                    deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));                  
+                if (dependencies == null)
+                    dependencies = CreateDependencies();
+                return dependencies;
             }
+        }
+
+        private IDependencies CreateDependencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("cpp"))
+            {
+                var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
+                    project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
+
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(filteredSourceSet,
+                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
+            }
+
+            deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
+
+            VCppATLParametersDependencies.Add(project, deps);
+            VCppCLIParametersDependencies.Add(project, deps);
+            VCppCompilerParametersDependencies.Add(project, deps);
+            VCppLinkerParametersDependencies.Add(project, deps);
+            VCppManifestParametersDependencies.Add(project, deps);
+            VCppMIDLParametersDependencies.Add(project, deps);
+
+            if (referenceBuilders != null)
+                deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         /// <summary>
@@ -98,22 +107,29 @@ namespace Bari.Plugins.VCpp.Build
         /// </summary>
         public IDependencies FullSourceDependencies
         {
-            get
+            get 
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("cpp"))
-                {
-                    var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
-                        project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
-
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(filteredSourceSet,
-                                                                                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
-                                                                                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
-                }
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+                if (fullSourceDependencies == null)
+                    fullSourceDependencies = CreateFullSourceDependencies();
+                return fullSourceDependencies;
             }
+        }
+
+        private IDependencies CreateFullSourceDependencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("cpp"))
+            {
+                var filteredSourceSet = project.GetSourceSet("cpp").FilterCppSourceSet(
+                    project.RootDirectory.GetChildDirectory("cpp"), suite.SuiteRoot);
+
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(filteredSourceSet,
+                    fn => fn.EndsWith(".vcxproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".vcxproj.user", StringComparison.InvariantCultureIgnoreCase)));
+            }
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder)

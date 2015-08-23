@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Bari.Core.Generic.LocalFileSystem;
 
 namespace Bari.Core.Generic
 {
@@ -12,7 +13,10 @@ namespace Bari.Core.Generic
     /// </summary>
     public class LocalFileSystemDirectory: IFileSystemDirectory, IEquatable<LocalFileSystemDirectory>
     {
+        private static readonly DateTime InvalidDateTime = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         private readonly string path;
+        private readonly Lazy<CachedFileInfos> fileInfos = new Lazy<CachedFileInfos>(() => new CachedFileInfos());
+        private readonly Lazy<CachedChildDirectories> childDirectories = new Lazy<CachedChildDirectories>(() => new CachedChildDirectories());
 
         /// <summary>
         /// Gets the local file system path represented by this directory
@@ -59,9 +63,31 @@ namespace Bari.Core.Generic
         /// <returns>Returns either a directory abstraction or <c>null</c> if it does not exists.</returns>
         public IFileSystemDirectory GetChildDirectory(string name)
         {
+            var parts = name.Split(Path.DirectorySeparatorChar);
+            var directChild = GetDirectChildDirectory(parts[0]);
+
+            if (parts.Length > 1)
+            {
+                if (directChild != null)
+                {
+                    return directChild.GetChildDirectory(Path.Combine(parts.Skip(1).ToArray()));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return directChild;
+            }
+        }
+
+        private IFileSystemDirectory GetDirectChildDirectory(string name)
+        {
             string childPath = Path.Combine(path, name);
             if (Directory.Exists(childPath))
-                return new LocalFileSystemDirectory(childPath);
+                return childDirectories.Value.Get(childPath);
             else
                 return null;
         }
@@ -93,10 +119,26 @@ namespace Bari.Core.Generic
         /// <returns>Returns the directory abstraction of the new (or already existing) directory</returns>
         public IFileSystemDirectory CreateDirectory(string name)
         {
+            var parts = name.Split(Path.DirectorySeparatorChar);
+
+            var directDir = CreateDirectDirectory(parts[0]);
+
+            if (parts.Length > 1)
+            {
+                return directDir.CreateDirectory(Path.Combine(parts.Skip(1).ToArray()));
+            }
+            else
+            {
+                return directDir;
+            }
+        }
+
+        private IFileSystemDirectory CreateDirectDirectory(string name)
+        {
             string childPath = Path.Combine(path, name);
             Directory.CreateDirectory(childPath);
 
-            return new LocalFileSystemDirectory(childPath);
+            return childDirectories.Value.Get(childPath);
         }
 
         /// <summary>
@@ -134,7 +176,8 @@ namespace Bari.Core.Generic
         public Stream ReadBinaryFile(string relativePath)
         {
             string absolutePath = Path.Combine(path, relativePath);
-            if (!File.Exists(absolutePath))
+            var info = fileInfos.Value.Get(absolutePath);
+            if (!info.Exists)
                 throw new ArgumentException("File does not exists" + absolutePath, "relativePath");
 
             return new FileStream(absolutePath, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -149,7 +192,8 @@ namespace Bari.Core.Generic
         public TextReader ReadTextFile(string relativePath)
         {
             string absolutePath = Path.Combine(path, relativePath);
-            if (!File.Exists(absolutePath))
+            var info = fileInfos.Value.Get(absolutePath);
+            if (!info.Exists)
                 throw new ArgumentException("File does not exists: " + absolutePath, "relativePath");
 
             return new StreamReader(absolutePath, Encoding.UTF8);
@@ -164,10 +208,11 @@ namespace Bari.Core.Generic
         public DateTime GetLastModifiedDate(string relativePath)
         {
             string absolutePath = Path.Combine(path, relativePath);
-            if (!File.Exists(absolutePath))
+            var date = fileInfos.Value.Get(absolutePath).LastWriteTimeUtc;
+            if (date == InvalidDateTime)
                 throw new ArgumentException("File does not exists", "relativePath");
 
-            return File.GetLastWriteTimeUtc(absolutePath);
+            return date;
         }
 
         /// <summary>
@@ -179,10 +224,10 @@ namespace Bari.Core.Generic
         public long GetFileSize(string relativePath)
         {
             string absolutePath = Path.Combine(path, relativePath);
-            if (!File.Exists(absolutePath))
+            var info = fileInfos.Value.Get(absolutePath);
+            if (!info.Exists)
                 throw new ArgumentException("File does not exists", "relativePath");
 
-            var info = new FileInfo(absolutePath);
             return info.Length;
         }
 
@@ -224,8 +269,8 @@ namespace Bari.Core.Generic
         private void Delete(Func<string, bool> filter, string prefix)
         {
             foreach (var child in ChildDirectories)
-            {                
-                var wrapper = new LocalFileSystemDirectory(Path.Combine(path, child));
+            {
+                var wrapper = (LocalFileSystemDirectory)GetChildDirectory(child);
                 wrapper.Delete(filter, Path.Combine(prefix, child));
             }
 

@@ -28,6 +28,8 @@ namespace Bari.Plugins.Fsharp.Build
         private readonly IFileSystemDirectory targetDir;
         private readonly FsprojGenerator generator;
         private ISet<IBuilder> referenceBuilders;
+        private IDependencies dependencies;
+        private IDependencies fullSourceDependencies;
 
         /// <summary>
         /// Gets the project this builder is working on
@@ -64,23 +66,30 @@ namespace Bari.Plugins.Fsharp.Build
         {
             get
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("fs"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("fs"),
-                        fn => fn.EndsWith(".fsproj", StringComparison.InvariantCultureIgnoreCase) ||
-                              fn.EndsWith(".fsproj.user", StringComparison.InvariantCultureIgnoreCase)));
-
-                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
-
-                FsharpParametersDependencies.Add(project, deps);
-                FileOrderDependencies.Add(project, deps);
-
-                if (referenceBuilders != null)
-                    deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+                if (dependencies == null)
+                    dependencies = CreateDepenencies();
+                return dependencies;
             }
+        }
+
+        private IDependencies CreateDepenencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("fs"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("fs"),
+                    fn => fn.EndsWith(".fsproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".fsproj.user", StringComparison.InvariantCultureIgnoreCase)));
+
+            deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
+
+            FsharpParametersDependencies.Add(project, deps);
+            FileOrderDependencies.Add(project, deps);
+
+            if (referenceBuilders != null)
+                deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         /// <summary>
@@ -90,15 +99,22 @@ namespace Bari.Plugins.Fsharp.Build
         {
             get
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("fs"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("fs"),
-                        fn => fn.EndsWith(".fsproj", StringComparison.InvariantCultureIgnoreCase) ||
-                              fn.EndsWith(".fsproj.user", StringComparison.InvariantCultureIgnoreCase)));
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+                if (fullSourceDependencies == null)
+                    fullSourceDependencies = CreateFullSourceDependencies();
+                return fullSourceDependencies;
             }
+        }
+
+        private IDependencies CreateFullSourceDependencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("fs"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("fs"),
+                    fn => fn.EndsWith(".fsproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".fsproj.user", StringComparison.InvariantCultureIgnoreCase)));
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder)
@@ -125,7 +141,7 @@ namespace Bari.Plugins.Fsharp.Build
             {
                 if (referenceBuilders == null)
                 {
-                    referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
+                    referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));                 
                 }
 
                 return referenceBuilders;
@@ -148,6 +164,7 @@ namespace Bari.Plugins.Fsharp.Build
             if (referenceBuilders != null)
             {
                 referenceBuilders.Add(target);
+                dependencies = null;
             }
 
             base.AddPrerequisite(target);
@@ -160,6 +177,7 @@ namespace Bari.Plugins.Fsharp.Build
                 if (referenceBuilders.Contains(target))
                 {
                     referenceBuilders.Remove(target);
+                    dependencies = null;
                 }
             }
 

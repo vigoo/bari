@@ -24,6 +24,8 @@ namespace Bari.Plugins.Csharp.Build
 
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
+        private IDependencies dependencies;
+        private IDependencies fullSourceDependencies;
 
         private readonly Project project;
         private readonly Suite suite;
@@ -66,33 +68,40 @@ namespace Bari.Plugins.Csharp.Build
         {
             get
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("cs"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("cs"),
-                        fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
-                              fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
-                if (project.HasNonEmptySourceSet("appconfig"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("appconfig"), null));
-                if (project.HasNonEmptySourceSet("manifest"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("manifest"), null));
-                if (project.HasNonEmptySourceSet("resources"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("resources"), null));
-
-                deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
-
-                WPFParametersDependencies.Add(project, deps);
-                CsharpParametersDependencies.Add(project, deps);
-
-                if (referenceBuilders != null)
-                {
-                    deps.AddRange(
-                        referenceBuilders.Select(
-                            (refBuilder, idx) => CreateReferenceDependency(refBuilder, referenceBuilders[idx])));
-                }
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+                if (dependencies == null)
+                    dependencies = CreateDependencies();
+                return dependencies;
             }
+        }
+
+        private IDependencies CreateDependencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("cs"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("cs"),
+                    fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
+            if (project.HasNonEmptySourceSet("appconfig"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("appconfig"), null));
+            if (project.HasNonEmptySourceSet("manifest"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("manifest"), null));
+            if (project.HasNonEmptySourceSet("resources"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetStructureDependency(project.GetSourceSet("resources"), null));
+
+            deps.Add(new ProjectPropertiesDependencies(project, "Name", "Type", "EffectiveVersion"));
+
+            WPFParametersDependencies.Add(project, deps);
+            CsharpParametersDependencies.Add(project, deps);
+
+            if (referenceBuilders != null)
+            {
+                deps.AddRange(
+                    referenceBuilders.Select(
+                        (refBuilder, idx) => CreateReferenceDependency(refBuilder, referenceBuilders[idx])));
+            }
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         /// <summary>
@@ -102,21 +111,28 @@ namespace Bari.Plugins.Csharp.Build
         {
             get
             {
-                var deps = new List<IDependencies>();
-
-                if (project.HasNonEmptySourceSet("cs"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cs"),
-                        fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
-                              fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
-                if (project.HasNonEmptySourceSet("appconfig"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
-                if (project.HasNonEmptySourceSet("manifest"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
-                if (project.HasNonEmptySourceSet("resources"))
-                    deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("resources"), null));
-
-                return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
+                if (fullSourceDependencies == null)
+                    fullSourceDependencies = CreateFullSourceDependencies();
+                return fullSourceDependencies;
             }
+        }
+
+        private IDependencies CreateFullSourceDependencies()
+        {
+            var deps = new List<IDependencies>();
+
+            if (project.HasNonEmptySourceSet("cs"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("cs"),
+                    fn => fn.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase) ||
+                          fn.EndsWith(".csproj.user", StringComparison.InvariantCultureIgnoreCase)));
+            if (project.HasNonEmptySourceSet("appconfig"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("appconfig"), null));
+            if (project.HasNonEmptySourceSet("manifest"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("manifest"), null));
+            if (project.HasNonEmptySourceSet("resources"))
+                deps.Add(sourceSetDependencyFactory.CreateSourceSetDependencies(project.GetSourceSet("resources"), null));
+
+            return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
         private IDependencies CreateReferenceDependency(IReferenceBuilder refBuilder, IBuilder effectiveRefBuilder)
@@ -210,6 +226,8 @@ namespace Bari.Plugins.Csharp.Build
             if (referenceBuilders != null)
             {
                 referenceBuilders.Add((IReferenceBuilder) target);
+                dependencies = null;
+                fullSourceDependencies = null;
             }
 
             base.AddPrerequisite(target);
@@ -222,6 +240,8 @@ namespace Bari.Plugins.Csharp.Build
                 if (referenceBuilders.Contains(target))
                 {
                     referenceBuilders.Remove((IReferenceBuilder) target);
+                    dependencies = null;
+                    fullSourceDependencies = null;
                 }
             }
 

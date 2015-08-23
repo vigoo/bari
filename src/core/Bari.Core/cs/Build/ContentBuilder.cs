@@ -17,16 +17,16 @@ namespace Bari.Core.Build
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (ContentBuilder));
 
         private readonly Project project;
-        private readonly ISourceSetFingerprintFactory fingerprintFactory;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
+        private readonly SourceSetDependencies dependencies;
 
         public ContentBuilder(Project project, ISourceSetFingerprintFactory fingerprintFactory, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot)
         {
             this.project = project;
-            this.fingerprintFactory = fingerprintFactory;
             this.suiteRoot = suiteRoot;
             this.targetRoot = targetRoot;
+            dependencies = new SourceSetDependencies(fingerprintFactory, project.GetSourceSet("content"));
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Bari.Core.Build
         {
             get
             {
-                return new SourceSetDependencies(fingerprintFactory, project.GetSourceSet("content"));
+                return dependencies;
             }
         }
 
