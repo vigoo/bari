@@ -19,14 +19,14 @@ namespace Bari.Plugins.PythonScripts.Build
         private readonly Project project;
         private readonly IBuildScript buildScript;
         private readonly IProjectBuildScriptRunner scriptRunner;
-        private readonly IDependencies dependencies;
+        private readonly Lazy<IDependencies> dependencies;
 
         /// <summary>
         /// Dependencies required for running this builder
         /// </summary>
         public override IDependencies Dependencies
         {
-            get { return dependencies; }
+            get { return dependencies.Value; }
         }
 
         /// <summary>
@@ -53,12 +53,12 @@ namespace Bari.Plugins.PythonScripts.Build
             this.buildScript = buildScript;
             this.scriptRunner = scriptRunner;
 
-            dependencies = MultipleDependenciesHelper.CreateMultipleDependencies(
+            dependencies = new Lazy<IDependencies>(() => MultipleDependenciesHelper.CreateMultipleDependencies(
                 new HashSet<IDependencies>(new IDependencies[]
                 {
                     new SourceSetDependencies(fingerprintFactory, project.GetSourceSet(buildScript.SourceSetName)),
                     new ScriptDependency(buildScript)
-                }));
+                })));
         }
 
         public override string ToString()

@@ -38,7 +38,7 @@ namespace Bari.Core.Test.Build.Dependencies
             sourceSet.Add(new SuiteRelativePath("file1"));
             sourceSet.Add(new SuiteRelativePath("file2"));
 
-            kernel.Bind<IFileSystemDirectory>().ToConstant(rootDir).WhenTargetHas<SuiteRootAttribute>();
+            RebindRootDir();
 
             var factoryMock = new Mock<ISourceSetFingerprintFactory>();
             factoryMock.Setup(
@@ -47,6 +47,12 @@ namespace Bari.Core.Test.Build.Dependencies
                        .Returns<IEnumerable<SuiteRelativePath>, Func<string, bool>, bool>(
                             (files, exclusions, fullDependency) => new SourceSetFingerprint(rootDir, files, exclusions, fullDependency));
             fingerprintFactory = factoryMock.Object;
+        }
+
+        private void RebindRootDir()
+        {
+            rootDir = new LocalFileSystemDirectory(tmp);
+            kernel.Rebind<IFileSystemDirectory>().ToConstant(rootDir).WhenTargetHas<SuiteRootAttribute>();
         }
 
         [TearDown]
@@ -111,6 +117,8 @@ namespace Bari.Core.Test.Build.Dependencies
                 writer.Flush();
             }
 
+            RebindRootDir();
+
             var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp2 = dep2.Fingerprint;
 
@@ -148,6 +156,8 @@ namespace Bari.Core.Test.Build.Dependencies
 
             using (var writer = rootDir.GetChildDirectory("subdir").CreateTextFile("file3"))
                 writer.WriteLine("Modified contents of file 3");
+
+            RebindRootDir();
 
             var dep2 = new SourceSetDependencies(fingerprintFactory, sourceSet);
             var fp2 = dep2.Fingerprint;
