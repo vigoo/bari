@@ -37,9 +37,8 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
-            FsharpProjectParameters parameters = project.HasParameters("fsharp")
-                                         ? project.GetParameters<FsharpProjectParameters>("fsharp")
-                                         : new FsharpProjectParameters(Suite);
+            FsharpProjectParameters parameters =
+                project.GetInheritableParameters<FsharpProjectParameters, FsharpProjectParametersDef>("fsharp");
 
             parameters.FillProjectSpecificMissingInfo(project);
             parameters.ToFsprojProperties(writer);   
