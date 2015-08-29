@@ -1,10 +1,11 @@
 ---
 suite:      bari systemtest single-cs-exe
 
+csharp:
+	target-framework: v4.5-client
+
 modules:
     - name: HelloWorld
       projects:
         - name: HelloWorld
           type: executable
-          csharp:
-            target-framework: v4.5-client
