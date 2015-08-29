@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Bari.Core.Model.Parameters;
@@ -142,6 +141,23 @@ namespace Bari.Core.Model
             return (TParams)parameters[paramsName];
         }
 
+        public TParams GetInheritableParameters<TParams, TParamsDef>(string paramsName) 
+            where TParams : InheritableProjectParameters<TParams, TParamsDef> 
+            where TParamsDef : ProjectParametersPropertyDefs<TParams>, new()
+        {
+            return (TParams) GetInheritableParameters(paramsName, new TParamsDef());
+        }
+
+        public IInheritableProjectParameters GetInheritableParameters(string paramsName, IInheritableProjectParametersDef defs)
+        {
+            if (parameters.ContainsKey(paramsName))
+                return (IInheritableProjectParameters)parameters[paramsName];
+            else
+            {
+                return defs.CreateDefault(modules.First().Suite, modules.First().Suite.GetInheritableParameters(paramsName, defs));
+            }
+        }
+
         /// <summary>
         /// Adds a new parameter block to this model item
         /// </summary>
@@ -149,7 +165,11 @@ namespace Bari.Core.Model
         /// <param name="projectParameters">The parameter block to be added</param>
         public void AddParameters(string paramsName, IProjectParameters projectParameters)
         {
-            parameters.Add(paramsName, projectParameters);
+            var inheritableProjectParameters = projectParameters as IInheritableProjectParameters;
+            if (inheritableProjectParameters != null)
+                parameters.Add(paramsName, inheritableProjectParameters.WithParent(modules.First().Suite, modules.First().Suite.GetInheritableParameters(paramsName, inheritableProjectParameters.Definition)));
+            else
+                parameters.Add(paramsName, projectParameters);
         }
 
         public override string ToString()

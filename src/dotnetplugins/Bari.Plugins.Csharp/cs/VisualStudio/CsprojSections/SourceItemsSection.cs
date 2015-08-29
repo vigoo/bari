@@ -92,7 +92,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
             if (project.HasParameters("wpf"))
             {
-                var wpfParameters = project.GetParameters<WPFParameters>("wpf");
+                var wpfParameters = project.GetInheritableParameters<WPFParameters, WPFParametersDef>("wpf");
                 return relativePath.Equals(wpfParameters.ApplicationDefinition, StringComparison.InvariantCultureIgnoreCase);
             }
 

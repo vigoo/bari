@@ -5,24 +5,25 @@ using Bari.Core.UI;
 
 namespace Bari.Core.Build.Dependencies
 {
-    public class InheritableProjectParametersDependencies<TDef>: DependenciesBase 
-        where TDef : ProjectParametersPropertyDefs, new()
+    public class InheritableProjectParametersDependencies<TParams, TDef>: DependenciesBase 
+        where TDef : ProjectParametersPropertyDefs<TParams>, new() 
+        where TParams : InheritableProjectParameters<TParams, TDef>
     {
         private readonly Project project;
         private readonly string blockName;
-        private readonly InheritableProjectParameters<TDef> parameters;
+        private readonly InheritableProjectParameters<TParams, TDef> parameters;
 
         protected InheritableProjectParametersDependencies(Project project, string name)
         {
             this.project = project;
             blockName = name;
-            parameters = project.GetParameters<InheritableProjectParameters<TDef>>(name);
+            parameters = project.GetParameters<InheritableProjectParameters<TParams, TDef>>(name);
         }
 
 
         protected override IDependencyFingerprint CreateFingerprint()
         {
-            return new InheritablePropertiesFingerprint<TDef>(parameters);
+            return new InheritablePropertiesFingerprint<TParams, TDef>(parameters);
         }
 
         public override void Dump(IUserOutput output)

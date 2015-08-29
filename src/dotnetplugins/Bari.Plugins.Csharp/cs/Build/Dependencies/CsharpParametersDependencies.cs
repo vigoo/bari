@@ -6,7 +6,7 @@ using Bari.Plugins.Csharp.Model;
 
 namespace Bari.Plugins.Csharp.Build.Dependencies
 {
-    public class CsharpParametersDependencies : InheritableProjectParametersDependencies<CsharpProjectParametersDef>
+    public class CsharpParametersDependencies : InheritableProjectParametersDependencies<CsharpProjectParameters, CsharpProjectParametersDef>
     {
         CsharpParametersDependencies(Project project) : base(project, "csharp")
         {            

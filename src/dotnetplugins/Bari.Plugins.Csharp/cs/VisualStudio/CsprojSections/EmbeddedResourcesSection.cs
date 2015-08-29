@@ -69,9 +69,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
         private string PrefixWithRootNamespace(Project project, string path)
         {
-            CsharpProjectParameters parameters = project.HasParameters("csharp")
-                                                     ? project.GetParameters<CsharpProjectParameters>("csharp")
-                                                     : new CsharpProjectParameters(Suite);
+            CsharpProjectParameters parameters = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
             parameters.FillProjectSpecificMissingInfo(project);
 
             return parameters.RootNamespace + "." + path;

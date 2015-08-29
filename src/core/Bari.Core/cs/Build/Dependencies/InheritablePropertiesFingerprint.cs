@@ -10,8 +10,9 @@ using Bari.Core.Model.Parameters;
 
 namespace Bari.Core.Build.Dependencies
 {
-    public class InheritablePropertiesFingerprint<TDef>: IDependencyFingerprint, IEquatable<InheritablePropertiesFingerprint<TDef>>
-                where TDef : ProjectParametersPropertyDefs, new()
+    public class InheritablePropertiesFingerprint<TParams, TDef>: IDependencyFingerprint, IEquatable<InheritablePropertiesFingerprint<TParams, TDef>>
+                where TDef : ProjectParametersPropertyDefs<TParams>, new() 
+                where TParams : InheritableProjectParameters<TParams, TDef>
     {
         private readonly IDictionary<string, Tuple<object, Type>> values;
 
@@ -20,7 +21,7 @@ namespace Bari.Core.Build.Dependencies
         /// and storing them in a dictionary
         /// </summary>
         /// <param name="obj">The object to make fingerprint of</param>
-        public InheritablePropertiesFingerprint(InheritableProjectParameters<TDef> obj)
+        public InheritablePropertiesFingerprint(InheritableProjectParameters<TParams, TDef> obj)
         {
             Contract.Requires(obj != null);
 
@@ -44,7 +45,7 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="serializer">The serialization implementation to be used</param>
         /// <param name="sourceStream">Deserialization stream</param>
         public InheritablePropertiesFingerprint(IProtocolSerializer serializer, Stream sourceStream)
-            : this(serializer.Deserialize<InheritablePropertiesProtocol<TDef>>(sourceStream))
+            : this(serializer.Deserialize<InheritablePropertiesProtocol<TParams, TDef>>(sourceStream))
         {
             Contract.Requires(serializer != null);
             Contract.Requires(sourceStream != null);
@@ -54,7 +55,7 @@ namespace Bari.Core.Build.Dependencies
         /// Constructs the fingerprint based on the deserialized protocol data
         /// </summary>
         /// <param name="proto">The protocol data which was deserialized from a stream</param>
-        public InheritablePropertiesFingerprint(InheritablePropertiesProtocol<TDef> proto)
+        public InheritablePropertiesFingerprint(InheritablePropertiesProtocol<TParams, TDef> proto)
         {
             values = proto.Values;
         }
@@ -90,7 +91,7 @@ namespace Bari.Core.Build.Dependencies
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(InheritablePropertiesFingerprint<TDef> other)
+        public bool Equals(InheritablePropertiesFingerprint<TParams, TDef> other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -152,7 +153,7 @@ namespace Bari.Core.Build.Dependencies
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(IDependencyFingerprint other)
         {
-            var opf = other as InheritablePropertiesFingerprint<TDef>;
+            var opf = other as InheritablePropertiesFingerprint<TParams, TDef>;
             return opf != null && Equals(opf);
         }
 
@@ -168,7 +169,7 @@ namespace Bari.Core.Build.Dependencies
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((InheritablePropertiesFingerprint<TDef>)obj);
+            return Equals((InheritablePropertiesFingerprint<TParams, TDef>)obj);
         }
 
         /// <summary>
@@ -209,7 +210,7 @@ namespace Bari.Core.Build.Dependencies
         /// <summary>
         /// Equality test
         /// </summary>
-        public static bool operator ==(InheritablePropertiesFingerprint<TDef> left, InheritablePropertiesFingerprint<TDef> right)
+        public static bool operator ==(InheritablePropertiesFingerprint<TParams, TDef> left, InheritablePropertiesFingerprint<TParams, TDef> right)
         {
             return Equals(left, right);
         }
@@ -217,7 +218,7 @@ namespace Bari.Core.Build.Dependencies
         /// <summary>
         /// Inequality test
         /// </summary>
-        public static bool operator !=(InheritablePropertiesFingerprint<TDef> left, InheritablePropertiesFingerprint<TDef> right)
+        public static bool operator !=(InheritablePropertiesFingerprint<TParams, TDef> left, InheritablePropertiesFingerprint<TParams, TDef> right)
         {
             return !Equals(left, right);
         }

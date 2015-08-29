@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace Bari.Core.Model.Parameters
 {
-    public class InheritableProjectParameters<TPropertyDefs>: IProjectParameters
-        where TPropertyDefs: ProjectParametersPropertyDefs, new()
+    public class InheritableProjectParameters<TSelf, TPropertyDefs>: IInheritableProjectParameters
+        where TPropertyDefs: ProjectParametersPropertyDefs<TSelf>, new() 
+        where TSelf : InheritableProjectParameters<TSelf, TPropertyDefs>
     {
         private readonly IDictionary<string, IPropertyValue> propertyValues = new Dictionary<string, IPropertyValue>();
-        private readonly InheritableProjectParameters<TPropertyDefs> parent;
+        private readonly TSelf parent;
         private readonly TPropertyDefs defs = new TPropertyDefs();
 
-        public InheritableProjectParameters(InheritableProjectParameters<TPropertyDefs> parent = null)
+        public InheritableProjectParameters(TSelf parent = default(TSelf))
         {
             this.parent = parent;
 
@@ -74,6 +75,25 @@ namespace Bari.Core.Model.Parameters
             return value.Value;
         }
 
+        public TSelf WithParent(Suite suite, TSelf newParent)
+        {
+            var copy = defs.CreateDefault(suite, newParent);
+            foreach (var pair in propertyValues)
+                copy.propertyValues.Add(pair);
+
+            return copy;
+        }
+
+        IInheritableProjectParametersDef IInheritableProjectParameters.Definition
+        {
+            get { return defs; }
+        }
+
+        public IInheritableProjectParameters WithParent(Suite suite, IInheritableProjectParameters newParent)
+        {
+            return WithParent(suite, (TSelf) newParent);
+        }
+
         protected void Set<T>(string name, T value)
         {
             defs.TypeCheck(name, typeof(T));
@@ -91,6 +111,6 @@ namespace Bari.Core.Model.Parameters
                 throw new ArgumentOutOfRangeException("name", "Property is not defined");
 
             return propertyValues[name];            
-        }
+        }        
     }
 }

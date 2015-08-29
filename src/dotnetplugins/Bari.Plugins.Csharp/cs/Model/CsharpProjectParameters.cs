@@ -10,7 +10,7 @@ using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Csharp.Model
 {
-    public class CsharpProjectParametersDef : ProjectParametersPropertyDefs
+    public class CsharpProjectParametersDef : ProjectParametersPropertyDefs<CsharpProjectParameters>
     {
         public CsharpProjectParametersDef()
         {
@@ -43,9 +43,14 @@ namespace Bari.Plugins.Csharp.Model
             Define<FrameworkVersion>("TargetFrameworkVersion");
             Define<FrameworkProfile>("TargetFrameworkProfile");
         }
+
+        public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
+        {
+            return new CsharpProjectParameters(suite, parent);
+        }
     }
 
-    public class CsharpProjectParameters: InheritableProjectParameters<CsharpProjectParametersDef>
+    public class CsharpProjectParameters: InheritableProjectParameters<CsharpProjectParameters, CsharpProjectParametersDef>
     {
         private readonly Suite suite;
 
@@ -285,7 +290,7 @@ namespace Bari.Plugins.Csharp.Model
                 var resources = project.GetSourceSet("resources");
                 var icons = resources.Files.Where(p => Path.GetExtension(p) == ".ico").ToList();
 
-                if (icons.Count == 1 && ApplicationIcon == null)
+                if (icons.Count == 1 && !IsApplicationIconSpecified)
                 {
                     ApplicationIcon = project.Module.Suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory("resources"), icons[0]);
                 }

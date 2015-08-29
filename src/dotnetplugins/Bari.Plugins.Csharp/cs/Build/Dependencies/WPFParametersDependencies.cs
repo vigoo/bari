@@ -6,7 +6,7 @@ using Bari.Plugins.Csharp.Model;
 
 namespace Bari.Plugins.Csharp.Build.Dependencies
 {
-    public class WPFParametersDependencies : InheritableProjectParametersDependencies<WPFParametersDef>
+    public class WPFParametersDependencies : InheritableProjectParametersDependencies<WPFParameters, WPFParametersDef>
     {
         WPFParametersDependencies(Project project) : base(project, "wpf")
         {

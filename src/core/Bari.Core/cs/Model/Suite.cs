@@ -229,6 +229,31 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets a possibly inherited parameter block by its name. If the block does not exists, a default
+        /// block is returned.
+        /// </summary>
+        /// <typeparam name="TParams">Parameter block type</typeparam>
+        /// <typeparam name="TParamsDef">Inheritable parameter block definition ype</typeparam>
+        /// <param name="paramsName">Name of the parameter block</param>
+        /// <returns>Returns the composed parameter block</returns>
+        public TParams GetInheritableParameters<TParams, TParamsDef>(string paramsName) 
+            where TParamsDef : ProjectParametersPropertyDefs<TParams>, new()
+            where TParams : InheritableProjectParameters<TParams, TParamsDef>
+        {
+            return (TParams) GetInheritableParameters(paramsName, new TParamsDef());
+        }
+
+        public IInheritableProjectParameters GetInheritableParameters(string paramsName, IInheritableProjectParametersDef defs)
+        {
+            if (parameters.ContainsKey(paramsName))
+                return (IInheritableProjectParameters) parameters[paramsName];
+            else
+            {
+                return defs.CreateDefault(this, null);
+            }
+        }
+
+        /// <summary>
         /// Adds a new parameter block to this model item
         /// </summary>
         /// <param name="paramsName">Name of the parameter block</param>

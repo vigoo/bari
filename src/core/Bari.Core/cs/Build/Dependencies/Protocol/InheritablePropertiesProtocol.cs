@@ -4,8 +4,9 @@ using Bari.Core.Model.Parameters;
 
 namespace Bari.Core.Build.Dependencies.Protocol
 {
-    public class InheritablePropertiesProtocol<TDef> : IDependencyFingerprintProtocol
-        where TDef : ProjectParametersPropertyDefs, new()
+    public class InheritablePropertiesProtocol<TParams, TDef> : IDependencyFingerprintProtocol
+        where TDef : ProjectParametersPropertyDefs<TParams>, new() 
+        where TParams : InheritableProjectParameters<TParams, TDef>
     {
         /// <summary>
         /// Gets or sets the stored property values
@@ -18,7 +19,7 @@ namespace Bari.Core.Build.Dependencies.Protocol
         /// <returns>Returns a fingerprint object which would save the same protocol as this one.</returns>
         public IDependencyFingerprint CreateFingerprint()
         {
-            return new InheritablePropertiesFingerprint<TDef>(this);
+            return new InheritablePropertiesFingerprint<TParams, TDef>(this);
         }
 
         public void Load(IProtocolDeserializerContext context)

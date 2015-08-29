@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Bari.Core.Model.Parameters
 {
-    public abstract class ProjectParametersPropertyDefs
+    public abstract class ProjectParametersPropertyDefs<TParams> : IInheritableProjectParametersDef
+        where TParams: IInheritableProjectParameters
     {
         public struct PropertyDef
         {
@@ -54,6 +55,13 @@ namespace Bari.Core.Model.Parameters
         public Type TypeOf(string name)
         {
             return propertyDefinitions[name].Type;
+        }
+
+        public abstract TParams CreateDefault(Suite suite, TParams parent);
+        
+        IInheritableProjectParameters IInheritableProjectParametersDef.CreateDefault(Suite suite, IInheritableProjectParameters parent)
+        {
+            return CreateDefault(suite, (TParams) parent);
         }
     }
 }

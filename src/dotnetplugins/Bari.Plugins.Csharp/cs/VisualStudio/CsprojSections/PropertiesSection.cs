@@ -54,9 +54,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
-            CsharpProjectParameters parameters = project.HasParameters("csharp")
-                                                     ? project.GetParameters<CsharpProjectParameters>("csharp")
-                                                     : new CsharpProjectParameters(Suite);
+            CsharpProjectParameters parameters = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
 
             parameters.FillProjectSpecificMissingInfo(project);
             parameters.ToCsprojProperties(writer);       
