@@ -31,7 +31,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
         /// <returns>Returns the new instance to be filled with loaded data</returns>
         protected override VCppProjectManifestParameters CreateNewParameters(Suite suite)
         {
-            return new VCppProjectManifestParameters(suite);
+            return new VCppProjectManifestParameters();
         }
 
         protected override Dictionary<string, Action> GetActions(VCppProjectManifestParameters target, YamlNode value, YamlParser parser)

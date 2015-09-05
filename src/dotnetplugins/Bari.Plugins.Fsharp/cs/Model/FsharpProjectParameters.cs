@@ -24,7 +24,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<bool>("Optimize");
             Define<CLRPlatform>("Platform");
             Define<string>("OtherFlags");
-            Define<bool>("TailCllas");
+            Define<bool>("Tailcalls");
             Define<WarningLevel>("WarningLevel");
             Define<bool>("AllWarningsAsError");
             Define<int[]>("SpecificWarningsAsError");

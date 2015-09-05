@@ -79,7 +79,7 @@ namespace Bari.Core.Model.Parameters
         {
             var copy = defs.CreateDefault(suite, newParent);
             foreach (var pair in propertyValues)
-                copy.propertyValues.Add(pair);
+                copy.propertyValues[pair.Key] = pair.Value;
 
             return copy;
         }
@@ -108,7 +108,7 @@ namespace Bari.Core.Model.Parameters
         private IPropertyValue GetPropertyValue(string name)
         {
             if (!defs.IsDefined(name))
-                throw new ArgumentOutOfRangeException("name", "Property is not defined");
+                throw new ArgumentOutOfRangeException("name", "Property is not defined: " + name);
 
             return propertyValues[name];            
         }        
