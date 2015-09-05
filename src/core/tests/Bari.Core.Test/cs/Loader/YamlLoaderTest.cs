@@ -4,6 +4,7 @@ using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
+using Bari.Core.Model.Parameters;
 using Bari.Core.Test.Helper;
 using Bari.Core.UI;
 using FluentAssertions;

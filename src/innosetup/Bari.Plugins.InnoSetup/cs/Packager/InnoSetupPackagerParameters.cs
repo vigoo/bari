@@ -1,5 +1,6 @@
 ﻿using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Plugins.InnoSetup.Packager
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bari.Core.Model.Parameters;
 
 namespace Bari.Core.Model
 {

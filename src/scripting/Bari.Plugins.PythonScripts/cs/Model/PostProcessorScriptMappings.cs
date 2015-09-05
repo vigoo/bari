@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Bari.Core.Model;
+using Bari.Core.Model.Parameters;
 using Bari.Plugins.PythonScripts.Scripting;
 
 namespace Bari.Plugins.PythonScripts.Model

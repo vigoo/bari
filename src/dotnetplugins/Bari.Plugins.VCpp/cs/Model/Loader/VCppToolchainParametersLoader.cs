@@ -1,5 +1,6 @@
 ﻿using System;
 using Bari.Core.Model.Loader;
+using Bari.Core.Model.Parameters;
 using Bari.Core.UI;
 using Bari.Core.Model;
 using YamlDotNet.RepresentationModel;

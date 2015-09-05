@@ -1,4 +1,6 @@
-﻿namespace Bari.Core.Model
+﻿using Bari.Core.Model.Parameters;
+
+namespace Bari.Core.Model
 {
     public class PostProcessDefinition
     {

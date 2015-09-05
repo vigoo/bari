@@ -47,28 +47,34 @@ namespace Bari.Plugins.VsCore.Build
             {
                 foreach (var slnBuilder in slnBuilders)
                 {
-                    var projectSet = new HashSet<Project>(slnBuilder.Projects);
-                    var childProjectBuilders = new HashSet<ISlnProjectBuilder>(slnBuilder
-                        .Prerequisites
-                        .OfType<ISlnProjectBuilder>());
-
-                    foreach (var projectBuilder in childProjectBuilders)
+                    if (rootBuilderMap.ContainsKey(slnBuilder))
                     {
-                        foreach (var dep in projectBuilder.Prerequisites.OfType<SuiteReferenceBuilder>().ToList())
+                        var projectSet = new HashSet<Project>(slnBuilder.Projects);
+                        var childProjectBuilders = new HashSet<ISlnProjectBuilder>(slnBuilder
+                            .Prerequisites
+                            .OfType<ISlnProjectBuilder>());
+
+                        foreach (var projectBuilder in childProjectBuilders)
                         {
-                            if (dep.Reference.Type == ReferenceType.Build && projectSet.Contains(dep.ReferencedProject))
+                            foreach (var dep in projectBuilder.Prerequisites.OfType<SuiteReferenceBuilder>().ToList())
                             {
-                                log.DebugFormat("Project {0}'s reference {1} can be replaced to in-solution-reference in {2}", projectBuilder.Project, dep, slnBuilder);
+                                if (dep.Reference.Type == ReferenceType.Build &&
+                                    projectSet.Contains(dep.ReferencedProject))
+                                {
+                                    log.DebugFormat(
+                                        "Project {0}'s reference {1} can be replaced to in-solution-reference in {2}",
+                                        projectBuilder.Project, dep, slnBuilder);
 
-                                // All sln project builders belonging to `slnBuilder` must replace their reference to dep to a 
-                                // new in solution reference builder (both in the builder and in the graph)
-                                ReplaceWithInSolutionReference(graph, childProjectBuilders, dep);
+                                    // All sln project builders belonging to `slnBuilder` must replace their reference to dep to a 
+                                    // new in solution reference builder (both in the builder and in the graph)
+                                    ReplaceWithInSolutionReference(graph, childProjectBuilders, dep);
 
-                                // All edges from dep must be removed and a single new edge to the MSBuild runner belonging to this `slnBuilder` added
-                                RemoveEdgesWhereSourceIs(graph, dep);
+                                    // All edges from dep must be removed and a single new edge to the MSBuild runner belonging to this `slnBuilder` added
+                                    RemoveEdgesWhereSourceIs(graph, dep);
 
-                                var newEdge = new EquatableEdge<IBuilder>(dep, rootBuilderMap[slnBuilder]);
-                                AddEdge(graph, newEdge);
+                                    var newEdge = new EquatableEdge<IBuilder>(dep, rootBuilderMap[slnBuilder]);
+                                    AddEdge(graph, newEdge);
+                                }
                             }
                         }
                     }

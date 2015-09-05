@@ -1,4 +1,5 @@
-﻿using YamlDotNet.RepresentationModel;
+﻿using Bari.Core.Model.Parameters;
+using YamlDotNet.RepresentationModel;
 
 namespace Bari.Core.Model.Loader
 {

@@ -2,10 +2,11 @@
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Model;
 
 namespace Bari.Plugins.VCpp.Build.Dependencies
 {
-    public class VCppCompilerParametersDependencies: ProjectParametersDependencies
+    public class VCppCompilerParametersDependencies : InheritableProjectParametersDependencies<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>
     {
         VCppCompilerParametersDependencies(Project project)
             : base(project, "cpp-compiler")

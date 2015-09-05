@@ -97,7 +97,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
                 {
                     var nums = parts.Select(int.Parse).ToArray();
                     items.Add(String.Format("BARI_PROJECT_VERSION_VI={0},{1},{2},{3}", nums[0], nums[1], nums[2], nums[3]));
-                }                
+                }
             }
 
             if (project.EffectiveCopyright != null)
@@ -117,7 +117,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         {
             var manifestParameters = GetManifestParameters(project);
 
-            if (manifestParameters.GenerateManifest)
+            if (manifestParameters.IsGenerateManifestSpecified && manifestParameters.GenerateManifest)
             {
                 writer.WriteStartElement("Manifest");
                 manifestParameters.ToVcxprojProperties(writer);
@@ -127,9 +127,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private VCppProjectManifestParameters GetManifestParameters(Project project)
         {
-            VCppProjectManifestParameters manifestParameters = project.HasParameters("manifest")
-                ? project.GetParameters<VCppProjectManifestParameters>("manifest")
-                : new VCppProjectManifestParameters(Suite);
+            VCppProjectManifestParameters manifestParameters = project.GetInheritableParameters<VCppProjectManifestParameters, VCppProjectManifestParametersDef>("manifest");
 
             manifestParameters.FillProjectSpecificMissingInfo(project);
             return manifestParameters;
@@ -141,7 +139,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             writer.WriteElementString("UseDebugLibraries", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.DebugGoal.Name)));
 
             var toolChain = GetToolchain(project);
-            writer.WriteElementString("PlatformToolset", toolChain.PlatformToolSetAsString);
+            writer.WriteElementString("PlatformToolset", toolChain.IsPlatformToolSetSpecified ? toolChain.PlatformToolSetAsString : "v110");
 
             var cliMode = GetCLIMode(project);
             if (cliMode != CppCliMode.Disabled)
@@ -159,37 +157,41 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private string GetUseOfAtl(Project project)
         {
-            VCppProjectATLParameters atlParameters = project.HasParameters("atl")
-                ? project.GetParameters<VCppProjectATLParameters>("atl")
-                : new VCppProjectATLParameters();
+            VCppProjectATLParameters atlParameters =
+                project.GetInheritableParameters<VCppProjectATLParameters, VCppProjectATLParametersDef>("atl");
 
-            switch (atlParameters.UseOfATL)
+            if (atlParameters.IsUseOfATLSpecified)
             {
-                case UseOfATL.None:
-                    return String.Empty;
-                case UseOfATL.Static:
-                    return "Static";
-                case UseOfATL.Dynamic:
-                    return "Dynamic";
-                default:
-                    throw new ArgumentOutOfRangeException();
+                switch (atlParameters.UseOfATL)
+                {
+                    case UseOfATL.None:
+                        return String.Empty;
+                    case UseOfATL.Static:
+                        return "Static";
+                    case UseOfATL.Dynamic:
+                        return "Dynamic";
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                return String.Empty;
             }
         }
 
         private CppCliMode GetCLIMode(Project project)
         {
-            VCppProjectCLIParameters cliParameters = project.HasParameters("cli")
-                ? project.GetParameters<VCppProjectCLIParameters>("cli")
-                : new VCppProjectCLIParameters();
+            VCppProjectCLIParameters cliParameters =
+                project.GetInheritableParameters<VCppProjectCLIParameters, VCppProjectCLIParametersDef>("cli");
 
-            return cliParameters.Mode;
+            return cliParameters.IsModeSpecified ? cliParameters.Mode : CppCliMode.Disabled;
         }
 
         private VCppProjectToolchainParameters GetToolchain(Project project)
         {
-            VCppProjectToolchainParameters toolChainParams = project.HasParameters("toolchain") 
-                ? project.GetParameters<VCppProjectToolchainParameters>("toolchain")
-                : new VCppProjectToolchainParameters();
+            VCppProjectToolchainParameters toolChainParams =
+                project.GetInheritableParameters<VCppProjectToolchainParameters, VCppProjectToolchainParametersDef>("toolchain");
 
             return toolChainParams;
         }
@@ -224,9 +226,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private void WriteCompilerParameters(XmlWriter writer, Project project)
         {
-            VCppProjectCompilerParameters compilerParameters = project.HasParameters("cpp-compiler")
-                                                                   ? project.GetParameters<VCppProjectCompilerParameters>("cpp-compiler")
-                                                                   : new VCppProjectCompilerParameters(Suite);
+            VCppProjectCompilerParameters compilerParameters = project.GetInheritableParameters<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>("cpp-compiler");
 
             compilerParameters.FillProjectSpecificMissingInfo(project, GetCLIMode(project), targetDir as LocalFileSystemDirectory);
 
@@ -241,21 +241,18 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
         private void WriteLinkerParameters(XmlWriter writer, Project project)
         {
-            var compilerParameters = GetLinkerParameters(project);
+            var linkerParameters = GetLinkerParameters(project);
 
-            compilerParameters.FillProjectSpecificMissingInfo(project);
+            linkerParameters.FillProjectSpecificMissingInfo(project);
 
             writer.WriteStartElement("Link");
-            compilerParameters.ToVcxprojProperties(writer);
+            linkerParameters.ToVcxprojProperties(writer);
             writer.WriteEndElement();
         }
 
         private VCppProjectLinkerParameters GetLinkerParameters(Project project)
         {
-            VCppProjectLinkerParameters compilerParameters = project.HasParameters("cpp-linker")
-                ? project.GetParameters<VCppProjectLinkerParameters>("cpp-linker")
-                : new VCppProjectLinkerParameters(Suite);
-            return compilerParameters;
+            return project.GetInheritableParameters<VCppProjectLinkerParameters, VCppProjectLinkerParametersDef>("cpp-linker");
         }
 
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
@@ -267,9 +264,9 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
             var manifestParameters = GetManifestParameters(project);
             var linkerParameters = GetLinkerParameters(project);
-            writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.EmbedManifest));
-            writer.WriteElementString("GenerateManifest", XmlConvert.ToString(manifestParameters.GenerateManifest));
-            writer.WriteElementString("LinkIncremental", XmlConvert.ToString(linkerParameters.LinkIncremental));
+            writer.WriteElementString("EmbedManifest", XmlConvert.ToString(manifestParameters.IsEmbedManifestSpecified && manifestParameters.EmbedManifest));
+            writer.WriteElementString("GenerateManifest", XmlConvert.ToString(manifestParameters.IsGenerateManifestSpecified && manifestParameters.GenerateManifest));
+            writer.WriteElementString("LinkIncremental", XmlConvert.ToString(!linkerParameters.IsLinkIncrementalSpecified || linkerParameters.LinkIncremental));
         }
     }
 }

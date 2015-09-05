@@ -2,10 +2,11 @@
 using Bari.Core.Build;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Model;
+using Bari.Plugins.Fsharp.Model;
 
 namespace Bari.Plugins.Fsharp.Build.Dependencies
 {
-    public class FsharpParametersDependencies : ProjectParametersDependencies
+    public class FsharpParametersDependencies : InheritableProjectParametersDependencies<FsharpProjectParameters, FsharpProjectParametersDef>
     {
         FsharpParametersDependencies(Project project)
             : base(project, "fsharp")

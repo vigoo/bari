@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
+using Bari.Core.Model.Parameters;
 using Bari.Core.Model.Validator;
 using Bari.Core.UI;
 using YamlDotNet.RepresentationModel;

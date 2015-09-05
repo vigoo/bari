@@ -54,9 +54,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
-            CsharpProjectParameters parameters = project.HasParameters("csharp")
-                                                     ? project.GetParameters<CsharpProjectParameters>("csharp")
-                                                     : new CsharpProjectParameters(Suite);
+            CsharpProjectParameters parameters = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
 
             parameters.FillProjectSpecificMissingInfo(project);
             parameters.ToCsprojProperties(writer);       
@@ -142,7 +140,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             if (project.Type == ProjectType.Executable ||
                 project.Type == ProjectType.WindowsExecutable)
             {
-                if (!String.IsNullOrWhiteSpace(parameters.ApplicationIcon))
+                if (parameters.IsApplicationIconSpecified && !String.IsNullOrWhiteSpace(parameters.ApplicationIcon))
                 {
                     string iconPath = Path.Combine(project.RelativeRootDirectory, "resources", parameters.ApplicationIcon);
                     writer.WriteElementString("ApplicationIcon", ToProjectRelativePath(project, iconPath, "cs"));
