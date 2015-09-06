@@ -254,7 +254,7 @@ namespace Bari.Plugins.VsCore.Build
                     if (existingPattern == null)
                     {
                         // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                        mergedRoot = CreateMergedBuild(graph, module.Projects);
+                        mergedRoot = CreateMergedBuild(graph, module.Projects, String.Format("Merged builders of module {0}", module.Name));
                     }
                     else
                     {
@@ -280,7 +280,7 @@ namespace Bari.Plugins.VsCore.Build
                     if (existingPattern == null)
                     {
                         // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                        mergedRoot = CreateMergedBuild(graph, module.TestProjects);
+                        mergedRoot = CreateMergedBuild(graph, module.TestProjects, String.Format("Merged test builders of module {0}", module.Name));
                     }
                     else
                     {
@@ -302,7 +302,7 @@ namespace Bari.Plugins.VsCore.Build
             return true;
         }
 
-        private IBuilder CreateMergedBuild(ISet<EquatableEdge<IBuilder>> graph, IEnumerable<Project> projects)
+        private IBuilder CreateMergedBuild(ISet<EquatableEdge<IBuilder>> graph, IEnumerable<Project> projects, string description)
         {
             var prjs = projects.ToList();
 
@@ -310,7 +310,7 @@ namespace Bari.Plugins.VsCore.Build
                 projectBuilders
                     .Select(pb => pb.Create(prjs))
                     .Where(b => b != null).ToArray(),
-                new ProjectBuilderTag(prjs));
+                new ProjectBuilderTag(description, prjs));
 
             AddNewBranch(graph, rootBuilder);
 

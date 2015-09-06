@@ -65,9 +65,10 @@ namespace Bari.Plugins.VsCore.Build
 
         private IBuilder MergeSteps(IList<IBuilder> additionalSteps, MSBuildRunner msbuild, IEnumerable<Project> projects)
         {
+            var prjs = projects.ToArray();
             if (additionalSteps.Count > 0)
             {
-                return coreBuilderFactory.CreateMergingBuilder(additionalSteps.Concat(new[] {msbuild}), new ProjectBuilderTag(projects));
+                return coreBuilderFactory.CreateMergingBuilder(additionalSteps.Concat(new[] { msbuild }), new ProjectBuilderTag(String.Format("Runtime deps with project builders for {0}", String.Join(", ", prjs.Select(p => p.Name))), prjs));
             }
             else
             {
@@ -102,7 +103,7 @@ namespace Bari.Plugins.VsCore.Build
             }
             else
             {
-                return coreBuilderFactory.CreateMergingBuilder(resultBuilders.Concat(new[] {input}), new ProjectBuilderTag(projects));
+                return coreBuilderFactory.CreateMergingBuilder(resultBuilders.Concat(new[] {input}), new ProjectBuilderTag(String.Format("Post processors of {0}", String.Join(", ", prjs.Select(p => p.Name))), projects));
             }
         }
 

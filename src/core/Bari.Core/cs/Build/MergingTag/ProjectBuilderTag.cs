@@ -6,11 +6,12 @@ using Bari.Core.Model;
 
 namespace Bari.Core.Build.MergingTag
 {
-    public class ProjectBuilderTag: IMergingBuilderTag, IEquatable<ProjectBuilderTag>
+    public class ProjectBuilderTag: DescriptionTag, IEquatable<ProjectBuilderTag>
     {
         private readonly ISet<Project> projects;
 
-        public ProjectBuilderTag(IEnumerable<Project> projects)
+        public ProjectBuilderTag(string description, IEnumerable<Project> projects)
+            : base(description)
         {
             Contract.Requires(projects != null);
 
@@ -21,7 +22,7 @@ namespace Bari.Core.Build.MergingTag
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return projects.SetEquals(other.projects);
+            return projects.SetEquals(other.projects) && base.Equals(other);
         }
 
         public override bool Equals(object obj)
@@ -34,7 +35,7 @@ namespace Bari.Core.Build.MergingTag
 
         public override int GetHashCode()
         {
-            return projects.Aggregate(11, (n, prj) => n ^= prj.GetHashCode());
+            return projects.Aggregate(11, (n, prj) => n ^= prj.GetHashCode()) ^ base.GetHashCode();
         }
 
         public static bool operator ==(ProjectBuilderTag left, ProjectBuilderTag right)

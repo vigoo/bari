@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.MergingTag;
@@ -46,7 +47,7 @@ namespace Bari.Plugins.PythonScripts.Build
                 }
             }
 
-            return coreBuilderFactory.Merge(builders.ToArray(), new ProjectBuilderTag(prjs));
+            return coreBuilderFactory.Merge(builders.ToArray(), new ProjectBuilderTag(String.Join("Python scripted builders of {0}", prjs.Select(p => p.Name)), prjs));
         }
     }
 }

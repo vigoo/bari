@@ -184,7 +184,7 @@ Example: `bari test --dump`
                 projectBuilders
                     .Select(pb => pb.Create(prjs))
                     .Where(b => b != null).ToArray(),
-                new ProjectBuilderTag(prjs));
+                new ProjectBuilderTag("Top level test project builders", prjs));
             context.AddBuilder(rootBuilder);
 
             if (dumpMode)

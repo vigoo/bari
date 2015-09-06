@@ -161,7 +161,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 projectBuilders
                     .Select(pb => pb.Create(projects))
                     .Where(b => b != null).ToArray(),
-                new ProjectBuilderTag(projects));
+                new ProjectBuilderTag("Top level project builders", projects));
 
             if (rootBuilder != null)
             {
@@ -228,7 +228,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
 
             if (resultBuilders.Any())
             {
-                var merger = coreBuilderFactory.CreateMergingBuilder(resultBuilders, new NoTag());
+                var merger = coreBuilderFactory.CreateMergingBuilder(resultBuilders, new DescriptionTag(String.Format("Product {0}'s result builders", product.Name)));
                 context.AddBuilder(merger);
                 return merger;
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bari.Core.Build.MergingTag;
 using Bari.Core.Model;
@@ -30,7 +31,11 @@ namespace Bari.Core.Build
                 .Where(prj => prj.HasNonEmptySourceSet("content"))
                 .Select(prj => (IBuilder) coreBuilderFactory.CreateContentBuilder(prj)).ToArray();
 
-            return coreBuilderFactory.Merge(builders, new ProjectBuilderTag(prjs));
+            return coreBuilderFactory.Merge(
+                builders,
+                new ProjectBuilderTag(
+                    String.Format("Content builders of {0}", String.Join(", ", prjs.Select(p => p.Name))),
+                    prjs));
         }
     }
 }

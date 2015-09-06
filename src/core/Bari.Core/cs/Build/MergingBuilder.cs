@@ -103,7 +103,7 @@ namespace Bari.Core.Build
 
         public override string ToString()
         {
-            return String.Format("[Merge #{0}]", debugId);
+            return String.Format("[Merge #{0}: {1}]", debugId, tag);
         }
 
         public bool Equals(MergingBuilder other)
