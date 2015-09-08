@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Bari.Core.Build;
+using Bari.Core.Build.MergingTag;
 using Bari.Core.Commands;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.Build;
-using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.VsCore.Commands
 {
@@ -24,9 +24,10 @@ namespace Bari.Plugins.VsCore.Commands
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(VisualStudioCommand));
 
         private readonly IBuildContextFactory buildContextFactory;
-        private readonly ISlnBuilderFactory slnBuilderFactory;
+        private readonly ICoreBuilderFactory coreBuilderFactory;
         private readonly IFileSystemDirectory targetDir;
         private readonly ICommandTargetParser targetParser;
+        private readonly IEnumerable<IProjectBuilderFactory> projectBuilders;
         private string lastTargetStr;
 
         /// <summary>
@@ -83,15 +84,15 @@ If called without any module or product name, it adds *every module* to the gene
         /// Initializes the command
         /// </summary>
         /// <param name="buildContextFactory">Interface to create new build contexts</param>
-        /// <param name="slnBuilderFactory">Interface to create new SLN builders</param>
         /// <param name="targetDir">Target root directory</param>
         /// <param name="targetParser">Parser used for parsing the target parameter</param>
-        public VisualStudioCommand(IBuildContextFactory buildContextFactory, ISlnBuilderFactory slnBuilderFactory, [TargetRoot] IFileSystemDirectory targetDir, ICommandTargetParser targetParser)
+        public VisualStudioCommand(IBuildContextFactory buildContextFactory, [TargetRoot] IFileSystemDirectory targetDir, ICommandTargetParser targetParser, ICoreBuilderFactory coreBuilderFactory, IEnumerable<IProjectBuilderFactory> projectBuilders)
         {
             this.buildContextFactory = buildContextFactory;
-            this.slnBuilderFactory = slnBuilderFactory;
             this.targetDir = targetDir;
             this.targetParser = targetParser;
+            this.coreBuilderFactory = coreBuilderFactory;
+            this.projectBuilders = projectBuilders;
         }
 
         /// <summary>
@@ -123,14 +124,7 @@ If called without any module or product name, it adds *every module* to the gene
                 lastTargetStr = targetStr;
                 var target = targetParser.ParseTarget(targetStr);
 
-                MSBuildParameters msbuildParams;
-                if (suite.HasParameters("msbuild"))
-                    msbuildParams = suite.GetParameters<MSBuildParameters>("msbuild");
-                else
-                    msbuildParams = new MSBuildParameters();
-
-
-                Run(target, msbuildParams.Version, openSolution);
+                Run(target, openSolution);
 
                 return true;
             }
@@ -140,36 +134,84 @@ If called without any module or product name, it adds *every module* to the gene
             }
         }
 
-        private void Run(CommandTarget target, MSBuildVersion msBuildVersion, bool openSolution)
+        private void Run(CommandTarget target, bool openSolution)
         {
-            Run(target.Projects.Concat(target.TestProjects), msBuildVersion, openSolution);
+            Run(target.Projects.Concat(target.TestProjects), openSolution);
         }
 
-        private void Run(IEnumerable<Project> projects, MSBuildVersion msBuildVersion, bool openSolution)
+        private void Run(IEnumerable<Project> projects, bool openSolution)
         {
-            var buildContext = buildContextFactory.CreateBuildContext();
-            var slnBuilder = slnBuilderFactory.CreateSlnBuilder(projects, msBuildVersion);
+            var prjs = projects.ToArray();
+            var context = buildContextFactory.CreateBuildContext();
 
-            buildContext.AddBuilder(slnBuilder);
-            buildContext.Run(slnBuilder);
+            // We have to emulate a real build at this point to make sure all the 
+            // graph transformations are executed correctly. 
+            // Then from the transformed graph we find the first sln builder and 
+            // run it.
 
-            if (openSolution)
+            IBuilder rootBuilder = coreBuilderFactory.Merge(
+                projectBuilders
+                    .Select(pb => pb.Create(prjs))
+                    .Where(b => b != null).ToArray(),
+                new ProjectBuilderTag("Top level project builders", prjs));
+
+            if (rootBuilder != null)
             {
-                var slnRelativePath = buildContext.GetResults(slnBuilder).FirstOrDefault();
-                if (slnRelativePath != null)
-                {
-                    log.InfoFormat("Opening {0} with Visual Studio...", slnRelativePath);
+                context.AddBuilder(rootBuilder);
+                var slnBuilder = context.Builders.OfType<SlnBuilder>().FirstOrDefault(
+                    builder => new HashSet<Project>(builder.Projects).IsSubsetOf(prjs));
+                
+                if (slnBuilder == null)
+                    throw new InvalidOperationException("Could not find a suitable SLN builder");
 
-                    var localTargetDir = targetDir as LocalFileSystemDirectory;
-                    if (localTargetDir != null)
+                var untilSlnBuilder = new MinimalBuilderFilter(slnBuilder);
+                context.Run(rootBuilder, untilSlnBuilder.Filter);
+
+                if (openSolution)
+                {
+                    var slnRelativePath = context.GetResults(slnBuilder).FirstOrDefault();
+                    if (slnRelativePath != null)
                     {
-                        Process.Start(Path.Combine(localTargetDir.AbsolutePath, slnRelativePath));
-                    }
-                    else
-                    {
-                        log.Warn("The --open command only works with local target directory!");
+                        log.InfoFormat("Opening {0} with Visual Studio...", slnRelativePath);
+
+                        var localTargetDir = targetDir as LocalFileSystemDirectory;
+                        if (localTargetDir != null)
+                        {
+                            Process.Start(Path.Combine(localTargetDir.AbsolutePath, slnRelativePath));
+                        }
+                        else
+                        {
+                            log.Warn("The --open command only works with local target directory!");
+                        }
                     }
                 }
+            }
+        }
+
+        private class MinimalBuilderFilter
+        {
+            private readonly IBuilder target;
+            private bool ran;
+
+            public MinimalBuilderFilter(IBuilder target)
+            {
+                this.target = target;
+            }
+
+            public bool Filter(IBuilder builder)
+            {
+                if (ran)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (builder == target)
+                        ran = true;
+
+                    return true;
+                }
+
             }
         }
 

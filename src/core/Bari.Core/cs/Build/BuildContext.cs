@@ -82,8 +82,9 @@ namespace Bari.Core.Build
         /// <param name="rootBuilder">The root builder which represents the final goal of the build process.
         /// If specified, every branch which is not accessible from the root builder will be removed
         /// from the build graph before executing it.</param>
+        /// <param name="filter">Filter function, can be used to skip specific builders</param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        public ISet<TargetRelativePath> Run(IBuilder rootBuilder = null)
+        public ISet<TargetRelativePath> Run(IBuilder rootBuilder = null, Func<IBuilder, bool> filter = null)
         {
             var result = new HashSet<TargetRelativePath>();
 
@@ -109,14 +110,17 @@ namespace Bari.Core.Build
 
                     foreach (var builder in sortedBuilders)
                     {
-                        log.DebugFormat("===> {0}", builder);
+                        if (filter == null || filter(builder))
+                        {
+                            log.DebugFormat("===> {0}", builder);
 
-						var wrappedBuilder = WrapBuilder(builder, statistics);
+                            var wrappedBuilder = WrapBuilder(builder, statistics);
 
-						var builderResult = wrappedBuilder.Run(this);
+                            var builderResult = wrappedBuilder.Run(this);
 
-                        partialResults.Add(builder, builderResult);
-                        result.UnionWith(builderResult);
+                            partialResults.Add(builder, builderResult);
+                            result.UnionWith(builderResult);
+                        }
                     }
 
 					statistics.Dump();
@@ -334,6 +338,14 @@ namespace Bari.Core.Build
         public IBuildContext RootContext
         {
             get { return this; }
+        }
+
+        /// <summary>
+        /// Enumerates all the added builders
+        /// </summary>
+        public IEnumerable<IBuilder> Builders
+        {
+            get { return builders.SelectMany(edge => new[] {edge.Source, edge.Target}).Distinct(); }
         }
     }
 }

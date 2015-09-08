@@ -32,8 +32,9 @@ namespace Bari.Core.Build
         /// <param name="rootBuilder">The root builder which represents the final goal of the build process.
         /// If specified, every branch which is not accessible from the root builder will be removed
         /// from the build graph before executing it.</param>
+        /// <param name="filter">Filter function, can be used to skip specific builders</param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        ISet<TargetRelativePath> Run(IBuilder rootBuilder = null);
+        ISet<TargetRelativePath> Run(IBuilder rootBuilder = null, Func<IBuilder, bool> filter = null);
 
         /// <summary>
         /// Gets the result paths returned by the given builder if it has already ran. Otherwise it throws an
@@ -91,6 +92,11 @@ namespace Bari.Core.Build
         /// Gets the root context instance
         /// </summary>
         IBuildContext RootContext { get; }
+
+        /// <summary>
+        /// Enumerates all the added builders
+        /// </summary>
+        IEnumerable<IBuilder> Builders { get; }
     }
 
     /// <summary>
@@ -121,8 +127,9 @@ namespace Bari.Core.Build
         /// Runs all the added builders
         /// </summary>
         /// <param name="rootBuilder"> </param>
+        /// <param name="filter">Filter function, can be used to skip specific builders</param>
         /// <returns>Returns the union of result paths given by all the builders added to the context</returns>
-        public ISet<TargetRelativePath> Run(IBuilder rootBuilder)
+        public ISet<TargetRelativePath> Run(IBuilder rootBuilder, Func<IBuilder, bool> filter = null)
         {
             Contract.Ensures(Contract.Result<ISet<TargetRelativePath>>() != null);
 
@@ -212,6 +219,15 @@ namespace Bari.Core.Build
             get 
             { 
                 Contract.Ensures(Contract.Result<IBuildContext>() != null);
+                return null; // dummy
+            }
+        }
+
+        public IEnumerable<IBuilder> Builders
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<IEnumerable<IBuilder>>() != null);
                 return null; // dummy
             }
         }

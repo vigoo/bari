@@ -47,7 +47,7 @@ namespace Bari.Plugins.PythonScripts.Build
                 }
             }
 
-            return coreBuilderFactory.Merge(builders.ToArray(), new ProjectBuilderTag(String.Join("Python scripted builders of {0}", prjs.Select(p => p.Name)), prjs));
+            return coreBuilderFactory.Merge(builders.ToArray(), new ProjectBuilderTag(String.Format("Python scripted builders of {0}", String.Join(", ", prjs.Select(p => p.Name))), prjs));
         }
     }
 }
