@@ -151,6 +151,7 @@ If called without any module or product name, it adds *every module* to the gene
 
             IBuilder rootBuilder = coreBuilderFactory.Merge(
                 projectBuilders
+                    .OfType<VsProjectBuilderFactory>()
                     .Select(pb => pb.Create(prjs))
                     .Where(b => b != null).ToArray(),
                 new ProjectBuilderTag("Top level project builders", prjs));
