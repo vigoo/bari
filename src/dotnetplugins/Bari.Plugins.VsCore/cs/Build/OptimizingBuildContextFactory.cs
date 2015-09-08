@@ -244,17 +244,25 @@ namespace Bari.Plugins.VsCore.Build
                 bool testsCovered = module.TestProjects.Any() && module.TestProjects.All(projects.Contains);
                 bool covered = module.Projects.Any() && module.Projects.All(projects.Contains);
 
-                if (covered)
+                if (covered || testsCovered)
                 {
+                    Project[] coveredProjects;
+                    if (covered && !testsCovered)
+                        coveredProjects = module.Projects.ToArray();
+                    else if (!covered)
+                        coveredProjects = module.TestProjects.Cast<Project>().ToArray();
+                    else
+                        coveredProjects = module.Projects.Concat(module.TestProjects).ToArray();
+
                     log.DebugFormat("Merging project builders of module {0} into a single solution", module.Name);
 
                     var existingPattern = patterns.Values.FirstOrDefault(
-                        p => module.Projects.All(p.Projects.Contains));
+                        p => coveredProjects.All(p.Projects.Contains));
                     IBuilder mergedRoot;
                     if (existingPattern == null)
                     {
                         // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                        mergedRoot = CreateMergedBuild(graph, module.Projects, String.Format("Merged builders of module {0}", module.Name));
+                        mergedRoot = CreateMergedBuild(graph, coveredProjects, String.Format("Merged builders of module {0}", module.Name));
                     }
                     else
                     {
@@ -266,33 +274,7 @@ namespace Bari.Plugins.VsCore.Build
                         graph,
                         new HashSet<IBuilder>(patterns.Values
                             .Where(p => p.Root != mergedRoot)
-                            .Where(p => p.ProjectBuilders.All(pb => pb.Project.Module == module))
-                            .Select(p => p.Root)),
-                        mergedRoot);
-
-                }
-                if (testsCovered)
-                {
-                    log.DebugFormat("Merging test project builders of module {0} into a single solution", module.Name);
-
-                    var existingPattern = patterns.Values.FirstOrDefault(p => module.Projects.All(p.Projects.Contains));
-                    IBuilder mergedRoot;
-                    if (existingPattern == null)
-                    {
-                        // Creating the new [MSBuildRunner] -> [SlnBuilder] -> ... branches
-                        mergedRoot = CreateMergedBuild(graph, module.TestProjects, String.Format("Merged test builders of module {0}", module.Name));
-                    }
-                    else
-                    {
-                        mergedRoot = existingPattern.Root;
-                    }
-
-                    // Redirecting all * -> [MSBuildRunner] edges to the merged [MSBuildRunner]
-                    RerouteEdgesTargeting(
-                        graph,
-                        new HashSet<IBuilder>(patterns.Values
-                            .Where(p => p.Root != mergedRoot)
-                            .Where(p => p.ProjectBuilders.Any(pb => pb.Project.Module == module))
+                            .Where(p => p.Projects.IsSubsetOf(coveredProjects))
                             .Select(p => p.Root)),
                         mergedRoot);
 
