@@ -136,6 +136,11 @@ namespace Bari.Core.Generic
         /// <param name="target">Target file system directory</param>
         /// <param name="targetName">Name (relative path) in the target directory</param>
         void CopyFile(string name, IFileSystemDirectory target, string targetName);
+
+        /// <summary>
+        /// Ensures that all requested file information will be up to date
+        /// </summary>
+        void InvalidateCacheFileData();
     }
 
     /// <summary>
@@ -355,5 +360,7 @@ namespace Bari.Core.Generic
             Contract.Requires(!String.IsNullOrWhiteSpace(targetName));
             Contract.Requires(target != null);
         }
+
+        public abstract void InvalidateCacheFileData();
     }
 }

@@ -88,17 +88,53 @@ namespace Bari.Plugins.VsCore.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
+            // Collecting all the files already existing in 'targetdir/modulename' directories
+            var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
+            var existingFiles = new Dictionary<TargetRelativePath, DateTime>();
+            foreach (var targetDir in targetDirs)
+            {
+                var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
+                if (moduleTargetDir != null)
+                {
+                    foreach (var fileName in moduleTargetDir.Files)
+                    {
+                        existingFiles.Add(new TargetRelativePath(targetDir, fileName), moduleTargetDir.GetLastModifiedDate(fileName));
+                    }
+                }
+            }
+
             msbuild.Run(targetRoot, slnPath);
 
-            // Collecting all the files in 'targetdir/modulename' directories as results
-            var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
+            // Collecting all the files in 'targetdir/modulename' directories as results            
             var outputs = new HashSet<TargetRelativePath>();
             foreach (var targetDir in targetDirs)
             {
                 var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
                 if (moduleTargetDir != null)
+                {
+                    moduleTargetDir.InvalidateCacheFileData();
+
                     foreach (var fileName in moduleTargetDir.Files)
-                        outputs.Add(new TargetRelativePath(targetDir, fileName));
+                    {
+                        var relativePath = new TargetRelativePath(targetDir, fileName);
+                        var lastModified = moduleTargetDir.GetLastModifiedDate(fileName);
+
+                        bool isNew = false;
+                        DateTime previousLastModified;
+                        if (existingFiles.TryGetValue(relativePath, out previousLastModified))
+                        {
+                            if (lastModified != previousLastModified)
+                                isNew = true;
+                        }
+                        else
+                        {
+                            isNew = true;
+                        }
+
+                        if (isNew)
+                            outputs.Add(relativePath);
+                    }
+                }
             }
 
             foreach (var targetDir in targetDirs)            

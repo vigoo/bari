@@ -338,6 +338,12 @@ namespace Bari.Core.Generic
             }
         }
 
+        public void InvalidateCacheFileData()
+        {
+            if (fileInfos.IsValueCreated)
+                fileInfos.Value.Invalidate();
+        }
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>

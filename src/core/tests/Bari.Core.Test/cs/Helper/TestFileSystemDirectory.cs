@@ -246,6 +246,10 @@ namespace Bari.Core.Test.Helper
             throw new NotImplementedException();
         }
 
+        public void InvalidateCacheFileData()
+        {
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;

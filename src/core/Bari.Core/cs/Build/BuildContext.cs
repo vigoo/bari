@@ -118,6 +118,7 @@ namespace Bari.Core.Build
 
                             var builderResult = wrappedBuilder.Run(this);
 
+                            log.DebugFormat("Storing results of {0}: {1}", builder, String.Join(", ", builderResult));
                             partialResults.Add(builder, builderResult);
                             result.UnionWith(builderResult);
                         }

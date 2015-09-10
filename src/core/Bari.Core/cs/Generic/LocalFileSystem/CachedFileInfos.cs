@@ -18,5 +18,10 @@ namespace Bari.Core.Generic.LocalFileSystem
 
             return result;
         }
+
+        public void Invalidate()
+        {
+            fileInfos.Clear();
+        }
     }
 }
