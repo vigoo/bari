@@ -18,6 +18,8 @@ namespace Bari.Plugins.VsCore.Build
     [AggressiveCacheRestore(Exceptions = new [] { @".+\.vshost\.exe$" })]
     public class MSBuildRunner: BuilderBase<MSBuildRunner>, IEquatable<MSBuildRunner>
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MSBuildRunner));
+
         private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
         private readonly IFileSystemDirectory targetRoot;
@@ -91,6 +93,8 @@ namespace Bari.Plugins.VsCore.Build
             // Collecting all the files already existing in 'targetdir/modulename' directories
             var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
             var existingFiles = new Dictionary<TargetRelativePath, DateTime>();
+            var expectedOutputs = new HashSet<TargetRelativePath>(slnBuilder.Projects.SelectMany(GetExpectedProjectOutputs));
+
             foreach (var targetDir in targetDirs)
             {
                 var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
@@ -107,6 +111,7 @@ namespace Bari.Plugins.VsCore.Build
 
             // Collecting all the files in 'targetdir/modulename' directories as results            
             var outputs = new HashSet<TargetRelativePath>();
+
             foreach (var targetDir in targetDirs)
             {
                 var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
@@ -120,15 +125,23 @@ namespace Bari.Plugins.VsCore.Build
                         var lastModified = moduleTargetDir.GetLastModifiedDate(fileName);
 
                         bool isNew = false;
-                        DateTime previousLastModified;
-                        if (existingFiles.TryGetValue(relativePath, out previousLastModified))
+                        if (expectedOutputs.Contains(relativePath))
                         {
-                            if (lastModified != previousLastModified)
-                                isNew = true;
+                            log.DebugFormat("{1}: Expected output found: {0}", relativePath, ToString());
+                            isNew = true;                            
                         }
                         else
                         {
-                            isNew = true;
+                            DateTime previousLastModified;
+                            if (existingFiles.TryGetValue(relativePath, out previousLastModified))
+                            {
+                                if (lastModified != previousLastModified)
+                                    isNew = true;
+                            }
+                            else
+                            {
+                                isNew = true;
+                            }
                         }
 
                         if (isNew)
@@ -141,6 +154,30 @@ namespace Bari.Plugins.VsCore.Build
                 outputs.ExceptWith(context.GetAllResultsIn(new TargetRelativePath(targetDir, String.Empty)));
 
             return outputs;
+        }
+
+        private IEnumerable<TargetRelativePath> GetExpectedProjectOutputs(Project project)
+        {
+            string ext;
+            switch (project.Type)
+            {
+                case ProjectType.WindowsExecutable:
+                    ext = ".exe";
+                    break;
+                case ProjectType.Executable:
+                    ext = ".exe";
+                    break;
+                case ProjectType.Library:
+                    ext = ".dll";
+                    break;
+                case ProjectType.StaticLibrary:
+                    ext = ".lib";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ext);
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".pdb");
         }
 
         private string GetTargetDir(Project project)
