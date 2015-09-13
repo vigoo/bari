@@ -91,17 +91,23 @@ namespace Bari.Plugins.Nuget.Build
             if (project != null)
             {
                 var csharpParams = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
+                var frameworkVersion = csharpParams.IsTargetFrameworkVersionSpecified
+                    ? csharpParams.TargetFrameworkVersion
+                    : FrameworkVersion.v4;
+                var frameworkProfile = csharpParams.IsTargetFrameworkProfileSpecified
+                    ? csharpParams.TargetFrameworkProfile
+                    : FrameworkProfile.Default;
 
-                switch (csharpParams.TargetFrameworkVersion)
+                switch (frameworkVersion)
                 {
                     case FrameworkVersion.v20: return NugetLibraryProfile.Net2;
                     case FrameworkVersion.v30: return NugetLibraryProfile.Net3;
                     case FrameworkVersion.v35:
-                        return csharpParams.TargetFrameworkProfile == FrameworkProfile.Default
+                        return frameworkProfile == FrameworkProfile.Default
                             ? NugetLibraryProfile.Net35
                             : NugetLibraryProfile.Net35Client;
                     case FrameworkVersion.v4:
-                        return csharpParams.TargetFrameworkProfile == FrameworkProfile.Default
+                        return frameworkProfile == FrameworkProfile.Default
                             ? NugetLibraryProfile.Net4
                             : NugetLibraryProfile.Net4Client;
                     case FrameworkVersion.v45:
