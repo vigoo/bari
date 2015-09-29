@@ -49,7 +49,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             }
             else
             {
-                writer.WriteElementString("TargetFrameworkVersion", "v4.0");
+                writer.WriteElementString("TargetFrameworkVersion", "v4.5");
                 writer.WriteElementString("Keyword", "ManagedCProj");
                 writer.WriteElementString("RootNamespace", project.Name);
             }
