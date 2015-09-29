@@ -67,7 +67,7 @@ namespace Bari.Core.Model.Parameters
 
             var value = GetPropertyValue(name);
             if (!value.IsSpecified && parent != null)
-                value = parent.GetPropertyValue(name);
+                return parent.GetDynamic(name, t);
 
             if (!value.IsSpecified)
                 throw new InvalidOperationException("Property value is not specified: " + name);

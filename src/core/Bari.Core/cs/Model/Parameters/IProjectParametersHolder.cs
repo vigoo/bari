@@ -84,7 +84,6 @@ namespace Bari.Core.Model.Parameters
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(projectParameters != null);
-            Contract.Requires(!HasParameters(name));
             Contract.Ensures(HasParameters(name));
         }
     }

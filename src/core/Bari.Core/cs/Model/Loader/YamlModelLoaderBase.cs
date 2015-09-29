@@ -84,6 +84,8 @@ namespace Bari.Core.Model.Loader
             suite.Version = ParseVersion(parser.GetOptionalScalarValue(yaml.RootNode, "version", null));
             suite.Copyright = parser.GetOptionalScalarValue(yaml.RootNode, "copyright", null);
 
+            LoadParameters(suite, suite, yaml.RootNode);
+
             foreach (KeyValuePair<string, YamlNode> item in parser.EnumerateNamedNodesOf(yaml.RootNode, "modules"))
             {
                 var module = suite.GetModule(item.Key);
@@ -100,7 +102,6 @@ namespace Bari.Core.Model.Loader
                     LoadProduct(suite, product, item.Value);
             }
 
-            LoadParameters(suite, suite, yaml.RootNode);
             LoadSourceSetIgnoreLists(suite.SourceSetIgnoreLists, yaml.RootNode);
 
             validator.Validate(suite);
@@ -312,9 +313,9 @@ namespace Bari.Core.Model.Loader
 
             LoadModuleVersion(module, moduleNode);
             LoadModuleCopyright(module, moduleNode);
+            LoadParameters(module.Suite, module, moduleNode);
             LoadProjects(module, moduleNode);
             LoadTestProjects(module, moduleNode);
-            LoadParameters(module.Suite, module, moduleNode);
             SetProjectPostProcessors(module.Suite, module, moduleNode);
         }
 

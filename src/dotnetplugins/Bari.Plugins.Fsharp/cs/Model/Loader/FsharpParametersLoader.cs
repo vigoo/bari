@@ -63,8 +63,48 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
                     {"warnings-as-error", () => ParseWarningsAsError(target, value)},
                     {"other-flags", () => { target.OtherFlags = ParseString(value); }},
-                    {"tailcalls", () => { target.Tailcalls = ParseBool(value); }}
+                    {"tailcalls", () => { target.Tailcalls = ParseBool(value); }},
+                    {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
+                    {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
+                    {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))}
                 };
+        }
+
+        private void ApplyFrameworkVersionAndProfile(FsharpProjectParameters target, string value)
+        {
+            string[] parts = value.Split('-');
+            if (parts.Length == 1)
+                target.TargetFrameworkVersion = ParseFrameworkVersion(value);
+            else
+            {
+                target.TargetFrameworkVersion = ParseFrameworkVersion(parts[0]);
+                target.TargetFrameworkProfile = ParseFrameworkProfile(parts[1]);
+            }
+        }
+
+        private FrameworkVersion ParseFrameworkVersion(string value)
+        {
+            switch (value.TrimStart('v'))
+            {
+                case "2.0": return FrameworkVersion.v20;
+                case "3.0": return FrameworkVersion.v30;
+                case "3.5": return FrameworkVersion.v35;
+                case "4.0": return FrameworkVersion.v4;
+                case "4.5": return FrameworkVersion.v45;
+                case "4.5.1": return FrameworkVersion.v451;
+                default:
+                    throw new InvalidSpecificationException(
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5' or '4.5.1'", value));
+            }
+        }
+
+        private FrameworkProfile ParseFrameworkProfile(string value)
+        {
+            switch (value)
+            {
+                case "client": return FrameworkProfile.Client;
+                default: return FrameworkProfile.Default;
+            }
         }
 
         private void ParseWarningsAsError(FsharpProjectParameters target, YamlNode value)

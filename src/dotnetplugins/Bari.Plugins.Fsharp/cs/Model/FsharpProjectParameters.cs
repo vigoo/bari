@@ -29,6 +29,8 @@ namespace Bari.Plugins.Fsharp.Model
             Define<bool>("AllWarningsAsError");
             Define<int[]>("SpecificWarningsAsError");
             Define<bool>("HighEntropyVirtualAddressSpace");
+            Define<FrameworkVersion>("TargetFrameworkVersion");
+            Define<FrameworkProfile>("TargetFrameworkProfile");
         }
 
         public override FsharpProjectParameters CreateDefault(Suite suite, FsharpProjectParameters parent)
@@ -171,6 +173,22 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsHighEntropyVirtualAddressSpaceSpecified { get { return IsSpecified("HighEntropyVirtualAddressSpace"); } }
 
+        public FrameworkVersion TargetFrameworkVersion
+        {
+            get { return Get<FrameworkVersion>("TargetFrameworkVersion"); }
+            set { Set("TargetFrameworkVersion", value); }
+        }
+
+        public bool IsTargetFrameworkVersionSpecified { get { return IsSpecified("TargetFrameworkVersion"); } }
+
+        public FrameworkProfile TargetFrameworkProfile
+        {
+            get { return Get<FrameworkProfile>("TargetFrameworkProfile"); }
+            set { Set("TargetFrameworkProfile", value); }
+        }
+
+        public bool IsTargetFrameworkProfileSpecified { get { return IsSpecified("TargetFrameworkProfile"); } }
+
         public FsharpProjectParameters(Suite suite, FsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -179,6 +197,40 @@ namespace Bari.Plugins.Fsharp.Model
 
         public void FillProjectSpecificMissingInfo(Project project)
         {                     
+        }
+
+        private string ToFrameworkProfile(FrameworkProfile targetFrameworkProfile)
+        {
+            switch (targetFrameworkProfile)
+            {
+                case FrameworkProfile.Default:
+                    return string.Empty;
+                case FrameworkProfile.Client:
+                    return "client";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkProfile");
+            }
+        }
+
+        private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
+        {
+            switch (targetFrameworkVersion)
+            {
+                case FrameworkVersion.v20:
+                    return "v2.0";
+                case FrameworkVersion.v30:
+                    return "v3.0";
+                case FrameworkVersion.v35:
+                    return "v3.5";
+                case FrameworkVersion.v4:
+                    return "v4.0";
+                case FrameworkVersion.v45:
+                    return "v4.5";
+                case FrameworkVersion.v451:
+                    return "v4.5.1";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
+            }
         }
 
         public void ToFsprojProperties(XmlWriter writer)
@@ -236,6 +288,16 @@ namespace Bari.Plugins.Fsharp.Model
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
             if (AreOtherFlagsSpecified)
                 writer.WriteElementString("OtherFlags", OtherFlags);
+
+            var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
+               ? TargetFrameworkVersion
+               : FrameworkVersion.v4;
+            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+
+            var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
+                ? TargetFrameworkProfile
+                : FrameworkProfile.Default;
+            writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(targetFrameworkProfile));
 
             writer.WriteStartElement("MinimumVisualStudioVersion");
             writer.WriteAttributeString("Condition", "'$(MinimumVisualStudioVersion)' == '11.0'");
