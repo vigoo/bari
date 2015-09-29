@@ -58,7 +58,7 @@ namespace Bari.Core.Build
             var contents = project.GetSourceSet("content");
             var contentsDir = project.RootDirectory.GetChildDirectory("content");
 
-            var targetDir = targetRoot.GetChildDirectory(project.Module.Name, createIfMissing: true);
+            var targetDir = targetRoot.GetChildDirectory(project.RelativeTargetPath, createIfMissing: true);
             var result = new HashSet<TargetRelativePath>();
             foreach (var sourcePath in contents.Files)
             {
@@ -68,7 +68,7 @@ namespace Bari.Core.Build
 
                 suiteRoot.CopyFile(sourcePath, targetDir, relativePath);
 
-                result.Add(new TargetRelativePath(project.Module.Name, relativePath));
+                result.Add(new TargetRelativePath(project.RelativeTargetPath, relativePath));
             }
 
             return result;
