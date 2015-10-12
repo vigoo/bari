@@ -3,12 +3,8 @@
  
 [Bari](http://vigoo.github.io/bari/) is an advanced build management tool for .NET projects.
 
-[![Build Status](https://travis-ci.org/vigoo/bari.svg?branch=master)](https://travis-ci.org/vigoo/bari)
+[![Build Status](https://travis-ci.org/vigoo/bari.svg?branch=master)](https://travis-ci.org/vigoo/bari) <a href="https://scan.coverity.com/projects/3787"><img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/3787/badge.svg"/></a> [![Apache 2 License License](http://img.shields.io/badge/license-APACHE2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-<a href="https://scan.coverity.com/projects/3787">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/3787/badge.svg"/>
-</a>
 
 # Getting started #
 ## Getting bari ##
