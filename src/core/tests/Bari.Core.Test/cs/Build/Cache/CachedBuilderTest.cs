@@ -66,7 +66,6 @@ namespace Bari.Core.Test.Build.Cache
         }
 
         [Test]
-        [ExpectedException(typeof (BuilderCantRunException))]
         public void ThrowsExceptionIfBuilderCannotRunAndNoCachedResults()
         {
             // Setting up the test
@@ -88,11 +87,10 @@ namespace Bari.Core.Test.Build.Cache
             var cachedBuilder = new CachedBuilder(realBuilder.Object, cache.Object, targetDir);
 
             // Running the builder for the first time
-            cachedBuilder.Run(buildContext.Object);
+            Assert.That(cachedBuilder.Run(buildContext.Object), Throws.TypeOf<BuilderCantRunException>());
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void ThrowsExceptionIfBuilderThrowsExceptionAndNoCachedResults()
         {
             // Setting up the test
@@ -115,7 +113,7 @@ namespace Bari.Core.Test.Build.Cache
             var cachedBuilder = new CachedBuilder(realBuilder.Object, cache.Object, targetDir);
 
             // Running the builder for the first time
-            cachedBuilder.Run(buildContext.Object);
+            Assert.That(cachedBuilder.Run(buildContext.Object), Throws.TypeOf<InvalidOperationException>());
         }
 
         [Test]

@@ -695,7 +695,6 @@ goals:
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidGoalException))]
         public void ExceptionThrownIfTargetGoalIsNotInTheGoalList()
         {
             const string yaml = @"---                   
@@ -708,7 +707,7 @@ goals:
 ";
             parameters.SetupGet(p => p.Goal).Returns("X");
             var loader = kernel.Get<InMemoryYamlModelLoader>();
-            loader.Load(yaml);
+            Assert.That(loader.Load(yaml), Throws.TypeOf<InvalidGoalException>());
         }
 
         [Test]
@@ -766,7 +765,6 @@ default-goal: test-goal
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidGoalException))]
         public void DefaultGoalIsUnknown()
         {
             const string yaml = @"---                   
@@ -775,7 +773,7 @@ default-goal: test-goal
 ";
             parameters.SetupGet(p => p.Goal).Returns((string)null);
             var loader = kernel.Get<InMemoryYamlModelLoader>();
-            loader.Load(yaml);
+            Assert.That(loader.Load(yaml), Throws.TypeOf<InvalidGoalException>());
         }
 
         [Test]

@@ -56,10 +56,9 @@ namespace Bari.Core.Test.Build.Cache
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidCommandParameterException))]
         public void ThrowsExceptionForMoreParameters()
         {
-            new CleanParameters(new[] {"-test1", "-test2", "-test3"});
+            Assert.That(new CleanParameters(new[] {"-test1", "-test2", "-test3"}), Throws.TypeOf<InvalidCommandParameterException>());
         }
     }
 }

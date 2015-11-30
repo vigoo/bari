@@ -67,7 +67,6 @@ namespace Bari.Core.Test.Model
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidGoalException))]
         public void RequiresExplicitActiveGoalIfCommandNeedsIt()
         {
             commandEnumerator.Setup(c => c.NeedsExplicitTargetGoal(It.IsAny<string>())).Returns(true);
@@ -75,7 +74,7 @@ namespace Bari.Core.Test.Model
             var factory = new DefaultSuiteFactory(parameters.Object, suiteRoot, commandEnumerator.Object);
 
             var goal1 = new Goal("goal1");
-            factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }), Suite.DebugGoal);
+            Assert.That(factory.CreateSuite(new HashSet<Goal>(new[] { goal1 }), Suite.DebugGoal), Throws.TypeOf<InvalidGoalException>());
         }
 
         [Test]
