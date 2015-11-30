@@ -1,4 +1,6 @@
-﻿using Bari.Core.Model.Loader;
+﻿using Bari.Core.Commands;
+using Bari.Core.Model.Loader;
+using Bari.Plugins.AddonSupport.Commands;
 using Bari.Plugins.AddonSupport.Model.Loader;
 using Bari.Plugins.AddonSupport.VisualStudio.SolutionItems;
 using Bari.Plugins.VsCore.VisualStudio.SolutionItems;
@@ -22,6 +24,9 @@ namespace Bari.Plugins.AddonSupport
 
             Kernel.Bind<ISolutionItemProvider>().To<AddonSupportSolutionItemProvider>();
             Bind<IYamlProjectParametersLoader>().To<StartupModuleParametersLoader>();
+            
+            Bind<ICommand>().To<AddonInfoCommand>().Named("addon-info");
+            Bind<ICommandPrerequisites>().To<DefaultCommandPrerequisites>().Named("addon-info");
         }
     }
 }
