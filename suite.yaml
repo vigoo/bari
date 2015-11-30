@@ -44,7 +44,7 @@ aliases:
     testing:
         - nuget://FluentAssertions/2.2.0
         - nuget://Moq
-        - nuget://NUnit
+        - nuget://NUnit/2.6.4
 
 modules:
     - name: core
