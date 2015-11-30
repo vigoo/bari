@@ -20,7 +20,7 @@ before_install:
  - mkdir _bootstrap 
  - wget "https://github.com/vigoo/bari/releases/download/1.0.1/bari-1.0.1-mono.zip" -P _bootstrap
  - unzip _bootstrap/bari-1.0.1-mono.zip -d _bootstrap
- # - mono _bootstrap/bari.exe selfupdate
+ - mono _bootstrap/bari.exe selfupdate
 
 
 script:
