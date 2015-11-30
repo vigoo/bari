@@ -62,7 +62,8 @@ namespace Bari.Core.Process
         /// </summary>
         public bool Run()
         {
-            output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
+            if (!parameters.QuietMode)
+                output.Message("bari version {0}\n", Assembly.GetAssembly(typeof(MainProcess)).GetName().Version.ToString());
 
             var cmdPrereq = commandFactory.CreateCommandPrerequisites(parameters.Command);
 
@@ -92,7 +93,8 @@ namespace Bari.Core.Process
                 finally
                 {
 #if DEBUG
-                    builderStore.DumpStats(output);
+                    if (!parameters.QuietMode)
+                        builderStore.DumpStats(output);
 #endif
                 }
             }

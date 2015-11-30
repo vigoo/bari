@@ -8,7 +8,13 @@ namespace Bari.Console.UI
     /// </summary>
     public class ConsoleUserInterface: IUserOutput
     {
+        private readonly IParameters parameters;
         private int indent;
+        
+        public ConsoleUserInterface(IParameters parameters)
+        {
+            this.parameters = parameters;
+        }
 
         /// <summary>
         /// Outputs a message to the user. The message can be single or multiline.
@@ -102,23 +108,26 @@ namespace Bari.Console.UI
         /// <param name="hints">Optional hints about the warning</param>
         public void Warning(string message, string[] hints = null)
         {
-            System.Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Console.WriteLine(IndentString + "Warning: {0}", message);
-
-            if (hints != null && hints.Length > 0)
+            if (!parameters.QuietMode)
             {
-                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
-                System.Console.WriteLine("\n" + IndentString + "Hints:");
-
-                Indent();
-                foreach (var hint in hints)
+                System.Console.ForegroundColor = ConsoleColor.Yellow;
+                System.Console.WriteLine(IndentString + "Warning: {0}", message);
+    
+                if (hints != null && hints.Length > 0)
                 {
-                    System.Console.WriteLine(IndentString + "- {0}", hint);
+                    System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    System.Console.WriteLine("\n" + IndentString + "Hints:");
+    
+                    Indent();
+                    foreach (var hint in hints)
+                    {
+                        System.Console.WriteLine(IndentString + "- {0}", hint);
+                    }
+                    Unindent();
                 }
-                Unindent();
+    
+                System.Console.ForegroundColor = ConsoleColor.Gray;
             }
-
-            System.Console.ForegroundColor = ConsoleColor.Gray;
         }
 
         /// <summary>

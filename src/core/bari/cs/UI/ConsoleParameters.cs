@@ -67,6 +67,7 @@ namespace Bari.Console.UI
         private bool IsGlobalParameter(string arg)
         {
             return arg == "-v" || arg == "/v" ||
+                   arg == "-q" || arg == "/q" ||
                    arg == "--target" || arg == "/target" ||
                    arg == "--mono";
         }
@@ -117,6 +118,17 @@ namespace Bari.Console.UI
             get
             {
                 return globalParams.Any(opt => opt == "-v" || opt == "/v");
+            }
+        }
+        
+        /// <summary>
+        /// True if quiet mode is enabled - only the direct command output should be printed
+        /// </summary>
+        public bool QuietMode
+        {
+            get
+            {
+                return globalParams.Any(opt => opt == "-q" || opt == "/q");
             }
         }
 

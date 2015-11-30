@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.Contracts;
-using Bari.Core.Model.Loader;
 
 namespace Bari.Core.UI
 {
@@ -32,6 +31,11 @@ namespace Bari.Core.UI
         /// True if verbose output should be printed
         /// </summary>
         bool VerboseOutput { get; }
+        
+        /// <summary>
+        /// True if quiet mode is enabled - only the direct command output should be printed
+        /// </summary>
+        bool QuietMode { get; }
 
         /// <summary>
         /// Gets the goal name
@@ -103,5 +107,7 @@ namespace Bari.Core.UI
         /// True if Mono toolchain should be used
         /// </summary>
         public abstract bool UseMono { get; }
+        
+        public abstract bool QuietMode { get; }
     }
 }
