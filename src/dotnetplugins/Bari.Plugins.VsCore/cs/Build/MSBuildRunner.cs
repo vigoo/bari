@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Cache;
@@ -15,11 +16,9 @@ namespace Bari.Plugins.VsCore.Build
     /// <summary>
     /// Builder for running MSBuild on a Visual Studio solution file.
     /// </summary>
-    [AggressiveCacheRestore(Exceptions = new [] { @".+\.vshost\.exe$" })]
-    public class MSBuildRunner: BuilderBase<MSBuildRunner>, IEquatable<MSBuildRunner>
+    [AggressiveCacheRestore(Exceptions = new[] { @".+\.vshost\.exe$" })]
+    public class MSBuildRunner : BuilderBase<MSBuildRunner>, IEquatable<MSBuildRunner>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (MSBuildRunner));
-
         private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
         private readonly IFileSystemDirectory targetRoot;
@@ -68,7 +67,7 @@ namespace Bari.Plugins.VsCore.Build
 
         public override IEnumerable<IBuilder> Prerequisites
         {
-            get { return new[] {slnBuilder}; }
+            get { return new[] { slnBuilder }; }
         }
 
         public override void AddPrerequisite(IBuilder target)
@@ -93,7 +92,8 @@ namespace Bari.Plugins.VsCore.Build
             // Collecting all the files already existing in 'targetdir/modulename' directories
             var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
             var existingFiles = new Dictionary<TargetRelativePath, DateTime>();
-            var expectedOutputs = new HashSet<TargetRelativePath>(slnBuilder.Projects.SelectMany(GetExpectedProjectOutputs));
+            var expectedOutputs =
+                new HashSet<TargetRelativePath>(slnBuilder.Projects.SelectMany(GetExpectedProjectOutputs).Union(GetDependencyResults(context)));
 
             foreach (var targetDir in targetDirs)
             {
@@ -127,8 +127,7 @@ namespace Bari.Plugins.VsCore.Build
                         bool isNew = false;
                         if (expectedOutputs.Contains(relativePath))
                         {
-                            log.DebugFormat("{1}: Expected output found: {0}", relativePath, ToString());
-                            isNew = true;                            
+                            isNew = true;
                         }
                         else
                         {
@@ -136,7 +135,9 @@ namespace Bari.Plugins.VsCore.Build
                             if (existingFiles.TryGetValue(relativePath, out previousLastModified))
                             {
                                 if (lastModified != previousLastModified)
+                                {
                                     isNew = true;
+                                }
                             }
                             else
                             {
@@ -150,10 +151,39 @@ namespace Bari.Plugins.VsCore.Build
                 }
             }
 
-            foreach (var targetDir in targetDirs)            
+            foreach (var targetDir in targetDirs)
                 outputs.ExceptWith(context.GetAllResultsIn(new TargetRelativePath(targetDir, String.Empty)));
 
             return outputs;
+        }
+
+        private IEnumerable<TargetRelativePath> GetDependencyResults(IBuildContext context)
+        {
+            return GetDependencyResults(context, this);
+        }
+
+        private IEnumerable<TargetRelativePath> GetDependencyResults(IBuildContext context, IBuilder node)
+        {
+            var referenceBuilder = node as IReferenceBuilder;
+            if (referenceBuilder != null)
+            {
+                foreach (var depSource in context.GetResults(referenceBuilder))
+                {
+                    foreach (var project in slnBuilder.Projects)
+                    {
+                        if (project.References.Contains(referenceBuilder.Reference))
+                        {
+                            // We expect the msbuild compilation to copy these dependencies to the module target directory
+                            yield return new TargetRelativePath(project.RelativeTargetPath, Path.GetFileName(depSource.RelativePath));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var result in context.GetDependencies(node).SelectMany(child => GetDependencyResults(context, child)))
+                    yield return result;
+            }
         }
 
         private IEnumerable<TargetRelativePath> GetExpectedProjectOutputs(Project project)
@@ -195,12 +225,12 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         public override Type BuilderType
-		{
-			get
-			{
-				return typeof(MSBuildRunner);
-			}
-		}
+        {
+            get
+            {
+                return typeof(MSBuildRunner);
+            }
+        }
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -239,8 +269,8 @@ namespace Bari.Plugins.VsCore.Build
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((MSBuildRunner) obj);
+            if (obj.GetType() != GetType()) return false;
+            return Equals((MSBuildRunner)obj);
         }
 
         /// <summary>
