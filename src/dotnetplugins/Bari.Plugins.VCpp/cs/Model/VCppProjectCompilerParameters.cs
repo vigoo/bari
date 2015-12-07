@@ -7,6 +7,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using System.IO;
 using Bari.Core.Model.Parameters;
+using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.VCpp.Model
 {
@@ -66,6 +67,8 @@ namespace Bari.Plugins.VCpp.Model
             Define<CppWarningLevel>("WarningLevel");
             Define<bool>("WholeProgramOptimization");
             Define<string>("PDBFileName");
+            Define<FrameworkVersion>("TargetFrameworkVersion");
+            Define<FrameworkProfile>("TargetFrameworkProfile");
         }
 
         public override VCppProjectCompilerParameters CreateDefault(Suite suite, VCppProjectCompilerParameters parent)
@@ -396,6 +399,22 @@ namespace Bari.Plugins.VCpp.Model
         public string PDBFileName { get { return Get<string>("PDBFileName"); } set { Set("PDBFileName", value); } } 
         public bool IsPDBFileNameSpecified { get { return IsSpecified("PDBFileName"); } }
 
+        public FrameworkVersion TargetFrameworkVersion
+        {
+            get { return Get<FrameworkVersion>("TargetFrameworkVersion"); }
+            set { Set("TargetFrameworkVersion", value); }
+        }
+
+        public bool IsTargetFrameworkVersionSpecified { get { return IsSpecified("TargetFrameworkVersion"); } }
+
+        public FrameworkProfile TargetFrameworkProfile
+        {
+            get { return Get<FrameworkProfile>("TargetFrameworkProfile"); }
+            set { Set("TargetFrameworkProfile", value); }
+        }
+
+        public bool IsTargetFrameworkProfileSpecified { get { return IsSpecified("TargetFrameworkProfile"); } }
+
         public VCppProjectCompilerParameters(Suite suite, VCppProjectCompilerParameters parent = null)
             : base(parent)
         {
@@ -555,6 +574,19 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("ProgramDataBaseFileName", PDBFileName);
         }
 
+        public void WriteGlobalProperties(XmlWriter writer)
+        {
+            var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
+                ? TargetFrameworkVersion
+                : FrameworkVersion.v4;
+            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+
+            var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
+                ? TargetFrameworkProfile
+                : FrameworkProfile.Default;
+            writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(targetFrameworkProfile));
+        }
+
         private string WarningLevelToString(CppWarningLevel warningLevel)
         {
             switch (warningLevel)
@@ -592,6 +624,40 @@ namespace Bari.Plugins.VCpp.Model
                     return "OldSyntax";
                 default:
                     throw new ArgumentOutOfRangeException("managedCppType");
+            }
+        }
+
+        private string ToFrameworkProfile(FrameworkProfile targetFrameworkProfile)
+        {
+            switch (targetFrameworkProfile)
+            {
+                case FrameworkProfile.Default:
+                    return string.Empty;
+                case FrameworkProfile.Client:
+                    return "client";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkProfile");
+            }
+        }
+
+        private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
+        {
+            switch (targetFrameworkVersion)
+            {
+                case FrameworkVersion.v20:
+                    return "v2.0";
+                case FrameworkVersion.v30:
+                    return "v3.0";
+                case FrameworkVersion.v35:
+                    return "v3.5";
+                case FrameworkVersion.v4:
+                    return "v4.0";
+                case FrameworkVersion.v45:
+                    return "v4.5";
+                case FrameworkVersion.v451:
+                    return "v4.5.1";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }
         }
     }
