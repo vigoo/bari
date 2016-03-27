@@ -1,11 +1,29 @@
 ---
 suite:      bari systemtest single-cs-exe
 
+goals:
+    - name: debug
+    - name: release
+    - name: debug-mono
+      incorporates:
+          - debug
+          - mono
+    - name: release-mono
+      incorporates:
+          - release
+          - mono
+
 csharp:
-	target-framework: v4.5-client
+    when mono:
+      target-framework: v4.5
+    when not mono:
+      target-framework: v4.5-client
 
 modules:
     - name: HelloWorld
       projects:
         - name: HelloWorld
           type: executable
+          references:
+            - gac://mscorlib            
+            - gac://System

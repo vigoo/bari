@@ -6,9 +6,13 @@ namespace systests
 {
     public class SysTests: SysTestBase
     {
+        private readonly string debugOrDebugMono;
+        
         public SysTests ()
             : base(Environment.CurrentDirectory)
         {
+            var isMono = Type.GetType("Mono.Runtime") != null;
+            debugOrDebugMono = isMono ? "debug-mono" : "debug";
         }
 
         public void Run()
@@ -18,7 +22,7 @@ namespace systests
             Steps(new Action[] 
             {
                 () => Initialize(),
-                () => SimpleExeBuild("single-cs-exe", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Test executable running\n"),
+                () => ExeBuildWithGoal("single-cs-exe", debugOrDebugMono, Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 11, "Test executable running\n"),
                 () => SimpleExeBuild("module-ref-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),
                 () => SimpleExeBuild("module-ref-test-withrt", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),
                 () => SimpleExeBuild("suite-ref-test", Path.Combine("target", "HelloWorld", "HelloWorld.exe"), 10, "TEST\n"),

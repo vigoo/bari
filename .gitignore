@@ -6,6 +6,8 @@ obj
 target
 _bootstrap
 cov-int
+.vscode
+
 
 # mstest test results
 TestResults
