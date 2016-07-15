@@ -5,6 +5,7 @@
         Net40x86,
         Net40x64,
         VS2013,
+        VS2015,
         Default
     }
 }

@@ -25,6 +25,13 @@ namespace Bari.Plugins.VsCore.Tools.Versions
         {
         }
     }
+    public class MSBuildVS2015 : MSBuild
+    {
+        public MSBuildVS2015(IParameters parameters) :
+            base(parameters, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"MSBuild\14.0\Bin\"))
+        {
+        }
+    }
     public class MSBuildInPath: MSBuild
     {
         public MSBuildInPath(IParameters parameters) :
