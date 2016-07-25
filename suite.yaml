@@ -43,7 +43,7 @@ aliases:
             - fsrepo://ninject-mono/Ninject.dll
     testing:
         - nuget://FluentAssertions/2.2.0
-        - nuget://Moq
+        - nuget://Moq/4.2.1510.2205
         - nuget://NUnit/2.6.4
 
 modules:
