@@ -240,7 +240,7 @@ modules:
             - alias://yaml
             - suite://core/Bari.Core
             - suite://dotnetplugins/Bari.Plugins.VsCore
-            - nuget://Newtonsoft.Json
+            - nuget://Newtonsoft.Json/8.0.3
       tests:
         - name: Bari.Plugins.AddonSupport.Test
           references:
