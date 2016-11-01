@@ -87,6 +87,13 @@ namespace Bari.Core.Build
             return result;
         }
 
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(String.Format("copy-result:{0}:{1}", sourceBuilder.Name.AsFull, targetDirectory)); 
+            }
+        }
 
         public override string ToString()
         {

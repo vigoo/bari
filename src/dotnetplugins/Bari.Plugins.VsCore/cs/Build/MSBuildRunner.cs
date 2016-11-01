@@ -231,6 +231,15 @@ namespace Bari.Plugins.VsCore.Build
                 return typeof(MSBuildRunner);
             }
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("msbuild:" + slnPath); 
+            }
+        }
+
 
         /// <summary>
         /// Returns a string that represents the current object.

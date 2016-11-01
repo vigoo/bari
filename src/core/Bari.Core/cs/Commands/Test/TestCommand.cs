@@ -136,7 +136,7 @@ Example: `bari test --dump`
                     var projects = target.TestProjects.ToList();
 
                     var tests = suite.HasParameters("test") ? suite.GetParameters<Tests>("test") : new Tests();
-                    var buildOutputs = RunWithProjects(projects, dumpMode, dumpDepsMode).ToList();
+                    var buildOutputs = RunWithProjects(suite, projects, dumpMode, dumpDepsMode).ToList();
 
                     if (buildOutputs.Any())
                         return RunTests(tests, projects, buildOutputs);
@@ -174,9 +174,9 @@ Example: `bari test --dump`
             return enabled;
         }
 
-        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode, bool dumpDepsMode)
+        private IEnumerable<TargetRelativePath> RunWithProjects(Suite suite, IEnumerable<TestProject> projects, bool dumpMode, bool dumpDepsMode)
         {
-            var context = buildContextFactory.CreateBuildContext();
+            var context = buildContextFactory.CreateBuildContext(suite);
 
             var prjs = projects.ToList();
 

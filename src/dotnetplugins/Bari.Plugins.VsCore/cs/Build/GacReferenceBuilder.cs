@@ -81,12 +81,20 @@ namespace Bari.Plugins.VsCore.Build
         }
 
         public override Type BuilderType
-		{
-			get
-			{
-				return typeof(GacReferenceBuilder);
-			}
-		}
+        {
+            get
+            {
+                return typeof(GacReferenceBuilder);
+            }
+        }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("ref:" + reference.Uri); 
+            }
+        }
 
         /// <summary>
         /// Returns a string that represents the current object.

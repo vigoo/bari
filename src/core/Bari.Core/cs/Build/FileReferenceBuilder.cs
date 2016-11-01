@@ -82,6 +82,14 @@ namespace Bari.Core.Build
             get { return reference; }
             set { reference = value; }
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("ref:" + reference.Uri); 
+            }
+        }
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.

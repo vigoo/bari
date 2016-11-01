@@ -59,5 +59,10 @@ namespace Bari.Core.Build
         public virtual void RemovePrerequisite(IBuilder target)
         {
         }
+        
+        public abstract BuilderName Name
+        {
+            get;
+        }
     }
 }

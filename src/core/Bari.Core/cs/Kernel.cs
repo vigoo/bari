@@ -126,6 +126,9 @@ namespace Bari.Core
             // Default build context
             kernel.Bind<IBuildContext>().To<BuildContext>();
             kernel.Bind<IBuildContextFactory>().ToFactory();
+            
+            var defaultBuildContextFactory = kernel.Get<IBuildContextFactory>();
+            kernel.Rebind<IBuildContextFactory>().ToConstant(new ExtendedBuildContextFactory(defaultBuildContextFactory));
 
             // Builders 
             kernel.Bind<IReferenceBuilder>().To<SuiteReferenceBuilder>().Named("suite");

@@ -92,6 +92,15 @@ namespace Bari.Plugins.PythonScripts.Build.PostProcessors
         {
             get { return definition; }
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("python-post-processor:" + script.Name); 
+            }
+        }
+
 
         public override string ToString()
         {

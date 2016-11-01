@@ -225,9 +225,13 @@ namespace Bari.Plugins.Csharp.Build
         {
             if (referenceBuilders != null)
             {
-                referenceBuilders.Add((IReferenceBuilder) target);
-                dependencies = null;
-                fullSourceDependencies = null;
+                var targetReferenceBuilder = target as IReferenceBuilder;
+                if (targetReferenceBuilder != null)
+                {
+                    referenceBuilders.Add(targetReferenceBuilder);
+                    dependencies = null;
+                    fullSourceDependencies = null;
+                }
             }
 
             base.AddPrerequisite(target);
@@ -247,6 +251,15 @@ namespace Bari.Plugins.Csharp.Build
 
             base.RemovePrerequisite(target);
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "csproj"); 
+            }
+        }
+
 
         /// <summary>
         /// Returns a string that represents the current object.

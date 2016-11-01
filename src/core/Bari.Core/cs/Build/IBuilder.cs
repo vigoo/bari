@@ -40,21 +40,27 @@ namespace Bari.Core.Build
         /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
         bool CanRun();
 
-		/// <summary>
-		/// Gets the type of the builder, without any decorators.
-		/// </summary>
-		/// <value>The type of the builder.</value>
-		Type BuilderType { get; }
+        /// <summary>
+        /// Gets the type of the builder, without any decorators.
+        /// </summary>
+        /// <value>The type of the builder.</value>
+        Type BuilderType { get; }
 
         void AddPrerequisite(IBuilder target);
         void RemovePrerequisite(IBuilder target);
+        
+        /// <summary>
+        /// Gets the builder's name which can be used to reference the builder
+        /// in human-written configuration.
+        /// </summary>
+        BuilderName Name { get; }
     }
 
     /// <summary>
     /// Contracts for <see cref="IBuilder"/> interface
     /// </summary>
     [ContractClassFor(typeof(IBuilder))]
-	abstract class IBuilderContracts : IBuilder
+    abstract class IBuilderContracts : IBuilder
     {
         /// <summary>
         /// Dependencies required for running this builder
@@ -104,14 +110,14 @@ namespace Bari.Core.Build
         /// <returns>If <c>true</c>, the builder thinks it can run.</returns>
         public abstract bool CanRun();
 
-		public Type BuilderType
-		{
-			get
-			{
-				Contract.Ensures(Contract.Result<Type>() != null);
-				return null; // dummy
-			}
-		}
+        public Type BuilderType
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Type>() != null);
+                return null; // dummy
+            }
+        }
 
         public void AddPrerequisite(IBuilder target)
         {
@@ -121,6 +127,15 @@ namespace Bari.Core.Build
         public void RemovePrerequisite(IBuilder target)
         {
             Contract.Requires(target != null);
+        }
+        
+        public BuilderName Name 
+        { 
+            get
+            {
+                Contract.Ensures(Contract.Result<BuilderName>() != null);
+                return null; // dummy
+            }
         }
     }
 }

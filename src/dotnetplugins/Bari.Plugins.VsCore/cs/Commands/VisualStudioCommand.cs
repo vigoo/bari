@@ -124,7 +124,7 @@ If called without any module or product name, it adds *every module* to the gene
                 lastTargetStr = targetStr;
                 var target = targetParser.ParseTarget(targetStr);
 
-                Run(target, openSolution);
+                Run(suite, target, openSolution);
 
                 return true;
             }
@@ -134,15 +134,15 @@ If called without any module or product name, it adds *every module* to the gene
             }
         }
 
-        private void Run(CommandTarget target, bool openSolution)
+        private void Run(Suite suite, CommandTarget target, bool openSolution)
         {
-            Run(target.Projects.Concat(target.TestProjects), openSolution);
+            Run(suite, target.Projects.Concat(target.TestProjects), openSolution);
         }
 
-        private void Run(IEnumerable<Project> projects, bool openSolution)
+        private void Run(Suite suite, IEnumerable<Project> projects, bool openSolution)
         {
             var prjs = projects.ToArray();
-            var context = buildContextFactory.CreateBuildContext();
+            var context = buildContextFactory.CreateBuildContext(suite);
 
             // We have to emulate a real build at this point to make sure all the 
             // graph transformations are executed correctly. 

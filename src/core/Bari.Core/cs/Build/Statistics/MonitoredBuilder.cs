@@ -91,7 +91,15 @@ namespace Bari.Core.Build.Statistics
 			}
 		}
 
-		public override string ToString()
+        public BuilderName Name
+        {
+            get
+            {
+                return wrappedBuilder.Name;
+            }
+        }
+
+        public override string ToString()
 		{
 			return wrappedBuilder.ToString();
 		}

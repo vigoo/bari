@@ -170,6 +170,14 @@ namespace Bari.Core.Build.Cache
 			}
 		}
 
+        public BuilderName Name
+        {
+            get
+            {
+                return wrappedBuilder.Name;
+            }
+        }
+
         public void AddPrerequisite(IBuilder target)
         {
             wrappedBuilder.AddPrerequisite(target);

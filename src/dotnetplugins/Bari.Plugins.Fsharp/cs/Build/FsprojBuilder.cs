@@ -163,8 +163,12 @@ namespace Bari.Plugins.Fsharp.Build
         {
             if (referenceBuilders != null)
             {
-                referenceBuilders.Add(target);
-                dependencies = null;
+                var targetReferenceBuilder = target as IReferenceBuilder;
+                if (targetReferenceBuilder != null)
+                {
+                    referenceBuilders.Add(targetReferenceBuilder);
+                    dependencies = null;
+                }
             }
 
             base.AddPrerequisite(target);
@@ -218,6 +222,15 @@ namespace Bari.Plugins.Fsharp.Build
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), fsversionPath)))
                     });
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "fsproj"); 
+            }
+        }
+
 
         /// <summary>
         /// Returns a string that represents the current object.

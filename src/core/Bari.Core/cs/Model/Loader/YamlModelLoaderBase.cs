@@ -386,6 +386,11 @@ namespace Bari.Core.Model.Loader
                     {
                         // skipping
                     }
+                    else if (new YamlScalarNode("forced-order").Equals(pair.Key) && 
+                             pair.Value is YamlSequenceNode)
+                    {
+                        SetForcedCompilationOrder(project, ((YamlSequenceNode)pair.Value).Children);             
+                    }
                     else
                     {
                         TryAddParameters(suite, project, pair.Key, pair.Value);
@@ -449,6 +454,18 @@ namespace Bari.Core.Model.Loader
             {
                 foreach (var reference in referenceLoader.LoadReference(referenceNode))
                     project.AddReference(reference);
+            }
+        }
+        
+        private void SetForcedCompilationOrder(Project project, IEnumerable<YamlNode> builderNames)
+        {
+            Contract.Requires(project != null);
+            Contract.Requires(builderNames != null);
+            
+            foreach (var builderNameNode in builderNames.OfType<YamlScalarNode>())
+            {
+                var relativeBuilderName = builderNameNode.Value;
+                project.AddOrderedCompilationStep(relativeBuilderName);
             }
         }
 

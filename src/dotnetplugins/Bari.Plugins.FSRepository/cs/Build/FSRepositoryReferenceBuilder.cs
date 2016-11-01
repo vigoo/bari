@@ -210,6 +210,15 @@ namespace Bari.Plugins.FSRepository.Build
         {
             return !Equals(left, right);
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("ref:" + reference.Uri); 
+            }
+        }
+
 
         /// <summary>
         /// Returns a string that represents the current object.

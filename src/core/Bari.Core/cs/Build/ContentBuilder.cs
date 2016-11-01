@@ -73,6 +73,14 @@ namespace Bari.Core.Build
 
             return result;
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "content"); 
+            }
+        }
 
         public override string ToString()
         {

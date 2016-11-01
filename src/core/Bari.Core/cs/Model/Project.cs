@@ -25,6 +25,7 @@ namespace Bari.Core.Model
         private ProjectType type = ProjectType.Library;
         private string version;
         private string copyright;
+        private readonly IList<string> forcedCompilationOrder = new List<string>();
 
         /// <summary>
         /// Gets the module this project belongs to
@@ -155,6 +156,18 @@ namespace Bari.Core.Model
         {
             get { return Path.Combine("src", Module.Name, name); }
         }
+        
+        /// <summary>
+        /// Gets the ordered user specified project-relative builder-names of steps with
+        /// enforced compilation order 
+        /// </summary>
+        public IEnumerable<string> ProjectLevelForcedCompilationOrder
+        {
+            get
+            {
+                return forcedCompilationOrder;
+            }
+        }
 
         /// <summary>
         /// Constructs the project model instance
@@ -217,6 +230,13 @@ namespace Bari.Core.Model
             Contract.Ensures(References.Contains(reference));
 
             references.Add(reference);
+        }
+        
+        public void AddOrderedCompilationStep(string name)
+        {
+            Contract.Requires(name != null);
+            
+            forcedCompilationOrder.Add(name);
         }
 
         /// <summary>

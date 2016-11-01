@@ -133,7 +133,7 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
                 {
                     lastTargetStr = targetStr;
                     var target = targetParser.ParseTarget(targetStr);
-                    RunWithProjects(target, dumpMode, dumpDepsMode);
+                    RunWithProjects(suite, target, dumpMode, dumpDepsMode);
 
                     return true;
                 }
@@ -149,20 +149,21 @@ Example: `bari build --dump` or `bari build HelloWorldModule --dump`
             }
         }
 
-        private void RunWithProjects(CommandTarget target, bool dumpMode, bool dumpDepsMode)
+        private void RunWithProjects(Suite suite, CommandTarget target, bool dumpMode, bool dumpDepsMode)
         {
             log.InfoFormat("Building...");
 
-            var context = buildContextFactory.CreateBuildContext();
+            var context = buildContextFactory.CreateBuildContext(suite);
 
             var projects = target.Projects.ToList();
 
-            IBuilder rootBuilder = coreBuilderFactory.Merge(
-                projectBuilders
+            var builders = projectBuilders
                     .Select(pb => pb.Create(projects))
-                    .Where(b => b != null).ToArray(),
+                    .Where(b => b != null).ToArray();
+            IBuilder rootBuilder = coreBuilderFactory.Merge(
+                builders,
                 new ProjectBuilderTag("Top level project builders", projects));
-
+                                
             if (rootBuilder != null)
             {
                 context.AddBuilder(rootBuilder);

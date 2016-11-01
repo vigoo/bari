@@ -1,0 +1,18 @@
+---
+suite:      bari systemtest codegen-script-test
+
+fs-repositories:
+    - fsrepo\%NAME\%FILENAME.%EXT
+    - fsrepo/%NAME/%FILENAME.%EXT
+
+modules:
+    - name: HelloWorld
+      projects:
+        - name: HelloWorld
+          type: executable
+          references:
+            - module://Dep
+        - name: Dep
+          forced-order:
+            - python-script:scr
+            - csproj

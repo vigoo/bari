@@ -60,6 +60,14 @@ namespace Bari.Plugins.PythonScripts.Build
                     new ScriptDependency(buildScript)
                 })));
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "python-script:" + buildScript.Name); 
+            }
+        }
 
         public override string ToString()
         {

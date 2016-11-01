@@ -49,6 +49,13 @@ namespace Bari.Plugins.VsCore.Build
             set { reference = value; }
         }
 
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "ref:" + reference.Uri); 
+            }
+        }
 
         /// <summary>
         /// Returns a string that represents the current object.

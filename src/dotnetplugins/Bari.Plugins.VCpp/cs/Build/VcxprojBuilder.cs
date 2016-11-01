@@ -178,7 +178,11 @@ namespace Bari.Plugins.VCpp.Build
         {
             if (referenceBuilders != null)
             {
-                referenceBuilders.Add((IReferenceBuilder)target);
+                var targetReferenceBuilder = target as IReferenceBuilder;
+                if (targetReferenceBuilder != null)
+                {
+                    referenceBuilders.Add(targetReferenceBuilder);
+                }
             }
 
             base.AddPrerequisite(target);
@@ -239,6 +243,14 @@ namespace Bari.Plugins.VCpp.Build
                 return new TargetRelativePath(String.Empty,
                     suite.SuiteRoot.GetRelativePathFrom(targetDir,
                         Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory))));
+            }
+        }
+
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(project, "vcxproj"); 
             }
         }
 

@@ -100,6 +100,14 @@ namespace Bari.Core.Build
 
             return result;
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName(String.Format("merge:{0}", debugId)); 
+            }
+        }
 
         public override string ToString()
         {

@@ -58,7 +58,7 @@ namespace Bari.Core
             var referenceBuilder =
                 referenceBuilderFactory.CreateReferenceBuilder(new Reference(referenceUri, ReferenceType.Build), dummyProject);
 
-            var buildContext = buildContextFactory.CreateBuildContext();
+            var buildContext = buildContextFactory.CreateBuildContext(null);
             buildContext.AddBuilder(referenceBuilder);
             var files = buildContext.Run(referenceBuilder);
             var file = files.FirstOrDefault(f => Path.GetExtension(f).ToLowerInvariant() == ".dll");

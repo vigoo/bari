@@ -26,9 +26,9 @@ namespace Bari.Plugins.VsCore.Build
             this.projectBuilders = projectBuilders;
         }
 
-        public IBuildContext CreateBuildContext()
+        public IBuildContext CreateBuildContext(Suite suite)
         {
-            var buildContext = originalFactory.CreateBuildContext();
+            var buildContext = originalFactory.CreateBuildContext(suite);
             buildContext.AddTransformation(MergeSolutionBuilds);
             buildContext.AddTransformation(CutRedundantSolutionBuilds);
             return buildContext;

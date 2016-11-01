@@ -195,6 +195,15 @@ namespace Bari.Plugins.VsCore.Build
                 }
             }
         }
+        
+        public override BuilderName Name
+        {
+            get
+            {
+                return new BuilderName("sln:" + Uid); 
+            }
+        }
+
 
         /// <summary>
         /// Returns a string that represents the current object.

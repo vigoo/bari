@@ -57,7 +57,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
             var referenceBuilder = referenceBuilderFactory.CreateReferenceBuilder(
                 new Reference(new Uri(uri), ReferenceType.Build), project);
 
-            var buildContext = buildContextFactory.CreateBuildContext();
+            var buildContext = buildContextFactory.CreateBuildContext(null);
             buildContext.AddBuilder(referenceBuilder);
             var files = buildContext.Run(referenceBuilder);
             var file = files.FirstOrDefault(f => Path.GetFileName(f).Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
