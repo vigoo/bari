@@ -216,8 +216,8 @@ modules:
           references:
             - gac://System
             - gac://System.Xml
-            - nuget://IronPython
-            - { uri: 'nuget://IronPython.StdLib', type: Runtime }
+            - nuget://IronPython/2.7.5
+            - { uri: 'nuget://IronPython.StdLib/2.7.5', type: Runtime }
             - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
