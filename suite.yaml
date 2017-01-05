@@ -45,6 +45,8 @@ aliases:
         - nuget://FluentAssertions/2.2.0
         - nuget://Moq/4.2.1510.2205
         - nuget://NUnit/2.6.4
+    logging:
+        - nuget://log4net/2.0.3
 
 modules:
     - name: core
@@ -54,7 +56,7 @@ modules:
             - alias://common
             - alias://ninject
             - nuget://Monads
-            - nuget://log4net
+            - alias://logging
             - alias://yaml
             - nuget://DotNetZip
             - nuget://QuickGraph
@@ -75,7 +77,7 @@ modules:
           type: executable
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - nuget://QuickGraph
             - module://Bari.Core
@@ -94,7 +96,7 @@ modules:
             - gac://System
             - gac://System.Xml
             - gac://System.Xml.Linq
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://testing
             - module://Bari.Core
@@ -107,7 +109,7 @@ modules:
           references:
             - gac://System
             - gac://System.Xml
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - nuget://QuickGraph
@@ -115,7 +117,7 @@ modules:
         - name: Bari.Plugins.Csharp
           references:
             - alias://common
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - module://Bari.Plugins.VsCore
@@ -124,7 +126,7 @@ modules:
           references:
             - gac://System
             - gac://System.Xml
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -133,7 +135,7 @@ modules:
           references:
             - gac://System
             - gac://System.Xml
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -141,7 +143,7 @@ modules:
         - name: Bari.Plugins.Nuget
           references:
             - alias://common
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -152,7 +154,7 @@ modules:
             - gac://Microsoft.CSharp
             - gac://System
             - gac://System.Core
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - nuget://Monads
             - alias://yaml
@@ -160,19 +162,19 @@ modules:
         - name: Bari.Plugins.Gallio
           references:
             - alias://common
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
         - name: Bari.Plugins.NUnit
           references:
             - alias://common
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
         - name: Bari.Plugins.CodeContracts
           references:
             - alias://common
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -216,7 +218,7 @@ modules:
             - gac://System.Xml
             - nuget://IronPython
             - { uri: 'nuget://IronPython.StdLib', type: Runtime }
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
       tests:
@@ -235,7 +237,7 @@ modules:
         - name: Bari.Plugins.AddonSupport
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -257,7 +259,7 @@ modules:
         - name: Bari.Plugins.InnoSetup
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - alias://yaml
             - suite://core/Bari.Core
@@ -267,14 +269,14 @@ modules:
         - name: Bari.Plugins.Vcs.Core
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
 
         - name: Bari.Plugins.Vcs.Hg
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - nuget://Mercurial.Net
             - module://Bari.Plugins.Vcs.Core
@@ -283,7 +285,7 @@ modules:
         - name: Bari.Plugins.Vcs.Git
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - alias://ninject
             - module://Bari.Plugins.Vcs.Core
             - suite://core/Bari.Core
