@@ -165,6 +165,7 @@ modules:
             - alias://logging
             - alias://ninject
             - suite://core/Bari.Core
+            - suite://dotnetplugins/Bari.Plugins.Nuget
         - name: Bari.Plugins.NUnit
           references:
             - alias://common

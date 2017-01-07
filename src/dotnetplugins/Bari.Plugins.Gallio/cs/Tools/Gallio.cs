@@ -5,16 +5,17 @@ using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Tools;
 using Bari.Core.UI;
+using Bari.Plugins.Nuget.Tools;
 
 namespace Bari.Plugins.Gallio.Tools
 {
-    public class Gallio: DownloadablePackedExternalTool, IGallio
+    public class Gallio: DownloadableNugetTool, IGallio
     {
         private readonly IFileSystemDirectory targetDir;
 
-        public Gallio([TargetRoot] IFileSystemDirectory targetDir, IParameters parameters)
-            : base("Gallio", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "gallio"),
-                   Path.Combine("bin", "Gallio.Echo.exe"), new Uri("http://mb-unit.googlecode.com/files/GallioBundle-3.4.14.0.zip"), true, parameters)
+        public Gallio(INuGet nuget, [TargetRoot] IFileSystemDirectory targetDir, IParameters parameters)
+            : base(nuget, "Gallio", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "gallio"),
+                   Path.Combine("bin", "Gallio.Echo.exe"), "GallioBundle", "3.4.14", parameters)
         {
             this.targetDir = targetDir;
         }
