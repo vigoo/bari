@@ -5,6 +5,10 @@
         Default,
         ISO1,
         ISO2,
-        V3
+        V3,
+        V4,
+        V5,
+        V6,
+        V7,
     }
 }

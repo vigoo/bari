@@ -187,9 +187,17 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     return CsharpLanguageVersion.ISO2;
                 case "3":
                     return CsharpLanguageVersion.V3;
+                case "4":
+                    return CsharpLanguageVersion.V4;
+                case "5":
+                    return CsharpLanguageVersion.V5;
+                case "6":
+                    return CsharpLanguageVersion.V6;
+                case "7":
+                    return CsharpLanguageVersion.V7;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2' or '3'", sval));
+                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6' or '7'", sval));
             }
         }
 
