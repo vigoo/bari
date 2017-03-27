@@ -10,6 +10,7 @@ namespace Bari.Core.Model.Parameters
         {
             private readonly string name;
             private readonly Type type;
+            private readonly bool mergeWithInherited; 
 
             public string Name
             {
@@ -21,23 +22,29 @@ namespace Bari.Core.Model.Parameters
                 get { return type; }
             }
 
-            public PropertyDef(string name, Type type)
+            public bool MergeWithInherited
+            {
+                get { return mergeWithInherited; }
+            }
+
+            public PropertyDef(string name, Type type, bool mergeWithInherited = false)
             {
                 this.type = type;
                 this.name = name;
+                this.mergeWithInherited = mergeWithInherited;
             }
         }
 
         private readonly IDictionary<string, PropertyDef> propertyDefinitions = new Dictionary<string, PropertyDef>();
 
-        protected void Define<T>(string name)
+        protected void Define<T>(string name, bool mergeWithInherited = false)
         {
-            Define(name, typeof (T));
+            Define(name, typeof (T), mergeWithInherited);
         }
 
-        protected void Define(string name, Type type)
+        protected void Define(string name, Type type, bool mergeWithInherited = false)
         {
-            propertyDefinitions.Add(name, new PropertyDef(name, type));
+            propertyDefinitions.Add(name, new PropertyDef(name, type, mergeWithInherited));
         }
 
         public IEnumerable<PropertyDef> Properties { get { return propertyDefinitions.Values; } }
@@ -55,6 +62,11 @@ namespace Bari.Core.Model.Parameters
         public Type TypeOf(string name)
         {
             return propertyDefinitions[name].Type;
+        }
+
+        public bool MergeWithInherited(string name)
+        {
+            return propertyDefinitions[name].MergeWithInherited;
         }
 
         public abstract TParams CreateDefault(Suite suite, TParams parent);

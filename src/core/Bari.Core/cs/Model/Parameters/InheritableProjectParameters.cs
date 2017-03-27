@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Bari.Core.Model.Parameters
 {
@@ -33,7 +36,7 @@ namespace Bari.Core.Model.Parameters
         }
 
         public bool IsSpecified(string name)
-        {            
+        {
             var value = GetPropertyValue(name);
             return value.IsSpecified || (parent != null && parent.IsSpecified(name));
         }
@@ -65,12 +68,56 @@ namespace Bari.Core.Model.Parameters
         {
             defs.TypeCheck(name, t);
 
+            if (defs.TypeOf(name).IsArray)
+            {
+                if (defs.MergeWithInherited(name))
+                {
+                    return GetMergedInheritedValue(name, t);
+                } else
+                {
+                    return GetSimpleInheritedValue(name, t);
+                }
+            } else
+            {
+                return GetSimpleInheritedValue(name, t);
+            }
+        }
+
+        private object GetSimpleInheritedValue(string name, Type t)
+        {
             var value = GetPropertyValue(name);
             if (!value.IsSpecified && parent != null)
                 return parent.GetDynamic(name, t);
 
             if (!value.IsSpecified)
                 throw new InvalidOperationException("Property value is not specified: " + name);
+
+            return value.Value;
+        }
+
+        private object GetMergedInheritedValue(string name, Type arrayType)
+        {            
+            var elementType = arrayType.GetElementType();
+            var value = GetPropertyValue(name);
+            if (!value.IsSpecified && parent != null)
+                return parent.GetMergedInheritedValue(name, arrayType);
+
+            if (!value.IsSpecified)
+                throw new InvalidOperationException("Property value is not specified: " + name);
+
+            if (parent != null)
+            {
+                if (parent.IsSpecified(name))
+                {
+                    var parentValue = (Array)parent.GetMergedInheritedValue(name, arrayType);
+                    var currentArray = (Array)value.Value;
+                    var mergeArrays = typeof(InheritableProjectParametersHelper).GetMethod("MergeArrays");
+                    var genericMergeArrays = mergeArrays.MakeGenericMethod(elementType);
+
+                    var res = genericMergeArrays.Invoke(null, new[] { parentValue, currentArray });
+                    return res;
+                }
+            }
 
             return value.Value;
         }
@@ -112,5 +159,13 @@ namespace Bari.Core.Model.Parameters
 
             return propertyValues[name];            
         }        
+    }
+}
+
+static class InheritableProjectParametersHelper
+{
+    public  static TElem[] MergeArrays<TElem>(TElem[] first, TElem[] second)
+    {
+        return first.Union(second).ToArray();
     }
 }

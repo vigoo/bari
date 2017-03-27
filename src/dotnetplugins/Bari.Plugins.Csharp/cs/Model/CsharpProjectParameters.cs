@@ -18,7 +18,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("Checked");
             Define<string>("CodePage");
             Define<DebugLevel>("Debug");
-            Define<string[]>("Defines");
+            Define<string[]>("Defines", mergeWithInherited: true);
             Define<bool>("DelaySign");
             Define<string>("DocOutput");
             Define<uint>("FileAlign");
@@ -28,7 +28,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<CsharpLanguageVersion>("LanguageVersion");
             Define<string>("MainClass");
             Define<bool>("NoStdLib");
-            Define<int[]>("SuppressedWarnings");
+            Define<int[]>("SuppressedWarnings", mergeWithInherited: true);
             Define<bool>("NoWin32Manifest");
             Define<bool>("Optimize");
             Define<CLRPlatform>("Platform");
@@ -37,7 +37,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("Unsafe");
             Define<WarningLevel>("WarningLevel");
             Define<bool>("AllWarningsAsError");
-            Define<int[]>("SpecificWarningsAsError");
+            Define<int[]>("SpecificWarningsAsError", mergeWithInherited: true);
             Define<string>("RootNamespace");
             Define<string>("ApplicationIcon");
             Define<FrameworkVersion>("TargetFrameworkVersion");
@@ -86,7 +86,7 @@ namespace Bari.Plugins.Csharp.Model
 
         public string[] Defines
         {
-            get { return Get<string[]>("Defines"); }
+            get { return Get<string[]>("Defines");}
             set { Set("Defines", value); }
         }
 

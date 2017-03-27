@@ -16,10 +16,10 @@ namespace Bari.Plugins.Fsharp.Model
             Define<string>("CodePage");
             Define<bool>("DebugSymbols");
             Define<DebugLevel>("Debug");
-            Define<string[]>("Defines");
+            Define<string[]>("Defines", mergeWithInherited: true);
             Define<bool>("DelaySign");
             Define<string>("DocOutput");
-            Define<int[]>("SuppressedWarnings");
+            Define<int[]>("SuppressedWarnings", mergeWithInherited: true);
             Define<string>("KeyFile");
             Define<bool>("Optimize");
             Define<CLRPlatform>("Platform");
@@ -27,7 +27,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<bool>("Tailcalls");
             Define<WarningLevel>("WarningLevel");
             Define<bool>("AllWarningsAsError");
-            Define<int[]>("SpecificWarningsAsError");
+            Define<int[]>("SpecificWarningsAsError", mergeWithInherited: true);
             Define<bool>("HighEntropyVirtualAddressSpace");
             Define<FrameworkVersion>("TargetFrameworkVersion");
             Define<FrameworkProfile>("TargetFrameworkProfile");
