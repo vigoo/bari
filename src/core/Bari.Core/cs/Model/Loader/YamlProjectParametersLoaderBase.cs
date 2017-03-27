@@ -74,9 +74,10 @@ namespace Bari.Core.Model.Loader
                 var hints = new List<string>();
                 
                 if (value is YamlSequenceNode)
-                    hints.Add("Remove the `-` characters to make it a mapping instead of sequence");
-                
-                output.Warning(String.Format("{0} block (line {1}) is not a mapping node", BlockName, value != null ? value.Start.Line.ToString(CultureInfo.InvariantCulture) : "?"), hints.ToArray());
+                {
+                    hints.Add("Remove the `-` characters to make it a mapping instead of sequence");                
+                    output.Warning(String.Format("{0} block (line {1}) is not a mapping node", BlockName, value != null ? value.Start.Line.ToString(CultureInfo.InvariantCulture) : "?"), hints.ToArray());
+                }
             }
 
             return result;
