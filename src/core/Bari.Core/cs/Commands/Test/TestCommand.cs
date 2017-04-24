@@ -133,13 +133,13 @@ Example: `bari test --dump`
                     lastBuildTarget = targetStr;
                     var target = targetParser.ParseTarget(targetStr);
 
-                    var projects = target.TestProjects.ToList();
+                    var allProjects = target.Projects.Concat(target.TestProjects).ToList();
 
                     var tests = suite.HasParameters("test") ? suite.GetParameters<Tests>("test") : new Tests();
-                    var buildOutputs = RunWithProjects(projects, dumpMode, dumpDepsMode).ToList();
+                    var buildOutputs = RunWithProjects(allProjects, dumpMode, dumpDepsMode).ToList();
 
                     if (buildOutputs.Any())
-                        return RunTests(tests, projects, buildOutputs);
+                        return RunTests(tests, target.TestProjects, buildOutputs);
                     else
                         return false;
                 }
@@ -174,7 +174,7 @@ Example: `bari test --dump`
             return enabled;
         }
 
-        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<TestProject> projects, bool dumpMode, bool dumpDepsMode)
+        private IEnumerable<TargetRelativePath> RunWithProjects(IEnumerable<Project> projects, bool dumpMode, bool dumpDepsMode)
         {
             var context = buildContextFactory.CreateBuildContext();
 
