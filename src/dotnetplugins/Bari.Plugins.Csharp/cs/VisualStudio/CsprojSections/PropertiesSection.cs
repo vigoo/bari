@@ -60,8 +60,11 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             parameters.ToCsprojProperties(writer);       
 
             WriteAppConfig(writer, project);
-            WriteManifest(writer, project);
-            WriteApplicationIcon(writer, project, parameters);
+            if (!WriteWin32Resource(writer, project))
+            {
+                WriteManifest(writer, project);
+                WriteApplicationIcon(writer, project, parameters);
+            }
 
             writer.WriteEndElement();
         }
@@ -137,6 +140,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
         private void WriteApplicationIcon(XmlWriter writer, Project project, CsharpProjectParameters parameters)
         {
+            // Must be called within an open PropertyGroup
+
             if (project.Type == ProjectType.Executable ||
                 project.Type == ProjectType.WindowsExecutable)
             {
@@ -146,6 +151,24 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     writer.WriteElementString("ApplicationIcon", ToProjectRelativePath(project, iconPath, "cs"));
                 }
             }
+        }
+
+        private bool WriteWin32Resource(XmlWriter writer, Project project)
+        {
+            // Must be called within an open PropertyGroup
+
+            var resources = project.GetSourceSet("resources");
+
+            foreach (var suiteRelativePath in resources.Files)
+            {
+                var resrelativePath = ToProjectRelativePath(project, suiteRelativePath, "resources");
+                if (resrelativePath.StartsWith("win32" + Path.DirectorySeparatorChar))
+                {
+                    writer.WriteElementString("Win32Resource", ToProjectRelativePath(project, suiteRelativePath, "cs"));
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
