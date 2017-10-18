@@ -46,17 +46,22 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                 // VisualStudio does not work as expected:
                 if (!IgnoredExtensions.Any(ext => relativePath.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    writer.WriteStartElement(GetElementNameFor(project, file));
-                    writer.WriteAttributeString("Include", relativePath);
-
-                    if (ProjectSourceSetName != sourceSetType)
-                        writer.WriteElementString("LogicalName", logicalPath);
-
-                    WriteAdditionalOptions(writer, project, file);
-
-                    writer.WriteEndElement();
+                    WriteItem(writer, project, file, relativePath, sourceSetType, logicalPath);
                 }
             }
+            writer.WriteEndElement();
+        }
+
+        protected virtual void WriteItem(XmlWriter writer, Project project, SuiteRelativePath file, string relativePath, SourceSetType sourceSetType, string logicalPath)
+        {
+            writer.WriteStartElement(GetElementNameFor(project, file));
+            writer.WriteAttributeString("Include", relativePath);
+
+            if (ProjectSourceSetName != sourceSetType)
+                writer.WriteElementString("LogicalName", logicalPath);
+
+            WriteAdditionalOptions(writer, project, file);
+
             writer.WriteEndElement();
         }
 

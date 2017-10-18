@@ -89,6 +89,12 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("Link", relativePath);
         }
 
+        protected override void WriteItem(XmlWriter writer, Project project, SuiteRelativePath file, string relativePath, SourceSetType sourceSetType, string logicalPath)
+        {
+            var resrelativePath = ToProjectRelativePath(project, file, "resources");
+            if (!resrelativePath.StartsWith("win32" + Path.DirectorySeparatorChar))
+                base.WriteItem(writer, project, file, relativePath, sourceSetType, logicalPath);
+        }
 
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
