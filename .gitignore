@@ -101,5 +101,6 @@ Bari.Plugins.PythonScripts.Test.csproj
 bari.Plugins.Vcs.Core.csproj
 bari.Plugins.Vcs.Hg.csproj
 bari.Plugins.Vcs.Git.csproj
+Bari.Plugins.Deps.csproj
 bari.Test.csproj
 systests.csproj

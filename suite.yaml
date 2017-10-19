@@ -297,6 +297,16 @@ modules:
           type: executable
           references:
             - gac://System
+          
+    - name: tools
+      projects:
+        - name: Bari.Plugins.Deps
+          references:
+            - gac://System
+            - nuget://log4net
+            - nuget://QuickGraph
+            - alias://ninject
+            - suite://core/Bari.Core
 
 products:
     - name: full
@@ -307,6 +317,7 @@ products:
           - innosetup
           - addon
           - vcs
+          - tools
       packager:
         type: nuget
         param:
