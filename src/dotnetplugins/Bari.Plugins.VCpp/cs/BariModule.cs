@@ -35,6 +35,7 @@ namespace Bari.Plugins.VCpp
 
             Bind<ISlnProject>().To<CppSlnProject>();
             Bind<IVcxprojBuilderFactory>().ToFactory();
+            Bind<IAppConfigBuilderFactory>().ToFactory();
 
             Bind<ICleanExtension>().To<VcxprojCleaner>();
 

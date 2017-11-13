@@ -23,6 +23,7 @@ namespace Bari.Plugins.VCpp.Build
     {
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
+        private readonly IAppConfigBuilderFactory appConfigBuilderFactory;
 
         private readonly Project project;
         private readonly Suite suite;
@@ -31,6 +32,7 @@ namespace Bari.Plugins.VCpp.Build
         private ISet<IBuilder> referenceBuilders;
         private IDependencies dependencies;
         private IDependencies fullSourceDependencies;
+        private AppConfigBuilder appConfigBuilder;
 
         /// <summary>
         /// Gets the project this builder is working on
@@ -49,8 +51,9 @@ namespace Bari.Plugins.VCpp.Build
         /// <param name="suite">The suite the project belongs to </param>
         /// <param name="targetDir">The build target directory </param>
         /// <param name="generator">The vcxproj generator class to be used</param>
+        /// <param name="appConfigBuilderFactory">Interface to create new app config builder</param>
         public VcxprojBuilder(IReferenceBuilderFactory referenceBuilderFactory, ISourceSetDependencyFactory sourceSetDependencyFactory, 
-                             Project project, Suite suite, [TargetRoot] IFileSystemDirectory targetDir, VcxprojGenerator generator)
+                             Project project, Suite suite, [TargetRoot] IFileSystemDirectory targetDir, VcxprojGenerator generator, IAppConfigBuilderFactory appConfigBuilderFactory)
         {
             this.referenceBuilderFactory = referenceBuilderFactory;
             this.sourceSetDependencyFactory = sourceSetDependencyFactory;
@@ -58,6 +61,7 @@ namespace Bari.Plugins.VCpp.Build
             this.suite = suite;
             this.targetDir = targetDir;
             this.generator = generator;
+            this.appConfigBuilderFactory = appConfigBuilderFactory;
         }
 
         /// <summary>
@@ -99,6 +103,9 @@ namespace Bari.Plugins.VCpp.Build
             if (referenceBuilders != null)
                 deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
 
+            if (appConfigBuilder != null && appConfigBuilder.HasConfigFile)
+                deps.Add(new SubtaskDependency(appConfigBuilder));
+
             return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
@@ -113,6 +120,13 @@ namespace Bari.Plugins.VCpp.Build
                     fullSourceDependencies = CreateFullSourceDependencies();
                 return fullSourceDependencies;
             }
+        }
+
+        private IDependencies CreateAppConfigDependency()
+        {
+            return new MultipleDependencies(
+                new SubtaskDependency(appConfigBuilder),
+                appConfigBuilder.Dependencies);
         }
 
         private IDependencies CreateFullSourceDependencies()
@@ -159,7 +173,12 @@ namespace Bari.Plugins.VCpp.Build
                     referenceBuilders = new HashSet<IBuilder>(project.References.Select(CreateReferenceBuilder));
                 }
 
-                return referenceBuilders;
+                if (appConfigBuilder == null)
+                {
+                    appConfigBuilder = appConfigBuilderFactory.CreateAppConfigBuilder(project);
+                }
+
+                return appConfigBuilder.HasConfigFile ? referenceBuilders.Concat(new[] { appConfigBuilder }) : referenceBuilders;
             }
         }
 

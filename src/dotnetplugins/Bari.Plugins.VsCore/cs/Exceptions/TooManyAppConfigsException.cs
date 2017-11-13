@@ -1,7 +1,7 @@
 ﻿using System;
 using Bari.Core.Model;
 
-namespace Bari.Plugins.Csharp.Exceptions
+namespace Bari.Plugins.VsCore.Exceptions
 {
     /// <summary>
     /// Exception thrown if there are more than one app.config file for a project
