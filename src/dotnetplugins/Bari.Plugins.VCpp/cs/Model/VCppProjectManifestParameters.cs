@@ -67,8 +67,6 @@ namespace Bari.Plugins.VCpp.Model
                 var midlParams = project.GetParameters<VCppProjectMIDLParameters>("midl");
                 TypeLibraryFile = midlParams.TypeLibraryName;         
             }
-
-            ComponentFileName = "$(TargetFileName)";
         }
 
         public void ToVcxprojProperties(XmlWriter writer)
