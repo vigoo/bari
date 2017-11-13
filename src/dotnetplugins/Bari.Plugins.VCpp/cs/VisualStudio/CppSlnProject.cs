@@ -37,7 +37,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
         public override ISlnProjectBuilder CreateBuilder(Project project)
         {
-            return builderFactory.CreateFsprojBuilder(project);
+            return builderFactory.CreateVcxprojBuilder(project);
         }
     }
 }
