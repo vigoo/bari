@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Bari.Core.Build;
-using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Exceptions;
 using Bari.Core.Generic;
 using Bari.Core.Model;
-using Bari.Core.UI;
 using Bari.Plugins.VsCore.Exceptions;
 
 namespace Bari.Plugins.VCpp.Build
 {
-    [FallbackToCache]
-    [AggressiveCacheRestore]
+    /// <summary>
+    /// Application configuration file builder for <see cref="Bari.Plugins.VCpp.VisualStudio.CppSlnProject"/>
+    /// </summary>
     public class AppConfigBuilder : BuilderBase<AppConfigBuilder>, IEquatable<AppConfigBuilder>
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(AppConfigBuilder));
@@ -23,9 +21,15 @@ namespace Bari.Plugins.VCpp.Build
         private readonly Project project;
         private readonly IFileSystemDirectory suiteRoot;
         private readonly IFileSystemDirectory targetRoot;
+        private readonly IDependencies dependencies;
 
-        private IDependencies dependencies;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppConfigBuilder"/> class.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <param name="fingerprintFactory">The fingerprint factory</param>
+        /// <param name="suiteRoot">Suite's root directory</param>
+        /// <param name="targetRoot">Target root directory</param>
         public AppConfigBuilder(Project project, ISourceSetFingerprintFactory fingerprintFactory, [SuiteRoot] IFileSystemDirectory suiteRoot, [TargetRoot] IFileSystemDirectory targetRoot)
         {
             this.project = project;
@@ -52,18 +56,7 @@ namespace Bari.Plugins.VCpp.Build
         {
             get { return project.Module + "." + project.Name + ".config"; }
         }
-
-        /// <summary>
-        /// Gets a value indicating whether this project has configuration file.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this project has configuration file; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasConfigFile
-        {
-            get { return project.HasNonEmptySourceSet(appConfigSourceSetName) && project.Type == ProjectType.Executable; }
-        }
-
+       
         /// <summary>
         /// Runs this builder
         /// </summary>
@@ -80,10 +73,9 @@ namespace Bari.Plugins.VCpp.Build
                     throw new TooManyAppConfigsException(project);
 
                 if (project.Type != ProjectType.Executable)
-                {
                     throw new InvalidSpecificationException(string.Format("Invalid project type ({0}) for {1}.{2} or unecessary application config file ({3})!",
                         project.Type, project.Module.Name, project.Name, ToString()));
-                }
+                
                 var configFile = configs.Files.FirstOrDefault();
 
                 log.DebugFormat("Copying config {0}...", configFile);
@@ -91,7 +83,6 @@ namespace Bari.Plugins.VCpp.Build
                 var targetDir = targetRoot.GetChildDirectory(project.RelativeTargetPath, createIfMissing: true);
                 var relativePath = project.Name + ".exe.config";
                 suiteRoot.CopyFile(configFile, targetDir, relativePath);
-                
                 return new HashSet<TargetRelativePath> { new TargetRelativePath(project.RelativeTargetPath, relativePath) };
             }
             else
@@ -134,7 +125,5 @@ namespace Bari.Plugins.VCpp.Build
         {
             return !Equals(left, right);
         }
-
-
     }
 }

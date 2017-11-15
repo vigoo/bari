@@ -1,4 +1,5 @@
-﻿using Bari.Core.Build.BuilderStore;
+﻿using Bari.Core.Build;
+using Bari.Core.Build.BuilderStore;
 using Bari.Core.Build.Dependencies.Protocol;
 using Bari.Core.Commands.Clean;
 using Bari.Core.Generic;
@@ -36,6 +37,7 @@ namespace Bari.Plugins.VCpp
             Bind<ISlnProject>().To<CppSlnProject>();
             Bind<IVcxprojBuilderFactory>().ToFactory();
             Bind<IAppConfigBuilderFactory>().ToFactory();
+            Bind<IProjectBuilderFactory>().To<AppConfigProjectBuilderFactory>();
 
             Bind<ICleanExtension>().To<VcxprojCleaner>();
 
