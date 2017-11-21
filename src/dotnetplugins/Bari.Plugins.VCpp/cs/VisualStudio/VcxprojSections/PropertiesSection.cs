@@ -123,6 +123,19 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             {
                 writer.WriteStartElement("Manifest");
                 manifestParameters.ToVcxprojProperties(writer);
+                
+                if (project.HasNonEmptySourceSet("manifest"))
+                {
+                    var sourceSet = project.GetSourceSet("manifest");
+                    var manifests = sourceSet.Files.ToList();
+                   
+                    var manifestPath = manifests.FirstOrDefault();
+                    if (manifestPath != null)
+                    {
+                        writer.WriteElementString("AdditionalManifestFiles", ToProjectRelativePath(project, manifestPath, "cpp"));
+                    }
+                }
+                
                 writer.WriteEndElement();
             }
         }

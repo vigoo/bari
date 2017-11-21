@@ -14,9 +14,9 @@ namespace Bari.Plugins.VCpp.Build.BuilderStore
             this.store = store;
         }
 
-        public VcxprojBuilder CreateFsprojBuilder(Project project)
+        public VcxprojBuilder CreateVcxprojBuilder(Project project)
         {
-            return store.Add(baseImpl.CreateFsprojBuilder(project));
+            return store.Add(baseImpl.CreateVcxprojBuilder(project));
         }
     }
 }

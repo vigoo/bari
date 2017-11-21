@@ -31,7 +31,7 @@ namespace Bari.Plugins.VCpp.Build
         private ISet<IBuilder> referenceBuilders;
         private IDependencies dependencies;
         private IDependencies fullSourceDependencies;
-
+        
         /// <summary>
         /// Gets the project this builder is working on
         /// </summary>
@@ -99,6 +99,9 @@ namespace Bari.Plugins.VCpp.Build
             if (referenceBuilders != null)
                 deps.AddRange(referenceBuilders.OfType<IReferenceBuilder>().Select(CreateReferenceDependency));
 
+            //if (appConfigBuilder != null && appConfigBuilder.HasConfigFile)
+            //    deps.Add(new SubtaskDependency(appConfigBuilder));
+
             return MultipleDependenciesHelper.CreateMultipleDependencies(new HashSet<IDependencies>(deps));
         }
 
@@ -114,7 +117,7 @@ namespace Bari.Plugins.VCpp.Build
                 return fullSourceDependencies;
             }
         }
-
+        
         private IDependencies CreateFullSourceDependencies()
         {
             var deps = new List<IDependencies>();

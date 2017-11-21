@@ -4,6 +4,6 @@ namespace Bari.Plugins.VCpp.Build
 {
     public interface IVcxprojBuilderFactory
     {
-        VcxprojBuilder CreateFsprojBuilder(Project project);
+        VcxprojBuilder CreateVcxprojBuilder(Project project);
     }
 }

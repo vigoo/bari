@@ -6,6 +6,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Exceptions;
 using Bari.Plugins.Csharp.Model;
+using Bari.Plugins.VsCore.Exceptions;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
