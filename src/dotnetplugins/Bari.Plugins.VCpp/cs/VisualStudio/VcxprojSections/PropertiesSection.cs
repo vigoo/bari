@@ -28,7 +28,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
             var platform = platformManagement.GetDefaultPlatform(project);
-            var cliMode = GetCLIMode(project);
+            var cliMode = project.GetCLIMode();
 
             writer.WriteStartElement("ItemGroup");
             writer.WriteAttributeString("Label", "ProjectConfigurations");
@@ -104,7 +104,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
             if (project.EffectiveCopyright != null)
             {
-                items.Add(String.Format("BARI_PROJECT_COPYRIGHT=\"\\\"{0}\\0\\\"\"", project.EffectiveCopyright));
+                items.Add(String.Format("BARI_PROJECT_COPYRIGHT=\"\\\"/\"{0}/\"\\0\\\"\"", project.EffectiveCopyright));
             }
 
             if (items.Count > 0)
@@ -156,7 +156,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             var toolChain = GetToolchain(project);
             writer.WriteElementString("PlatformToolset", toolChain.IsPlatformToolSetSpecified ? toolChain.PlatformToolSetAsString : "v110");
 
-            var cliMode = GetCLIMode(project);
+            var cliMode = project.GetCLIMode();
             if (cliMode != CppCliMode.Disabled)
             {
                 writer.WriteElementString("CLRSupport", cliMode.ToString().Replace("Enabled", "true"));
@@ -193,14 +193,6 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             {
                 return String.Empty;
             }
-        }
-
-        private CppCliMode GetCLIMode(Project project)
-        {
-            VCppProjectCLIParameters cliParameters =
-                project.GetInheritableParameters<VCppProjectCLIParameters, VCppProjectCLIParametersDef>("cli");
-
-            return cliParameters.IsModeSpecified ? cliParameters.Mode : CppCliMode.Disabled;
         }
 
         private VCppProjectToolchainParameters GetToolchain(Project project)
@@ -243,7 +235,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         {
             VCppProjectCompilerParameters compilerParameters = project.GetInheritableParameters<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>("cpp-compiler");
 
-            compilerParameters.FillProjectSpecificMissingInfo(project, GetCLIMode(project), targetDir as LocalFileSystemDirectory);
+            compilerParameters.FillProjectSpecificMissingInfo(project, project.GetCLIMode(), targetDir as LocalFileSystemDirectory);
 
             writer.WriteStartElement("ClCompile");
             compilerParameters.ToVcxprojProperties(writer);

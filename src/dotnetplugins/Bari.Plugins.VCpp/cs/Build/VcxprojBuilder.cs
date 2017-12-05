@@ -209,9 +209,13 @@ namespace Bari.Plugins.VCpp.Build
         public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var vcxprojPath = project.Name + ".vcxproj";
+            const string csversionPath = "version.cpp";
+            var isCLI = project.GetCLIMode() != CppCliMode.Disabled;
 
+            var csversion = isCLI ? project.RootDirectory.CreateTextFile(csversionPath) : null;
             using (var fsproj = project.RootDirectory.GetChildDirectory("cpp").CreateTextFile(vcxprojPath))
             {
+
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this).OfType<IReferenceBuilder>().Where(r => r.Reference.Type == ReferenceType.Build))
                 {
@@ -219,7 +223,13 @@ namespace Bari.Plugins.VCpp.Build
                     references.UnionWith(builderResults);
                 }
 
-                generator.Generate(project, references, fsproj);
+                generator.Generate(project, references, fsproj, csversion, csversionPath);
+            }
+
+            if (isCLI)
+            {
+                csversion.Close();
+                csversion.Dispose();
             }
 
             return new HashSet<TargetRelativePath>(

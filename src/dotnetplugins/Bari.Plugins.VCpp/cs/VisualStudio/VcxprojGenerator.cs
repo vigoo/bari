@@ -16,6 +16,8 @@ namespace Bari.Plugins.VCpp.VisualStudio
     {
         private readonly IEnumerable<IMSBuildProjectSection> sections;
         private ISet<TargetRelativePath> references;
+        private TextWriter versionOutput;
+        private string versionFileName;
 
         /// <summary>
         /// Gets the set of references for the given project
@@ -30,7 +32,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// </summary>
         public TextWriter VersionOutput
         {
-            get { return null; }
+            get { return versionOutput; }
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// </summary>
         public string VersionFileName
         {
-            get { return null; }
+            get { return versionFileName; }
         }
 
         /// <summary>
@@ -56,9 +58,13 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// <param name="project">The project to generate vcxproj file for</param>
         /// <param name="references">Paths to the external references to be included in the project</param>
         /// <param name="output">Output where the vcxproj file will be written</param>
-        public void Generate(Project project, IEnumerable<TargetRelativePath> references, TextWriter output)
+        /// <param name="versionOutput">Output where the version info should be generated</param>
+        /// <param name="versionFileName">File name relative to the vcxproj file for the version info</param>      
+        public void Generate(Project project, IEnumerable<TargetRelativePath> references, TextWriter output, TextWriter versionOutput, string versionFileName)
         {
             this.references = new HashSet<TargetRelativePath>(references);
+            this.versionOutput = versionOutput;
+            this.versionFileName = versionFileName;
 
             var settings = new XmlWriterSettings
             {
@@ -87,6 +93,6 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
             writer.WriteEndElement();
             writer.Flush();
-        }       
+        }
     }
 }
