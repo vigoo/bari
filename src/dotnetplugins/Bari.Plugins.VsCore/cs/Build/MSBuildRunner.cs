@@ -208,6 +208,8 @@ namespace Bari.Plugins.VsCore.Build
             }
             yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ext);
             yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".pdb");
+            if (project.HasNonEmptySourceSet("appconfig"))
+                yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ext + ".config");
         }
 
         private string GetTargetDir(Project project)
