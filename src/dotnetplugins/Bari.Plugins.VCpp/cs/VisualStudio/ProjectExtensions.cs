@@ -17,5 +17,18 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
             return cliParameters.IsModeSpecified ? cliParameters.Mode : CppCliMode.Disabled;
         }
+
+        /// <summary>
+        /// Gets the version support.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <returns></returns>
+        public static bool GetVersionSupport(this Project project)
+        {
+            var cli = project.GetCLIMode();
+            var versionSupportParams = project.GetInheritableParameters<VCppProjectVersionParameters, VCppProjectVersionParametersDef>("version-support");
+
+            return cli != CppCliMode.Disabled && versionSupportParams.IsVersionSupportSpecified && versionSupportParams.VersionSupport;
+        }
     }
 }

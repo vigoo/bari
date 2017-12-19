@@ -104,7 +104,8 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
 
             if (project.EffectiveCopyright != null)
             {
-                items.Add(String.Format("BARI_PROJECT_COPYRIGHT=\"\\\"/\"{0}/\"\\0\\\"\"", project.EffectiveCopyright));
+                var copyright = project.EffectiveCopyright.Trim('"', '/');
+                items.Add(String.Format("BARI_PROJECT_COPYRIGHT=\"\\\"/\"{0}/\"\\0\\\"\"", copyright));
             }
 
             if (items.Count > 0)

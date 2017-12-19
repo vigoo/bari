@@ -210,9 +210,8 @@ namespace Bari.Plugins.VCpp.Build
         {
             var vcxprojPath = project.Name + ".vcxproj";
             const string csversionPath = "version.cpp";
-            var isCLI = project.GetCLIMode() != CppCliMode.Disabled;
 
-            var csversion = isCLI ? project.RootDirectory.CreateTextFile(csversionPath) : null;
+            var csversion = project.GetVersionSupport() ? project.RootDirectory.CreateTextFile(csversionPath) : null;
             using (var fsproj = project.RootDirectory.GetChildDirectory("cpp").CreateTextFile(vcxprojPath))
             {
 
@@ -226,7 +225,7 @@ namespace Bari.Plugins.VCpp.Build
                 generator.Generate(project, references, fsproj, csversion, csversionPath);
             }
 
-            if (isCLI)
+            if (csversion != null)
             {
                 csversion.Close();
                 csversion.Dispose();

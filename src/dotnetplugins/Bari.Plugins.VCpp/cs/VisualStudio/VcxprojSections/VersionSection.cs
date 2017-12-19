@@ -26,7 +26,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         /// <param name="context">Current .vcxproj generation context</param>
         public override void Write(System.Xml.XmlWriter writer, Core.Model.Project project, VsCore.VisualStudio.IMSBuildProjectGeneratorContext context)
         {
-            if (context.VersionOutput != null && project.GetCLIMode() != CppCliMode.Disabled)
+            if (context.VersionOutput != null && project.GetVersionSupport())
             {
                 // Generating the version file (C# source code)
                 var generator = new CppVersionInfoGenerator(project);
