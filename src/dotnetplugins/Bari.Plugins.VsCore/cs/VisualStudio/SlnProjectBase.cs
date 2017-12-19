@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.VsCore.Build;
@@ -21,7 +22,8 @@ namespace Bari.Plugins.VsCore.VisualStudio
         /// <returns>Returns <c>true</c> if the project is supported</returns>
         public virtual bool SupportsProject(Project project)
         {
-            return project.HasNonEmptySourceSet(SourceSetName);
+            var sourceSet = project.GetSourceSet(SourceSetName);
+            return project.HasNonEmptySourceSet(SourceSetName) && !sourceSet.Files.All(f => f.ToString().EndsWith(ProjectFileExtension));
         }
 
         protected abstract string SourceSetName { get; }
