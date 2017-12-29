@@ -379,7 +379,7 @@ namespace Bari.Core.Model.Loader
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)
                     {
-                        SetProjectReferences(project, ((YamlSequenceNode)pair.Value).Children);
+                        SetProjectReferences(project, (YamlSequenceNode)pair.Value);
                     }
                     else if (new YamlScalarNode("postprocessors").Equals(pair.Key) &&
                              pair.Value is YamlMappingNode)
@@ -440,12 +440,12 @@ namespace Bari.Core.Model.Loader
             }
         }
 
-        private void SetProjectReferences(Project project, IEnumerable<YamlNode> referenceNodes)
+        private void SetProjectReferences(Project project, YamlSequenceNode referenceNodes)
         {
             Contract.Requires(project != null);
             Contract.Requires(referenceNodes != null);
 
-            foreach (var referenceNode in referenceNodes)
+            foreach (var referenceNode in parser.EnumerateNodesOf(referenceNodes))
             {
                 foreach (var reference in referenceLoader.LoadReference(referenceNode))
                     project.AddReference(reference);

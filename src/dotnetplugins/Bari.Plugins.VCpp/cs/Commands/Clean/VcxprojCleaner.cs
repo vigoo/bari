@@ -63,6 +63,12 @@ namespace Bari.Plugins.VCpp.Commands.Clean
                         log.DebugFormat("Deleting generated file {0}", filteredFile);
                         suite.SuiteRoot.DeleteFile(filteredFile);
                     }
+
+                    foreach (var csversion in projectRoot.Files.Where(
+                        name => name.Equals("version.cpp", StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        projectRoot.DeleteFile(csversion);
+                    }
                 }
             }
         }

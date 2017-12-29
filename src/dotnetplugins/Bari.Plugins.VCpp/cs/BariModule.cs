@@ -48,10 +48,12 @@ namespace Bari.Plugins.VCpp
             Bind<IYamlProjectParametersLoader>().To<VCppManifestParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppCLIParametersLoader>();
             Bind<IYamlProjectParametersLoader>().To<VCppToolchainParametersLoader>();
+            Bind<IYamlProjectParametersLoader>().To<VCppVersionParametersLoader>();
 
             Bind<IMSBuildProjectSection>().To<SourceItemsSection>().WhenInjectedInto<VcxprojGenerator>();
             Bind<IMSBuildProjectSection>().To<PropertiesSection>().WhenInjectedInto<VcxprojGenerator>();
             Bind<IMSBuildProjectSection>().To<ReferencesSection>().WhenInjectedInto<VcxprojGenerator>().WithConstructorArgument("sourceSetName", "cpp");
+            Bind<IMSBuildProjectSection>().To<VersionSection>().WhenInjectedInto<VcxprojGenerator>();
             Bind<IMSBuildProjectSection>().To<StaticLibraryReferencesSection>().WhenInjectedInto<VcxprojGenerator>();
 
             var oldPlatformManagement = Kernel.Get<IProjectPlatformManagement>();
