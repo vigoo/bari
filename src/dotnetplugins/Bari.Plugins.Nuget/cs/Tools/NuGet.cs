@@ -22,7 +22,7 @@ namespace Bari.Plugins.Nuget.Tools
         /// Creates the external tool
         /// </summary>
         public NuGet(IParameters parameters)
-            : base("NuGet", @"C:\Programs\", "NuGet.exe", new Uri("https://nuget.org/nuget.exe"), true, parameters)
+            : base("NuGet", @"C:\Programs\", "NuGet.exe", new Uri("https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"), true, parameters)
         {
             this.parameters = parameters;
         }
@@ -107,7 +107,7 @@ namespace Bari.Plugins.Nuget.Tools
             if (localRoot != null)
             {
                 var nuPkgName = string.Format("{0}.{1}.nupkg", packageName, version);
-                Run(targetRoot, "push", nuPkgName, apiKey, "-NonInteractive", "-Verbosity", Verbosity);
+                Run(targetRoot, "push", nuPkgName, apiKey, "-NonInteractive", "-Verbosity", Verbosity, "-Source", "https://api.nuget.org/v3/index.json");
             }
         }
 
