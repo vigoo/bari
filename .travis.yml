@@ -24,7 +24,7 @@ script:
  - git fetch
  - mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full
  - mono _bootstrap/bari.exe -v --target ${TARGET} pack full
- - test "$TARGET" == "release-mono" && mono _bootstrap/bari.exe -v --target ${TARGET} test
+ - (test "$TARGET" == "release-mono" && mono _bootstrap/bari.exe -v --target ${TARGET} test) || true
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && mono _bootstrap/bari.exe -v --target ${TARGET} publish full
