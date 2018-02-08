@@ -66,7 +66,7 @@ Example: `bari dependencies exampleProduct --module`
             var modules = suite.Modules;
             var target = "suite";
 
-            if ((modulesOnly && effectiveLength > 1) || !(modulesOnly && effectiveLength > 0))
+            if (modulesOnly && effectiveLength > 1 || (!modulesOnly && effectiveLength > 0))
             {
                 var product = parameters[0];
                 if (suite.HasProduct(product))
