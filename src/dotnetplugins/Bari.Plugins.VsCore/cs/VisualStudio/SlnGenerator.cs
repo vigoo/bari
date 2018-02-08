@@ -130,12 +130,16 @@ namespace Bari.Plugins.VsCore.VisualStudio
         {
             switch (msBuildVersion)
             {
+                case MSBuildVersion.VS2017:
+                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                    output.WriteLine("# Visual Studio 15");
+                    break;
                 case MSBuildVersion.VS2015:
-                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 14.00");
-                    output.WriteLine("# Visual Studio 2015");
+                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                    output.WriteLine("# Visual Studio 14");
                     break;
                 case MSBuildVersion.VS2013:
-                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 13.00");
+                    output.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
                     output.WriteLine("# Visual Studio 2013");
                     break;
                 default:

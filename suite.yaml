@@ -113,6 +113,8 @@ modules:
             - alias://ninject
             - alias://yaml
             - nuget://QuickGraph
+            - nuget://Microsoft.VisualStudio.Setup.Configuration.Interop/1.16.30
+            - nuget://Microsoft.Build.Utilities.Core/15.5.180
             - suite://core/Bari.Core
         - name: Bari.Plugins.Csharp
           references:
