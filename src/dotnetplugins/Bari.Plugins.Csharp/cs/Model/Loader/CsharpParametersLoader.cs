@@ -34,26 +34,26 @@ namespace Bari.Plugins.Csharp.Model.Loader
             return new Dictionary<string, Action>
                 {
                     {"base-address", () => { target.BaseAddress = ParseUint32(value); }},
-                    {"checked", () => { target.Checked = ParseBool(value); }},
+                    {"checked", () => { target.Checked = ParseBool(parser, value); }},
                     {"code-page", () => { target.CodePage = ParseString(value); }},
                     {"debug", () => { target.Debug = ParseDebugLevel(value); }},
                     {"defines", () => { target.Defines = ParseDefines(parser, value); }},
-                    {"delay-sign", () => { target.DelaySign = ParseBool(value); }},
+                    {"delay-sign", () => { target.DelaySign = ParseBool(parser, value); }},
                     {"doc-output", () => { target.DocOutput = ParseString(value); }},
                     {"file-align", () => { target.FileAlign = ParseUint32(value); }},
-                    {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(value); }},
+                    {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(parser, value); }},
                     {"key-container", () => { target.KeyContainer = ParseString(value); }},
                     {"key-file", () => { target.KeyFile = ParseString(value); }},
                     {"language-version", () => { target.LanguageVersion = ParseLanguageVersion(value); }},
                     {"main-class", () => { target.MainClass = ParseString(value); }},
-                    {"no-std-lib", () => { target.NoStdLib = ParseBool(value); }},
+                    {"no-std-lib", () => { target.NoStdLib = ParseBool(parser, value); }},
                     {"suppressed-warnings", () => { target.SuppressedWarnings = ParseWarnings(parser, value); }},
-                    {"no-win23-manifest", () => { target.NoWin32Manifest = ParseBool(value); }},
-                    {"optimize", () => { target.Optimize = ParseBool(value); }},
+                    {"no-win23-manifest", () => { target.NoWin32Manifest = ParseBool(parser, value); }},
+                    {"optimize", () => { target.Optimize = ParseBool(parser, value); }},
                     {"platform", () => { target.Platform = ParsePlatform(value); }},
                     {"preferred-ui-lang", () => { target.PreferredUILang = ParseString(value); }},
                     {"subsystem-version", () => { target.SubsystemVersion = ParseString(value); }},
-                    {"unsafe", () => { target.Unsafe = ParseBool(value); }},
+                    {"unsafe", () => { target.Unsafe = ParseBool(parser, value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
                     {"warnings-as-error", () => ParseWarningsAsError(parser, target, value) },
                     {"root-namespace", () => { target.RootNamespace = ParseString(value); }},
@@ -107,7 +107,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
             if (seq != null)
                 target.SpecificWarningsAsError = ParseWarnings(parser, value);
             else
-                target.AllWarningsAsError = ParseBool(value);
+                target.AllWarningsAsError = ParseBool(parser, value);
         }
 
         private int[] ParseWarnings(YamlParser parser, YamlNode value)
