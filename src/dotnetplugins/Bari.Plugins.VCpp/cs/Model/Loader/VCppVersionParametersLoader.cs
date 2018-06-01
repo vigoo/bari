@@ -40,7 +40,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
             Suite = suite;
 
             var result = CreateNewParameters(suite);
-            result.VersionSupport = ParseBool(value);
+            result.VersionSupport = ParseBool(parser, value);
 
             return result;
         }

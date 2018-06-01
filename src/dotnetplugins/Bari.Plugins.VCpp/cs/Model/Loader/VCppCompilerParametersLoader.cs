@@ -58,48 +58,48 @@ namespace Bari.Plugins.VCpp.Model.Loader
                     {"assembler-output", () => target.AssemblerOutput = ParseEnum<AssemblerOutputType>(value, "assembler output type") },
                     {"basic-runtime-checks", () => target.BasicRuntimeChecks = ParseEnum<RuntimeCheckType>(value, "runtime check type") },
                     {"browse-information-file", () => target.BrowseInformationFile = ParseString(value) },
-                    {"buffer-security-check", () => target.BufferSecurityCheck = ParseBool(value) },
+                    {"buffer-security-check", () => target.BufferSecurityCheck = ParseBool(parser, value) },
                     {"calling-convention", () => target.CallingConvention = ParseEnum<CallingConvention>(value, "calling convention") },
                     {"compile-as", () => target.CompileAs = ParseCLanguage(value) },
                     {"compile-as-managed", () => target.CompileAsManaged = ParseEnum<ManagedCppType>(value, "managed c++ type")},
-                    {"create-hotpatchable-image", () => target.CreateHotpatchableImage = ParseBool(value)},
+                    {"create-hotpatchable-image", () => target.CreateHotpatchableImage = ParseBool(parser, value)},
                     {"debug-information-format", () => target.DebugInformationFormat = ParseEnum<DebugInformationFormat>(value, "debug information format")},
-                    {"disable-language-extensions", () => target.DisableLanguageExtensions = ParseBool(value)},
+                    {"disable-language-extensions", () => target.DisableLanguageExtensions = ParseBool(parser, value)},
                     {"supressed-warnings", () => target.SuppressedWarnings = ParseWarnings(value)},
                     {"enhanced-instruction-set", () => target.EnableEnhancedInstructionSet = ParseEnum<EnhancedInstructionSet>(value, "enhanced instruction set")},
-                    {"fiber-safe-optimizations", () => target.EnableFiberSafeOptimizations = ParseBool(value)},
-                    {"code-analysis", () => target.CodeAnalysis = ParseBool(value)},
+                    {"fiber-safe-optimizations", () => target.EnableFiberSafeOptimizations = ParseBool(parser, value)},
+                    {"code-analysis", () => target.CodeAnalysis = ParseBool(parser, value)},
                     {"exception--handling", () => target.ExceptionHandling = ParseEnum<ExceptionHandlingType>(value, "exception handling type")},
-                    {"expand-attributed-source", () => target.ExpandAttributedSource = ParseBool(value)},
+                    {"expand-attributed-source", () => target.ExpandAttributedSource = ParseBool(parser, value)},
                     {"favor", () => target.Favor = ParseEnum<OptimizationFavor>(value, "optimization favor")},
-                    {"floating-point-exceptions", () => target.FloatingPointExceptions = ParseBool(value)},
+                    {"floating-point-exceptions", () => target.FloatingPointExceptions = ParseBool(parser, value)},
                     {"floating-point-model", () => target.FloatingPointModel = ParseEnum<FloatingPointModel>(value, "floating point model")},
-                    {"force-conformance-in-for-loop-scope", () => target.ForceConformanceInForLoopScope = ParseBool(value)},
+                    {"force-conformance-in-for-loop-scope", () => target.ForceConformanceInForLoopScope = ParseBool(parser, value)},
                     {"forced-include-files", () => target.ForcedIncludeFiles = ParseStringArray(parser, value)},
                     {"forced-using-files", () => target.ForcedUsingFiles = ParseStringArray(parser, value)},
-                    {"function-level-linking", () => target.FunctionLevelLinking = ParseBool(value)},
-                    {"generate-xml-documentation-files", () => target.GenerateXMLDocumentationFiles = ParseBool(value)},
-                    {"ignore-standard-include-path", () => target.IgnoreStandardIncludePath = ParseBool(value)},
+                    {"function-level-linking", () => target.FunctionLevelLinking = ParseBool(parser, value)},
+                    {"generate-xml-documentation-files", () => target.GenerateXMLDocumentationFiles = ParseBool(parser, value)},
+                    {"ignore-standard-include-path", () => target.IgnoreStandardIncludePath = ParseBool(parser, value)},
                     {"inline-function-expansion", () => target.InlineFunctionExpansion = ParseEnum<InlineExpansion>(value, "inline expansion")},                    
-                    {"intrinsic-functions", () => target.IntrinsicFunctions = ParseBool(value)},
-                    {"minimal-rebuild", () => target.MinimalRebuild = ParseBool(value)},
-                    {"multi-processor-compilation", () => target.MultiProcessorCompilation = ParseBool(value)},
-                    {"omit-default-lib-name", () => target.OmitDefaultLibName = ParseBool(value)},
-                    {"omit-frame-pointers", () => target.OmitFramePointers = ParseBool(value)},
-                    {"openmp-support", () => target.OpenMPSupport = ParseBool(value)},
+                    {"intrinsic-functions", () => target.IntrinsicFunctions = ParseBool(parser, value)},
+                    {"minimal-rebuild", () => target.MinimalRebuild = ParseBool(parser, value)},
+                    {"multi-processor-compilation", () => target.MultiProcessorCompilation = ParseBool(parser, value)},
+                    {"omit-default-lib-name", () => target.OmitDefaultLibName = ParseBool(parser, value)},
+                    {"omit-frame-pointers", () => target.OmitFramePointers = ParseBool(parser, value)},
+                    {"openmp-support", () => target.OpenMPSupport = ParseBool(parser, value)},
                     {"optimization", () => target.Optimization = ParseEnum<OptimizationLevel>(value, "optimization level")},
                     {"defines", () => target.Defines = ParseStringArray(parser, value) },
                     {"processor-count", () => target.ProcessorNumber = (int?)ParseUint32(value)},
                     {"runtime-library", () => target.RuntimeLibrary = ParseEnum<RuntimeLibraryType>(value, "runtime library")},
-                    {"runtime-type-info", () => target.RuntimeTypeInfo = ParseBool(value)},
-                    {"smaller-type-check", () => target.SmallerTypeCheck = ParseBool(value)},
-                    {"string-pooling", () => target.StringPooling = ParseBool(value)},
+                    {"runtime-type-info", () => target.RuntimeTypeInfo = ParseBool(parser, value)},
+                    {"smaller-type-check", () => target.SmallerTypeCheck = ParseBool(parser, value)},
+                    {"string-pooling", () => target.StringPooling = ParseBool(parser, value)},
                     {"struct-member-alignment", () => target.StructMemberAlignment = (int?) ParseUint32(value)},
-                    {"warnings-as-error", () => ParseWarningsAsError(target, value)},
-                    {"treat-wchart-as-buildin-type", () => target.TreatWCharTAsBuiltInType = ParseBool(value)},
+                    {"warnings-as-error", () => ParseWarningsAsError(parser, target, value)},
+                    {"treat-wchart-as-buildin-type", () => target.TreatWCharTAsBuiltInType = ParseBool(parser, value)},
                     {"undefine-preprocessor-definitions", () => ParseUndefinePreprocessorDefinitions(parser, target, value)},
                     {"warning-level", () => target.WarningLevel = ParseWarningLevel(value)},
-                    {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(value)},
+                    {"whole-program-optimization", () => target.WholeProgramOptimization = ParseBool(parser, value)},
                     {"pdb-file-name", () => target.PDBFileName = ParseString(value)},
                     {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
                     {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
@@ -172,16 +172,16 @@ namespace Bari.Plugins.VCpp.Model.Loader
             if (seq != null)
                 target.UndefinePreprocessorDefinitions = ParseStringArray(parser, value);
             else
-                target.UndefineAllPreprocessorDefinitions = ParseBool(value);
+                target.UndefineAllPreprocessorDefinitions = ParseBool(parser, value);
         }
 
-        private void ParseWarningsAsError(VCppProjectCompilerParameters target, YamlNode value)
+        private void ParseWarningsAsError(YamlParser parser, VCppProjectCompilerParameters target, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
                 target.SpecificWarningsAsError = ParseWarnings(value);
             else
-                target.AllWarningsAsError = ParseBool(value);
+                target.AllWarningsAsError = ParseBool(parser, value);
         }
 
 

@@ -124,9 +124,19 @@ namespace Bari.Core.Model.Loader
             return Convert.ToUInt32(ParseString(value));
         }
 
-        protected bool ParseBool(YamlNode value)
+        protected bool ParseBool(YamlParser parser, YamlNode value)
         {
-            var scalarValue = (YamlScalarNode)value;
+            var seq = value as YamlSequenceNode;
+            if (seq != null)
+            {
+                var values = parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => ParseBool(parser, childValue)).ToList();
+                if (values.Any())
+                    return values.First();
+                
+                return false;
+            }
+
+            var scalarValue = (YamlScalarNode) value;
             return "true".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase) ||
                    "yes".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase);
         }

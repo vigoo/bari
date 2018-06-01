@@ -55,15 +55,15 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"debug", () => { target.Debug = ParseDebugLevel(value); }},
                     {"defines", () => { target.Defines = ParseDefines(value); }},
                     {"doc-output", () => { target.DocOutput = ParseString(value); }},
-                    {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(value); }},
+                    {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(parser, value); }},
                     {"key-file", () => { target.KeyFile = ParseString(value); }},
                     {"suppressed-warnings", () => { target.SuppressedWarnings = ParseWarnings(value); }},
-                    {"optimize", () => { target.Optimize = ParseBool(value); }},
+                    {"optimize", () => { target.Optimize = ParseBool(parser, value); }},
                     {"platform", () => { target.Platform = ParsePlatform(value); }},
                     {"warning-level", () => { target.WarningLevel = ParseWarningLevel(value); }},
-                    {"warnings-as-error", () => ParseWarningsAsError(target, value)},
+                    {"warnings-as-error", () => ParseWarningsAsError(parser, target, value)},
                     {"other-flags", () => { target.OtherFlags = ParseString(value); }},
-                    {"tailcalls", () => { target.Tailcalls = ParseBool(value); }},
+                    {"tailcalls", () => { target.Tailcalls = ParseBool(parser, value); }},
                     {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
                     {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
                     {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))}
@@ -107,13 +107,13 @@ namespace Bari.Plugins.Fsharp.Model.Loader
             }
         }
 
-        private void ParseWarningsAsError(FsharpProjectParameters target, YamlNode value)
+        private void ParseWarningsAsError(YamlParser parser, FsharpProjectParameters target, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
                 target.SpecificWarningsAsError = ParseWarnings(value);
             else
-                target.AllWarningsAsError = ParseBool(value);
+                target.AllWarningsAsError = ParseBool(parser, value);
         }
 
         private int[] ParseWarnings(YamlNode value)

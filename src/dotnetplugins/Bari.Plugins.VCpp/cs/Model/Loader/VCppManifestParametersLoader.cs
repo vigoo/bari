@@ -38,8 +38,8 @@ namespace Bari.Plugins.VCpp.Model.Loader
         {
             return new Dictionary<string, Action>
             {
-                { "generate-manifest", () => target.GenerateManifest = ParseBool(value) },
-                { "embed-manifest", () => target.EmbedManifest = ParseBool(value) }
+                { "generate-manifest", () => target.GenerateManifest = ParseBool(parser, value) },
+                { "embed-manifest", () => target.EmbedManifest = ParseBool(parser, value) }
             };
         }
     }
