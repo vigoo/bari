@@ -56,7 +56,8 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                     var referredProject = Suite.GetModule(moduleName).GetProjectOrTestProject(projectName);
 
                     if (referredProject.Type == ProjectType.Library ||
-                        referredProject.Type == ProjectType.Executable)
+                        referredProject.Type == ProjectType.Executable ||
+                        referredProject.Type == ProjectType.WindowsExecutable)
                     {
                         writer.WriteComment("Project reference " + projectGuidManagement.GetGuid(referredProject));
 
