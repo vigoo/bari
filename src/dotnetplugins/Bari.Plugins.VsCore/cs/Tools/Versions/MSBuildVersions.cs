@@ -38,7 +38,14 @@ namespace Bari.Plugins.VsCore.Tools.Versions
     public class MSBuildVS2017 : MSBuild
     {
         public MSBuildVS2017(IParameters parameters) :
-            base(parameters, VSInstance.GetMsBuildInstallPath("15"))
+            base(parameters, VSInstance.GetMsBuildInstallPath("15", "15.0"))
+        {
+        }
+    }
+    public class MSBuildVS2019 : MSBuild
+    {
+        public MSBuildVS2019(IParameters parameters) :
+            base(parameters, VSInstance.GetMsBuildInstallPath("16", "Current"))
         {
         }
     }
@@ -113,13 +120,13 @@ namespace Bari.Plugins.VsCore.Tools.Versions
                                 "There were no instances of Visual Studio 15.0 or later found that match the specified requirements.");
         }
 
-        internal static string GetMsBuildInstallPath(string mainVersion)
+        internal static string GetMsBuildInstallPath(string mainVersion, string msBuildVersion)
         {
             var instance = LocateVisualStudioInstance(mainVersion, new HashSet<string>(new[] { "Microsoft.Component.MSBuild" })) as ISetupInstance2;
             if (instance != null)
             {
                 var installationPath = instance.GetInstallationPath();
-                return Path.Combine(installationPath, "MSBuild", mainVersion + ".0", "Bin");
+                return Path.Combine(installationPath, "MSBuild", msBuildVersion, "Bin");
             }
 
             throw new Exception("There were no instances of Visual Studio " + mainVersion + " found.");
