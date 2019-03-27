@@ -465,6 +465,12 @@ namespace Bari.Plugins.Csharp.Model
                     return "6";
                 case CsharpLanguageVersion.V7:
                     return "7";
+                case CsharpLanguageVersion.V71:
+                    return "7.1";
+                case CsharpLanguageVersion.V72:
+                    return "7.2";
+                case CsharpLanguageVersion.V73:
+                    return "7.3";
                 default:
                     throw new ArgumentOutOfRangeException("languageVersion");
             }
