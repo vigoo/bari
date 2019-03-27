@@ -428,6 +428,18 @@ namespace Bari.Plugins.Csharp.Model
                     return "v4.5";
                 case FrameworkVersion.v451:
                     return "v4.5.1";
+                case FrameworkVersion.v452:
+                    return "v4.5.2";
+                case FrameworkVersion.v46:
+                    return "v4.6";
+                case FrameworkVersion.v461:
+                    return "v4.6.1";
+                case FrameworkVersion.v462:
+                    return "v4.6.2";
+                case FrameworkVersion.v47:
+                    return "v4.7";
+                case FrameworkVersion.v471:
+                    return "v4.7.1";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }
@@ -453,6 +465,12 @@ namespace Bari.Plugins.Csharp.Model
                     return "6";
                 case CsharpLanguageVersion.V7:
                     return "7";
+                case CsharpLanguageVersion.V71:
+                    return "7.1";
+                case CsharpLanguageVersion.V72:
+                    return "7.2";
+                case CsharpLanguageVersion.V73:
+                    return "7.3";
                 default:
                     throw new ArgumentOutOfRangeException("languageVersion");
             }
