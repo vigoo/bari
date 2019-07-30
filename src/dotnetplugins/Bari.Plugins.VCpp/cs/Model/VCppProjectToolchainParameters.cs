@@ -12,7 +12,7 @@ namespace Bari.Plugins.VCpp.Model
 
         public override VCppProjectToolchainParameters CreateDefault(Suite suite, VCppProjectToolchainParameters parent)
         {
-            return new VCppProjectToolchainParameters();
+            return new VCppProjectToolchainParameters(parent);
         }
     }
 
@@ -31,7 +31,13 @@ namespace Bari.Plugins.VCpp.Model
             get
             { 
                 switch (PlatformToolSet)
-                {                                    
+                {
+                    case PlatformToolSet.VS2019:
+                        return "v142"; 
+                    case PlatformToolSet.VS2017:
+                        return "v141"; 
+                    case PlatformToolSet.VS2015:
+                        return "v140"; 
                     case PlatformToolSet.VS2013: 
                         return "v120";                 
                     case PlatformToolSet.VS2012: 
@@ -39,6 +45,12 @@ namespace Bari.Plugins.VCpp.Model
                         return "v110"; 
                 }
             }
+        }
+
+        public VCppProjectToolchainParameters(VCppProjectToolchainParameters parent = null):
+            base(parent)
+        {
+            
         }
     }
 }
