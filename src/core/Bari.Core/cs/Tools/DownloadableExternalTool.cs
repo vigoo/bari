@@ -88,7 +88,7 @@ namespace Bari.Core.Tools
             get { return isDotNetProcess; }
         }
 
-        private void DownloadTool()
+        protected void DownloadTool()
         {
             log.InfoFormat("Downloading tool {0} from {1} to {2}", Name, url, bariInstallLocation);
 
