@@ -43,6 +43,9 @@ namespace Bari.Plugins.Nuget.Tools
             }
         }
 
+        protected string BariInstallLocation { get { return bariInstallLocation; } }
+
+        protected string DefaultInstallLocation { get { return defaultInstallLocation; } }
 
         /// <summary>
         /// Defines a tool which can be downloaded if missing from an URL
