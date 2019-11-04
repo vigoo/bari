@@ -92,9 +92,11 @@ namespace Bari.Plugins.Csharp.Model.Loader
                 case "4.6.2": return FrameworkVersion.v462;
                 case "4.7": return FrameworkVersion.v47;
                 case "4.7.1": return FrameworkVersion.v471;
+                case "4.7.2": return FrameworkVersion.v472;
+                case "4.8": return FrameworkVersion.v48;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7' or '4.7.1'", value));
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2' or '4.8'", value));
             }
         }
 
@@ -207,9 +209,11 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     return CsharpLanguageVersion.V72;
                 case "7.3":
                     return CsharpLanguageVersion.V73;
+                case "8":
+                    return CsharpLanguageVersion.V8;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6' or '7'", sval));
+                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6', '7', '7.1', '7.2', '7.3' or '8'", sval));
             }
         }
 
