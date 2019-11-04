@@ -240,6 +240,10 @@ namespace Bari.Plugins.Fsharp.Model
                     return "v4.7";
                 case FrameworkVersion.v471:
                     return "v4.7.1";
+                case FrameworkVersion.v472:
+                    return "v4.7.2";
+                case FrameworkVersion.v48:
+                    return "v4.8";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }

@@ -98,9 +98,11 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                 case "4.6.2": return FrameworkVersion.v462;
                 case "4.7": return FrameworkVersion.v47;
                 case "4.7.1": return FrameworkVersion.v471;
+                case "4.7.2": return FrameworkVersion.v472;
+                case "4.8": return FrameworkVersion.v48;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7' or '4.7.1'", value));
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2' or '4.8'", value));
             }
         }
 
