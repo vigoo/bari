@@ -1,30 +1,28 @@
 language: csharp
-
 branches:
   except:
-    - site-src
-    - gh-pages
-
+  - site-src
+  - gh-pages
 env:
- global:
-  - EnableNuGetPackageRestore=true 
+  global:
+  - EnableNuGetPackageRestore=true
   - BUILDNO=${TRAVIS_BUILD_NUMBER}
- matrix:
+  - secure: QhuCPReXooE2i8LI8HTJjObcEnOgemzdDViIWAXgpEoYz/094VZ4QdkOpICS0PmCWMsE5F6gtGdiP5k3a6KoX5Zy11iXIewk9UiCSEyNGPCZSNbWp7aK3AZHLV4N1U6+Ffa66TOn+6gkCBKoWUFFqJgXVzLfUSsdMSgf796DBrA=
+  matrix:
   - TARGET=release-mono
   - TARGET=release
-
 before_install:
- - mkdir _bootstrap 
- - wget "https://github.com/vigoo/bari/releases/download/1.0.1/bari-1.0.1-mono.zip" -P _bootstrap
- - unzip _bootstrap/bari-1.0.1-mono.zip -d _bootstrap
- - mono _bootstrap/bari.exe selfupdate
-
-
+- mkdir _bootstrap
+- wget "https://github.com/vigoo/bari/releases/download/1.0.1/bari-1.0.1-mono.zip"
+  -P _bootstrap
+- unzip _bootstrap/bari-1.0.1-mono.zip -d _bootstrap
+- mono _bootstrap/bari.exe selfupdate
 script:
- - git fetch
- - mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full
- - mono _bootstrap/bari.exe -v --target ${TARGET} pack full
- - (test "$TARGET" == "release-mono" && mono _bootstrap/bari.exe -v --target ${TARGET} test) || true
-
+- git fetch
+- mono _bootstrap/bari.exe -v --target ${TARGET} rebuild full
+- mono _bootstrap/bari.exe -v --target ${TARGET} pack full
+- (test "$TARGET" == "release-mono" && mono _bootstrap/bari.exe -v --target ${TARGET}
+  test) || true
 after_success:
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && mono _bootstrap/bari.exe -v --target ${TARGET} publish full
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && mono
+  _bootstrap/bari.exe -v --target ${TARGET} publish full
