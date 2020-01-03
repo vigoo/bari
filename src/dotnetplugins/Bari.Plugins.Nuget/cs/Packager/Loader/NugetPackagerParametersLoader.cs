@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Loader;
 using Bari.Core.UI;
@@ -9,8 +11,11 @@ namespace Bari.Plugins.Nuget.Packager.Loader
 {
     public class NugetPackagerParametersLoader: YamlProjectParametersLoaderBase<NugetPackagerParameters>
     {
-        public NugetPackagerParametersLoader(IUserOutput output) : base(output)
+        private IEnvironmentVariableContext environmentVariableContext;
+
+        public NugetPackagerParametersLoader(IUserOutput output, IEnvironmentVariableContext environmentVariableContext) : base(output)
         {
+            this.environmentVariableContext = environmentVariableContext;
         }
 
         protected override string BlockName
@@ -37,8 +42,16 @@ namespace Bari.Plugins.Nuget.Packager.Loader
                 { "license-url", () => target.LicenseUrl = new Uri(ParseString(value))},
                 { "icon-url", () => target.IconUrl = new Uri(ParseString(value)) },
                 { "package-as-tool", () => target.PackageAsTool = ParseBool(parser, value)},
-                { "api-key", () => target.ApiKey = ParseString(value) }
+                { "api-key", () => target.ApiKey = ParseApiKey(ParseString(value)) }
             };
+        }
+
+        private string ParseApiKey(String apiKey)
+        {
+            var result = new StringBuilder(apiKey);
+            EnvironmentVariables.ResolveEnvironmentVariables(environmentVariableContext, result);
+
+            return result.ToString();
         }
     }
 }

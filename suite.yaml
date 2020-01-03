@@ -58,7 +58,7 @@ modules:
             - nuget://Monads
             - alias://logging
             - alias://yaml
-            - nuget://DotNetZip
+            - nuget://DotNetZip/1.10.0
             - nuget://QuickGraph
             - nuget://Nuget.Core/1.5.20902.9026
             - nuget://NuSelfUpdate/0.1.1.16794
@@ -306,7 +306,7 @@ modules:
         - name: Bari.Plugins.Deps
           references:
             - gac://System
-            - nuget://log4net
+            - alias://logging
             - nuget://QuickGraph
             - alias://ninject
             - suite://core/Bari.Core
