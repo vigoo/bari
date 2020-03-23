@@ -328,7 +328,21 @@ namespace Bari.Core.Generic
                         Directory.CreateDirectory(absoluteTargetDir);
                 }
 
-                File.Copy(Path.Combine(path, name), Path.Combine(localTarget.AbsolutePath, targetName), overwrite: true);
+                var copy = true;
+                if (target.Exists(targetName))
+                {
+                    var sourceSize = GetFileSize(name);
+                    var targetSize = target.GetFileSize(targetName);
+                    var sourceDate = GetLastModifiedDate(name);
+                    var targetDate = target.GetLastModifiedDate(targetName);
+                    
+                    copy = sourceSize != targetSize || !sourceDate.Equals(targetDate);
+                }
+
+                if (copy)
+                {
+                    File.Copy(Path.Combine(path, name), Path.Combine(localTarget.AbsolutePath, targetName), overwrite: true);
+                }
             }
             else
             {

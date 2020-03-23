@@ -102,10 +102,7 @@ namespace Bari.Plugins.FSRepository.Build
 
             string fileName = resolutionContext.FileName + "." + resolutionContext.Extension;
 
-            if (fileName == "*.*")
-                return Directory.Exists(Path.GetDirectoryName(resolvedPath));
-            else
-                return File.Exists(resolvedPath);
+            return !string.IsNullOrEmpty(fileName);
         }
 
         private ISet<TargetRelativePath> DeployDirectoryContents(IFileSystemDirectory depDir)
