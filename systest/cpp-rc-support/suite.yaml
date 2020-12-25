@@ -1,11 +1,20 @@
 ---
 suite:      bari systemtest cpp-rc-support
 
+msbuild:
+    version: VS2019
+
+cpp-compiler:
+toolchain: VS2019
+
 modules:
     - name: Module1
       projects:
         - name: hello
           type: executable
+          cpp-compiler:
+            function-level-linking: true
+            smaller-type-check: false
           cpp-linker:
             subsystem: Console
 

@@ -1,6 +1,12 @@
 ---
 suite:      bari systemtest mixed-cpp-cli
 
+msbuild:
+    version: VS2019
+
+cpp-compiler:
+toolchain: VS2019
+
 modules:
     - name: Module1
       projects:
@@ -9,6 +15,9 @@ modules:
           references:
             - gac://System
           cli: Enabled
+          cpp-compiler:
+            function-level-linking: true
+            smaller-type-check: false
           cpp-linker:
             subsystem: Console
 
