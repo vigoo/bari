@@ -117,7 +117,23 @@ namespace Bari.Plugins.Nuget.Build
                     case FrameworkVersion.v45:
                         return NugetLibraryProfile.Net45;
                     case FrameworkVersion.v451:
-                        return NugetLibraryProfile.Net45;
+                        return NugetLibraryProfile.Net451;
+                    case FrameworkVersion.v452:
+                        return NugetLibraryProfile.Net452;
+                    case FrameworkVersion.v46:
+                        return NugetLibraryProfile.Net46;
+                    case FrameworkVersion.v461:
+                        return NugetLibraryProfile.Net461;
+                    case FrameworkVersion.v462:
+                        return NugetLibraryProfile.Net462;
+                    case FrameworkVersion.v47:
+                        return NugetLibraryProfile.Net47;
+                    case FrameworkVersion.v471:
+                        return NugetLibraryProfile.Net471;
+                    case FrameworkVersion.v472:
+                        return NugetLibraryProfile.Net472;
+                    case FrameworkVersion.v48:
+                        return NugetLibraryProfile.Net48;
                 }
             }
 
