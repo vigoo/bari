@@ -39,10 +39,11 @@ namespace Bari.Plugins.Nuget.Tools
         /// <returns>Returns the <c>root</c> relative paths of the DLL files to be used</returns>
         public Tuple<string, IEnumerable<string>> InstallPackage(string name, string version, IFileSystemDirectory root, string relativeTargetDirectory, bool dllsOnly, NugetLibraryProfile maxProfile)
         {
+            string dir = string.IsNullOrEmpty(relativeTargetDirectory) ? "." : relativeTargetDirectory;
             if (String.IsNullOrWhiteSpace(version))
-                Run(root, "install", name, "-o", "\""+relativeTargetDirectory+"\"", "-Verbosity", Verbosity);
+                Run(root, "install", name, "-o", "\""+dir+"\"", "-Verbosity", Verbosity);
             else
-                Run(root, "install", name, "-Version", version, "-o", "\"" + relativeTargetDirectory + "\"", "-Verbosity", Verbosity);
+                Run(root, "install", name, "-Version", version, "-o", "\"" + dir + "\"", "-Verbosity", Verbosity);
 
             var result = new List<string>(); // root relative paths
             string commonRoot = String.Empty; // root relative path
