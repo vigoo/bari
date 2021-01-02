@@ -41,6 +41,7 @@ namespace Bari.Plugins.VCpp.Model
             Define<MidlTargetEnvironment>("TargetEnvironment");
             Define<bool>("NewTypeLibFormat");
             Define<string>("TypeLibraryName");
+            Define<string>("ComponentFileName");
             Define<string[]>("UndefinePreprocessorDefinitions");
             Define<bool>("ValidateAllParameters");
             Define<bool>("WarningsAsError");
@@ -144,6 +145,9 @@ namespace Bari.Plugins.VCpp.Model
         
         public string TypeLibraryName { get { return Get<string>("TypeLibraryName"); } set { Set("TypeLibraryName", value); } }
         public bool IsTypeLibraryNameSpecified { get { return IsSpecified("TypeLibraryName"); }}
+
+        public string ComponentFileName { get { return Get<string>("ComponentFileName"); } set { Set("ComponentFileName", value); } }
+        public bool IsComponentFileNameSpecified { get { return IsSpecified("ComponentFileName"); } }
         
         public string[] UndefinePreprocessorDefinitions { get { return Get<string[]>("UndefinePreprocessorDefinitions"); } set { Set("UndefinePreprocessorDefinitions", value); } }
         public bool AreUndefinePreprocessorDefinitionsSpecified { get { return IsSpecified("UndefinePreprocessorDefinitions"); }}
@@ -257,6 +261,9 @@ namespace Bari.Plugins.VCpp.Model
 
             if (IsTypeLibraryNameSpecified)
                 writer.WriteElementString("TypeLibraryName", TypeLibraryName);
+
+            if (IsComponentFileNameSpecified)
+                writer.WriteElementString("ComponentFileName", ComponentFileName);
 
             if (AreUndefinePreprocessorDefinitionsSpecified)
                 WriteStringArray(writer, "UndefinePreprocessorDefinitions", UndefinePreprocessorDefinitions);

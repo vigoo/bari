@@ -1,5 +1,5 @@
 ---
-suite:      bari systemtest single-cpp-exe
+suite:      bari systemtest regfree-com-server
 
 fs-repositories:
     - fsrepo\%NAME\%FILENAME.%EXT
@@ -50,6 +50,7 @@ modules:
             proxy-file-name: comserver_p.c
             generate-stubless-proxies: true
             type-library-name: comserver.tlb
+            component-file-name: comserver.dll
             target-environment: Win32
             validate-all-parameters: true
           manifest:

@@ -78,6 +78,7 @@ namespace Bari.Plugins.VCpp.Model.Loader
                 {"target-environment", () => target.TargetEnvironment = ParseEnum<MidlTargetEnvironment>(value, "MIDL target environment")},
                 {"new-typelib-format", () => target.NewTypeLibFormat = ParseBool(parser, value)},
                 {"type-library-name", () => target.TypeLibraryName = ParseString(value)},
+                {"component-file-name", () => target.ComponentFileName = ParseString(value)},
                 {"undefine-preprocessor-definitions", () => target.UndefinePreprocessorDefinitions = ParseStringArray(parser, value)},
                 {"validate-all-parameters", () => target.ValidateAllParameters = ParseBool(parser, value)},
                 {"warnings-as-error", () => target.WarningsAsError = ParseBool(parser, value)},
