@@ -83,11 +83,7 @@ namespace Bari.Plugins.Nuget.Build
             return new HashSet<TargetRelativePath>(
                 from path in files.Item2
                 let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
-                select reference.Type == ReferenceType.Build ?
-                    new TargetRelativePath(relativeRoot, relativePath) :
-                    new TargetRelativePath(
-                        Path.GetDirectoryName(Path.Combine(relativeRoot, relativePath)),
-                        Path.GetFileName(Path.Combine(relativeRoot, relativePath))));
+                select new TargetRelativePath(relativeRoot, relativePath));
         }
 
         private NugetLibraryProfile GetMaxProfile()
