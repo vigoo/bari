@@ -26,12 +26,12 @@ modules:
           cpp-compiler:
             function-level-linking: true
             smaller-type-check: false
-             defines:
-               - when debug:
-                 - _DEBUG
-               - when release:
-                 - NDEBUG
-               - TEST
+            defines:
+              - when debug:
+                - _DEBUG
+              - when release:
+                - NDEBUG
+              - TEST
           cpp-linker:
             subsystem: Console
 
