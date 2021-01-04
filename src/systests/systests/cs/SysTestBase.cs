@@ -154,11 +154,14 @@ namespace systests
                 Arguments = String.Join(" ", isRunningOnMono ? new [] { bariPath }.Concat(args) : args),
                 CreateNoWindow = true,
                 WorkingDirectory = Path.Combine(root, name),
-                UseShellExecute = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
             };
             using (var process = Process.Start(psi))
+            using (var output = process.StandardOutput)
             {
                 process.WaitForExit();
+                File.WriteAllText(Path.Combine(logs, logName), output.ReadToEnd());
 
                 return process.ExitCode;
             }
