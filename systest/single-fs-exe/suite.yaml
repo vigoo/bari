@@ -18,3 +18,5 @@ modules:
             - { uri: 'nuget://FSharp.Core', type: Runtime }
           order:
             - main.fs
+      postprocessors:
+        - move_fsharpcore
