@@ -160,8 +160,9 @@ namespace systests
             using (var process = Process.Start(psi))
             using (var output = process.StandardOutput)
             {
+                string text = output.ReadToEnd();
                 process.WaitForExit();
-                File.WriteAllText(Path.Combine(logs, logName), output.ReadToEnd());
+                File.WriteAllText(Path.Combine(logs, logName), text);
 
                 return process.ExitCode;
             }
