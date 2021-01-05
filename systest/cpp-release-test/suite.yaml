@@ -1,6 +1,12 @@
 ---
 suite:      bari systemtest cpp-release-test
 
+msbuild:
+    version: VS2019
+
+cpp-compiler:
+toolchain: VS2019
+
 goals:
     - name: debug
     - name: release
@@ -18,12 +24,14 @@ modules:
         - name: hello
           type: executable
           cpp-compiler:
-             defines:
-               - when debug:
-                 - _DEBUG
-               - when release:
-                 - NDEBUG
-               - TEST
+            function-level-linking: true
+            smaller-type-check: false
+            defines:
+              - when debug:
+                - _DEBUG
+              - when release:
+                - NDEBUG
+              - TEST
           cpp-linker:
             subsystem: Console
 

@@ -65,7 +65,8 @@ namespace Bari.Plugins.VCpp.Model
             if (project.HasParameters("midl"))
             {
                 var midlParams = project.GetParameters<VCppProjectMIDLParameters>("midl");
-                TypeLibraryFile = midlParams.TypeLibraryName;         
+                TypeLibraryFile = midlParams.TypeLibraryName;
+                ComponentFileName = midlParams.ComponentFileName;
             }
         }
 

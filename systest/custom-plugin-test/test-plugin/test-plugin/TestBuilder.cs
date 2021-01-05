@@ -22,11 +22,6 @@ namespace TestPlugin
             this.targetRoot = targetRoot;
         }
 
-        public void AddToContext(IBuildContext context)
-        {
-            context.AddBuilder(this, new IBuilder[0]);
-        }
-
         public ISet<TargetRelativePath> Run(IBuildContext context)
         {
             var targetDir = targetRoot.CreateDirectory(project.RelativeTargetPath);
@@ -55,6 +50,21 @@ namespace TestPlugin
             return result;
         }
 
+        public bool CanRun()
+        {
+            return true;
+        }
+
+        public void AddPrerequisite(IBuilder target)
+        {
+            // do nothing
+        }
+
+        public void RemovePrerequisite(IBuilder target)
+        {
+            // do nothing
+        }
+
         public IDependencies Dependencies
         {
             get { return new NoDependencies(); }
@@ -63,6 +73,22 @@ namespace TestPlugin
         public string Uid
         {
             get { return String.Format("test-{0}", project.Name); }
+        }
+
+        public IEnumerable<IBuilder> Prerequisites
+        {
+            get
+            {
+                return new IBuilder[0];
+            }
+        }
+
+        public Type BuilderType
+        {
+            get
+            {
+                return typeof(TestBuilder);
+            }
         }
     }
 }

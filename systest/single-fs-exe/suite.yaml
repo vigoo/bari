@@ -1,6 +1,12 @@
 ---
 suite:      bari systemtest single-fs-exe
 
+msbuild:
+    version: VS2019
+
+csharp: # TODO: fsharp
+    target-framework: v4.7.2
+
 modules:
     - name: Module
       projects:
@@ -9,6 +15,8 @@ modules:
           references:
             - gac://mscorlib            
             - gac://System
-            - gac://FSharp.Core
+            - { uri: 'nuget://FSharp.Core', type: Runtime }
           order:
             - main.fs
+      postprocessors:
+        - move_fsharpcore
