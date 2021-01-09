@@ -7,7 +7,7 @@ env:
   global:
   - EnableNuGetPackageRestore=true
   - BUILDNO=${TRAVIS_BUILD_NUMBER}
-  secure: "SnCAsyIjlJHpmXiREltgMH5S0yT46e40hOE5o8oHa0n6o1XZuyco9Bpm/z+0Qo1z+KNb2KwfR97YqF+PAjyiazuDuNrLNt19B0SRctN81eDV+0uHTwewwuGYMi4yS7Sgh6MIQ+ViB1PAKETwfunVcMzefLCsp8iX7kWAjoG75Hs="
+  - secure: BwYW48SgUj0UL739ECVV7Vz/dXyNAEvDoR6i7iD1SF6FY0u/jgVSWmBGDoSUkFV4hgrDhlsz9BmUOwTgN6u3nbaeSGdiWCekstZoLkylh8iZ20iz1R4qLXCDAAtoVRazyIrB6ZdQxWaYlSZ+aeGFPHcd59L+JGm3QTcOBTctwrY=
   matrix:
   - TARGET=release-mono
   - TARGET=release
