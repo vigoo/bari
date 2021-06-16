@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0        
       - name: Installing Mono
         run: |
           sudo apt install gnupg ca-certificates curl
@@ -49,3 +51,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} publish full
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
