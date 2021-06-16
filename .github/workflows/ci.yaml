@@ -1,0 +1,51 @@
+name: CI
+on:
+  push:
+    branches-ignore:
+    - site-src
+    - gh-pages
+  pull_request:
+    branches-ignore:
+    - site-src
+    - gh-pages
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        target: 
+          - release-mono
+          - release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Installing Mono
+        run: |
+          sudo apt install gnupg ca-certificates curl
+          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          sudo apt update
+          sudo apt install mono-devel
+          mono --version
+      - name: Downloading NuGet
+        run: |
+          mkdir -v .bin
+          curl https://dist.nuget.org/win-x86-commandline/latest/nuget.exe --output .bin/nuget.exe
+      - name: Downloading Bari
+        run: |
+          mono .bin/nuget.exe install bari-mono -OutputDirectory .bin
+          mono .bin/bari*/tools/bari.exe info
+      - name: Build
+        run: |
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} rebuild full
+      - name: Pack
+        run: |
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} pack
+      - name: Test
+        run: |
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} test
+      - name: Publish
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} publish full
