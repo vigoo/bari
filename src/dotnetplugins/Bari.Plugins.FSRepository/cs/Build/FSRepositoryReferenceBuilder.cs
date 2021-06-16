@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Bari.Core.Build;
 using Bari.Core.Build.Cache;
 using Bari.Core.Exceptions;
@@ -90,7 +91,7 @@ namespace Bari.Plugins.FSRepository.Build
             string fileName = resolutionContext.FileName + "." + resolutionContext.Extension;
 
             if (fileName == "*.*")
-                return DeployDirectoryContents(depDir);
+                return DeployDirectoryContents(depDir, Path.GetDirectoryName(resolvedPath), "");
             else
                 return DeploySingleFile(depDir, fileName);
         }
@@ -105,18 +106,33 @@ namespace Bari.Plugins.FSRepository.Build
             return !string.IsNullOrEmpty(fileName);
         }
 
-        private ISet<TargetRelativePath> DeployDirectoryContents(IFileSystemDirectory depDir)
+        private ISet<TargetRelativePath> DeployDirectoryContents(IFileSystemDirectory depDir, string directoryPath, string subDir)
         {
             var result = new HashSet<TargetRelativePath>();
-            foreach (var file in repository.ListFiles(Path.GetDirectoryName(resolvedPath)))
+            
+            //Files
+            foreach (var file in repository.ListFiles(directoryPath))
             {
                 var fileName = Path.GetFileName(file);
-                repository.Copy(file, depDir, fileName);
-                result.Add(new TargetRelativePath(targetRoot.GetRelativePath(depDir), fileName));
+                repository.Copy(file, depDir, Path.Combine(subDir, fileName));
+                result.Add(new TargetRelativePath(targetRoot.GetRelativePath(depDir), Path.Combine(subDir, fileName)));
+            }
+
+            //Child directories
+            var directory = new LocalFileSystemDirectory(directoryPath);
+            foreach (var childDirectory in directory.ChildDirectories)
+            {
+                var dir = directory.GetChildDirectory(childDirectory);
+                var dirContents = DeployDirectoryContents(depDir, dir.ToString(), Path.Combine(subDir, childDirectory));
+                foreach (var path in dirContents)
+                {
+                    result.Add(path);
+                }
             }
 
             return result;
         }
+
 
         private ISet<TargetRelativePath> DeploySingleFile(IFileSystemDirectory depDir, string fileName)
         {
