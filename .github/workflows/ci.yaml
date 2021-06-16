@@ -41,7 +41,7 @@ jobs:
           mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} rebuild full
       - name: Pack
         run: |
-          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} pack
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} pack full
       - name: Test
         run: |
           mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} test
