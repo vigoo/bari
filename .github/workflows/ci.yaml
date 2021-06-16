@@ -38,14 +38,14 @@ jobs:
           mono .bin/bari*/tools/bari.exe info
       - name: Build
         run: |
-          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} rebuild full
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} rebuild full
       - name: Pack
         run: |
-          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} pack
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} pack
       - name: Test
         run: |
-          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} test
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} test
       - name: Publish
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.release }} publish full
+          mono .bin/bari*/tools/bari.exe -v --target ${{ matrix.target }} publish full
