@@ -32,8 +32,8 @@ aliases:
         - gac://System.Xml
         - gac://System.Xml.Linq   
     yaml:
-        - nuget://YamlDotNet.Core
-        - nuget://YamlDotNet.RepresentationModel
+        - nuget://YamlDotNet.Core/2.2.0
+        - nuget://YamlDotNet.RepresentationModel/2.2.0
     ninject:
         - nuget://Castle.Core/3.0.0.4001
         - nuget://Ninject.Extensions.Factory/3.0.1
@@ -55,7 +55,7 @@ modules:
           references:
             - alias://common
             - alias://ninject
-            - nuget://Monads
+            - nuget://Monads/1.1.5
             - alias://logging
             - alias://yaml
             - nuget://DotNetZip/1.10.0
@@ -158,7 +158,7 @@ modules:
             - gac://System.Core
             - alias://logging
             - alias://ninject
-            - nuget://Monads
+            - nuget://Monads/1.1.5
             - alias://yaml
             - suite://core/Bari.Core
         - name: Bari.Plugins.Gallio
