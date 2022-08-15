@@ -104,6 +104,7 @@ namespace Bari.Core.Tools
         /// <param name="target">Target directory</param>
         protected virtual void DownloadAndDeploy(string target)
         {
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             using (var client = new WebClient())
             {
                 client.DownloadFile(url, Path.Combine(target, executableName));
