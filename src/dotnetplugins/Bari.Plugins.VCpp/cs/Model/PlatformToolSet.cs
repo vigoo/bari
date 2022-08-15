@@ -9,6 +9,7 @@ namespace Bari.Plugins.VCpp.Model
         VS2015,
         VS2017,
         VS2019,
+        VS2022,
     }
 }
 

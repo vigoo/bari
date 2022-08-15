@@ -38,7 +38,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                 writer.WriteStartElement("ItemGroup");
                 writer.WriteStartElement("Compile");
                 writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
-                writer.WriteElementString("Link", Path.Combine("_Generated", "version.cs"));
+                writer.WriteElementString("Link", Path.Combine("_Generated", "version.fs"));
                 writer.WriteEndElement();
                 writer.WriteEndElement();
             }

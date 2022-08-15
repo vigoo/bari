@@ -32,6 +32,8 @@ namespace Bari.Plugins.VCpp.Model
             { 
                 switch (PlatformToolSet)
                 {
+                    case PlatformToolSet.VS2022:
+                        return "v143";
                     case PlatformToolSet.VS2019:
                         return "v142"; 
                     case PlatformToolSet.VS2017:
