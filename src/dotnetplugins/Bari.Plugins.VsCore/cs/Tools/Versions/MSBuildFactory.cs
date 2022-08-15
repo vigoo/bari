@@ -23,6 +23,7 @@ namespace Bari.Plugins.VsCore.Tools.Versions
                 case MSBuildVersion.VS2015: return new MSBuildVS2015(parameters);
                 case MSBuildVersion.VS2017: return new MSBuildVS2017(parameters);
                 case MSBuildVersion.VS2019: return new MSBuildVS2019(parameters);
+                case MSBuildVersion.VS2022: return new MSBuildVS2022(parameters);
                 case MSBuildVersion.Default: return new MSBuildInPath(parameters);
                 default:
                     throw new ArgumentOutOfRangeException("version");
